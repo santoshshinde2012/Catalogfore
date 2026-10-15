@@ -3,7 +3,7 @@ import { skuCatalog } from "@dcf/engine";
 export function Method() {
   return (
     <div className="stage max-w-3xl">
-      <h2 className="font-display text-3xl mb-2">How the number is made</h2>
+      <h1 className="h2">How the number is made</h1>
       <p>
         A classic workload is two bills. Databricks charges DBUs. Your cloud charges the VMs, disks, storage, and egress. Serverless SKUs fold the compute into the DBU rate and leave storage and egress outside.
       </p>

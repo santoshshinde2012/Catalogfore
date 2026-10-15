@@ -53,7 +53,7 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
   }, [menuOpen]);
 
   return (
-    <div className="ledger" id="desk">
+    <div className="ledger">
       <section className="assumptions" aria-label="Portfolio assumptions">
         <label className="field">
           Forecast name
@@ -187,7 +187,13 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
             </button>
           );
         })}
-        {portfolio.workloads.length === 0 && <p className="hint">No workloads yet. Add one, or start from a template.</p>}
+        {portfolio.workloads.length === 0 && (
+          <div className="empty">
+            <p className="eyebrow">Empty desk</p>
+            <h2>Nothing is running yet.</h2>
+            <p className="hint">Add a job, a warehouse, or a template. The month updates as you type.</p>
+          </div>
+        )}
       </div>
 
       {selected && (

@@ -12,8 +12,8 @@ export function Scenarios({ portfolio, selected, onToggle }: ScenariosProps) {
   const max = Math.max(...results.map((result) => result.annual), 1);
   return (
     <div className="stage">
-      <h2 className="font-display text-3xl mb-2">Side by side</h2>
-      <p className="hint mb-4 max-w-3xl">
+      <h1 className="h2">Side by side</h1>
+      <p className="lede mb-6">
         Each card clones this portfolio and changes one lever. Photon’s 2× case is an assumption, not a measured speedup. A commit only helps if you use it.
       </p>
       <div className="scenario-grid mb-6">

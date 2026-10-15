@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0a0a0b" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)" />
     <meta
       name="description"
       content="Forecast Databricks DBU and cloud infrastructure cost across AWS, Azure, and GCP. Estimates only."
@@ -11,10 +14,8 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <script>
       try {
-        const stored = localStorage.getItem("dcf-theme");
-        const dark = stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-        if (dark) document.documentElement.classList.add("dark");
-      } catch (_) {}
+        if (localStorage.getItem("dcf-theme") === "light") document.documentElement.dataset.theme = "light";
+      } catch (e) {}
     </script>
   </head>
   <body>

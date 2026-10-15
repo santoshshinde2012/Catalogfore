@@ -2,7 +2,7 @@
 
 An open-source forecast for Databricks spend. It prices a portfolio of jobs, notebooks, SQL warehouses, Lakeflow pipelines, serverless compute, model serving, and the cloud bill next to the DBU bill, then projects 12 to 36 months with growth, seasonality, and commitment scenarios.
 
-It is deliberately not a quote. List rates are versioned, sourced, and labeled when a figure is a proxy.
+It is deliberately not a quote. List rates are versioned, sourced, and labeled when a figure is a proxy. The interface uses the same type, color, and spacing system as [holdmap](https://santoshshinde2012.github.io/holdmap/): Inter, JetBrains Mono, near-black and off-white surfaces, and one indigo accent.
 
 ![Welcome templates with live monthly totals](docs/screenshots/welcome.png)
 

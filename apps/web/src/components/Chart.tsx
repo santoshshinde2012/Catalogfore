@@ -8,7 +8,7 @@ interface ChartProps {
 export function ForecastChart({ points, title }: ChartProps) {
   const width = 640;
   const height = 240;
-  const padL = 44;
+  const padL = 48;
   const padR = 12;
   const padT = 16;
   const padB = 28;
@@ -27,21 +27,23 @@ export function ForecastChart({ points, title }: ChartProps) {
   const total = points.map((point) => point.total);
   const zero = points.map(() => 0);
   const ticks = [0, 0.5, 1];
+  const line = total.map((value, index) => `${index === 0 ? "M" : "L"}${x(index).toFixed(1)},${y(value).toFixed(1)}`).join(" ");
 
   return (
     <div className="chart-wrap">
       <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={title}>
         {ticks.map((tick) => (
           <g key={tick}>
-            <line x1={padL} x2={width - padR} y1={y(max * tick)} y2={y(max * tick)} stroke="rgba(255,255,255,0.12)" />
-            <text className="axis" x={padL - 6} y={y(max * tick) + 4} textAnchor="end">
+            <line x1={padL} x2={width - padR} y1={y(max * tick)} y2={y(max * tick)} stroke="currentColor" strokeOpacity="0.35" />
+            <text className="axis" x={padL - 8} y={y(max * tick) + 4} textAnchor="end">
               {tick === 0 ? "0" : tick === 1 ? formatAxis(max) : formatAxis(max * tick)}
             </text>
           </g>
         ))}
-        <path d={path(cloud, zero)} fill="#8fa884" opacity="0.9" />
-        <path d={path(dbuTop, cloud)} fill="#e39a62" opacity="0.95" />
-        <path d={path(total, dbuTop)} fill="#efe6d4" opacity="0.8" />
+        <path d={path(cloud, zero)} fill="var(--green)" opacity="0.45" />
+        <path d={path(dbuTop, cloud)} fill="var(--accent)" opacity="0.72" />
+        <path d={path(total, dbuTop)} fill="var(--amber)" opacity="0.55" />
+        <path d={line} fill="none" stroke="var(--text)" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" />
         <text className="axis" x={x(0)} y={height - 8}>
           M1
         </text>

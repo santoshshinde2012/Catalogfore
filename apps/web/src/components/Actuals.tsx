@@ -30,8 +30,8 @@ export function Actuals({ portfolio, onPortfolio }: ActualsProps) {
 
   return (
     <div className="stage">
-      <h2 className="font-display text-3xl mb-2">Calibrate from a bill</h2>
-      <p className="hint max-w-3xl mb-4">
+      <h1 className="h2">Calibrate from a bill</h1>
+      <p className="lede mb-6">
         Export <code>system.billing.usage</code> to CSV. Retractions are already negative and are netted. Storage and token rows are skipped. The scale multiplies every line so this month’s DBUs match the file. Cloud dollars move with them, because the usage table has no VM bill.
       </p>
       <div className="flex flex-wrap gap-2 mb-3">
