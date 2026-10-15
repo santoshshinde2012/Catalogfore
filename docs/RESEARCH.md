@@ -209,25 +209,92 @@ Default in the catalog: Azure and Enterprise-style **$0.111 per CU-hour**, stora
 - Managed Databricks storage: DSU rates in section 3. Customer-owned S3, ADLS, and GCS are **not** DSU; they are cloud list prices. The calculator includes a simple object-storage line (GB-month) using a refreshed or pinned $/GB so both show up.
 - Egress is cloud-specific and tiered. A honest default for the first version is a single user-editable $/GB (seeded near the common US East internet-egress list, on the order of $0.09/GB after a free allotment on AWS) plus a GB/month input. Cross-region and cross-AZ are called out in tips, not fully tariffed. Private connectivity is hourly plus per-GB on serverless; leave it as an optional add-on line rather than pretending to enumerate every endpoint SKU.
 
+### Serverless multipliers (official, not a higher $/DBU)
+
+[Microsoft Learn, serverless DBU consumption](https://learn.microsoft.com/en-us/azure/databricks/resources/pricing) (fetched 2026-10-15) bills features as multipliers on a SKU, and the usage table already contains the multiplied DBUs:
+
+| SKU | Feature | Multiplier |
+| --- | --- | --- |
+| Automated Serverless | Serverless Jobs, serverless Spark Declarative Pipelines, predictive optimization, fine-grained access control, materialized views and streaming tables in SQL | 1× |
+| Automated Serverless | Data Quality Monitoring | 2× |
+| Automated Serverless | Data Classification | 3× |
+| Interactive Serverless | Serverless notebooks | 1× |
+| Interactive Serverless | Databricks Apps, medium compute-hour | 0.5× |
+| Interactive Serverless | Databricks Apps, large compute-hour | 1× |
+| Database Serverless | Lakebase autoscaling compute | 0.213× |
+| Databricks Storage | Database storage | 15× DSU |
+| Databricks Storage | Point-in-time restore | 8.7× DSU |
+| Databricks Storage | Snapshots | 3.91× DSU |
+| Databricks Storage | AI Search storage | 10× DSU |
+| Databricks Storage | Per GB stored / 1,000 writes / 1,000 reads | 1× / 0.3535× / 0.0226× |
+| Model Serving | AI Gateway inference tables | 7.143 DBU per GB of payload |
+| Model Serving | AI Gateway usage tracking | 1.429 DBU per GB of payload |
+| Model Serving | AI Search reranker | 28.571 DBU per 1,000 requests |
+| Model Serving | Shutterstock Image AI | 0.857 DBU per image |
+| Model Training | Forecasting | 4× |
+
+The same page prices model training at **$0.65/DBU in US East** in the fine-tuning cost column (Llama 3.3 70B, 10M words ≈ 225 DBU ≈ $146.25). That is a first-party dollar rate, not a secondary compilation. AI Parse Document is estimated at 10–90 DBU per page before a 50% promo through 2026-06-30.
+
+The “managed services” dollar rate in the catalog is the $/DBU, not the multiplier. The metered editor asks for DBUs after the multiplier.
+
 ### Region factors
 
-DBU list price is not flat. The clearest first-party regional table found on 2026-10-15 is Lakehouse Real-Time ([docs](https://docs.databricks.com/aws/en/compute/sql-warehouse/real-time-pricing)):
+DBU list price is not flat. Two first-party regional tables were fetched on 2026-10-15.
 
-| AWS region | Premium $/DBU | vs us-east-1 |
-| --- | ---: | ---: |
-| us-east-1, us-east-2, us-west-2 | 0.55 | 1.00 |
-| ca-central-1, eu-west-1 | 0.61 | 1.11 |
-| eu-west-2, eu-west-3, us-west-1 | 0.64 | 1.16 |
-| eu-central-1 | 0.66 | 1.20 |
-| ap-northeast-2 | 0.68 | 1.24 |
-| ap-southeast-1, ap-southeast-2, ap-southeast-3 | 0.69 | 1.25 |
-| ap-northeast-1 | 0.71 | 1.29 |
-| sa-east-1 | 0.87 | 1.58 |
-| ap-south-1 | 0.58 | 1.05 |
+**AWS Lakehouse Real-Time** ([docs](https://docs.databricks.com/aws/en/compute/sql-warehouse/real-time-pricing), updated 2026-10-08), SKU `LAKEHOUSE_SERVERLESS_COMPUTE`. Every published region is in the catalog. The factor is Premium $/DBU ÷ $0.55 (us-east-1), stored to 6 decimals.
 
-Enterprise on that page is about 1.27× Premium in each region. The AI Search page independently shows Sydney above US East ($0.088 vs $0.07 per DBU in the worked example).
+| Region | Code | Premium | Enterprise | Factor |
+| --- | --- | ---: | ---: | ---: |
+| US East (N. Virginia) | us-east-1 | 0.55 | 0.70 | 1 |
+| US East (Ohio) | us-east-2 | 0.55 | 0.70 | 1 |
+| US West (Oregon) | us-west-2 | 0.55 | 0.70 | 1 |
+| US West (N. California) | us-west-1 | 0.64 | 0.82 | 1.163636 |
+| Canada (Central) | ca-central-1 | 0.61 | 0.78 | 1.109091 |
+| Europe (Ireland) | eu-west-1 | 0.61 | 0.78 | 1.109091 |
+| Europe (London) | eu-west-2 | 0.64 | 0.81 | 1.163636 |
+| Europe (Paris) | eu-west-3 | 0.64 | 0.82 | 1.163636 |
+| Europe (Frankfurt) | eu-central-1 | 0.66 | 0.84 | 1.200000 |
+| Asia Pacific (Mumbai) | ap-south-1 | 0.58 | 0.74 | 1.054545 |
+| Asia Pacific (Seoul) | ap-northeast-2 | 0.68 | 0.86 | 1.236364 |
+| Asia Pacific (Singapore) | ap-southeast-1 | 0.69 | 0.88 | 1.254545 |
+| Asia Pacific (Sydney) | ap-southeast-2 | 0.69 | 0.88 | 1.254545 |
+| Asia Pacific (Jakarta) | ap-southeast-3 | 0.69 | 0.88 | 1.254545 |
+| Asia Pacific (Tokyo) | ap-northeast-1 | 0.71 | 0.90 | 1.290909 |
+| South America (São Paulo) | sa-east-1 | 0.87 | 1.11 | 1.581818 |
 
-**Calculator rule:** store US East list rates and multiply by a region factor seeded from this table for AWS, with analogous curated factors for a handful of Azure and GCP regions. Label the factor `proxyFromLakehouseRt` when the SKU itself has no published regional row. Users can pick “US East (reference)” and get factor 1.
+Enterprise on that page is about 1.27× Premium in each region, so one factor applied to the already-tiered US East rate stays close. The AI Search page independently shows Sydney above US East ($0.088 vs $0.07 per DBU in the worked example).
+
+**Azure Lakehouse Real-Time** ([Microsoft Learn](https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/real-time-pricing), fetched 2026-10-15). Until 2026-10-10 this SKU billed at serverless SQL rates. From 2026-10-10 it bills the regional Premium rates below. Azure publishes no Enterprise column on this page. The catalog factor is the published $/DBU ÷ $0.70 (East US). All 39 regions are stored.
+
+| Region | Code | $/DBU | Factor |
+| --- | --- | ---: | ---: |
+| East US, East US 2, North Central US, West US 2, West US 3 | eastus, eastus2, northcentralus, westus2, westus3 | 0.70 | 1 |
+| Central India, Sweden Central | centralindia, swedencentral | 0.74 | 1.057143 |
+| Mexico Central | mexicocentral | 0.77 | 1.100000 |
+| Canada Central, Canada East, Malaysia West, North Europe | canadacentral, canadaeast, malaysiawest, northeurope | 0.78 | 1.114286 |
+| Central US | centralus | 0.79 | 1.128571 |
+| UK South | uksouth | 0.81 | 1.157143 |
+| France Central, West US | francecentral, westus | 0.82 | 1.171429 |
+| Germany West Central, West Europe | germanywestcentral, westeurope | 0.83 | 1.185714 |
+| South Central US, West Central US | southcentralus, westcentralus | 0.84 | 1.200000 |
+| UAE North, UK West | uaenorth, ukwest | 0.85 | 1.214286 |
+| Qatar Central | qatarcentral | 0.86 | 1.228571 |
+| Australia Central, Australia Central 2, Australia East, Southeast Asia | australiacentral, australiacentral2, australiaeast, southeastasia | 0.88 | 1.257143 |
+| Australia Southeast, Korea Central | australiasoutheast, koreacentral | 0.91 | 1.300000 |
+| Japan East, Japan West, West India | japaneast, japanwest, westindia | 0.90 | 1.285714 |
+| East Asia | eastasia | 0.96 | 1.371429 |
+| South Africa North | southafricanorth | 0.98 | 1.400000 |
+| South India | southindia | 0.99 | 1.414286 |
+| Norway East | norwayeast | 1.00 | 1.428571 |
+| Switzerland North | switzerlandnorth | 1.09 | 1.557143 |
+| Brazil South | brazilsouth | 1.11 | 1.585714 |
+| Switzerland West | switzerlandwest | 1.42 | 2.028571 |
+
+Both clouds offer a **30% introductory emission discount through 2027-01-31** on Lakehouse Real-Time only (10 DBUs billed as 7). The calculator does not apply it. It is not a discount on jobs, classic SQL, or model serving, and applying it to a whole portfolio would understate those lines.
+
+**GCP:** no equivalent first-party regional DBU table was found on 2026-10-15. Non-reference GCP factors stay labeled `proxy`.
+
+**Calculator rule:** store US East list rates and multiply by the region factor. Label the factor `proxy-lakehouse-rt` when the ratio is real for Lakehouse Real-Time and only a proxy for the SKU being priced. Users who pick the reference region get factor 1.
 
 ## 10. Public price APIs
 
@@ -269,7 +336,36 @@ A custom MCP can be hosted on Databricks Apps ([custom MCP](https://docs.databri
 
 **Decision:** ship a small **stdio MCP server in this repo** (`/mcp`) that calls the same TypeScript pricing engine as the website. Tools: `list_skus`, `estimate_workload`, `forecast`, `compare_scenarios`. No Databricks credentials, no customer data. Assistants that need live account usage should use Databricks SQL MCP against `system.billing.usage` and then pass the totals into this server. Building that bridge into their account is out of scope.
 
-## 13. Implications for the catalog
+## 13. Rate ledger (what the catalog stores, and who published it)
+
+Every number in `data/sku-rates.json` and `data/instances.json` is one of these classes. “Official” means a first-party page returned the figure as text on 2026-10-15. “Secondary” means the official price page is a client-rendered app that returned no dollars to a static fetch, and the figure is taken from a 2026 compilation that cites those pages. Secondary dollars are estimates until a `system.billing.list_prices` export or a Retail Prices harvest replaces them.
+
+| Catalog field | Value basis | Source class | Source |
+| --- | --- | --- | --- |
+| SQL DBU/hour ladder, 2X-Small through 4X-Large | 4, 6, 12, 24, 40, 80, 144, 272, 528 | Official | [Microsoft Learn, serverless DBU consumption](https://learn.microsoft.com/en-us/azure/databricks/resources/pricing) |
+| Photon multiplier default | 2.9× classic DBU emission | Official | [Azure Databricks pricing](https://azure.microsoft.com/en-us/pricing/details/databricks/), Lakeflow pipeline feature table |
+| Jobs example, Azure | DS13 v2 = 2.0 DBU, Jobs = $0.30/DBU, VM $0.598 | Official (FAQ arithmetic rendered) | Same Azure pricing page |
+| DBCU ceiling | Up to 37% versus pay-as-you-go, 1- and 3-year tiers | Official (percents per tier did not render) | Same Azure pricing page, pre-purchase section |
+| Add-ons | Compliance +10% of product spend; mission critical +30% | Official | Same Azure pricing page |
+| CPU serving | 1 concurrent request-hour = 1 DBU | Official | Microsoft Learn, Model Serving SKU |
+| GPU serving DBU/hour | T4 10.48, A10G 20, L40S 44.86, A100 80GB 78.60, H100 100, plus the multi-GPU rows on the product page | Official | [Model serving pricing](https://www.databricks.com/product/pricing/model-serving) and Microsoft Learn |
+| Foundation model DBU per million tokens | Llama 4 Maverick 7.143 / 21.429, and the other rows in section 9 | Official quantities | Microsoft Learn. Dollars = those DBUs × the $0.07 serving rate, which matches the $0.50 / $1.50 secondary quote |
+| AI Search DBU/hour | Standard 4.00, storage-optimized 18.29 | Official | Microsoft Learn and [AI Search pricing](https://www.databricks.com/product/pricing/ai-search) |
+| AI Search US East $/hour | $0.28 and $1.28 per unit-hour | Official (worked example on the product page) | AI Search pricing page |
+| Apps multipliers | Medium 0.5×, Large 1× of interactive serverless | Official | Microsoft Learn, Interactive Serverless SKU |
+| Lakebase multiplier | 0.213× database serverless; storage 15× DSU | Official multiplier, not a dollar rate | Microsoft Learn |
+| Model training $/DBU | $0.65 US East, from the fine-tuning cost column (225 DBU ≈ $146.25) | Official | [Microsoft Learn, serverless DBU consumption](https://learn.microsoft.com/en-us/azure/databricks/resources/pricing) |
+| AWS region factors | Premium Lakehouse Real-Time $/DBU ÷ $0.55, all 16 published regions | Official ratio, applied as a proxy to other SKUs | [Lakehouse Real-Time pricing](https://docs.databricks.com/aws/en/compute/sql-warehouse/real-time-pricing), updated 2026-10-08 |
+| Azure region factors | Lakehouse Real-Time Premium $/DBU ÷ $0.70, all 39 regions, effective 2026-10-10 | Official ratio, applied as a proxy to other SKUs | [Azure Lakehouse Real-Time pricing](https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/real-time-pricing) |
+| Instance DBU/hour | Curated non-Photon counts (m5.xlarge 0.69, DS3 v2 0.75, n2-standard-4 0.72, …) | Community extract of Databricks pricing bundles; DS3 v2 / DS4 v2 also match the Azure table structure | [LakeMeter instance-dbu-rates.csv](https://github.com/databrickslabs/lakemeter-oss/blob/ab0dfcbf/backend/static/pricing/instance-dbu-rates.csv), [Azure pricing instance table](https://azure.microsoft.com/en-us/pricing/details/databricks/) |
+| $/DBU by SKU, cloud, and tier | Section 3 table | Secondary, cross-checked where two guides agree | [Flexera 2026 guide](https://www.flexera.com/blog/finops/databricks-pricing-guide/), [LakeSentry](https://lakesentry.io/blog/databricks-pricing-explained/), [OWOX](https://www.owox.com/blog/articles/databricks-pricing) |
+| DSU $/unit, Lakebase $/CU-hour, object storage, egress seeds | Section 3 and section 9 | Secondary or labeled assumption | Flexera for DSU and Lakebase dollars. Egress and object storage are editable assumptions, not a tariff |
+| VM $/hour seeds | Reference-region on-demand | Mixed | AWS rows match the published us-east-1 Linux list cited by public price maps (m5.xlarge $0.192, i3.xlarge $0.312, g4dn.xlarge $0.526). Azure DS13 v2 $0.598 is the official FAQ figure. Remaining Azure and all GCP rows are seeds until `scripts/refresh-prices.mjs` replaces them |
+| GCP region factors other than the reference region | Short proxy list | Not a published tariff | Labeled `proxy` in the catalog. No first-party GCP regional DBU table was found on 2026-10-15 |
+
+No public unauthenticated Databricks price endpoint was found. The AWS, Azure, and GCP APIs in section 10 can refresh VM rates. They cannot refresh negotiated DBU discounts.
+
+## 14. Implications for the catalog
 
 - Version the JSON (`version`, `verifiedOn`, `source` per rate family).
 - US East list rates are curated and reviewed by a human. VM $/hour may be machine-refreshed.
