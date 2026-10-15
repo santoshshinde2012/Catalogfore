@@ -48,7 +48,7 @@ test("scenarios, actuals, method, and csv export", async ({ page }) => {
   await page.getByRole("button", { name: "CSV" }).click();
   expect((await csvPromise).suggestedFilename()).toMatch(/\.csv$/);
   const jsonPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "JSON" }).click();
+  await page.getByRole("button", { name: "JSON", exact: true }).click();
   expect((await jsonPromise).suggestedFilename()).toMatch(/\.json$/);
   const pdfPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "PDF" }).click();
@@ -70,10 +70,10 @@ test("adds a workload and toggles dark mode", async ({ page }) => {
   await page.getByRole("button", { name: "Add" }).click();
   await page.getByRole("button", { name: /Serverless jobs/ }).click();
   await expect(page.getByRole("button", { name: /Serverless jobs/ }).first()).toBeVisible();
-  await page.getByRole("button", { name: "Dark" }).click();
-  await expect(page.locator("html")).toHaveClass(/dark/);
-  await page.getByRole("button", { name: "Light" }).click();
-  await expect(page.locator("html")).not.toHaveClass(/dark/);
+  await page.getByRole("button", { name: "Switch to light theme" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await page.getByRole("button", { name: "Switch to dark theme" }).click();
+  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "light");
 });
 
 test("has no serious accessibility violations on the desk", async ({ page }, testInfo) => {
