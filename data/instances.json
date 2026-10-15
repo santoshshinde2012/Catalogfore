@@ -1,0 +1,28 @@
+{
+  "version": "2026-10-15.1",
+  "verifiedOn": "2026-10-15",
+  "note": "DBU/hour values come from the Databricks Labs LakeMeter pricing bundle (non-Photon). They are the same count on Jobs and All-Purpose; the dollar rate changes with the SKU. Confirm against the Databricks instance picker before a contract.",
+  "instances": [
+    { "cloud": "aws", "id": "m5.xlarge", "label": "m5.xlarge", "family": "General purpose", "vCPU": 4, "memoryGiB": 16, "dbuPerHour": 0.69 },
+    { "cloud": "aws", "id": "m5.2xlarge", "label": "m5.2xlarge", "family": "General purpose", "vCPU": 8, "memoryGiB": 32, "dbuPerHour": 1.37 },
+    { "cloud": "aws", "id": "m5d.large", "label": "m5d.large", "family": "General purpose", "vCPU": 2, "memoryGiB": 8, "dbuPerHour": 0.34 },
+    { "cloud": "aws", "id": "m5d.2xlarge", "label": "m5d.2xlarge", "family": "General purpose", "vCPU": 8, "memoryGiB": 32, "dbuPerHour": 1.37 },
+    { "cloud": "aws", "id": "i3.xlarge", "label": "i3.xlarge", "family": "Storage optimized", "vCPU": 4, "memoryGiB": 30.5, "dbuPerHour": 1 },
+    { "cloud": "aws", "id": "i3.2xlarge", "label": "i3.2xlarge", "family": "Storage optimized", "vCPU": 8, "memoryGiB": 61, "dbuPerHour": 2 },
+    { "cloud": "aws", "id": "r5d.xlarge", "label": "r5d.xlarge", "family": "Memory optimized", "vCPU": 4, "memoryGiB": 32, "dbuPerHour": 0.9 },
+    { "cloud": "aws", "id": "r5d.2xlarge", "label": "r5d.2xlarge", "family": "Memory optimized", "vCPU": 8, "memoryGiB": 64, "dbuPerHour": 1.8 },
+    { "cloud": "aws", "id": "g4dn.xlarge", "label": "g4dn.xlarge", "family": "GPU", "vCPU": 4, "memoryGiB": 16, "dbuPerHour": 0.71 },
+    { "cloud": "azure", "id": "Standard_DS3_v2", "label": "DS3 v2", "family": "General purpose", "vCPU": 4, "memoryGiB": 14, "dbuPerHour": 0.75 },
+    { "cloud": "azure", "id": "Standard_DS4_v2", "label": "DS4 v2", "family": "General purpose", "vCPU": 8, "memoryGiB": 28, "dbuPerHour": 1.5 },
+    { "cloud": "azure", "id": "Standard_DS13_v2", "label": "DS13 v2", "family": "General purpose", "vCPU": 8, "memoryGiB": 56, "dbuPerHour": 2 },
+    { "cloud": "azure", "id": "Standard_D4s_v5", "label": "D4s v5", "family": "General purpose", "vCPU": 4, "memoryGiB": 16, "dbuPerHour": 1 },
+    { "cloud": "azure", "id": "Standard_E8s_v3", "label": "E8s v3", "family": "Memory optimized", "vCPU": 8, "memoryGiB": 64, "dbuPerHour": 2 },
+    { "cloud": "azure", "id": "Standard_F4s_v2", "label": "F4s v2", "family": "Compute optimized", "vCPU": 4, "memoryGiB": 8, "dbuPerHour": 0.75 },
+    { "cloud": "gcp", "id": "n2-standard-4", "label": "n2-standard-4", "family": "General purpose", "vCPU": 4, "memoryGiB": 16, "dbuPerHour": 0.72 },
+    { "cloud": "gcp", "id": "n2-standard-8", "label": "n2-standard-8", "family": "General purpose", "vCPU": 8, "memoryGiB": 32, "dbuPerHour": 1.44 },
+    { "cloud": "gcp", "id": "n1-standard-4", "label": "n1-standard-4", "family": "General purpose", "vCPU": 4, "memoryGiB": 15, "dbuPerHour": 0.71 },
+    { "cloud": "gcp", "id": "n1-standard-8", "label": "n1-standard-8", "family": "General purpose", "vCPU": 8, "memoryGiB": 30, "dbuPerHour": 1.41 },
+    { "cloud": "gcp", "id": "n2-highmem-4", "label": "n2-highmem-4", "family": "Memory optimized", "vCPU": 4, "memoryGiB": 32, "dbuPerHour": 0.96 },
+    { "cloud": "gcp", "id": "c2-standard-8", "label": "c2-standard-8", "family": "Compute optimized", "vCPU": 8, "memoryGiB": 32, "dbuPerHour": 1.44 }
+  ]
+}

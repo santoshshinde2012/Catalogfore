@@ -1,0 +1,32 @@
+name: Refresh cloud VM prices
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node scripts/refresh-prices.mjs
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "Refresh cloud VM list prices"
+          title: "Refresh cloud VM list prices"
+          body: |
+            Automated refresh of on-demand VM rates from the Azure Retail Prices API and the public AWS Price List offer files.
+
+            DBU list rates are not changed. Review the diff before merging. Figures are list prices for estimation, not a quote.
+          branch: price-refresh
+          add-paths: data/cloud-vm-prices.json

@@ -1,0 +1,766 @@
+{
+  "version": "2026-10-15.2",
+  "verifiedOn": "2026-10-15",
+  "disclaimer": "Estimates only. Not a quote, invoice, or commitment. US East list rates were compiled on 2026-10-15. AWS and Azure region factors are Lakehouse Real-Time ratios (Azure table effective 2026-10-10) applied as a proxy to other SKUs. GCP region factors outside the reference region are proxies. Dollar rates for classic SKUs come from secondary guides where the official price pages render in the browser. Your contract and promotions will differ. VM rates may be reference-region seeds until a price refresh replaces them.",
+  "photonMultiplier": 2.9,
+  "photonMultiplierNote": "Default 2.9× DBU emission for classic Photon, the factor printed on the Azure Lakeflow pipeline price table. Not applied to serverless or SQL. See docs/RESEARCH.md.",
+  "sqlVmDollarsPerDbuHour": 0.22,
+  "sqlVmNote": "Classic and Pro SQL warehouses bill a VM that Databricks does not publish as a stable type per t-shirt size. $0.22 of VM per DBU-hour is an assumption you can override per warehouse.",
+  "commitmentPresets": [
+    0,
+    0.15,
+    0.25,
+    0.37
+  ],
+  "defaultSpotDiscount": 0.6,
+  "addonRates": {
+    "none": 0,
+    "compliance": 0.1,
+    "mission_critical": 0.3
+  },
+  "azureEnterpriseEqualsPremium": true,
+  "managedStoragePerDsu": {
+    "aws": 0.023,
+    "azure": 0.026,
+    "gcp": 0.023
+  },
+  "objectStoragePerGbMonth": {
+    "aws": 0.023,
+    "azure": 0.018,
+    "gcp": 0.02
+  },
+  "defaultEgressPerGb": {
+    "aws": 0.09,
+    "azure": 0.087,
+    "gcp": 0.12
+  },
+  "lakebase": {
+    "available": {
+      "aws": true,
+      "azure": true,
+      "gcp": false
+    },
+    "usdPerCuHour": {
+      "aws": 0.111,
+      "azure": 0.111,
+      "gcp": 0
+    },
+    "usdPerGbMonth": {
+      "aws": 0.345,
+      "azure": 0.39,
+      "gcp": 0
+    },
+    "note": "CU-hour rates follow the Enterprise / Azure Premium figures in the Flexera 2026 compilation. The AWS Premium $0.0092 preview figure is not the default. GCP has no Lakebase rate in that compilation."
+  },
+  "sqlDbuPerHour": {
+    "2xs": 4,
+    "xs": 6,
+    "s": 12,
+    "m": 24,
+    "l": 40,
+    "xl": 80,
+    "2xl": 144,
+    "3xl": 272,
+    "4xl": 528
+  },
+  "appsDbuPerHour": {
+    "medium": 0.5,
+    "large": 1
+  },
+  "aiSearch": {
+    "standard": {
+      "dbuPerHour": 4,
+      "storagePerGbMonth": 0.23,
+      "freeGb": 30
+    },
+    "storage_optimized": {
+      "dbuPerHour": 18.29,
+      "storagePerGbMonth": 0.046,
+      "freeGb": 0
+    }
+  },
+  "servingGpuDbuPerHour": [
+    {
+      "id": "t4",
+      "label": "T4 · small",
+      "dbuPerHour": 10.48
+    },
+    {
+      "id": "a10g",
+      "label": "A10G · 1 GPU",
+      "dbuPerHour": 20
+    },
+    {
+      "id": "l40s",
+      "label": "L40S · 1 GPU",
+      "dbuPerHour": 44.86
+    },
+    {
+      "id": "a100-80",
+      "label": "A100 80GB · 1 GPU",
+      "dbuPerHour": 78.6
+    },
+    {
+      "id": "a100-80-2",
+      "label": "A100 80GB · 2 GPU",
+      "dbuPerHour": 157.2
+    },
+    {
+      "id": "a100-80-4",
+      "label": "A100 80GB · 4 GPU",
+      "dbuPerHour": 314.4
+    },
+    {
+      "id": "h100",
+      "label": "H100 · 1 GPU",
+      "dbuPerHour": 100
+    }
+  ],
+  "foundationModels": [
+    {
+      "id": "llama4-maverick",
+      "label": "Llama 4 Maverick",
+      "inputDbuPerMillion": 7.143,
+      "outputDbuPerMillion": 21.429,
+      "provisionedDbuPerHour": 85.714
+    },
+    {
+      "id": "llama-3.3-70b",
+      "label": "Llama 3.3 70B",
+      "inputDbuPerMillion": 7.143,
+      "outputDbuPerMillion": 21.429,
+      "provisionedDbuPerHour": 85.714
+    },
+    {
+      "id": "llama-3.1-8b",
+      "label": "Llama 3.1 8B",
+      "inputDbuPerMillion": 2.143,
+      "outputDbuPerMillion": 6.429,
+      "provisionedDbuPerHour": 53.571
+    },
+    {
+      "id": "gpt-oss-20b",
+      "label": "GPT OSS 20B",
+      "inputDbuPerMillion": 1,
+      "outputDbuPerMillion": 4.286,
+      "provisionedDbuPerHour": 53.571
+    },
+    {
+      "id": "gpt-oss-120b",
+      "label": "GPT OSS 120B",
+      "inputDbuPerMillion": 2.143,
+      "outputDbuPerMillion": 8.571,
+      "provisionedDbuPerHour": 71.429
+    },
+    {
+      "id": "gemma-3-12b",
+      "label": "Gemma 3 12B",
+      "inputDbuPerMillion": 2.143,
+      "outputDbuPerMillion": 7.143,
+      "provisionedDbuPerHour": 71.429
+    },
+    {
+      "id": "gte",
+      "label": "GTE embeddings",
+      "inputDbuPerMillion": 1.857,
+      "outputDbuPerMillion": 0,
+      "provisionedDbuPerHour": 20
+    },
+    {
+      "id": "bge-large",
+      "label": "BGE Large embeddings",
+      "inputDbuPerMillion": 1.429,
+      "outputDbuPerMillion": 0,
+      "provisionedDbuPerHour": 24
+    }
+  ],
+  "rates": {
+    "aws": {
+      "premium": {
+        "jobs_classic": 0.15,
+        "jobs_serverless": 0.35,
+        "all_purpose_classic": 0.55,
+        "all_purpose_serverless": 0.75,
+        "dlt_core": 0.2,
+        "dlt_pro": 0.25,
+        "dlt_advanced": 0.36,
+        "dlt_serverless": 0.35,
+        "sql_classic": 0.22,
+        "sql_pro": 0.55,
+        "sql_serverless": 0.7,
+        "model_serving": 0.07,
+        "model_training": 0.65,
+        "apps": 0.75,
+        "managed_services": 0.35,
+        "lakeflow_connect": 0.35,
+        "ai_search": 0.07
+      },
+      "enterprise": {
+        "jobs_classic": 0.2,
+        "jobs_serverless": 0.45,
+        "all_purpose_classic": 0.65,
+        "all_purpose_serverless": 0.95,
+        "dlt_core": 0.2,
+        "dlt_pro": 0.25,
+        "dlt_advanced": 0.36,
+        "dlt_serverless": 0.45,
+        "sql_classic": 0.22,
+        "sql_pro": 0.55,
+        "sql_serverless": 0.7,
+        "model_serving": 0.07,
+        "model_training": 0.65,
+        "apps": 0.95,
+        "managed_services": 0.45,
+        "lakeflow_connect": 0.45,
+        "ai_search": 0.07
+      }
+    },
+    "azure": {
+      "premium": {
+        "jobs_classic": 0.3,
+        "jobs_serverless": 0.45,
+        "all_purpose_classic": 0.55,
+        "all_purpose_serverless": 0.95,
+        "dlt_core": 0.3,
+        "dlt_pro": 0.38,
+        "dlt_advanced": 0.54,
+        "dlt_serverless": 0.45,
+        "sql_classic": 0.22,
+        "sql_pro": 0.55,
+        "sql_serverless": 0.7,
+        "model_serving": 0.07,
+        "model_training": 0.65,
+        "apps": 0.95,
+        "managed_services": 0.45,
+        "lakeflow_connect": 0.45,
+        "ai_search": 0.07
+      },
+      "enterprise": {
+        "jobs_classic": 0.3,
+        "jobs_serverless": 0.45,
+        "all_purpose_classic": 0.55,
+        "all_purpose_serverless": 0.95,
+        "dlt_core": 0.3,
+        "dlt_pro": 0.38,
+        "dlt_advanced": 0.54,
+        "dlt_serverless": 0.45,
+        "sql_classic": 0.22,
+        "sql_pro": 0.55,
+        "sql_serverless": 0.7,
+        "model_serving": 0.07,
+        "model_training": 0.65,
+        "apps": 0.95,
+        "managed_services": 0.45,
+        "lakeflow_connect": 0.45,
+        "ai_search": 0.07
+      }
+    },
+    "gcp": {
+      "premium": {
+        "jobs_classic": 0.15,
+        "jobs_serverless": 0.35,
+        "all_purpose_classic": 0.55,
+        "all_purpose_serverless": 0.75,
+        "dlt_core": 0.2,
+        "dlt_pro": 0.25,
+        "dlt_advanced": 0.36,
+        "dlt_serverless": 0.35,
+        "sql_classic": 0.22,
+        "sql_pro": 0.55,
+        "sql_serverless": 0.7,
+        "model_serving": 0.07,
+        "model_training": 0.65,
+        "apps": 0.75,
+        "managed_services": 0.35,
+        "lakeflow_connect": 0.35,
+        "ai_search": 0.07
+      },
+      "enterprise": {
+        "jobs_classic": 0.2,
+        "jobs_serverless": 0.45,
+        "all_purpose_classic": 0.65,
+        "all_purpose_serverless": 0.95,
+        "dlt_core": 0.2,
+        "dlt_pro": 0.25,
+        "dlt_advanced": 0.36,
+        "dlt_serverless": 0.45,
+        "sql_classic": 0.22,
+        "sql_pro": 0.55,
+        "sql_serverless": 0.7,
+        "model_serving": 0.07,
+        "model_training": 0.65,
+        "apps": 0.95,
+        "managed_services": 0.45,
+        "lakeflow_connect": 0.45,
+        "ai_search": 0.07
+      }
+    }
+  },
+  "regions": [
+    {
+      "cloud": "aws",
+      "id": "us-east-1",
+      "label": "US East (N. Virginia)",
+      "factor": 1,
+      "source": "reference"
+    },
+    {
+      "cloud": "aws",
+      "id": "us-east-2",
+      "label": "US East (Ohio)",
+      "factor": 1,
+      "source": "lakehouse-rt"
+    },
+    {
+      "cloud": "aws",
+      "id": "us-west-2",
+      "label": "US West (Oregon)",
+      "factor": 1,
+      "source": "lakehouse-rt"
+    },
+    {
+      "cloud": "aws",
+      "id": "us-west-1",
+      "label": "US West (N. California)",
+      "factor": 1.163636,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "aws",
+      "id": "ca-central-1",
+      "label": "Canada (Central)",
+      "factor": 1.109091,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "aws",
+      "id": "eu-west-1",
+      "label": "Europe (Ireland)",
+      "factor": 1.109091,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "aws",
+      "id": "eu-west-2",
+      "label": "Europe (London)",
+      "factor": 1.163636,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "aws",
+      "id": "eu-west-3",
+      "label": "Europe (Paris)",
+      "factor": 1.163636,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "aws",
+      "id": "eu-central-1",
+      "label": "Europe (Frankfurt)",
+      "factor": 1.2,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "aws",
+      "id": "ap-south-1",
+      "label": "Asia Pacific (Mumbai)",
+      "factor": 1.054545,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "aws",
+      "id": "ap-northeast-1",
+      "label": "Asia Pacific (Tokyo)",
+      "factor": 1.290909,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "aws",
+      "id": "ap-northeast-2",
+      "label": "Asia Pacific (Seoul)",
+      "factor": 1.236364,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "aws",
+      "id": "ap-southeast-1",
+      "label": "Asia Pacific (Singapore)",
+      "factor": 1.254545,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "aws",
+      "id": "ap-southeast-2",
+      "label": "Asia Pacific (Sydney)",
+      "factor": 1.254545,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "aws",
+      "id": "ap-southeast-3",
+      "label": "Asia Pacific (Jakarta)",
+      "factor": 1.254545,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "aws",
+      "id": "sa-east-1",
+      "label": "South America (São Paulo)",
+      "factor": 1.581818,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "australiacentral",
+      "label": "Australia Central",
+      "factor": 1.257143,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "australiacentral2",
+      "label": "Australia Central 2",
+      "factor": 1.257143,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "australiaeast",
+      "label": "Australia East",
+      "factor": 1.257143,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "australiasoutheast",
+      "label": "Australia Southeast",
+      "factor": 1.3,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "brazilsouth",
+      "label": "Brazil South",
+      "factor": 1.585714,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "canadacentral",
+      "label": "Canada Central",
+      "factor": 1.114286,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "canadaeast",
+      "label": "Canada East",
+      "factor": 1.114286,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "centralindia",
+      "label": "Central India",
+      "factor": 1.057143,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "centralus",
+      "label": "Central US",
+      "factor": 1.128571,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "eastasia",
+      "label": "East Asia",
+      "factor": 1.371429,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "eastus",
+      "label": "East US",
+      "factor": 1,
+      "source": "reference"
+    },
+    {
+      "cloud": "azure",
+      "id": "eastus2",
+      "label": "East US 2",
+      "factor": 1,
+      "source": "lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "francecentral",
+      "label": "France Central",
+      "factor": 1.171429,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "germanywestcentral",
+      "label": "Germany West Central",
+      "factor": 1.185714,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "japaneast",
+      "label": "Japan East",
+      "factor": 1.285714,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "japanwest",
+      "label": "Japan West",
+      "factor": 1.285714,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "koreacentral",
+      "label": "Korea Central",
+      "factor": 1.3,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "malaysiawest",
+      "label": "Malaysia West",
+      "factor": 1.114286,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "mexicocentral",
+      "label": "Mexico Central",
+      "factor": 1.1,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "northcentralus",
+      "label": "North Central US",
+      "factor": 1,
+      "source": "lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "northeurope",
+      "label": "North Europe",
+      "factor": 1.114286,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "norwayeast",
+      "label": "Norway East",
+      "factor": 1.428571,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "qatarcentral",
+      "label": "Qatar Central",
+      "factor": 1.228571,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "southafricanorth",
+      "label": "South Africa North",
+      "factor": 1.4,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "southcentralus",
+      "label": "South Central US",
+      "factor": 1.2,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "southindia",
+      "label": "South India",
+      "factor": 1.414286,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "southeastasia",
+      "label": "Southeast Asia",
+      "factor": 1.257143,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "swedencentral",
+      "label": "Sweden Central",
+      "factor": 1.057143,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "switzerlandnorth",
+      "label": "Switzerland North",
+      "factor": 1.557143,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "switzerlandwest",
+      "label": "Switzerland West",
+      "factor": 2.028571,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "uaenorth",
+      "label": "UAE North",
+      "factor": 1.214286,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "uksouth",
+      "label": "UK South",
+      "factor": 1.157143,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "ukwest",
+      "label": "UK West",
+      "factor": 1.214286,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "westcentralus",
+      "label": "West Central US",
+      "factor": 1.2,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "westeurope",
+      "label": "West Europe",
+      "factor": 1.185714,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "westindia",
+      "label": "West India",
+      "factor": 1.285714,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "westus",
+      "label": "West US",
+      "factor": 1.171429,
+      "source": "proxy-lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "westus2",
+      "label": "West US 2",
+      "factor": 1,
+      "source": "lakehouse-rt"
+    },
+    {
+      "cloud": "azure",
+      "id": "westus3",
+      "label": "West US 3",
+      "factor": 1,
+      "source": "lakehouse-rt"
+    },
+    {
+      "cloud": "gcp",
+      "id": "us-central1",
+      "label": "US Central (Iowa)",
+      "factor": 1,
+      "source": "reference"
+    },
+    {
+      "cloud": "gcp",
+      "id": "us-east1",
+      "label": "US East (South Carolina)",
+      "factor": 1,
+      "source": "proxy"
+    },
+    {
+      "cloud": "gcp",
+      "id": "europe-west1",
+      "label": "Europe West (Belgium)",
+      "factor": 1.12,
+      "source": "proxy"
+    },
+    {
+      "cloud": "gcp",
+      "id": "europe-west2",
+      "label": "Europe West (London)",
+      "factor": 1.16,
+      "source": "proxy"
+    },
+    {
+      "cloud": "gcp",
+      "id": "asia-southeast1",
+      "label": "Asia Southeast (Singapore)",
+      "factor": 1.25,
+      "source": "proxy"
+    },
+    {
+      "cloud": "gcp",
+      "id": "australia-southeast1",
+      "label": "Australia Southeast (Sydney)",
+      "factor": 1.25,
+      "source": "proxy"
+    }
+  ],
+  "skuLabels": {
+    "jobs_classic": "Jobs classic",
+    "jobs_serverless": "Jobs serverless",
+    "all_purpose_classic": "All-purpose classic",
+    "all_purpose_serverless": "All-purpose serverless",
+    "dlt_core": "Lakeflow pipelines Core",
+    "dlt_pro": "Lakeflow pipelines Pro",
+    "dlt_advanced": "Lakeflow pipelines Advanced",
+    "dlt_serverless": "Lakeflow pipelines serverless",
+    "sql_classic": "SQL Classic",
+    "sql_pro": "SQL Pro",
+    "sql_serverless": "SQL Serverless",
+    "model_serving": "Model serving",
+    "model_training": "Model training",
+    "apps": "Databricks Apps",
+    "managed_services": "Managed services",
+    "lakeflow_connect": "Lakeflow Connect",
+    "ai_search": "AI Search"
+  },
+  "includesCompute": {
+    "jobs_classic": false,
+    "jobs_serverless": true,
+    "all_purpose_classic": false,
+    "all_purpose_serverless": true,
+    "dlt_core": false,
+    "dlt_pro": false,
+    "dlt_advanced": false,
+    "dlt_serverless": true,
+    "sql_classic": false,
+    "sql_pro": false,
+    "sql_serverless": true,
+    "model_serving": true,
+    "model_training": false,
+    "apps": true,
+    "managed_services": true,
+    "lakeflow_connect": true,
+    "ai_search": true
+  }
+}

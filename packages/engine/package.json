@@ -1,0 +1,16 @@
+{
+  "name": "@dcf/engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared Databricks cost estimate and forecast engine",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "lz-string": "^1.5.0"
+  }
+}
