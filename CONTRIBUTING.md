@@ -50,4 +50,4 @@ Point an MCP client at that file over stdio. See the README.
 
 ## Design
 
-Keep the ledger / instrument split. New controls need a visible label, a keyboard path, and a check in both themes. Totals stay estimates, and the catalog version stays on the page.
+Keep pricing in a strategy or a policy, not in a component. New controls need a visible label, a keyboard path, and a check in both themes. Totals stay estimates, and the catalog version stays on the page. `npm run lint` runs ESLint and Prettier.

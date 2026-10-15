@@ -63,7 +63,9 @@ export function normalizeWorkload(input: unknown, cloud: Cloud): Workload | null
   if (!isRecord(input) || typeof input.kind !== "string") return null;
   const kind = input.kind;
   if (kind === "cluster") {
-    const sku = ["jobs_classic", "all_purpose_classic", "dlt_core", "dlt_pro", "dlt_advanced"].includes(String(input.sku))
+    const sku = ["jobs_classic", "all_purpose_classic", "dlt_core", "dlt_pro", "dlt_advanced"].includes(
+      String(input.sku),
+    )
       ? (input.sku as Extract<Workload, { kind: "cluster" }>["sku"])
       : "jobs_classic";
     const instanceCloud = cloudOf(input.cloud) ?? cloud;
@@ -102,7 +104,9 @@ export function normalizeWorkload(input: unknown, cloud: Cloud): Workload | null
       size,
       scale: scale(input.scale, 1, 1, 1),
       schedule: schedule(input.schedule, 8, 5),
-      ...(input.vmPerDbuHour == null ? {} : { vmPerDbuHour: num(input.vmPerDbuHour, skuCatalog.sqlVmDollarsPerDbuHour, 0, 100) }),
+      ...(input.vmPerDbuHour == null
+        ? {}
+        : { vmPerDbuHour: num(input.vmPerDbuHour, skuCatalog.sqlVmDollarsPerDbuHour, 0, 100) }),
     };
   }
   if (kind === "model_serving") {
@@ -154,7 +158,12 @@ export function normalizeWorkload(input: unknown, cloud: Cloud): Workload | null
     };
   }
   if (kind === "storage") {
-    return { ...base(input, "Storage"), kind, gbMonth: num(input.gbMonth, 100, 0, 1e12), managed: input.managed !== false };
+    return {
+      ...base(input, "Storage"),
+      kind,
+      gbMonth: num(input.gbMonth, 100, 0, 1e12),
+      managed: input.managed !== false,
+    };
   }
   if (kind === "egress") {
     return {
@@ -195,9 +204,7 @@ export function normalizePortfolio(input: unknown): Portfolio {
   const cloud = cloudOf(input.cloud) ?? "aws";
   const regions = listRegions(cloud);
   const region =
-    typeof input.region === "string" && regions.some((item) => item.id === input.region)
-      ? input.region
-      : regions[0].id;
+    typeof input.region === "string" && regions.some((item) => item.id === input.region) ? input.region : regions[0].id;
   const tier = tierOf(input.tier) ?? "premium";
   const commitment = isRecord(input.commitment) ? input.commitment : {};
   const forecast = isRecord(input.forecast) ? input.forecast : {};
@@ -205,9 +212,12 @@ export function normalizePortfolio(input: unknown): Portfolio {
     forecast.seasonality === "retail" || forecast.seasonality === "custom" ? forecast.seasonality : "flat";
   const months = forecast.months === 24 || forecast.months === 36 ? forecast.months : 12;
   const workloads = Array.isArray(input.workloads)
-    ? input.workloads.map((workload) => normalizeWorkload(workload, cloud)).filter((workload): workload is Workload => workload !== null)
+    ? input.workloads
+        .map((workload) => normalizeWorkload(workload, cloud))
+        .filter((workload): workload is Workload => workload !== null)
     : [];
   const addon = ADDONS.includes(input.addon as Addon) ? (input.addon as Addon) : "none";
+  const budget = num(input.budgetAnnual, 0, 0, 1e12);
   return {
     version: 1,
     name: str(input.name, fallback.name).slice(0, 80),
@@ -221,6 +231,7 @@ export function normalizePortfolio(input: unknown): Portfolio {
     },
     addon,
     usageScale: num(input.usageScale, 1, 0.0001, 1000),
+    ...(budget > 0 ? { budgetAnnual: budget } : {}),
     forecast: {
       months,
       annualGrowth: num(forecast.annualGrowth, 0, -0.9, 5),

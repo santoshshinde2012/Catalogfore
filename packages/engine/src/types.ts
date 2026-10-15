@@ -137,6 +137,8 @@ export interface Portfolio {
   commitment: { dbuDiscount: number; cloudDiscount: number };
   addon: Addon;
   usageScale: number;
+  /** Optional annual budget in dollars. Omitted when the user has not set one. */
+  budgetAnnual?: number;
   forecast: ForecastSettings;
 }
 
@@ -177,13 +179,7 @@ export interface ForecastPoint {
 }
 
 export type ScenarioPresetId =
-  | "as_modeled"
-  | "jobs_serverless"
-  | "photon_on"
-  | "photon_speedup_2"
-  | "spot_70"
-  | "commit_37"
-  | "commit_37_cloud_30";
+  "as_modeled" | "jobs_serverless" | "photon_on" | "photon_speedup_2" | "spot_70" | "commit_37" | "commit_37_cloud_30";
 
 export interface ScenarioResult {
   id: ScenarioPresetId;

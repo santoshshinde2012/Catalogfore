@@ -1,4 +1,4 @@
-import { defaultInstanceId, findInstance, regionInfo, skuCatalog, type Estimate, type Portfolio, type Workload } from "@dcf/engine";
+import { defaultInstanceId, skuCatalog, type Estimate, type Portfolio, type Workload } from "@dcf/engine";
 import { useEffect, useId, useRef, useState } from "react";
 import { money } from "../format";
 import { MENU, createWorkload, type MenuKind } from "../templates";
@@ -19,8 +19,6 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
-  const region = regionInfo(portfolio.cloud, portfolio.region);
-
   function update(workload: Workload) {
     onPortfolio({
       ...portfolio,
@@ -53,91 +51,9 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
   }, [menuOpen]);
 
   return (
-    <div className="ledger">
-      <section className="assumptions" aria-label="Portfolio assumptions">
-        <label className="field">
-          Forecast name
-          <input value={portfolio.name} maxLength={80} onChange={(event) => onPortfolio({ ...portfolio, name: event.target.value })} />
-        </label>
-        <div className="grid-3">
-          <label className="field">
-            Cloud
-            <select
-              value={portfolio.cloud}
-              onChange={(event) => onPortfolio(moveCloud(portfolio, event.target.value as Portfolio["cloud"]))}
-            >
-              <option value="aws">AWS</option>
-              <option value="azure">Azure</option>
-              <option value="gcp">GCP</option>
-            </select>
-          </label>
-          <label className="field">
-            Region
-            <select value={portfolio.region} onChange={(event) => onPortfolio({ ...portfolio, region: event.target.value })}>
-              {skuCatalog.regions
-                .filter((region) => region.cloud === portfolio.cloud)
-                .map((region) => (
-                  <option key={region.id} value={region.id}>
-                    {region.label}
-                  </option>
-                ))}
-            </select>
-          </label>
-          <label className="field">
-            Tier
-            <select value={portfolio.tier} onChange={(event) => onPortfolio({ ...portfolio, tier: event.target.value as Portfolio["tier"] })}>
-              <option value="premium">Premium</option>
-              <option value="enterprise">Enterprise</option>
-            </select>
-          </label>
-        </div>
-        <p className="hint">{regionHint(region.source)}</p>
-        <div className="grid-3">
-          <label className="field">
-            DBU commit (0–0.95)
-            <input
-              type="number"
-              min={0}
-              max={0.95}
-              step={0.01}
-              value={portfolio.commitment.dbuDiscount}
-              onChange={(event) =>
-                onPortfolio({
-                  ...portfolio,
-                  commitment: { ...portfolio.commitment, dbuDiscount: Number(event.target.value) },
-                })
-              }
-            />
-          </label>
-          <label className="field">
-            VM commit (on-demand)
-            <input
-              type="number"
-              min={0}
-              max={0.95}
-              step={0.01}
-              value={portfolio.commitment.cloudDiscount}
-              onChange={(event) =>
-                onPortfolio({
-                  ...portfolio,
-                  commitment: { ...portfolio.commitment, cloudDiscount: Number(event.target.value) },
-                })
-              }
-            />
-          </label>
-          <label className="field">
-            Add-on
-            <select value={portfolio.addon} onChange={(event) => onPortfolio({ ...portfolio, addon: event.target.value as Portfolio["addon"] })}>
-              <option value="none">None</option>
-              <option value="compliance">Compliance +10%</option>
-              <option value="mission_critical">Mission critical +30%</option>
-            </select>
-          </label>
-        </div>
-      </section>
-
+    <div className="workloads">
       <div className="ledger-head">
-        <h2 className="section-label">Workloads</h2>
+        <h2>Workloads</h2>
         <div className="add-menu" ref={menuRef}>
           <button
             type="button"
@@ -180,7 +96,9 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
               <span className="entry-row">
                 <span>
                   <span className="entry-name">{workload.name}</span>
-                  <span className="entry-meta block">{skuCatalog.skuLabels[line?.sku as keyof typeof skuCatalog.skuLabels] ?? line?.sku}</span>
+                  <span className="entry-meta block">
+                    {skuCatalog.skuLabels[line?.sku as keyof typeof skuCatalog.skuLabels] ?? line?.sku}
+                  </span>
                 </span>
                 <span className="entry-cost">{money(line?.total ?? 0)}</span>
               </span>
@@ -189,9 +107,8 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
         })}
         {portfolio.workloads.length === 0 && (
           <div className="empty">
-            <p className="eyebrow">Empty desk</p>
-            <h2>Nothing is running yet.</h2>
-            <p className="hint">Add a job, a warehouse, or a template. The month updates as you type.</p>
+            <p className="entry-name">Nothing is on this forecast yet.</p>
+            <p className="hint">Add a job or a warehouse. The month updates as you type.</p>
           </div>
         )}
       </div>
@@ -212,25 +129,4 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
       )}
     </div>
   );
-}
-
-function regionHint(source: string): string {
-  if (source === "reference") return "Reference region. DBU rates are the catalog list, factor 1.";
-  if (source === "proxy") return "This region factor is a proxy. It is not a published tariff for every SKU.";
-  return "DBU rates scale by the published Lakehouse Real-Time ratio versus the reference region. That ratio is for one SKU and is applied here as a proxy.";
-}
-
-function moveCloud(portfolio: Portfolio, cloud: Portfolio["cloud"]): Portfolio {
-  const regions = skuCatalog.regions.filter((region) => region.cloud === cloud);
-  const region = regions.some((item) => item.id === portfolio.region) ? portfolio.region : regions[0].id;
-  return {
-    ...portfolio,
-    cloud,
-    region,
-    workloads: portfolio.workloads.map((workload) => {
-      if (workload.kind !== "cluster" || workload.cloud) return workload;
-      if (findInstance(cloud, workload.instanceId)) return workload;
-      return { ...workload, instanceId: defaultInstanceId(cloud) };
-    }),
-  };
 }

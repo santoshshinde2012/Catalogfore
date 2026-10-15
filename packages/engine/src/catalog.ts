@@ -53,10 +53,7 @@ export interface SkuCatalog {
   };
   sqlDbuPerHour: Record<SqlSize, number>;
   appsDbuPerHour: { medium: number; large: number };
-  aiSearch: Record<
-    "standard" | "storage_optimized",
-    { dbuPerHour: number; storagePerGbMonth: number; freeGb: number }
-  >;
+  aiSearch: Record<"standard" | "storage_optimized", { dbuPerHour: number; storagePerGbMonth: number; freeGb: number }>;
   servingGpuDbuPerHour: { id: string; label: string; dbuPerHour: number }[];
   foundationModels: {
     id: string;
@@ -113,7 +110,8 @@ export function vmHourly(
   if (exact) return { hourly: exact.onDemandHourly, approximate: false, source: exact.source };
   const fallbackRegion = referenceRegion[cloud];
   const fallback = priceMap.get(`${cloud}:${fallbackRegion}:${instanceId}`);
-  if (fallback) return { hourly: fallback.onDemandHourly, approximate: region !== fallbackRegion, source: fallback.source };
+  if (fallback)
+    return { hourly: fallback.onDemandHourly, approximate: region !== fallbackRegion, source: fallback.source };
   return { hourly: 0, approximate: true, source: "missing" };
 }
 

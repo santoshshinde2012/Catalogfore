@@ -91,7 +91,9 @@ export function pickAzureLinuxHour(items, armSkuName) {
       item.priceType === "Consumption" &&
       typeof item.unitPrice === "number" &&
       item.unitPrice > 0 &&
-      String(item.unitOfMeasure ?? "").toLowerCase().includes("hour") &&
+      String(item.unitOfMeasure ?? "")
+        .toLowerCase()
+        .includes("hour") &&
       !/windows/i.test(name) &&
       !/spot|low priority/i.test(name)
     );

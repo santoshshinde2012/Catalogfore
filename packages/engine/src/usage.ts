@@ -76,7 +76,9 @@ export function importUsageCsv(text: string): UsageImport {
   const records = parseCsv(text);
   const warnings: string[] = [];
   if (!records.length) warnings.push("No data rows found. Export system.billing.usage as CSV with a header row.");
-  const quantityKey = records[0] ? Object.keys(records[0]).find((key) => key === "usage_quantity" || key === "dbus" || key === "dbu") : undefined;
+  const quantityKey = records[0]
+    ? Object.keys(records[0]).find((key) => key === "usage_quantity" || key === "dbus" || key === "dbu")
+    : undefined;
   if (records.length && !quantityKey) warnings.push("Could not find a usage_quantity column.");
   const totals = new Map<string, number>();
   let skippedRows = 0;

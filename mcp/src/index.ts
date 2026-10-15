@@ -24,7 +24,9 @@ function text(payload: unknown) {
 }
 
 function portfolioSchema() {
-  return z.record(z.unknown()).describe("A forecast portfolio. Missing fields are filled from the small-analytics defaults.");
+  return z
+    .record(z.unknown())
+    .describe("A forecast portfolio. Missing fields are filled from the small-analytics defaults.");
 }
 
 export function createServer(): McpServer {
@@ -68,7 +70,12 @@ export function createServer(): McpServer {
         regions: listRegions(selected),
         instances: listInstances(selected).map((instance) => {
           const price = vmHourly(selected, referenceRegion[selected], instance.id);
-          return { ...instance, referenceRegion: referenceRegion[selected], onDemandHourly: price.hourly, priceSource: price.source };
+          return {
+            ...instance,
+            referenceRegion: referenceRegion[selected],
+            onDemandHourly: price.hourly,
+            priceSource: price.source,
+          };
         }),
         foundationModels: catalog.foundationModels,
         servingGpu: catalog.servingGpuDbuPerHour,

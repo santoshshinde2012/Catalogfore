@@ -2,11 +2,11 @@
 
 An open-source forecast for Databricks spend. It prices a portfolio of jobs, notebooks, SQL warehouses, Lakeflow pipelines, serverless compute, model serving, and the cloud bill next to the DBU bill, then projects 12 to 36 months with growth, seasonality, and commitment scenarios.
 
-It is deliberately not a quote. List rates are versioned, sourced, and labeled when a figure is a proxy. The interface uses the same type, color, and spacing system as [holdmap](https://santoshshinde2012.github.io/holdmap/): Inter, JetBrains Mono, near-black and off-white surfaces, and one indigo accent.
+It is deliberately not a quote. List rates are versioned, sourced, and labeled when a figure is a proxy. The interface is Fathom: Inter, JetBrains Mono, near-black and off-white surfaces, hairline cards, and one indigo accent. How the pricing code is split is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-![Welcome templates with live monthly totals](docs/screenshots/welcome.png)
+![Four questions, each with a starting monthly figure](docs/screenshots/home-dark.png)
 
-![The desk: workloads on the left, the monthly forecast on the right](docs/screenshots/desk.png)
+![The answer: this month, a yearly range, and the split between DBU and cloud](docs/screenshots/answer-dark.png)
 
 The running total is the point. Templates, edits, scenarios, and a usage-file scale all move the same number.
 
@@ -21,9 +21,9 @@ The running total is the point. Templates, edits, scenarios, and a usage-file sc
 - Import a `system.billing.usage` CSV and scale the forecast to last month’s DBUs. The file is not a price list, and it has no VM bill, so cloud dollars scale with DBUs and the page says that.
 - Switch light and dark. The layout fits a phone.
 
-![Scenario comparison, including the labeled Photon speedup assumption](docs/screenshots/scenarios.png)
+![Savings with a dollar impact you can apply](docs/screenshots/savings-dark.png)
 
-![The same forecast on a narrow screen](docs/screenshots/mobile.png)
+![The same forecast on a narrow screen](docs/screenshots/mobile-dark.png)
 
 ## Estimates only
 
@@ -51,7 +51,7 @@ npm run test:mcp  # stdio MCP smoke test
 npm run test:e2e  # Playwright, desktop and mobile, including axe
 ```
 
-Node 20 or newer. The production bundle is about 94 KB of JavaScript and 5 KB of CSS, gzipped, before fonts. PDF export loads on demand.
+Node 20 or newer. The production bundle is about 95 KB of JavaScript and 20 KB of CSS, gzipped, before fonts. PDF export loads on demand.
 
 ## MCP
 
@@ -74,15 +74,17 @@ A weekly workflow opens a pull request when AWS or Azure VM prices for the curat
 
 ## Layout
 
-| Path | Role |
-| --- | --- |
-| `packages/engine` | Pricing, forecast, scenarios, usage import, URL codec. Unit tested. |
-| `data/` | Versioned SKU rates, instance DBU ratings, VM prices. |
-| `apps/web` | The calculator. |
-| `mcp/` | The stdio server. |
-| `scripts/refresh-prices.mjs` | Unauthenticated VM price refresh. |
-| `docs/RESEARCH.md` | Sources and the rate ledger. |
-| `docs/PLAN.md` | How the pieces fit together. |
+| Path                         | Role                                                                |
+| ---------------------------- | ------------------------------------------------------------------- |
+| `packages/engine`            | Pricing, forecast, scenarios, usage import, URL codec. Unit tested. |
+| `data/`                      | Versioned SKU rates, instance DBU ratings, VM prices.               |
+| `apps/web`                   | The calculator.                                                     |
+| `mcp/`                       | The stdio server.                                                   |
+| `scripts/refresh-prices.mjs` | Unauthenticated VM price refresh.                                   |
+| `docs/RESEARCH.md`           | Sources for every rate.                                             |
+| `docs/ARCHITECTURE.md`       | Modules, injected catalog and strategies, and how SOLID is applied. |
+| `docs/PLAN.md`               | How the pieces fit together.                                        |
+| `docs/USABILITY.md`          | Persona walkthroughs and how this compares with other calculators.  |
 
 ## License
 

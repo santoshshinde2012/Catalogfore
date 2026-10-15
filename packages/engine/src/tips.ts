@@ -55,7 +55,7 @@ export function tips(portfolio: Portfolio, estimateResult: Estimate): Tip[] {
     found.push({
       id: "calibrate",
       tone: "info",
-      text: "This forecast is not calibrated to a bill. Import a system.billing.usage CSV on the Actuals tab to scale month zero to last month’s DBUs.",
+      text: "This forecast is not calibrated to a bill. Import a system.billing.usage CSV to scale month zero to last month’s DBUs.",
     });
   }
 

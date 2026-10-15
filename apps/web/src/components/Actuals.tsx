@@ -11,28 +11,45 @@ export function Actuals({ portfolio, onPortfolio }: ActualsProps) {
   const [text, setText] = useState("");
   const [parsed, setParsed] = useState<UsageImport | null>(null);
   const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
   const steady = { ...portfolio, usageScale: 1 };
   const baseline = estimate(steady);
 
   function read(csv: string) {
     setText(csv);
+    if (!csv.trim()) {
+      setParsed(null);
+      setError("");
+      return;
+    }
     const result = importUsageCsv(csv);
     setParsed(result);
     setError(result.usedRows ? "" : "That file did not contain DBU rows.");
   }
 
   async function loadSample() {
-    const response = await fetch(`${import.meta.env.BASE_URL}sample-usage.csv`);
-    read(await response.text());
+    setBusy(true);
+    setError("");
+    try {
+      const response = await fetch(`${import.meta.env.BASE_URL}sample-usage.csv`);
+      if (!response.ok) throw new Error("missing");
+      read(await response.text());
+    } catch {
+      setError("The sample file did not load. Paste a usage CSV instead.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   const scale = parsed && parsed.dbu > 0 ? scaleForActuals(baseline.dbu, parsed.dbu) : 1;
 
   return (
-    <div className="stage">
-      <h1 className="h2">Calibrate from a bill</h1>
-      <p className="lede mb-6">
-        Export <code>system.billing.usage</code> to CSV. Retractions are already negative and are netted. Storage and token rows are skipped. The scale multiplies every line so this month’s DBUs match the file. Cloud dollars move with them, because the usage table has no VM bill.
+    <section className="calibrate">
+      <h2>Calibrate from a bill</h2>
+      <p className="hint">
+        Export <code>system.billing.usage</code> to CSV. Retractions are already negative and are netted. Storage and
+        token rows are skipped. The scale multiplies every line so this month’s DBUs match the file. Cloud dollars move
+        with them, because the usage table has no VM bill.
       </p>
       <div className="flex flex-wrap gap-2 mb-3">
         <label className="btn">
@@ -47,8 +64,8 @@ export function Actuals({ portfolio, onPortfolio }: ActualsProps) {
             }}
           />
         </label>
-        <button type="button" className="btn" onClick={() => void loadSample()}>
-          Load sample
+        <button type="button" className="btn" onClick={() => void loadSample()} disabled={busy} aria-busy={busy}>
+          {busy ? "Loading sample…" : "Load sample"}
         </button>
         <button type="button" className="btn" onClick={() => onPortfolio({ ...portfolio, usageScale: 1 })}>
           Clear scale ({portfolio.usageScale.toFixed(2)}×)
@@ -62,8 +79,8 @@ export function Actuals({ portfolio, onPortfolio }: ActualsProps) {
       {parsed && parsed.usedRows > 0 && (
         <div className="panel p-4">
           <p>
-            Imported <strong>{parsed.dbu.toLocaleString()} DBU</strong> across {parsed.usedRows} rows. This portfolio’s unscaled month is{" "}
-            <strong>{baseline.dbu.toLocaleString()} DBU</strong> ({money(baseline.total)}).
+            Imported <strong>{parsed.dbu.toLocaleString()} DBU</strong> across {parsed.usedRows} rows. This portfolio’s
+            unscaled month is <strong>{baseline.dbu.toLocaleString()} DBU</strong> ({money(baseline.total)}).
           </p>
           <table className="lines">
             <thead>
@@ -82,13 +99,19 @@ export function Actuals({ portfolio, onPortfolio }: ActualsProps) {
             </tbody>
           </table>
           {parsed.warnings.map((warning) => (
-            <p key={warning} className="hint">{warning}</p>
+            <p key={warning} className="hint">
+              {warning}
+            </p>
           ))}
-          <button type="button" className="btn-copper mt-3" onClick={() => onPortfolio({ ...portfolio, usageScale: scale })}>
+          <button
+            type="button"
+            className="btn-copper mt-3"
+            onClick={() => onPortfolio({ ...portfolio, usageScale: scale })}
+          >
             Scale forecast to {scale.toFixed(3)}×
           </button>
         </div>
       )}
-    </div>
+    </section>
   );
 }

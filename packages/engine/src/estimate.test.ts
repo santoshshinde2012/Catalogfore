@@ -41,6 +41,8 @@ describe("classic jobs estimate", () => {
     expect(result.total).toBe(roundMoney(result.dbuCost + result.cloudCost));
     expect(result.dbuCost).toBe(53.82);
     expect(result.cloudCost).toBe(99.84);
+    expect(result.lines[0].notes[0]).toContain("× 0.69 DBU/h ×");
+    expect(result.lines[0].notes[0]).toContain("$0.15/DBU");
   });
 
   it("applies Photon to DBU emission only", () => {

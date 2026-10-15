@@ -1,4 +1,11 @@
-import { annualTotal, type Estimate, type ForecastPoint, type Portfolio } from "@dcf/engine";
+import {
+  annualTotal,
+  recommendations,
+  uncertaintyBand,
+  type Estimate,
+  type ForecastPoint,
+  type Portfolio,
+} from "@dcf/engine";
 
 function download(filename: string, blob: Blob) {
   const url = URL.createObjectURL(blob);
@@ -10,7 +17,12 @@ function download(filename: string, blob: Blob) {
 }
 
 function slug(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "forecast";
+  return (
+    name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "") || "forecast"
+  );
 }
 
 export function exportJson(portfolio: Portfolio, estimate: Estimate, points: ForecastPoint[]) {
@@ -34,7 +46,17 @@ export function exportCsv(portfolio: Portfolio, estimate: Estimate, points: Fore
         csv(line.notes.join(" ")),
       ].join(","),
     ),
-    ["monthly", csv(portfolio.name), "", "", estimate.dbu, estimate.dbuCost, estimate.cloudCost, estimate.total, csv(estimate.disclaimer)].join(","),
+    [
+      "monthly",
+      csv(portfolio.name),
+      "",
+      "",
+      estimate.dbu,
+      estimate.dbuCost,
+      estimate.cloudCost,
+      estimate.total,
+      csv(estimate.disclaimer),
+    ].join(","),
     ...points.map((point) =>
       ["forecast", `month_${point.month}`, "", "", "", point.dbuCost, point.cloudCost, point.total, ""].join(","),
     ),
@@ -57,21 +79,41 @@ export async function exportPdf(portfolio: Portfolio, estimate: Estimate, points
     doc.text(rows, 36, y);
     y += rows.length * (size + 4) + 4;
   };
+  const year = annualTotal(points);
+  const monthBand = uncertaintyBand(estimate.total, portfolio, estimate);
+  const yearBand = uncertaintyBand(year, portfolio, estimate);
+  const ideas = recommendations(portfolio).slice(0, 4);
   doc.setFont("times", "bold");
-  write(portfolio.name, 20, 22);
+  write("Fathom", 12, 14);
+  write(portfolio.name || "Untitled forecast", 20, 22);
   doc.setFont("times", "normal");
   write(`${portfolio.cloud.toUpperCase()} · ${portfolio.region} · ${portfolio.tier}`);
-  write(`Monthly ${usd(estimate.total)}  ·  DBU ${usd(estimate.dbuCost)}  ·  Cloud ${usd(estimate.cloudCost)}  ·  Add-on ${usd(estimate.addonCost)}`);
-  write(`Next 12 months ${usd(annualTotal(points))}. Catalog ${estimate.catalogVersion}, verified ${estimate.verifiedOn}.`);
+  write(
+    `This month ${usd(estimate.total)} (about ${usd(monthBand.low)} to ${usd(monthBand.high)}). DBU ${usd(estimate.dbuCost)}. Cloud ${usd(estimate.cloudCost)}.`,
+  );
+  write(`First 12 months ${usd(yearBand.expected)} (about ${usd(yearBand.low)} to ${usd(yearBand.high)}).`);
+  if (portfolio.budgetAnnual && portfolio.budgetAnnual > 0) {
+    const gap = year - portfolio.budgetAnnual;
+    write(
+      gap > 0
+        ? `${usd(gap)} over a ${usd(portfolio.budgetAnnual)} annual budget.`
+        : `${usd(portfolio.budgetAnnual - year)} under a ${usd(portfolio.budgetAnnual)} annual budget.`,
+    );
+  }
   write(estimate.disclaimer);
-  write("Workloads");
+  if (ideas.length) {
+    write("Changes that save money");
+    for (const idea of ideas) write(`${idea.title}: ${usd(idea.annualSavings)} over the first year. ${idea.detail}`);
+  }
+  write("Why");
   for (const line of estimate.lines) {
-    write(`${line.name} (${line.sku}): ${usd(line.total)}  ·  ${line.dbu} DBU  ·  cloud ${usd(line.cloudCost)}`);
+    write(`${line.name}: ${usd(line.total)}. ${line.notes[0] ?? ""}`);
   }
-  write("Forecast");
-  for (const point of points) {
-    write(`Month ${point.month}: ${usd(point.total)} (DBU ${usd(point.dbuCost)}, cloud ${usd(point.cloudCost)})`);
-  }
+  const last = points[points.length - 1];
+  if (last)
+    write(
+      `Horizon ${points.length} months. Last month ${usd(last.total)}. Catalog ${estimate.catalogVersion}, verified ${estimate.verifiedOn}.`,
+    );
   doc.save(`${slug(portfolio.name)}.pdf`);
 }
 

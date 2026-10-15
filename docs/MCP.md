@@ -80,15 +80,15 @@ Same `portfolio`. Returns the monthly estimate plus one point per forecast month
 
 `portfolio`, plus optional `presets`:
 
-| Preset | What changes |
-| --- | --- |
-| `as_modeled` | The portfolio as given |
-| `jobs_serverless` | Classic jobs and Lakeflow pipelines move to serverless, keeping monthly DBUs and dropping the VM line |
-| `photon_on` | Photon on classic clusters (2.9× DBU emission, same hours) |
-| `photon_speedup_2` | Photon on, and hours cut in half. The speedup is an assumption, not a measurement |
-| `spot_70` | 70% of workers on spot |
-| `commit_37` | 37% off the DBU line |
-| `commit_37_cloud_30` | 37% off DBUs and 30% off on-demand VM hours |
+| Preset               | What changes                                                                                          |
+| -------------------- | ----------------------------------------------------------------------------------------------------- |
+| `as_modeled`         | The portfolio as given                                                                                |
+| `jobs_serverless`    | Classic jobs and Lakeflow pipelines move to serverless, keeping monthly DBUs and dropping the VM line |
+| `photon_on`          | Photon on classic clusters (2.9× DBU emission, same hours)                                            |
+| `photon_speedup_2`   | Photon on, and hours cut in half. The speedup is an assumption, not a measurement                     |
+| `spot_70`            | 70% of workers on spot                                                                                |
+| `commit_37`          | 37% off the DBU line                                                                                  |
+| `commit_37_cloud_30` | 37% off DBUs and 30% off on-demand VM hours                                                           |
 
 The default comparison is `as_modeled`, `jobs_serverless`, and `commit_37`.
 

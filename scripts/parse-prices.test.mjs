@@ -19,9 +19,33 @@ test("aws offer csv keeps linux shared on-demand and ignores windows and reserve
 test("azure picker skips windows and spot meters", () => {
   const picked = pickAzureLinuxHour(
     [
-      { armSkuName: "Standard_DS3_v2", priceType: "Consumption", unitPrice: 0.4, unitOfMeasure: "1 Hour", productName: "Virtual Machines DSv2 Series Windows", skuName: "DS3 v2", meterName: "DS3 v2" },
-      { armSkuName: "Standard_DS3_v2", priceType: "Consumption", unitPrice: 0.05, unitOfMeasure: "1 Hour", productName: "Virtual Machines DSv2 Series", skuName: "DS3 v2 Spot", meterName: "DS3 v2 Spot" },
-      { armSkuName: "Standard_DS3_v2", priceType: "Consumption", unitPrice: 0.229, unitOfMeasure: "1 Hour", productName: "Virtual Machines DSv2 Series", skuName: "DS3 v2", meterName: "DS3 v2" },
+      {
+        armSkuName: "Standard_DS3_v2",
+        priceType: "Consumption",
+        unitPrice: 0.4,
+        unitOfMeasure: "1 Hour",
+        productName: "Virtual Machines DSv2 Series Windows",
+        skuName: "DS3 v2",
+        meterName: "DS3 v2",
+      },
+      {
+        armSkuName: "Standard_DS3_v2",
+        priceType: "Consumption",
+        unitPrice: 0.05,
+        unitOfMeasure: "1 Hour",
+        productName: "Virtual Machines DSv2 Series",
+        skuName: "DS3 v2 Spot",
+        meterName: "DS3 v2 Spot",
+      },
+      {
+        armSkuName: "Standard_DS3_v2",
+        priceType: "Consumption",
+        unitPrice: 0.229,
+        unitOfMeasure: "1 Hour",
+        productName: "Virtual Machines DSv2 Series",
+        skuName: "DS3 v2",
+        meterName: "DS3 v2",
+      },
     ],
     "Standard_DS3_v2",
   );
