@@ -9,6 +9,11 @@ import {
 } from "@dcf/engine";
 import { useState } from "react";
 import { money } from "../../format";
+import { Input } from "../ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Separator } from "../ui/separator";
+import { Slider } from "../ui/slider";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 
 const CLOUDS: { id: Cloud; label: string }[] = [
   { id: "aws", label: "AWS" },
@@ -28,6 +33,12 @@ const MIX_FIELDS: { key: keyof WorkloadMix; label: string }[] = [
   { key: "sql", label: "Dashboards" },
   { key: "ml", label: "Models" },
 ];
+
+const MIX_DOT: Record<keyof WorkloadMix, string> = {
+  etl: "bg-lava",
+  sql: "bg-[#146c43]",
+  ml: "bg-[#b45309]",
+};
 
 export function PlanForm({
   plan,
@@ -66,187 +77,215 @@ export function PlanForm({
 
   return (
     <form
-      className="plan"
+      className="grid gap-6"
       onSubmit={(event) => {
         event.preventDefault();
       }}
     >
-      <fieldset>
-        <legend>Cloud and tier</legend>
-        <div className="choice-row" role="group" aria-label="Cloud">
+      <fieldset className="grid gap-4" disabled={false}>
+        <legend className="text-sm font-medium">Cloud and tier</legend>
+        <ToggleGroup
+          type="single"
+          value={plan.cloud}
+          onValueChange={(value) => value && onCloud(value as Cloud)}
+          aria-label="Cloud"
+          className="grid grid-cols-3"
+        >
           {CLOUDS.map((cloud) => (
-            <button
-              key={cloud.id}
-              type="button"
-              className="btn"
-              aria-pressed={plan.cloud === cloud.id}
-              onClick={() => onCloud(cloud.id)}
-            >
+            <ToggleGroupItem key={cloud.id} value={cloud.id} className="h-9">
               {cloud.label}
-            </button>
+            </ToggleGroupItem>
           ))}
-        </div>
-        <div className="choice-row" role="group" aria-label="Tier">
+        </ToggleGroup>
+        <ToggleGroup
+          type="single"
+          value={plan.tier}
+          onValueChange={(value) => value && onTier(value as Tier)}
+          aria-label="Tier"
+          className="grid grid-cols-2"
+        >
           {TIERS.map((tier) => (
-            <button
-              key={tier.id}
-              type="button"
-              className="btn"
-              aria-pressed={plan.tier === tier.id}
-              onClick={() => onTier(tier.id)}
-            >
+            <ToggleGroupItem key={tier.id} value={tier.id} className="h-9">
               {tier.label}
-            </button>
+            </ToggleGroupItem>
           ))}
-        </div>
-        <label className="field">
+        </ToggleGroup>
+        <label className="grid gap-2 text-sm font-medium">
           Region
-          <select value={plan.region} onChange={(event) => onRegion(event.target.value)}>
-            {regions.map((region) => (
-              <option key={region.id} value={region.id}>
-                {region.label}
-              </option>
-            ))}
-          </select>
+          <Select value={plan.region} onValueChange={onRegion}>
+            <SelectTrigger aria-label="Region">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {regions.map((region) => (
+                <SelectItem key={region.id} value={region.id}>
+                  {region.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </label>
-        <p className="hint">Region is optional. The default is the reference region for that cloud.</p>
+        <p className="text-sm text-muted-foreground">Optional. Each cloud starts in its reference region.</p>
       </fieldset>
 
-      <fieldset disabled={usageLocked}>
-        <legend>Starting point</legend>
-        <label className="field">
+      <Separator />
+
+      <fieldset className="grid gap-4" disabled={usageLocked}>
+        <legend className="text-sm font-medium">Starting point</legend>
+        <label className="grid gap-2 text-sm font-medium">
           Starting monthly spend
-          <input
-            inputMode="decimal"
-            aria-describedby="spend-hint"
-            value={spendFocus ? spendText : String(Math.round(listMonthly))}
-            onFocus={() => {
-              setSpendFocus(true);
-              setSpendText(String(Math.round(listMonthly)));
-            }}
-            onChange={(event) => setSpendText(event.target.value)}
-            onBlur={() => {
-              setSpendFocus(false);
-              const amount = Number(spendText.replace(/[$,\s]/g, ""));
-              if (Number.isFinite(amount)) onSpend(amount);
-            }}
-          />
+          <span className="relative block font-normal">
+            <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground">
+              $
+            </span>
+            <Input
+              inputMode="decimal"
+              aria-describedby="spend-hint"
+              className="h-12 pl-7 text-lg tabular-nums"
+              value={spendFocus ? spendText : String(Math.round(listMonthly))}
+              onFocus={() => {
+                setSpendFocus(true);
+                setSpendText(String(Math.round(listMonthly)));
+              }}
+              onChange={(event) => setSpendText(event.target.value)}
+              onBlur={() => {
+                setSpendFocus(false);
+                const amount = Number(spendText.replace(/[$,\s]/g, ""));
+                if (Number.isFinite(amount)) onSpend(amount);
+              }}
+            />
+          </span>
         </label>
-        <p id="spend-hint" className="hint">
-          Before a commitment discount. Or start from a team size.
+        <p id="spend-hint" className="text-sm text-muted-foreground">
+          Before any commitment discount. Or choose a team size.
         </p>
-        <div className="choice-row" role="group" aria-label="Team size">
-          {TEAM_PRESETS.map((preset) => {
-            const pressed =
-              !usageLocked &&
-              Math.abs(plan.mix.etl - preset.mix.etl) < 0.02 &&
-              Math.abs(plan.mix.sql - preset.mix.sql) < 0.02 &&
-              Math.abs(plan.mix.ml - preset.mix.ml) < 0.02 &&
-              Math.abs(listMonthly - preset.monthlySpend) < 50;
-            return (
-              <button
-                key={preset.id}
-                type="button"
-                className="btn"
-                aria-pressed={pressed}
-                onClick={() => onPreset(preset.id)}
-              >
-                {preset.label}
-                <span className="btn-sub">{money(preset.monthlySpend, 0)}</span>
-              </button>
-            );
-          })}
-        </div>
-        <p className="hint" data-testid="mix-assumption">
+        <ToggleGroup
+          type="single"
+          value={pressedPreset(plan, listMonthly, usageLocked) ?? ""}
+          onValueChange={(value) => value && onPreset(value as TeamPresetId)}
+          aria-label="Team size"
+          className="grid grid-cols-3"
+          disabled={usageLocked}
+        >
+          {TEAM_PRESETS.map((preset) => (
+            <ToggleGroupItem
+              key={preset.id}
+              value={preset.id}
+              className="h-auto flex-col items-start gap-0.5 px-3 py-2"
+            >
+              {preset.label}
+              <span className="text-xs font-normal text-muted-foreground tabular-nums">
+                {money(preset.monthlySpend, 0)}
+              </span>
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+        <p className="text-sm text-muted-foreground" data-testid="mix-assumption">
           {mixLine}. {describePreset(plan)}
         </p>
       </fieldset>
 
-      <fieldset disabled={usageLocked}>
-        <legend>Workload mix</legend>
+      <fieldset className="grid gap-4" disabled={usageLocked}>
+        <legend className="text-sm font-medium">Workload mix</legend>
         {MIX_FIELDS.map((field) => (
-          <label key={field.key} className="field range-field">
-            <span>
-              {field.label}
-              <strong>{pct(plan.mix[field.key])}</strong>
-            </span>
-            <input
-              type="range"
+          <div key={field.key} className="grid gap-2">
+            <div className="flex items-center justify-between text-sm font-medium">
+              <span className="flex items-center gap-2">
+                <span className={`size-2 rounded-full ${MIX_DOT[field.key]}`} aria-hidden="true" />
+                {field.label}
+              </span>
+              <span className="tabular-nums">{pct(plan.mix[field.key])}</span>
+            </div>
+            <Slider
+              aria-label={field.label}
               min={0}
               max={100}
               step={1}
-              value={Math.round(plan.mix[field.key] * 100)}
+              disabled={usageLocked}
+              value={[Math.round(plan.mix[field.key] * 100)]}
               aria-valuetext={`${pct(plan.mix[field.key])} ${field.label.toLowerCase()}`}
-              onChange={(event) => onMix(field.key, Number(event.target.value) / 100)}
+              onValueChange={(value) => onMix(field.key, (value[0] ?? 0) / 100)}
             />
-          </label>
+          </div>
         ))}
-        <div className="mix-bar" aria-hidden="true">
-          <span style={{ width: `${plan.mix.etl * 100}%` }} />
-          <span style={{ width: `${plan.mix.sql * 100}%` }} />
-          <span style={{ width: `${plan.mix.ml * 100}%` }} />
+        <div className="flex h-2 overflow-hidden rounded-full bg-muted" aria-hidden="true">
+          <span className="bg-lava" style={{ width: `${plan.mix.etl * 100}%` }} />
+          <span className="bg-[#146c43]" style={{ width: `${plan.mix.sql * 100}%` }} />
+          <span className="bg-[#b45309]" style={{ width: `${plan.mix.ml * 100}%` }} />
         </div>
       </fieldset>
 
       {usageLocked && (
-        <p className="hint" data-testid="usage-summary">
+        <p className="text-sm text-muted-foreground" data-testid="usage-summary">
           From your usage file: about {money(listMonthly, 0)} this month. {mixLine}.{" "}
-          <button type="button" className="btn" onClick={onClearUsage}>
+          <button
+            type="button"
+            className="font-medium text-link underline-offset-4 hover:underline"
+            onClick={onClearUsage}
+          >
             Use the sliders instead
           </button>
         </p>
       )}
 
-      <fieldset>
-        <legend>Growth and discount</legend>
-        <div className="choice-row" role="group" aria-label="Monthly growth">
+      <Separator />
+
+      <fieldset className="grid gap-4">
+        <legend className="text-sm font-medium">Growth and discount</legend>
+        <ToggleGroup
+          type="single"
+          value={growthValue(plan.monthlyGrowth)}
+          onValueChange={(value) => {
+            if (value) onGrowth(Number(value));
+          }}
+          aria-label="Monthly growth"
+        >
           {GROWTH.map((rate) => (
-            <button
-              key={rate}
-              type="button"
-              className="btn"
-              aria-pressed={Math.abs(plan.monthlyGrowth - rate) < 0.0005}
-              onClick={() => onGrowth(rate)}
-            >
+            <ToggleGroupItem key={rate} value={String(rate)} className="h-9 min-w-14">
               {Math.round(rate * 100)}%
-            </button>
+            </ToggleGroupItem>
           ))}
-        </div>
-        <label className="field">
-          Monthly growth, custom
-          <input
-            inputMode="decimal"
-            value={growthFocus ? growthText : String(growthPercent)}
-            onFocus={() => {
-              setGrowthFocus(true);
-              setGrowthText(String(growthPercent));
-            }}
-            onChange={(event) => setGrowthText(event.target.value)}
-            onBlur={() => {
-              setGrowthFocus(false);
-              const value = Number(growthText);
-              if (Number.isFinite(value)) onGrowth(value / 100);
-            }}
-          />
-        </label>
-        <label className="field range-field">
-          <span>
-            Commitment discount
-            <strong>{Math.round(plan.commitDiscount * 100)}%</strong>
+        </ToggleGroup>
+        <label className="flex items-center justify-between gap-4 text-sm font-medium">
+          Custom
+          <span className="relative block w-28 font-normal">
+            <Input
+              inputMode="decimal"
+              aria-label="Custom monthly growth"
+              className="h-9 pr-8 tabular-nums"
+              value={growthFocus ? growthText : String(growthPercent)}
+              onFocus={() => {
+                setGrowthFocus(true);
+                setGrowthText(String(growthPercent));
+              }}
+              onChange={(event) => setGrowthText(event.target.value)}
+              onBlur={() => {
+                setGrowthFocus(false);
+                const value = Number(growthText);
+                if (Number.isFinite(value)) onGrowth(value / 100);
+              }}
+            />
+            <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground">
+              %
+            </span>
           </span>
-          <input
-            type="range"
+        </label>
+        <div className="grid gap-2">
+          <div className="flex items-center justify-between text-sm font-medium">
+            <span>Commitment discount</span>
+            <span className="tabular-nums">{Math.round(plan.commitDiscount * 100)}%</span>
+          </div>
+          <Slider
+            aria-label="Commitment discount"
             min={0}
             max={60}
             step={1}
-            value={Math.round(plan.commitDiscount * 100)}
+            value={[Math.round(plan.commitDiscount * 100)]}
             aria-valuetext={`${Math.round(plan.commitDiscount * 100)} percent off the Databricks portion`}
-            onChange={(event) => onCommit(Number(event.target.value) / 100)}
+            onValueChange={(value) => onCommit((value[0] ?? 0) / 100)}
           />
-        </label>
-        <p className="hint">
-          Optional. It reduces the Databricks portion, not the cloud machines. Leave it at 0 if you do not have one.
-        </p>
+        </div>
+        <p className="text-sm text-muted-foreground">Applies to the Databricks portion only, not cloud machines.</p>
       </fieldset>
     </form>
   );
@@ -264,4 +303,21 @@ function describePreset(plan: SimplePlan): string {
       Math.abs(plan.mix.ml - preset.mix.ml) < 0.02,
   );
   return match ? match.detail : "Custom mix.";
+}
+
+function pressedPreset(plan: SimplePlan, listMonthly: number, usageLocked: boolean): TeamPresetId | null {
+  if (usageLocked) return null;
+  const match = TEAM_PRESETS.find(
+    (preset) =>
+      Math.abs(plan.mix.etl - preset.mix.etl) < 0.02 &&
+      Math.abs(plan.mix.sql - preset.mix.sql) < 0.02 &&
+      Math.abs(plan.mix.ml - preset.mix.ml) < 0.02 &&
+      Math.abs(listMonthly - preset.monthlySpend) < 50,
+  );
+  return match?.id ?? null;
+}
+
+function growthValue(rate: number): string {
+  const match = GROWTH.find((preset) => Math.abs(rate - preset) < 0.0005);
+  return match === undefined ? "" : String(match);
 }

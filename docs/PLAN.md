@@ -1,28 +1,25 @@
 # Plan
 
-Last updated: **2026-10-16**. Pricing assumptions and sources live in [RESEARCH.md](./RESEARCH.md). This file is the build plan those findings imply.
+Last updated: **2026-10-16**. Sources live in [RESEARCH.md](./RESEARCH.md). Module boundaries live in [ARCHITECTURE.md](./ARCHITECTURE.md).
 
-The public page now opens on a four-input year forecast (cloud and tier, starting spend or a team preset, workload mix, monthly growth and an optional commitment discount). The portfolio builder below is the Advanced disclosure. The simple forecast only assembles workloads; prices still come from the strategies in [ARCHITECTURE.md](./ARCHITECTURE.md).
+The public page opens on four inputs: cloud and tier, a starting monthly amount or a team size, a mix of pipelines, dashboards, and models, and monthly growth with an optional commitment discount. It answers with a 12-month range. Advanced opens the per-workload editor. Prices come from the engine.
 
 ## Product
 
-A static, public Databricks cost **forecast**, not another single-cluster DBU snapshot.
+Fathom is a static forecast of Databricks spend. It is an estimate, not a quote, and it is not affiliated with Databricks.
 
-Someone modeling a platform should be able to:
+The page lets someone:
 
-- Start from a template (small analytics team, ML platform, streaming ETL) or a blank portfolio.
-- Add workloads: classic and serverless jobs, all-purpose clusters, SQL warehouses, Lakeflow pipelines, model serving, Foundation Model API calls, AI Search, Databricks Apps, Lakebase, plus storage and egress lines.
-- Set cloud, region, and tier once, and override them per workload when a platform is split.
-- Describe a schedule: hours per day, days per week, min/max nodes or warehouse scale, average utilization between min and max, Photon, and a spot share on workers.
-- See DBU cost and cloud infra cost separately, for the month and the year, updating as they type.
-- Project 12, 24, or 36 months with a growth rate and a simple seasonality curve.
-- Put two or three scenarios side by side (classic vs serverless, Photon on vs off, pay-as-you-go vs a 37% DBU commit, spot mix).
-- Read short, computed tips (all-purpose used like a job, warehouse pinned at max overnight, commit larger than the forecast, Photon multiplier with no runtime reduction).
-- Share the estimate as a URL, save and load JSON locally, and export CSV, JSON, and PDF.
-- Import a `system.billing.usage` CSV so last month’s actual DBU quantity scales the forecast.
-- Use the site in light or dark mode, on a phone, and from the keyboard.
+- Choose AWS, Azure, or GCP, and Premium or Enterprise.
+- Start from Small, Medium, or Large, or type a monthly amount.
+- Set a mix and a monthly growth rate, and an optional commitment discount on the Databricks portion.
+- Read a low-to-high year, export CSV, JSON, or PDF, or copy a link.
+- Replace the amount and the mix with a `system.billing.usage` CSV.
+- Edit a workload directly from Advanced.
 
-Every total is an estimate. The footer and the export both say so, and both name the catalog version and the date it was verified.
+The engine still prices classic and serverless jobs, SQL warehouses, pipelines, model serving, Foundation Model API calls, AI Search, Databricks Apps, Lakebase, storage, and egress. It forecasts with growth, compares scenarios, and ranks savings. That catalog is not the first screen.
+
+Every total is an estimate. The footer and the export both say so.
 
 ## What we will not do in this pass
 
@@ -91,25 +88,18 @@ Refresh workflow (weekly cron plus `workflow_dispatch`):
 
 ## Web app
 
-Vite `base` is `/databricks-cost-forecaster/` so GitHub Pages project sites resolve assets. React Router, if used, uses that basename.
-
-Visual direction: a forecasting desk, not a generic SaaS dashboard. Dark olive ink, warm paper, and a single copper accent for “money” figures. Display type is Fraunces (serif) for the forecast total; body is Source Sans 3. Charts are hand-built SVG (no chart library) so the bundle stays small and the forecast is readable without a legend hunt. Light and dark themes share the same tokens.
+Vite `base` is `/databricks-cost-forecaster/` so GitHub Pages resolves assets. The interface is React, Tailwind, and Radix. Light is the default. Dark mode sets `data-theme="dark"`.
 
 Layout:
 
-1. Top bar: catalog version, cloud / region / tier, light-dark toggle, Share, Export.
-2. Left: workload list and templates. Adding a workload opens a compact editor, not a new page.
-3. Right: live month total (DBU vs cloud), annual run-rate, and the forecast chart. Sticky on desktop; stacked under the editor on small screens.
-4. A second view, “Scenarios”, clones the portfolio twice and changes one lever (compute mode, Photon, commit, spot).
-5. “Actuals” accepts a usage CSV and shows the scale it would apply.
+1. Top bar: wordmark, theme, and open a saved forecast.
+2. Inputs on the left. On a wide screen the result stays in a sticky panel: year total, range, chart, and exports. On a narrow screen the result follows the inputs, and the year total stays pinned to the bottom.
+3. Assumptions, savings, and the note for existing customers sit below the two columns.
+4. Unknown addresses serve `404.html`.
 
-State:
+The URL hash stores the portfolio. Save and load use a JSON file on the device. Nothing is uploaded.
 
-- Portfolio, scenarios, and forecast settings serialize to JSON.
-- The URL hash holds a compressed payload (lz-string or a tiny equivalent) so a link restores the desk without a backend.
-- Save/load uses that same JSON via download and a file input. Nothing is uploaded.
-
-Accessibility: visible focus, labels on every input, contrast that holds in both themes, chart data also available as a table, no information by color alone.
+Accessibility: visible focus, a name on every input, contrast that holds in both themes, and the chart repeated as a month table. The chart legend does not rely on color alone.
 
 ## MCP
 

@@ -29,6 +29,7 @@ import {
   type WorkloadMix,
 } from "@dcf/engine";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 export type Theme = "dark" | "light";
 
@@ -143,12 +144,18 @@ export function useSimpleForecast(): SimpleSession {
   }, [portfolio]);
 
   useEffect(() => {
-    if (theme === "dark") document.documentElement.dataset.theme = "dark";
-    else delete document.documentElement.dataset.theme;
+    const root = document.documentElement;
+    root.classList.add("theme-swap");
+    if (theme === "dark") root.dataset.theme = "dark";
+    else delete root.dataset.theme;
     localStorage.setItem("dcf-theme", theme);
     document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute("content", theme === "dark" ? "#0B2026" : "#F9F7F4");
+      ?.setAttribute("content", theme === "dark" ? "#0B2026" : "#F6F6F7");
+    const frame = requestAnimationFrame(() => {
+      requestAnimationFrame(() => root.classList.remove("theme-swap"));
+    });
+    return () => cancelAnimationFrame(frame);
   }, [theme]);
 
   function replacePlan(next: SimplePlan) {
@@ -223,6 +230,7 @@ export function useSimpleForecast(): SimpleSession {
       try {
         await navigator.clipboard.writeText(url);
         setNotice("Link copied");
+        toast.success("Link copied");
       } catch {
         window.prompt("Copy this link", url);
       }
@@ -257,11 +265,21 @@ export function useSimpleForecast(): SimpleSession {
     },
     selectWorkload: setSelectedId,
     removeWorkload: (id) => {
-      setUndo(portfolio);
+      const previous = portfolio;
+      setUndo(previous);
       const next = { ...portfolio, workloads: portfolio.workloads.filter((workload) => workload.id !== id) };
       delete next.simple;
       setOverride(next);
       setSelectedId((current) => (current === id ? null : current));
+      toast("Workload removed", {
+        action: {
+          label: "Undo",
+          onClick: () => {
+            setOverride(previous);
+            setUndo(null);
+          },
+        },
+      });
     },
     undoRemove: () => {
       if (!undo) return;

@@ -1,6 +1,7 @@
 import type { Estimate, ForecastPoint, Portfolio } from "@dcf/engine";
 import { useState } from "react";
 import { exportCsv, exportJson, exportPdf } from "../../export";
+import { Button } from "../ui/button";
 
 export function ExportBar({
   portfolio,
@@ -28,18 +29,16 @@ export function ExportBar({
 
   return (
     <>
-      <div className="row-actions">
-        <button type="button" className="btn" onClick={() => exportCsv(portfolio, estimate, points)}>
-          CSV
-        </button>
-        <button type="button" className="btn" onClick={() => exportJson(portfolio, estimate, points)}>
-          JSON
-        </button>
-        <button type="button" className="btn" onClick={() => void downloadPdf()} disabled={pdfBusy} aria-busy={pdfBusy}>
-          {pdfBusy ? "Preparing PDF…" : "PDF"}
-        </button>
-      </div>
-      {pdfError && <p className="tip warn">{pdfError}</p>}
+      <Button type="button" variant="outline" onClick={() => exportCsv(portfolio, estimate, points)}>
+        CSV
+      </Button>
+      <Button type="button" variant="outline" onClick={() => exportJson(portfolio, estimate, points)}>
+        JSON
+      </Button>
+      <Button type="button" variant="outline" onClick={() => void downloadPdf()} disabled={pdfBusy} aria-busy={pdfBusy}>
+        {pdfBusy ? "Preparing PDF…" : "PDF"}
+      </Button>
+      {pdfError && <p className="w-full text-sm text-destructive">{pdfError}</p>}
     </>
   );
 }

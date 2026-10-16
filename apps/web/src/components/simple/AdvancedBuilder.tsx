@@ -1,5 +1,8 @@
 import type { Estimate, Portfolio } from "@dcf/engine";
+import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Ledger } from "../Ledger";
 
 export function AdvancedBuilder({
@@ -24,19 +27,30 @@ export function AdvancedBuilder({
     if (open) setOpened(true);
   }, [open]);
   return (
-    <details className="fold" open={opened} onToggle={(event) => setOpened(event.currentTarget.open)}>
-      <summary>Advanced</summary>
-      <p className="hint">
-        The same forecast, one workload at a time. Edits here replace the sliders until you change an input above.
-      </p>
-      <Ledger
-        portfolio={portfolio}
-        estimate={estimate}
-        selectedId={selectedId}
-        onPortfolio={onPortfolio}
-        onSelect={onSelect}
-        onRemove={onRemove}
-      />
-    </details>
+    <Sheet open={opened} onOpenChange={setOpened}>
+      <SheetTrigger asChild>
+        <Button type="button" variant="ghost" className="h-auto w-full justify-between px-2 py-2 font-medium">
+          Advanced
+          <ChevronRight className="size-4 text-muted-foreground" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Advanced</SheetTitle>
+          <SheetDescription>
+            The same forecast, one workload at a time. Edits here replace the sliders until you change an input on the
+            page.
+          </SheetDescription>
+        </SheetHeader>
+        <Ledger
+          portfolio={portfolio}
+          estimate={estimate}
+          selectedId={selectedId}
+          onPortfolio={onPortfolio}
+          onSelect={onSelect}
+          onRemove={onRemove}
+        />
+      </SheetContent>
+    </Sheet>
   );
 }

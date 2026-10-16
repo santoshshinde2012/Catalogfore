@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping make the forecast more honest.
+Changes to rates need a source and a date. Changes to the page should keep the forecast, the tests, and the accessibility checks green.
 
 ## Local setup
 

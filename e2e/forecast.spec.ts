@@ -10,15 +10,16 @@ test("four inputs move the year", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("What does the next year cost?");
   await expect(page.getByTestId("year-sentence")).toContainText(/About \$[\d,]+ per year, ±\d+%/);
   await expect(page.getByTestId("bill-split")).toBeVisible();
+  await page.getByRole("tab", { name: "Months" }).click();
   await expect(page.getByRole("row")).toHaveCount(13);
 
   const initial = await sentence(page);
-  await page.getByRole("button", { name: /^Small/ }).click();
+  await page.getByRole("radio", { name: /^Small/ }).click();
   await expect(page.getByTestId("year-sentence")).not.toHaveText(initial);
   await expect(page.getByTestId("mix-assumption")).toContainText(/pipelines/);
 
   const afterSmall = await sentence(page);
-  await page.getByRole("button", { name: "10%", exact: true }).click();
+  await page.getByRole("radio", { name: "10%", exact: true }).click();
   await expect(page.getByTestId("year-sentence")).not.toHaveText(afterSmall);
 
   const split = await page.getByTestId("bill-split").innerText();
@@ -30,20 +31,20 @@ test("four inputs move the year", async ({ page }) => {
 
 test("share link restores growth", async ({ page }) => {
   await page.goto("./");
-  await page.getByRole("button", { name: "10%", exact: true }).click();
-  await expect(page.getByRole("button", { name: "10%", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("radio", { name: "10%", exact: true }).click();
+  await expect(page.getByRole("radio", { name: "10%", exact: true })).toHaveAttribute("aria-checked", "true");
   const url = page.url();
   expect(url).toContain("#");
   await page.goto("about:blank");
   await page.goto(url);
-  await expect(page.getByRole("button", { name: "10%", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("radio", { name: "10%", exact: true })).toHaveAttribute("aria-checked", "true");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("What does the next year cost?");
 });
 
 test("cloud, commitment, exports, and a usage file", async ({ page }) => {
   await page.goto("./");
   const before = await sentence(page);
-  await page.getByRole("button", { name: "Azure", exact: true }).click();
+  await page.getByRole("radio", { name: "Azure", exact: true }).click();
   await expect(page.getByTestId("year-sentence")).not.toHaveText(before);
 
   const onAzure = await sentence(page);
@@ -84,7 +85,12 @@ test("advanced builder, how we got this, and theme", async ({ page }) => {
   await page.getByRole("button", { name: /Serverless jobs/ }).click();
   await expect(page.getByRole("button", { name: /Serverless jobs/ }).first()).toBeVisible();
   await expect(page.getByText(/detailed workloads are driving/)).toBeVisible();
-  await expect(page.locator(".site-foot")).toContainText("not affiliated with Databricks");
+  const footer = page.locator("footer");
+  await expect(footer).toContainText("not affiliated with Databricks");
+  await page.keyboard.press("Escape");
+  await expect(footer.getByRole("link", { name: "Source" })).toHaveAttribute("href", /databricks-cost-forecaster$/);
+  await expect(footer.getByRole("link", { name: "License" })).toHaveAttribute("href", /LICENSE/);
+  await expect(footer.getByRole("link", { name: "Rates" })).toHaveAttribute("href", /RESEARCH\.md/);
   await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
   await page.getByRole("button", { name: "Switch to dark theme" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
@@ -108,6 +114,7 @@ test("has no serious accessibility violations", async ({ page }, testInfo) => {
   await page.getByText("How we got this").click();
   await page.getByText("Ways to pay less").click();
   await page.getByText("Advanced", { exact: true }).click();
+  await page.keyboard.press("Escape");
   const open = await new AxeBuilder({ page }).analyze();
   expect(open.violations).toEqual([]);
   await page.getByRole("button", { name: "Switch to dark theme" }).click();
@@ -118,6 +125,19 @@ test("has no serious accessibility violations", async ({ page }, testInfo) => {
   expect(light.violations).toEqual([]);
 });
 
+test("unknown address explains that the page is not part of the forecast", async ({ page }, testInfo) => {
+  await page.goto("./404.html");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Page not found");
+  await expect(page.getByRole("link", { name: "Back to the forecast" })).toHaveAttribute(
+    "href",
+    "/databricks-cost-forecaster/",
+  );
+  await expect(page.locator("footer")).toContainText("not affiliated with Databricks");
+  if (testInfo.project.name !== "desktop") return;
+  const result = await new AxeBuilder({ page }).analyze();
+  expect(result.violations).toEqual([]);
+});
+
 test("mobile layout does not overflow the viewport", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile", "mobile project only");
   await page.goto("./");
@@ -125,8 +145,8 @@ test("mobile layout does not overflow the viewport", async ({ page }, testInfo) 
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );
   expect(homeOverflow).toBeLessThanOrEqual(1);
-  await page.getByText("Advanced", { exact: true }).click();
+  await expect(page.getByTestId("year-total")).toBeVisible();
+  await page.getByRole("button", { name: "Advanced", exact: true }).click();
   const opened = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(opened).toBeLessThanOrEqual(1);
-  await expect(page.getByTestId("year-total")).toBeVisible();
 });

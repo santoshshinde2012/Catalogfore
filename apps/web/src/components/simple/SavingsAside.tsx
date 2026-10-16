@@ -1,5 +1,8 @@
 import type { Recommendation, RecommendationId } from "@dcf/engine";
+import { ChevronDown } from "lucide-react";
 import { money } from "../../format";
+import { Button } from "../ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 
 const PLAIN: Record<RecommendationId, { title: string; detail: string }> = {
   jobs_serverless: {
@@ -44,28 +47,36 @@ export function SavingsAside({
   onApply: (id: RecommendationId) => void;
 }) {
   return (
-    <details className="fold">
-      <summary>Ways to pay less</summary>
-      {recommendations.length === 0 ? (
-        <p className="hint">Nothing here beats the current inputs.</p>
-      ) : (
-        <ul className="tip-list">
-          {recommendations.map((item) => {
-            const plain = PLAIN[item.id];
-            return (
-              <li key={item.id}>
-                <div>
-                  <strong>{plain.title}</strong>
-                  <p className="hint">{plain.detail}</p>
-                </div>
-                <button type="button" className="btn" onClick={() => onApply(item.id)}>
-                  Apply, save {money(item.annualSavings, 0)} a year
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </details>
+    <Collapsible className="rounded-lg border bg-card shadow-sm">
+      <CollapsibleTrigger className="group flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium hover:bg-muted/70">
+        Ways to pay less
+        <ChevronDown className="size-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+      </CollapsibleTrigger>
+      <CollapsibleContent className="px-4 pb-4">
+        {recommendations.length === 0 ? (
+          <p className="text-sm text-muted-foreground">None of these changes lower the forecast.</p>
+        ) : (
+          <ul className="grid gap-3">
+            {recommendations.map((item) => {
+              const plain = PLAIN[item.id];
+              return (
+                <li
+                  key={item.id}
+                  className="flex flex-col gap-3 border-t pt-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div>
+                    <p className="text-sm font-medium">{plain.title}</p>
+                    <p className="text-sm text-muted-foreground">{plain.detail}</p>
+                  </div>
+                  <Button type="button" variant="outline" onClick={() => onApply(item.id)}>
+                    Apply, save {money(item.annualSavings, 0)} a year
+                  </Button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </CollapsibleContent>
+    </Collapsible>
   );
 }

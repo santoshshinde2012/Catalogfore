@@ -1,3 +1,7 @@
+import { ChevronDown } from "lucide-react";
+import { Button } from "../ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
+
 export function UsagePanel({
   busy,
   error,
@@ -10,36 +14,43 @@ export function UsagePanel({
   onSample: () => void;
 }) {
   return (
-    <details className="fold">
-      <summary>Use my real usage</summary>
-      <p className="hint">
-        Upload a <code>system.billing.usage</code> CSV. It replaces the monthly spend and the mix. Growth, cloud, and
-        discount stay as you set them.
-      </p>
-      <div className="row-actions">
-        <label className="btn">
-          {busy ? "Reading…" : "Choose CSV"}
-          <input
-            className="sr-only"
-            type="file"
-            accept=".csv,text/csv"
-            aria-label="Usage CSV"
-            onChange={(event) => {
-              const file = event.target.files?.[0];
-              event.target.value = "";
-              if (file) onFile(file);
-            }}
-          />
-        </label>
-        <button type="button" className="btn" onClick={onSample} disabled={busy}>
-          Load a sample
-        </button>
-      </div>
-      {error && (
-        <p className="tip warn" role="alert">
-          {error}
+    <Collapsible>
+      <CollapsibleTrigger className="group flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm font-medium hover:bg-muted">
+        Use my real usage
+        <ChevronDown className="size-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+      </CollapsibleTrigger>
+      <CollapsibleContent className="pt-3">
+        <p className="text-sm text-muted-foreground">
+          Upload a <code className="font-mono text-xs">system.billing.usage</code> CSV. It replaces the monthly spend
+          and the mix. Growth, cloud, and discount stay as you set them.
         </p>
-      )}
-    </details>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button type="button" variant="outline" asChild>
+            <label>
+              {busy ? "Reading…" : "Choose CSV"}
+              <input
+                className="sr-only"
+                type="file"
+                accept=".csv,text/csv"
+                aria-label="Usage CSV"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  event.target.value = "";
+                  if (file) onFile(file);
+                }}
+              />
+            </label>
+          </Button>
+          <Button type="button" variant="outline" onClick={onSample} disabled={busy}>
+            Load a sample
+          </Button>
+        </div>
+        {error && (
+          <p className="mt-3 text-sm text-destructive" role="alert">
+            {error}
+          </p>
+        )}
+      </CollapsibleContent>
+    </Collapsible>
   );
 }

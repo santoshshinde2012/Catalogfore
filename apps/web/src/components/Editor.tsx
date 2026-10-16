@@ -1,5 +1,6 @@
 import { listRegions, type Cloud, type Portfolio, type Tier, type Workload } from "@dcf/engine";
 import { workloadEditors } from "./editor/registry";
+import { Button } from "./ui/button";
 
 interface EditorProps {
   workload: Workload;
@@ -14,19 +15,19 @@ export function Editor({ workload, portfolio, onChange, onDuplicate, onRemove, o
   const cloud = workload.cloud ?? portfolio.cloud;
   const Fields = workloadEditors[workload.kind];
   return (
-    <div className="editor panel">
-      <div className="editor-bar">
-        <strong>Edit workload</strong>
-        <span className="flex gap-2">
-          <button type="button" className="btn-ghost" onClick={onDuplicate}>
+    <div className="mt-2 rounded-lg border p-4">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <strong className="text-sm">Edit workload</strong>
+        <span className="flex gap-1">
+          <Button type="button" variant="ghost" size="sm" onClick={onDuplicate}>
             Duplicate
-          </button>
-          <button type="button" className="btn-ghost" onClick={onClose}>
+          </Button>
+          <Button type="button" variant="ghost" size="sm" onClick={onClose}>
             Close
-          </button>
-          <button type="button" className="danger" onClick={onRemove}>
+          </Button>
+          <Button type="button" variant="destructive" size="sm" onClick={onRemove}>
             Remove
-          </button>
+          </Button>
         </span>
       </div>
       <div className="grid-2">
