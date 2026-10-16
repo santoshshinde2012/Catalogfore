@@ -2,6 +2,7 @@ import {
   findInstance,
   regionInfo,
   skuCatalog,
+  regionalSkuRate,
   skuRate,
   vmHourly,
   type InstanceInfo,
@@ -12,6 +13,7 @@ import type { Cloud, SkuId, Tier } from "../types.js";
 
 export interface VmQuote {
   hourly: number;
+  spotHourly: number | null;
   approximate: boolean;
   source: string;
 }
@@ -36,6 +38,7 @@ export interface PricingCatalog {
   readonly objectStoragePerGbMonth: SkuCatalog["objectStoragePerGbMonth"];
   readonly defaultEgressPerGb: SkuCatalog["defaultEgressPerGb"];
   skuRate(cloud: Cloud, tier: Tier, sku: SkuId): number;
+  regionalSkuRate?(cloud: Cloud, region: string, tier: Tier, sku: SkuId): number | null;
   region(cloud: Cloud, regionId: string): RegionInfo;
   instance(cloud: Cloud, id: string): InstanceInfo | undefined;
   vmHourly(cloud: Cloud, region: string, instanceId: string): VmQuote;
@@ -60,6 +63,7 @@ export const bundledPricingCatalog: PricingCatalog = {
   objectStoragePerGbMonth: skuCatalog.objectStoragePerGbMonth,
   defaultEgressPerGb: skuCatalog.defaultEgressPerGb,
   skuRate,
+  regionalSkuRate,
   region: regionInfo,
   instance: findInstance,
   vmHourly,

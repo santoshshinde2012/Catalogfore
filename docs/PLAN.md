@@ -6,7 +6,7 @@ The public page opens on four inputs: cloud and tier, a starting monthly amount 
 
 ## Product
 
-Fathom is a static forecast of Databricks spend. It is an estimate, not a quote, and it is not affiliated with Databricks.
+Cayfore is a static forecast of Databricks spend. It is an estimate, not a quote, and it is not affiliated with Databricks.
 
 The page lets someone:
 

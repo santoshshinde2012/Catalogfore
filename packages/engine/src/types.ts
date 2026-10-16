@@ -1,3 +1,5 @@
+import type { UsageForecast } from "./forecast/series.js";
+
 export type Cloud = "aws" | "azure" | "gcp";
 export type Tier = "premium" | "enterprise";
 export type Addon = "none" | "compliance" | "mission_critical";
@@ -153,6 +155,8 @@ export interface StoredSimple {
   basket: SimpleBasket;
   /** Set when a usage file supplied the mix and the quantity. */
   usageDbu?: number;
+  /** Set when the file had enough history to fit a trend. Ratios are versus the last observed month. */
+  usageForecast?: UsageForecast;
 }
 
 export interface Portfolio {

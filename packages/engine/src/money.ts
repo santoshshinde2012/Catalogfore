@@ -24,3 +24,15 @@ export function scaledCount(min: number, max: number, utilization: number): numb
 export function uid(): string {
   return Math.random().toString(36).slice(2, 10);
 }
+
+/** US dollar text. Matches the page: whole dollars from $1,000 up, cents below that. */
+export function formatUsd(value: number, digits?: number): string {
+  const safe = Number.isFinite(value) ? value : 0;
+  const fraction = digits ?? (Math.abs(safe) >= 1000 ? 0 : 2);
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: fraction,
+    maximumFractionDigits: fraction,
+  }).format(safe);
+}

@@ -21,8 +21,9 @@ export function UsagePanel({
       </CollapsibleTrigger>
       <CollapsibleContent className="pt-3">
         <p className="text-sm text-muted-foreground">
-          Upload a <code className="font-mono text-xs">system.billing.usage</code> CSV. It replaces the monthly spend
-          and the mix. Growth, cloud, and discount stay as you set them.
+          Upload a <code className="font-mono text-xs">system.billing.usage</code> CSV. One month replaces the spend and
+          the mix. Several months also fit a trend, and the growth field shows that rate. Cloud and discount stay as you
+          set them.
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button type="button" variant="outline" asChild>

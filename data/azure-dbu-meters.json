@@ -1,0 +1,3188 @@
+{
+  "version": "2026-10-16.2",
+  "updatedOn": "2026-10-16",
+  "source": "azure-retail-prices",
+  "note": "Premium Azure Databricks consumption meters. Enterprise uses the same meters. A SKU missing from a region still uses the curated US East rate times the region factor.",
+  "meters": [
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "australiacentral"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "australiacentral"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "australiacentral"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "australiacentral"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "australiacentral"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "australiacentral"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "australiacentral"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "australiacentral"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "australiacentral"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.088,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "australiacentral"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium Model Training DBU",
+      "region": "australiacentral"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "australiacentral"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.74,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "australiacentral"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "australiacentral"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "australiacentral2"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "australiacentral2"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "australiacentral2"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "australiacentral2"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "australiacentral2"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "australiacentral2"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "australiacentral2"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "australiacentral2"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "australiacentral2"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.088,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "australiacentral2"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium Model Training DBU",
+      "region": "australiacentral2"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "australiacentral2"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.74,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "australiacentral2"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "australiacentral2"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "australiaeast"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "australiaeast"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "australiaeast"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "australiaeast"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "australiaeast"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "australiaeast"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "australiaeast"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "australiaeast"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "australiaeast"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.088,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "australiaeast"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium Model Training DBU",
+      "region": "australiaeast"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "australiaeast"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.74,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "australiaeast"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "australiaeast"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "australiasoutheast"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1.05,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "australiasoutheast"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1.05,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "australiasoutheast"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "australiasoutheast"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "australiasoutheast"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "australiasoutheast"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.52,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "australiasoutheast"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "australiasoutheast"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.52,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "australiasoutheast"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.091,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "australiasoutheast"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium Model Training DBU",
+      "region": "australiasoutheast"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "australiasoutheast"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.74,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "australiasoutheast"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "australiasoutheast"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "brazilsouth"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1.09,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "brazilsouth"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1.09,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "brazilsouth"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "brazilsouth"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "brazilsouth"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "brazilsouth"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.59,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "brazilsouth"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "brazilsouth"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.59,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "brazilsouth"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.112,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "brazilsouth"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 1.11,
+      "meterName": "Premium Model Training DBU",
+      "region": "brazilsouth"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "brazilsouth"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "brazilsouth"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 1.09,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "brazilsouth"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "canadacentral"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "canadacentral"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "canadacentral"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "canadacentral"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "canadacentral"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "canadacentral"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "canadacentral"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "canadacentral"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "canadacentral"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.078,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "canadacentral"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.65,
+      "meterName": "Premium Model Training DBU",
+      "region": "canadacentral"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "canadacentral"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.62,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "canadacentral"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.79,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "canadacentral"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "canadaeast"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "canadaeast"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "canadaeast"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "canadaeast"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "canadaeast"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "canadaeast"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "canadaeast"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "canadaeast"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "canadaeast"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.078,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "canadaeast"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.65,
+      "meterName": "Premium Model Training DBU",
+      "region": "canadaeast"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "canadaeast"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.62,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "canadaeast"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.79,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "canadaeast"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "centralindia"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "centralindia"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "centralindia"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "centralindia"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "centralindia"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "centralindia"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "centralindia"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "centralindia"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "centralindia"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.074,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "centralindia"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium Model Training DBU",
+      "region": "centralindia"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "centralindia"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.61,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "centralindia"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.77,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "centralindia"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "centralus"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "centralus"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "centralus"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "centralus"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "centralus"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "centralus"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "centralus"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "centralus"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "centralus"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.079,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "centralus"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.65,
+      "meterName": "Premium Model Training DBU",
+      "region": "centralus"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "centralus"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "centralus"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.7,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "centralus"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "eastasia"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1.05,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "eastasia"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1.05,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "eastasia"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "eastasia"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "eastasia"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "eastasia"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.52,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "eastasia"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "eastasia"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.52,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "eastasia"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.096,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "eastasia"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium Model Training DBU",
+      "region": "eastasia"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "eastasia"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.74,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "eastasia"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "eastasia"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "eastus"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "eastus"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "eastus"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "eastus"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "eastus"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "eastus"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.45,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "eastus"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "eastus"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.45,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "eastus"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.07,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "eastus"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.65,
+      "meterName": "Premium Model Training DBU",
+      "region": "eastus"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "eastus"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "eastus"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.7,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "eastus"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "eastus2"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "eastus2"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "eastus2"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "eastus2"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "eastus2"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "eastus2"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.45,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "eastus2"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "eastus2"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.45,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "eastus2"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.07,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "eastus2"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.65,
+      "meterName": "Premium Model Training DBU",
+      "region": "eastus2"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "eastus2"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "eastus2"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.7,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "eastus2"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "francecentral"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "francecentral"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "francecentral"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "francecentral"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "francecentral"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "francecentral"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "francecentral"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "francecentral"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "francecentral"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.082,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "francecentral"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.78,
+      "meterName": "Premium Model Training DBU",
+      "region": "francecentral"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "francecentral"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.72,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "francecentral"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.91,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "francecentral"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "germanywestcentral"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "germanywestcentral"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "germanywestcentral"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "germanywestcentral"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "germanywestcentral"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "germanywestcentral"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "germanywestcentral"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "germanywestcentral"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "germanywestcentral"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.084,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "germanywestcentral"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.78,
+      "meterName": "Premium Model Training DBU",
+      "region": "germanywestcentral"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "germanywestcentral"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.72,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "germanywestcentral"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.91,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "germanywestcentral"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "japaneast"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "japaneast"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "japaneast"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "japaneast"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "japaneast"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "japaneast"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "japaneast"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "japaneast"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "japaneast"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.09,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "japaneast"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium Model Training DBU",
+      "region": "japaneast"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "japaneast"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.78,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "japaneast"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "japaneast"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "japanwest"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "japanwest"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "japanwest"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "japanwest"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "japanwest"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "japanwest"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "japanwest"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "japanwest"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "japanwest"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.09,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "japanwest"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium Model Training DBU",
+      "region": "japanwest"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "japanwest"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.78,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "japanwest"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "japanwest"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "koreacentral"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "koreacentral"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "koreacentral"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "koreacentral"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "koreacentral"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "koreacentral"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "koreacentral"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "koreacentral"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "koreacentral"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.086,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "koreacentral"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium Model Training DBU",
+      "region": "koreacentral"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "koreacentral"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.74,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "koreacentral"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "koreacentral"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 0.98,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "malaysiawest"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 0.98,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "malaysiawest"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "malaysiawest"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "malaysiawest"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.088,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "malaysiawest"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.82,
+      "meterName": "Premium Model Training DBU",
+      "region": "malaysiawest"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.61,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "malaysiawest"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.77,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "malaysiawest"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "mexicocentral"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 0.98,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "mexicocentral"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 0.98,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "mexicocentral"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "mexicocentral"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "mexicocentral"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "mexicocentral"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.48,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "mexicocentral"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "mexicocentral"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.48,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "mexicocentral"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.077,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "mexicocentral"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "mexicocentral"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.61,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "mexicocentral"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.77,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "mexicocentral"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "northcentralus"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "northcentralus"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "northcentralus"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "northcentralus"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "northcentralus"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "northcentralus"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.45,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "northcentralus"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "northcentralus"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.45,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "northcentralus"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.07,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "northcentralus"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.65,
+      "meterName": "Premium Model Training DBU",
+      "region": "northcentralus"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "northcentralus"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "northcentralus"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.7,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "northcentralus"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "northeurope"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "northeurope"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "northeurope"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "northeurope"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "northeurope"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "northeurope"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "northeurope"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "northeurope"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "northeurope"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.078,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "northeurope"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.78,
+      "meterName": "Premium Model Training DBU",
+      "region": "northeurope"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "northeurope"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.72,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "northeurope"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.91,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "northeurope"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "norwayeast"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1.05,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "norwayeast"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1.05,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "norwayeast"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "norwayeast"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "norwayeast"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "norwayeast"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.52,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "norwayeast"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "norwayeast"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.52,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "norwayeast"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.092,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "norwayeast"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.78,
+      "meterName": "Premium Model Training DBU",
+      "region": "norwayeast"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "norwayeast"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.72,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "norwayeast"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.91,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "norwayeast"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "qatarcentral"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "qatarcentral"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "qatarcentral"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "qatarcentral"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "qatarcentral"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "qatarcentral"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.74,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "qatarcentral"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "southafricanorth"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1.05,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "southafricanorth"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1.05,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "southafricanorth"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "southafricanorth"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "southafricanorth"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "southafricanorth"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.52,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "southafricanorth"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "southafricanorth"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.52,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "southafricanorth"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.093,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "southafricanorth"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium Model Training DBU",
+      "region": "southafricanorth"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "southafricanorth"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.74,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "southafricanorth"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "southafricanorth"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "southcentralus"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "southcentralus"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "southcentralus"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "southcentralus"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "southcentralus"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "southcentralus"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "southcentralus"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "southcentralus"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "southcentralus"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.084,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "southcentralus"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.65,
+      "meterName": "Premium Model Training DBU",
+      "region": "southcentralus"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "southcentralus"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "southcentralus"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.7,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "southcentralus"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "southeastasia"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "southeastasia"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "southeastasia"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "southeastasia"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "southeastasia"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "southeastasia"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "southeastasia"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "southeastasia"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "southeastasia"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.088,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "southeastasia"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium Model Training DBU",
+      "region": "southeastasia"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "southeastasia"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.69,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "southeastasia"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.88,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "southeastasia"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "southindia"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1.05,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "southindia"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1.05,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "southindia"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "southindia"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "southindia"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "southindia"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "southindia"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "southindia"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "southindia"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.099,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "southindia"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium Model Training DBU",
+      "region": "southindia"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "southindia"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.69,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "southindia"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.88,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "southindia"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "swedencentral"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "swedencentral"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "swedencentral"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "swedencentral"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "swedencentral"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "swedencentral"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "swedencentral"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "swedencentral"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "swedencentral"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.074,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "swedencentral"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.78,
+      "meterName": "Premium Model Training DBU",
+      "region": "swedencentral"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "swedencentral"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.72,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "swedencentral"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.91,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "swedencentral"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "switzerlandnorth"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1.05,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "switzerlandnorth"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1.05,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "switzerlandnorth"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "switzerlandnorth"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "switzerlandnorth"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "switzerlandnorth"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.56,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "switzerlandnorth"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "switzerlandnorth"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.56,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "switzerlandnorth"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.092,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "switzerlandnorth"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.78,
+      "meterName": "Premium Model Training DBU",
+      "region": "switzerlandnorth"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "switzerlandnorth"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "switzerlandnorth"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 1.09,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "switzerlandnorth"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "switzerlandwest"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1.14,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "switzerlandwest"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1.14,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "switzerlandwest"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "switzerlandwest"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "switzerlandwest"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "switzerlandwest"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.65,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "switzerlandwest"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "switzerlandwest"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.65,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "switzerlandwest"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.12,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "switzerlandwest"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.78,
+      "meterName": "Premium Model Training DBU",
+      "region": "switzerlandwest"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "switzerlandwest"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.96,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "switzerlandwest"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "uaenorth"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "uaenorth"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "uaenorth"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "uaenorth"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "uaenorth"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "uaenorth"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "uaenorth"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "uaenorth"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "uaenorth"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.086,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "uaenorth"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium Model Training DBU",
+      "region": "uaenorth"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "uaenorth"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.74,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "uaenorth"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "uaenorth"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "uksouth"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "uksouth"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "uksouth"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "uksouth"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "uksouth"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "uksouth"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "uksouth"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "uksouth"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "uksouth"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.081,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "uksouth"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.78,
+      "meterName": "Premium Model Training DBU",
+      "region": "uksouth"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "uksouth"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.74,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "uksouth"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "uksouth"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "ukwest"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "ukwest"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "ukwest"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "ukwest"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "ukwest"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "ukwest"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "ukwest"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "ukwest"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "ukwest"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.085,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "ukwest"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.78,
+      "meterName": "Premium Model Training DBU",
+      "region": "ukwest"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "ukwest"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.74,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "ukwest"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "ukwest"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "westcentralus"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "westcentralus"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "westcentralus"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "westcentralus"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "westcentralus"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "westcentralus"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "westcentralus"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "westcentralus"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "westcentralus"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.65,
+      "meterName": "Premium Model Training DBU",
+      "region": "westcentralus"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "westcentralus"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "westcentralus"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.7,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "westcentralus"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "westeurope"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "westeurope"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "westeurope"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "westeurope"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "westeurope"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "westeurope"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "westeurope"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "westeurope"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.5,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "westeurope"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.084,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "westeurope"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.78,
+      "meterName": "Premium Model Training DBU",
+      "region": "westeurope"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "westeurope"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.72,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "westeurope"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.91,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "westeurope"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "westindia"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "westindia"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "westindia"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "westindia"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "westindia"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "westindia"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.52,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "westindia"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "westindia"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.52,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "westindia"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.09,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "westindia"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.85,
+      "meterName": "Premium Model Training DBU",
+      "region": "westindia"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "westindia"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.69,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "westindia"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.88,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "westindia"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "westus"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "westus"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 1,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "westus"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "westus"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "westus"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "westus"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "westus"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "westus"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.47,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "westus"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.082,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "westus"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.65,
+      "meterName": "Premium Model Training DBU",
+      "region": "westus"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "westus"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "westus"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.7,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "westus"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "westus2"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "westus2"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "westus2"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "westus2"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "westus2"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "westus2"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.45,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "westus2"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "westus2"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.45,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "westus2"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.07,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "westus2"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.65,
+      "meterName": "Premium Model Training DBU",
+      "region": "westus2"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "westus2"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "westus2"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.7,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "westus2"
+    },
+    {
+      "sku": "all_purpose_classic",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium All-purpose Compute DBU",
+      "region": "westus3"
+    },
+    {
+      "sku": "all_purpose_serverless",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "westus3"
+    },
+    {
+      "sku": "apps",
+      "usdPerDbu": 0.95,
+      "meterName": "Premium Interactive Serverless Compute DBU",
+      "region": "westus3"
+    },
+    {
+      "sku": "dlt_advanced",
+      "usdPerDbu": 0.54,
+      "meterName": "Premium Advanced Compute Delta Live Tables DBU",
+      "region": "westus3"
+    },
+    {
+      "sku": "dlt_core",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Core Compute Delta Live Tables DBU",
+      "region": "westus3"
+    },
+    {
+      "sku": "dlt_pro",
+      "usdPerDbu": 0.38,
+      "meterName": "Premium Pro Compute Delta Live Tables DBU",
+      "region": "westus3"
+    },
+    {
+      "sku": "dlt_serverless",
+      "usdPerDbu": 0.45,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "westus3"
+    },
+    {
+      "sku": "jobs_classic",
+      "usdPerDbu": 0.3,
+      "meterName": "Premium Jobs Compute DBU",
+      "region": "westus3"
+    },
+    {
+      "sku": "jobs_serverless",
+      "usdPerDbu": 0.45,
+      "meterName": "Premium Automated Serverless Compute DBU",
+      "region": "westus3"
+    },
+    {
+      "sku": "model_serving",
+      "usdPerDbu": 0.07,
+      "meterName": "Premium Serverless Realtime Inferencing DBU",
+      "region": "westus3"
+    },
+    {
+      "sku": "model_training",
+      "usdPerDbu": 0.65,
+      "meterName": "Premium Model Training DBU",
+      "region": "westus3"
+    },
+    {
+      "sku": "sql_classic",
+      "usdPerDbu": 0.22,
+      "meterName": "Premium SQL Analytics DBU",
+      "region": "westus3"
+    },
+    {
+      "sku": "sql_pro",
+      "usdPerDbu": 0.55,
+      "meterName": "Premium SQL Compute Pro DBU",
+      "region": "westus3"
+    },
+    {
+      "sku": "sql_serverless",
+      "usdPerDbu": 0.7,
+      "meterName": "Premium Serverless SQL DBU",
+      "region": "westus3"
+    }
+  ]
+}

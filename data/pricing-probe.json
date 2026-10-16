@@ -1,0 +1,16 @@
+{
+  "checkedOn": "2026-10-16",
+  "foundPublicJson": false,
+  "checks": [
+    {
+      "url": "https://www.databricks.com/en-pricing-assets/page-data/app-data.json",
+      "status": "no-prices",
+      "bytes": 50
+    },
+    {
+      "url": "https://www.databricks.com/page-data/product/pricing/page-data.json",
+      "status": "404 https://www.databricks.com/page-data/product/pricing/page-data.json"
+    }
+  ],
+  "note": "Databricks pricing pages are a client bundle. These probes look for a JSON document of rates. They do not scrape the bundle. No public rate JSON means the curated table stays."
+}

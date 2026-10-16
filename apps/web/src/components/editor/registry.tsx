@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import type { Workload } from "@dcf/engine";
+import type { Workload } from "@cayfore/engine";
 import { AppFields, DbuMeterFields, EgressFields, LakebaseFields, SearchFields, StorageFields } from "./MeterFields";
 import { ClusterFields } from "./ClusterFields";
 import { FoundationFields, ServingFields } from "./ServingFields";

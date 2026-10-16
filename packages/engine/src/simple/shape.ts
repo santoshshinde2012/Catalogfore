@@ -1,7 +1,7 @@
 import { defaultInstanceId, referenceRegion, skuCatalog } from "../catalog.js";
 import { defaultEstimateDependencies, type EstimateDependencies } from "../costing/estimate-portfolio.js";
 import { estimate } from "../estimate.js";
-import { FLAT_SEASONALITY } from "../forecast.js";
+import { FLAT_SEASONALITY, type UsageForecast } from "../forecast.js";
 import { clamp, roundMoney } from "../money.js";
 import type { Cloud, Portfolio, SimpleBasket, Tier, Workload, WorkloadMix } from "../types.js";
 import { normalizeMix } from "./mix.js";
@@ -112,6 +112,7 @@ export function portfolioShell(
     usageScale?: number;
     usageCalibrated?: boolean;
     usageDbu?: number;
+    usageForecast?: UsageForecast;
     monthlySpend: number;
     mix: WorkloadMix;
     basket: SimpleBasket;
@@ -142,6 +143,7 @@ export function portfolioShell(
         mlInputTokens: snap(input.basket.mlInputTokens),
       },
       ...(input.usageDbu && input.usageDbu > 0 ? { usageDbu: input.usageDbu } : {}),
+      ...(input.usageForecast ? { usageForecast: input.usageForecast } : {}),
     },
     forecast: {
       months: 12,

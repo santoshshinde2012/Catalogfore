@@ -10,9 +10,13 @@ export default tseslint.config(
     files: ["scripts/**/*.mjs", "eslint.config.js", "playwright.config.ts", "vitest.config.ts"],
     languageOptions: {
       globals: {
+        AbortController: "readonly",
         console: "readonly",
-        process: "readonly",
         fetch: "readonly",
+        process: "readonly",
+        setTimeout: "readonly",
+        TextDecoder: "readonly",
+        URL: "readonly",
       },
     },
   },

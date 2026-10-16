@@ -43,7 +43,7 @@ export function AppShell({ session }: { session: SimpleSession }) {
               <span className="flex size-6 items-center justify-center rounded-md bg-foreground" aria-hidden="true">
                 <span className="size-2 rounded-full bg-lava" />
               </span>
-              Fathom
+              Cayfore
             </button>
             <nav aria-label="Page" className="ml-2 hidden items-center gap-1 lg:flex">
               <Button type="button" variant="ghost" onClick={showForecast}>
@@ -115,7 +115,7 @@ export function AppShell({ session }: { session: SimpleSession }) {
                   <span className="flex size-5 items-center justify-center rounded-md bg-foreground" aria-hidden="true">
                     <span className="size-1.5 rounded-full bg-lava" />
                   </span>
-                  Fathom
+                  Cayfore
                 </p>
                 <p className="mt-2 text-sm text-muted-foreground">
                   An independent estimate of Databricks spend. Not a quote, and not affiliated with Databricks.

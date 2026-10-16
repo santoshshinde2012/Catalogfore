@@ -1,4 +1,4 @@
-import type { SimpleMonth } from "@dcf/engine";
+import type { SimpleMonth } from "@cayfore/engine";
 import { money } from "../../format";
 
 export function MonthTable({ months }: { months: SimpleMonth[] }) {

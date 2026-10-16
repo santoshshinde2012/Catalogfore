@@ -1,4 +1,6 @@
-import { regionInfo } from "../catalog.js";
+import { pricesUpdatedOn, regionInfo } from "../catalog.js";
+import { fitUsageForecast, type UsageForecast } from "../forecast.js";
+import { usageHistory } from "../usage.js";
 import { referenceRegion } from "../catalog.js";
 import { estimate, type EstimateDependencies } from "../estimate.js";
 import { defaultEstimateDependencies } from "../costing/estimate-portfolio.js";
@@ -28,6 +30,7 @@ export interface SimplePlan {
   commitDiscount: number;
   basket: SimpleBasket;
   usageDbu?: number;
+  usageForecast?: UsageForecast;
 }
 
 export interface SimpleMonth {
@@ -68,8 +71,20 @@ export function projectSimple(
   const result = estimate(portfolio, dependencies);
   const points = forecast(result, portfolio.forecast);
   const rolled = rollForward(portfolio, result, points);
-  const { annual, band, months } = rolled;
-  const listMonthly = rolled.listMonthly;
+  const fittedMonths = applyFittedMonths(normalized.usageForecast, result.total);
+  const months = fittedMonths ?? rolled.months;
+  const annual = fittedMonths
+    ? roundMoney(fittedMonths.reduce((sum, month) => sum + month.expected, 0))
+    : rolled.annual;
+  const band = fittedMonths
+    ? {
+        ...rolled.band,
+        low: roundMoney(fittedMonths.reduce((sum, month) => sum + month.low, 0)),
+        expected: annual,
+        high: roundMoney(fittedMonths.reduce((sum, month) => sum + month.high, 0)),
+        calibrated: true,
+      }
+    : rolled.band;
   const stored: SimplePlan = {
     ...normalized,
     monthlySpend: roundMoney(normalized.monthlySpend),
@@ -77,6 +92,7 @@ export function projectSimple(
     monthlyGrowth: portfolio.simple?.monthlyGrowth ?? normalized.monthlyGrowth,
     basket: portfolio.simple?.basket ?? normalized.basket,
     ...(portfolio.simple?.usageDbu ? { usageDbu: portfolio.simple.usageDbu } : {}),
+    ...(normalized.usageForecast ? { usageForecast: normalized.usageForecast } : {}),
   };
   return {
     plan: stored,
@@ -86,8 +102,8 @@ export function projectSimple(
     months,
     annual,
     band,
-    spreadPercent: rolled.spreadPercent,
-    listMonthly,
+    spreadPercent: spreadPercent(band),
+    listMonthly: rolled.listMonthly,
     cloudShare: rolled.cloudShare,
     assumptions: explain(stored, result, band),
   };
@@ -114,12 +130,26 @@ export function withRates(
   next: { cloud: Cloud; tier: Tier; region: string },
   dependencies?: EstimateDependencies,
 ): SimplePlan {
-  const draft: SimplePlan = { ...plan, cloud: next.cloud, tier: next.tier, region: regionFor(next.cloud, next.region) };
+  const draft: SimplePlan = {
+    ...withoutForecast(plan),
+    cloud: next.cloud,
+    tier: next.tier,
+    region: regionFor(next.cloud, next.region),
+  };
   return { ...draft, monthlySpend: projectSimple(draft, dependencies).listMonthly };
 }
 
 export function withGrowth(plan: SimplePlan, monthlyGrowth: number): SimplePlan {
-  return { ...plan, monthlyGrowth: clamp(Number.isFinite(monthlyGrowth) ? monthlyGrowth : 0, 0, 0.2) };
+  return {
+    ...withoutForecast(plan),
+    monthlyGrowth: clamp(Number.isFinite(monthlyGrowth) ? monthlyGrowth : 0, 0, 0.2),
+  };
+}
+
+function withoutForecast(plan: SimplePlan): SimplePlan {
+  const next = { ...plan };
+  delete next.usageForecast;
+  return next;
 }
 
 export function withCommit(plan: SimplePlan, commitDiscount: number): SimplePlan {
@@ -148,16 +178,25 @@ export function planFromUsage(
   text: string,
   dependencies?: EstimateDependencies,
 ): { ok: true; plan: SimplePlan } | { ok: false; error: string } {
-  const usage = importUsageCsv(text);
+  const history = usageHistory(text);
+  const latest = history.months.length ? history.months[history.months.length - 1].period : undefined;
+  const usage = importUsageCsv(text, history.months.length > 1 ? latest : undefined);
   if (!(usage.dbu > 0)) return { ok: false, error: "That file did not contain usage rows." };
   const buckets = bucketDbu(usage);
   const basket = basketForDbu(plan, buckets, dependencies);
+  const fitted = fitUsageForecast(history);
   const draft: SimplePlan = {
     ...plan,
     mix: normalizeMix(buckets),
     basket,
     usageDbu: usage.dbu,
     monthlySpend: 0,
+    ...(fitted
+      ? {
+          usageForecast: fitted,
+          monthlyGrowth: clamp(fitted.monthlyGrowth, 0, 0.2),
+        }
+      : {}),
   };
   return { ok: true, plan: { ...draft, monthlySpend: projectSimple(draft, dependencies).listMonthly } };
 }
@@ -216,25 +255,36 @@ export function explain(plan: SimplePlan, result: Estimate, band: UncertaintyBan
       `The commitment discount of ${percent(plan.commitDiscount)} applies to the Databricks portion only, not to cloud machines.`,
     );
   }
-  if (plan.monthlyGrowth > 0) {
+  if (plan.usageForecast) {
+    const mape =
+      plan.usageForecast.mape == null
+        ? ""
+        : ` Holding out the last ${plan.usageForecast.holdout} periods, the fit missed by ${mapeText(plan.usageForecast.mape)}.`;
+    lines.push(
+      `The shaded band is a prediction interval from a ${plan.usageForecast.method} fit to the usage file.${mape}`,
+    );
+  } else if (plan.monthlyGrowth > 0) {
     lines.push(`Each month is ${percent(plan.monthlyGrowth)} higher than the month before.`);
   } else {
     lines.push("Growth is flat, so a year with no discount is about twelve times the first month.");
   }
-  if (band.calibrated) {
-    lines.push(
-      "The shaded range is tighter because it starts from a usage file. It is a planning range, not a prediction interval.",
-    );
-  } else if (result.lines.some((item) => item.approximateVm)) {
-    lines.push("The shaded range runs from about 15% under to 28% over, because a machine rate is a stand-in.");
-  } else {
-    lines.push(
-      "The shaded range runs from about 15% under to 20% over. It is a planning range, not a prediction interval.",
-    );
+  if (!plan.usageForecast) {
+    if (band.calibrated) {
+      lines.push(
+        "The shaded range is tighter because it starts from a usage file. It is a planning range, not a prediction interval.",
+      );
+    } else if (result.lines.some((item) => item.approximateVm)) {
+      lines.push("The shaded range runs from about 15% under to 28% over, because a machine rate is a stand-in.");
+    } else {
+      lines.push(
+        "The shaded range runs from about 15% under to 20% over. It is a planning range, not a prediction interval.",
+      );
+    }
   }
   if (plan.cloud === "azure" && plan.tier === "enterprise") {
     lines.push("Azure publishes one plan, so Enterprise uses the same list as Premium.");
   }
+  lines.push(`Prices updated ${pricesUpdatedOn}.`);
   lines.push(
     "Estimates only. A private contract, a promotion, or support charges will differ. The Lakehouse Real-Time promotion is not applied.",
   );
@@ -244,7 +294,18 @@ export function explain(plan: SimplePlan, result: Estimate, band: UncertaintyBan
 function withoutUsage(plan: SimplePlan): SimplePlan {
   const next = { ...plan };
   delete next.usageDbu;
+  delete next.usageForecast;
   return next;
+}
+
+function applyFittedMonths(forecast: UsageForecast | undefined, baseline: number): SimpleMonth[] | null {
+  if (!forecast || !(baseline > 0) || forecast.ratios.length < 12) return null;
+  return forecast.ratios.slice(0, 12).map((ratio, index) => ({
+    month: index + 1,
+    low: roundMoney(baseline * Math.min(ratio.low, ratio.expected)),
+    expected: roundMoney(baseline * ratio.expected),
+    high: roundMoney(baseline * Math.max(ratio.expected, ratio.high)),
+  }));
 }
 
 function snapScale(value: number): number {
@@ -253,6 +314,13 @@ function snapScale(value: number): number {
 
 function percent(value: number): string {
   return `${Math.round(value * 100)}%`;
+}
+
+function mapeText(mape: number): string {
+  const pct = mape * 100;
+  if (pct < 0.1) return "under 0.1%";
+  if (pct < 10) return `${pct.toFixed(1)}%`;
+  return `${Math.round(pct)}%`;
 }
 
 function cloudName(cloud: Cloud): string {

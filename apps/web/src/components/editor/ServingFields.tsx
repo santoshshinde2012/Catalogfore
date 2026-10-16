@@ -1,4 +1,4 @@
-import { skuCatalog } from "@dcf/engine";
+import { skuCatalog } from "@cayfore/engine";
 import { type KindProps, numberOr, ScheduleFields } from "./fields";
 
 export function ServingFields({ workload, onChange }: KindProps) {

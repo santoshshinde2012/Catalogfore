@@ -124,6 +124,10 @@ describe("uncertainty band", () => {
     expect(open.expected).toBe(1200);
     expect(open.high).toBe(1440);
     portfolio.region = "sa-east-1";
+    const priced = uncertaintyBand(1200, portfolio, estimate(portfolio));
+    expect(priced.high).toBe(1440);
+    portfolio.region = "us-east-1";
+    portfolio.workloads = [{ ...portfolio.workloads[0], instanceId: "no.such" } as Workload];
     const wider = uncertaintyBand(1200, portfolio, estimate(portfolio));
     expect(wider.high).toBe(1536);
     portfolio.region = "us-east-1";

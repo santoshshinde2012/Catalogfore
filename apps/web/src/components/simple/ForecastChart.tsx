@@ -1,4 +1,4 @@
-import type { SimpleMonth } from "@dcf/engine";
+import type { SimpleMonth } from "@cayfore/engine";
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { money } from "../../format";
 import { usePrefersReducedMotion } from "../../lib/use-animated-number";

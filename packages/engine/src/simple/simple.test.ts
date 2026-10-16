@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { importUsageCsv } from "../usage.js";
 import { adjustMix, mixFromUsage } from "./mix.js";
@@ -89,6 +90,17 @@ describe("simple forecast", () => {
     expect(projected.estimate.dbu).toBeGreaterThan(1700);
     expect(projected.estimate.dbu).toBeLessThan(1800);
     expect(planFromUsage(defaultPlan(), "not,a,file").ok).toBe(false);
+    const history = readFileSync(
+      new URL("../../../../apps/web/public/sample-usage-history.csv", import.meta.url),
+      "utf8",
+    );
+    const fitted = planFromUsage(defaultPlan(), history);
+    expect(fitted.ok).toBe(true);
+    if (!fitted.ok) return;
+    expect(fitted.plan.usageForecast?.method).toBe("log-linear-seasonal");
+    const fittedProjection = projectSimple(fitted.plan);
+    expect(fittedProjection.assumptions.some((line) => line.startsWith("Prices updated"))).toBe(true);
+    expect(fittedProjection.annual).toBeGreaterThan(fittedProjection.months[0].expected);
   });
 
   it("rescales the other shares when one slider moves", () => {

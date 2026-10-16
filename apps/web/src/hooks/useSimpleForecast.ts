@@ -27,7 +27,7 @@ import {
   type TeamPresetId,
   type Tier,
   type WorkloadMix,
-} from "@dcf/engine";
+} from "@cayfore/engine";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -45,6 +45,7 @@ function planFromPortfolio(portfolio: Portfolio): SimplePlan | null {
     commitDiscount: portfolio.simple.commitDiscount,
     basket: portfolio.simple.basket,
     ...(portfolio.simple.usageDbu ? { usageDbu: portfolio.simple.usageDbu } : {}),
+    ...(portfolio.simple.usageForecast ? { usageForecast: portfolio.simple.usageForecast } : {}),
   });
 }
 

@@ -1,4 +1,5 @@
-import type { Estimate, ForecastPoint, Portfolio, SimpleMonth, SimplePlan } from "@dcf/engine";
+import type { Estimate, ForecastPoint, Portfolio, SimpleMonth, SimplePlan } from "@cayfore/engine";
+import { pricesUpdatedOn } from "@cayfore/engine";
 import { money } from "../../format";
 import { Rise } from "../../lib/rise";
 import { useAnimatedNumber } from "../../lib/use-animated-number";
@@ -145,7 +146,7 @@ export function ResultsPanel({
         </ul>
       </div>
       <p className="text-xs text-muted-foreground">
-        Estimates only. Not a Databricks quote, and not affiliated with Databricks.
+        Estimates only. Prices updated {pricesUpdatedOn}. Not a Databricks quote, and not affiliated with Databricks.
       </p>
     </div>
   );

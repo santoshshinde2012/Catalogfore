@@ -1,4 +1,4 @@
-import { SQL_SIZES, skuCatalog, sqlSizeLabel } from "@dcf/engine";
+import { SQL_SIZES, skuCatalog, sqlSizeLabel } from "@cayfore/engine";
 import { type KindProps, numberOr, ScaleFields, ScheduleFields } from "./fields";
 
 export function SqlFields({ workload, onChange }: KindProps) {

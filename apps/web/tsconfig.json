@@ -14,7 +14,7 @@
     "forceConsistentCasingInFileNames": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@dcf/engine": ["../../packages/engine/src/index.ts"]
+      "@cayfore/engine": ["../../packages/engine/src/index.ts"]
     }
   },
   "include": ["src"]

@@ -1,5 +1,5 @@
 {
-  "name": "@dcf/web",
+  "name": "@cayfore/web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dcf/engine": "*",
+    "@cayfore/engine": "*",
     "@fontsource/dm-mono": "^5.3.0",
     "@fontsource/dm-sans": "^5.3.0",
     "@radix-ui/react-collapsible": "^1.2.1",

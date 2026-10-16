@@ -88,7 +88,7 @@ export function pickAzureLinuxHour(items, armSkuName) {
     const name = `${item.productName ?? ""} ${item.skuName ?? ""} ${item.meterName ?? ""}`;
     return (
       item.armSkuName === armSkuName &&
-      item.priceType === "Consumption" &&
+      (item.priceType == null || item.priceType === "Consumption") &&
       typeof item.unitPrice === "number" &&
       item.unitPrice > 0 &&
       String(item.unitOfMeasure ?? "")
@@ -100,4 +100,89 @@ export function pickAzureLinuxHour(items, armSkuName) {
   });
   matches.sort((a, b) => a.unitPrice - b.unitPrice);
   return matches[0] ? { onDemandHourly: matches[0].unitPrice, meterName: matches[0].meterName ?? "" } : null;
+}
+
+/** Linux spot hourly rate. Azure publishes it as a Consumption meter with Spot in the name. */
+export function pickAzureSpotHour(items, armSkuName) {
+  const matches = (items ?? []).filter((item) => {
+    const name = `${item.productName ?? ""} ${item.skuName ?? ""} ${item.meterName ?? ""}`;
+    return (
+      item.armSkuName === armSkuName &&
+      (item.priceType == null || item.priceType === "Consumption") &&
+      typeof item.unitPrice === "number" &&
+      item.unitPrice > 0 &&
+      String(item.unitOfMeasure ?? "")
+        .toLowerCase()
+        .includes("hour") &&
+      /spot/i.test(name) &&
+      !/windows/i.test(name)
+    );
+  });
+  matches.sort((a, b) => a.unitPrice - b.unitPrice);
+  return matches[0] ? { spotHourly: matches[0].unitPrice, meterName: matches[0].meterName ?? "" } : null;
+}
+
+/** Premium meter name to catalog SKU ids. Photon, trial, and POC meters are not listed. */
+export const AZURE_DBU_METERS = [
+  { meter: "Premium Jobs Compute DBU", skus: ["jobs_classic"] },
+  { meter: "Premium All-purpose Compute DBU", skus: ["all_purpose_classic"] },
+  { meter: "Premium SQL Analytics DBU", skus: ["sql_classic"] },
+  { meter: "Premium SQL Compute Pro DBU", skus: ["sql_pro"] },
+  { meter: "Premium Serverless SQL DBU", skus: ["sql_serverless"] },
+  { meter: "Premium Automated Serverless Compute DBU", skus: ["jobs_serverless", "dlt_serverless"] },
+  { meter: "Premium Interactive Serverless Compute DBU", skus: ["all_purpose_serverless", "apps"] },
+  { meter: "Premium Core Compute Delta Live Tables DBU", skus: ["dlt_core"] },
+  { meter: "Premium Pro Compute Delta Live Tables DBU", skus: ["dlt_pro"] },
+  { meter: "Premium Advanced Compute Delta Live Tables DBU", skus: ["dlt_advanced"] },
+  { meter: "Premium Model Training DBU", skus: ["model_training"] },
+  { meter: "Premium Serverless Realtime Inferencing DBU", skus: ["model_serving"] },
+];
+
+export function pickAzureDbuMeters(items) {
+  const rows = [];
+  for (const item of items ?? []) {
+    if (item.priceType && item.priceType !== "Consumption") continue;
+    if (!(item.unitPrice > 0)) continue;
+    const name = String(item.meterName ?? "");
+    if (/photon|free trial|poc /i.test(name)) continue;
+    const spec = AZURE_DBU_METERS.find((row) => row.meter === name);
+    if (!spec) continue;
+    for (const sku of spec.skus) {
+      rows.push({ sku, usdPerDbu: item.unitPrice, meterName: name });
+    }
+  }
+  return rows;
+}
+
+/**
+ * On-demand hourly price for a GCP machine: cores × family core SKU + memory × family RAM SKU.
+ * `skus` is a Cloud Billing Catalog page. Missing either SKU returns null.
+ */
+export function gcpMachineHour(skus, region, spec) {
+  const core = gcpSkuHour(skus, region, `${spec.family} Instance Core`);
+  const ram = gcpSkuHour(skus, region, `${spec.family} Instance Ram`);
+  if (core == null || ram == null) return null;
+  return Math.round((spec.cores * core + spec.memory * ram) * 1e6) / 1e6;
+}
+
+function gcpSkuHour(skus, region, descriptionPrefix) {
+  const sku = (skus ?? []).find(
+    (item) =>
+      String(item.description ?? "").startsWith(descriptionPrefix) &&
+      Array.isArray(item.serviceRegions) &&
+      item.serviceRegions.includes(region) &&
+      item.category?.usageType === "OnDemand",
+  );
+  const rate = sku?.pricingInfo?.[0]?.pricingExpression?.tieredRates?.[0]?.unitPrice;
+  if (!rate) return null;
+  const hourly = Number(rate.units ?? 0) + Number(rate.nanos ?? 0) / 1e9;
+  return hourly > 0 ? hourly : null;
+}
+
+/** Spot advisor `s` is the percent saved versus on-demand, not an hourly price. */
+export function spotHourFromSavings(onDemandHourly, savingsPercent) {
+  if (!(onDemandHourly > 0) || !Number.isFinite(savingsPercent)) return null;
+  const fraction = savingsPercent / 100;
+  if (fraction <= 0 || fraction >= 0.95) return null;
+  return Math.round(onDemandHourly * (1 - fraction) * 1e6) / 1e6;
 }

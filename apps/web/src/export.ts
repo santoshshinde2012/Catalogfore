@@ -5,7 +5,7 @@ import {
   type Estimate,
   type ForecastPoint,
   type Portfolio,
-} from "@dcf/engine";
+} from "@cayfore/engine";
 
 function download(filename: string, blob: Blob) {
   const url = URL.createObjectURL(blob);
@@ -84,7 +84,7 @@ export async function exportPdf(portfolio: Portfolio, estimate: Estimate, points
   const yearBand = uncertaintyBand(year, portfolio, estimate);
   const ideas = recommendations(portfolio).slice(0, 4);
   doc.setFont("times", "bold");
-  write("Fathom", 12, 14);
+  write("Cayfore", 12, 14);
   write(portfolio.name || "Untitled forecast", 20, 22);
   doc.setFont("times", "normal");
   write(`${portfolio.cloud.toUpperCase()} · ${portfolio.region} · ${portfolio.tier}`);

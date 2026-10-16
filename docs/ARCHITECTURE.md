@@ -1,6 +1,6 @@
 # Architecture
 
-Fathom prices a portfolio by composing small units. The website and the MCP server both call the same engine. Neither one owns a rate table or a pricing formula.
+Cayfore prices a portfolio by composing small units. The website and the MCP server both call the same engine. Neither one owns a rate table or a pricing formula.
 
 ```mermaid
 flowchart LR
@@ -47,6 +47,7 @@ flowchart LR
 | `costing/strategies/*`          | One `CostStrategy` per workload kind. Each file prices that kind only.                                                                     | `PricingCatalog`, pure helpers in `costing/support.ts` |
 | `costing/estimate-portfolio.ts` | Walks the portfolio, finds a strategy, scales lines, adds the add-on. It does not know how a SKU is priced.                                | `CostStrategy[]`, `PricingCatalog`                     |
 | `forecast/model.ts`             | Turns one month’s estimate into 12–36 points. Growth and seasonality only.                                                                 | An `Estimate`                                          |
+| `forecast/series.ts`            | Fits an imported usage history to twelve months, with an approximate interval.                                                             | Usage points                                           |
 | `policies/scenario-policies.ts` | Named mutations: serverless, Photon, spot, commits. Each policy is data plus `apply`.                                                      | `PricingCatalog` when a policy needs a rate            |
 | `recommend.ts`                  | Ranks policies and the autostop / right-size adjustments by annual dollars.                                                                | `estimate`, `forecast`, `applyScenario`                |
 | `simple/`                       | Turns four inputs into a portfolio. Mix, presets, monthly growth, and a usage file set workload sizes. It does not price a SKU itself.     | `estimate`, `forecast`, `uncertaintyFactors`           |

@@ -1,9 +1,9 @@
 {
-  "name": "@dcf/mcp",
+  "name": "@cayfore/mcp",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "MCP server for the Databricks cost forecast engine",
+  "description": "MCP server for the Cayfore forecast engine",
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/index.js --external:@modelcontextprotocol/sdk --external:zod --banner:js=\"#!/usr/bin/env node\"",
     "typecheck": "tsc --noEmit",

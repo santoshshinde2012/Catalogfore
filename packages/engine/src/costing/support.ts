@@ -3,6 +3,11 @@ import { clamp } from "../money.js";
 import type { Portfolio, SkuId, Workload } from "../types.js";
 import type { CostContext, Placement, RawLine } from "./types.js";
 
+export interface SkuCharge {
+  perDbu: number;
+  text: string;
+}
+
 export function resolvePlacement(catalog: PricingCatalog, portfolio: Portfolio, workload: Workload): Placement {
   const cloud = workload.cloud ?? portfolio.cloud;
   const region = catalog.region(cloud, workload.region ?? portfolio.region);
@@ -19,9 +24,18 @@ export function discountDbu(amount: number, portfolio: Portfolio): number {
   return amount * (1 - clamp(portfolio.commitment.dbuDiscount, 0, 0.95));
 }
 
+export function skuCharge(context: CostContext, sku: SkuId): SkuCharge {
+  const { catalog, placement } = context;
+  const regional = catalog.regionalSkuRate?.(placement.cloud, placement.region, placement.tier, sku) ?? null;
+  if (regional != null) {
+    return { perDbu: regional, text: `$${regional}/DBU from the Azure meter for this region` };
+  }
+  const rate = catalog.skuRate(placement.cloud, placement.tier, sku);
+  return { perDbu: rate * placement.factor, text: `$${rate}/DBU × ${factorText(placement.factor)}` };
+}
+
 export function priceDbu(dbu: number, context: CostContext, sku: SkuId): number {
-  const { catalog, portfolio, placement } = context;
-  return discountDbu(dbu * catalog.skuRate(placement.cloud, placement.tier, sku) * placement.factor, portfolio);
+  return discountDbu(dbu * skuCharge(context, sku).perDbu, context.portfolio);
 }
 
 export function cloudCommit(onDemand: number, spot: number, portfolio: Portfolio): number {

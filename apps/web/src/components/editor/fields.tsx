@@ -1,4 +1,4 @@
-import type { Portfolio, Schedule, Scale, Workload } from "@dcf/engine";
+import type { Portfolio, Schedule, Scale, Workload } from "@cayfore/engine";
 
 export interface KindProps {
   workload: Workload;

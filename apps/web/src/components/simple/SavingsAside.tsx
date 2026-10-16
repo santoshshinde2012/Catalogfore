@@ -1,4 +1,4 @@
-import type { Recommendation, RecommendationId } from "@dcf/engine";
+import type { Recommendation, RecommendationId } from "@cayfore/engine";
 import { money } from "../../format";
 import { Button } from "../ui/button";
 
