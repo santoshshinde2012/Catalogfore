@@ -125,7 +125,7 @@ export function useSimpleForecast(): SimpleSession {
   const [usageError, setUsageError] = useState("");
   const [usageBusy, setUsageBusy] = useState(false);
   const [theme, setTheme] = useState<Theme>(() =>
-    document.documentElement.dataset.theme === "light" ? "light" : "dark",
+    document.documentElement.dataset.theme === "dark" ? "dark" : "light",
   );
 
   const projection = useMemo(() => projectSimple(plan), [plan]);
@@ -143,9 +143,12 @@ export function useSimpleForecast(): SimpleSession {
   }, [portfolio]);
 
   useEffect(() => {
-    if (theme === "light") document.documentElement.dataset.theme = "light";
+    if (theme === "dark") document.documentElement.dataset.theme = "dark";
     else delete document.documentElement.dataset.theme;
     localStorage.setItem("dcf-theme", theme);
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", theme === "dark" ? "#0B2026" : "#F9F7F4");
   }, [theme]);
 
   function replacePlan(next: SimplePlan) {

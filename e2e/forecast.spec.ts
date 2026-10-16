@@ -84,10 +84,12 @@ test("advanced builder, how we got this, and theme", async ({ page }) => {
   await page.getByRole("button", { name: /Serverless jobs/ }).click();
   await expect(page.getByRole("button", { name: /Serverless jobs/ }).first()).toBeVisible();
   await expect(page.getByText(/detailed workloads are driving/)).toBeVisible();
-  await page.getByRole("button", { name: "Switch to light theme" }).click();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator(".site-foot")).toContainText("not affiliated with Databricks");
+  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
   await page.getByRole("button", { name: "Switch to dark theme" }).click();
-  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "light");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.getByRole("button", { name: "Switch to light theme" }).click();
+  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
 });
 
 test("customer note links to the account tools", async ({ page }) => {
@@ -108,6 +110,9 @@ test("has no serious accessibility violations", async ({ page }, testInfo) => {
   await page.getByText("Advanced", { exact: true }).click();
   const open = await new AxeBuilder({ page }).analyze();
   expect(open.violations).toEqual([]);
+  await page.getByRole("button", { name: "Switch to dark theme" }).click();
+  const dark = await new AxeBuilder({ page }).analyze();
+  expect(dark.violations).toEqual([]);
   await page.getByRole("button", { name: "Switch to light theme" }).click();
   const light = await new AxeBuilder({ page }).analyze();
   expect(light.violations).toEqual([]);

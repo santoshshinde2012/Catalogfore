@@ -3,7 +3,7 @@ export function Mark() {
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" strokeWidth="1.6" />
       <path d="M4.5 12h15" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-      <circle cx="12" cy="12" r="2.15" fill="var(--accent)" />
+      <circle cx="12" cy="12" r="2.15" fill="var(--lava)" />
     </svg>
   );
 }

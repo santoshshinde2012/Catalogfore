@@ -40,7 +40,7 @@ export function BandChart({ months, label }: { months: SimpleMonth[]; label: str
             </text>
           </g>
         ))}
-        <path d={band} fill="var(--accent)" opacity="0.22" />
+        <path d={band} fill="var(--lava)" opacity="0.22" />
         <path d={line(expected)} fill="none" stroke="var(--text)" strokeWidth="1.8" strokeLinejoin="round" />
         <text className="axis" x={x(0)} y={height - 8}>
           Month 1

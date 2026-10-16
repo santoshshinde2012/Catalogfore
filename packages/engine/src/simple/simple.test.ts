@@ -18,8 +18,8 @@ describe("simple forecast", () => {
   it("prices a medium team near the preset monthly amount", () => {
     const plan = defaultPlan();
     const projected = projectSimple(plan);
-    expect(projected.listMonthly).toBeGreaterThan(7_900);
-    expect(projected.listMonthly).toBeLessThan(8_100);
+    expect(projected.listMonthly).toBeGreaterThan(11_900);
+    expect(projected.listMonthly).toBeLessThan(12_100);
     expect(projected.months).toHaveLength(12);
     expect(projected.spreadPercent).toBeGreaterThan(0);
   });

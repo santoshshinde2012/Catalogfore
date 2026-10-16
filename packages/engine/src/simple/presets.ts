@@ -16,21 +16,21 @@ export const TEAM_PRESETS: readonly TeamPreset[] = [
     label: "Small",
     monthlySpend: 2_000,
     mix: { etl: 0.35, sql: 0.55, ml: 0.1 },
-    detail: "A few nightly jobs and a shared dashboard.",
+    detail: "Nightly pipelines and a shared dashboard.",
   },
   {
     id: "medium",
     label: "Medium",
-    monthlySpend: 8_000,
+    monthlySpend: 12_000,
     mix: { etl: 0.45, sql: 0.4, ml: 0.15 },
-    detail: "Pipelines, a dashboard warehouse, and a small model.",
+    detail: "Pipelines lead, with dashboards and a little model use.",
   },
   {
     id: "large",
     label: "Large",
     monthlySpend: 25_000,
     mix: { etl: 0.4, sql: 0.3, ml: 0.3 },
-    detail: "A platform team with a real share of model usage.",
+    detail: "A platform bill with a real share of model usage.",
   },
 ];
 

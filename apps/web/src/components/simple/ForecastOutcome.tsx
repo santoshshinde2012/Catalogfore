@@ -77,7 +77,7 @@ export function ForecastDetail({
         </button>
         <ExportBar portfolio={portfolio} estimate={estimate} points={points} />
       </div>
-      <p className="fine">Estimates only. Not a Databricks quote.</p>
+      <p className="fine">Estimates only. Not a Databricks quote, and not affiliated with Databricks.</p>
     </section>
   );
 }

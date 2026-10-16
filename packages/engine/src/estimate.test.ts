@@ -288,6 +288,20 @@ describe("other products", () => {
     expect(estimate(portfolio).dbuCost).toBe(roundMoney(2 * hours * 0.07));
   });
 
+  it("prices Azure Lakebase from the Database Serverless meter", () => {
+    const portfolio = blankPortfolio("azure");
+    portfolio.region = "eastus";
+    portfolio.workloads = [
+      { id: "lb", name: "LB", kind: "lakebase", cu: 4, storageGb: 10, schedule: { hoursPerDay: 24, daysPerWeek: 7 } },
+    ];
+    const hours = 24 * 7 * MONTH_WEEKS;
+    const cuHour = 0.213 * 0.26;
+    expect(skuCatalog.lakebase.usdPerCuHour.azure).toBeCloseTo(cuHour, 5);
+    const result = estimate(portfolio);
+    expect(result.dbuCost).toBe(roundMoney(4 * hours * cuHour));
+    expect(result.cloudCost).toBe(roundMoney(10 * 0.39));
+  });
+
   it("does not price Lakebase on GCP", () => {
     const portfolio = blankPortfolio("gcp");
     portfolio.workloads = [

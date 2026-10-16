@@ -47,7 +47,7 @@ export function AppShell({ session }: { session: SimpleSession }) {
         <SimplePage session={session} />
       </main>
       <footer className="site-foot wrap">
-        <p>Fathom is an estimate. It is not a Databricks quote.</p>
+        <p>Fathom is an independent estimate, not a Databricks quote. Fathom is not affiliated with Databricks.</p>
         <a href="https://github.com/santoshshinde2012/databricks-cost-forecaster">Source</a>
       </footer>
       <p className="sr-only" role="status">
