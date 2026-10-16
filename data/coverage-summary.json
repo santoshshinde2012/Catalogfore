@@ -1,9 +1,9 @@
 {
-  "assumption": "Catalog coverage: 58 of 70 products (82.9%) have a stored rate or a priced underlying SKU. Azure meters fill 97.1% of region-and-SKU cells across 39 regions. AWS (16 regions) and GCP (6 regions) use the US East card times a Lakehouse Real-Time region factor, not a per-region meter.",
+  "assumption": "Catalog coverage: 59 of 70 products (84.3%) have a stored rate or a priced underlying SKU. Azure meters fill 97.1% of region-and-SKU cells across 39 regions. AWS (16 regions) and GCP (6 regions) use the US East card times a Lakehouse Real-Time region factor, not a per-region meter.",
   "products": 70,
-  "pricedProducts": 58,
-  "unpublishedProducts": 12,
-  "productCoveragePercent": 82.9,
+  "pricedProducts": 59,
+  "unpublishedProducts": 11,
+  "productCoveragePercent": 84.3,
   "azureRegionSkuPercent": 97.1,
   "azureRegions": 39,
   "awsRegions": 16,

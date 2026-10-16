@@ -1,232 +1,21 @@
 import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from "lz-string";
-import { defaultInstanceId, listRegions, skuCatalog } from "./catalog.js";
-import { clamp, uid } from "./money.js";
+import { listRegions } from "./catalog.js";
 import { FLAT_SEASONALITY } from "./forecast.js";
-import {
-  METERED_SKUS,
-  type Addon,
-  type Cloud,
-  type Portfolio,
-  type SeasonalityPreset,
-  type SimpleBasket,
-  type StoredSimple,
-  type Tier,
-  type Workload,
-  type WorkloadMix,
+import { normalizeWorkload } from "./normalize-workload.js";
+import { cloudOf, isRecord, num, str, tierOf } from "./portfolio-fields.js";
+import { err, ok, type Result } from "./result.js";
+import type {
+  Addon,
+  Cloud,
+  Portfolio,
+  SeasonalityPreset,
+  SimpleBasket,
+  StoredSimple,
+  Workload,
+  WorkloadMix,
 } from "./types.js";
 
-const CLOUDS: Cloud[] = ["aws", "azure", "gcp"];
-const TIERS: Tier[] = ["premium", "enterprise"];
 const ADDONS: Addon[] = ["none", "compliance", "mission_critical"];
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function num(value: unknown, fallback: number, min = 0, max = Number.POSITIVE_INFINITY): number {
-  const parsed = typeof value === "number" ? value : typeof value === "string" ? Number(value) : NaN;
-  if (!Number.isFinite(parsed)) return fallback;
-  return clamp(parsed, min, max);
-}
-
-function str(value: unknown, fallback: string): string {
-  return typeof value === "string" && value.trim() ? value.trim() : fallback;
-}
-
-function schedule(value: unknown, fallbackHours: number, fallbackDays: number) {
-  const record = isRecord(value) ? value : {};
-  return {
-    hoursPerDay: num(record.hoursPerDay, fallbackHours, 0, 24),
-    daysPerWeek: num(record.daysPerWeek, fallbackDays, 0, 7),
-  };
-}
-
-function scale(value: unknown, fallbackMin: number, fallbackMax: number, fallbackUtil: number) {
-  const record = isRecord(value) ? value : {};
-  return {
-    min: num(record.min, fallbackMin, 0, 1_000_000),
-    max: num(record.max, fallbackMax, 0, 1_000_000),
-    utilization: num(record.utilization, fallbackUtil, 0, 1),
-  };
-}
-
-function cloudRates(value: unknown): Partial<Record<Cloud, number>> | undefined {
-  if (!isRecord(value)) return undefined;
-  const rates: Partial<Record<Cloud, number>> = {};
-  for (const cloud of CLOUDS) {
-    if (value[cloud] != null) rates[cloud] = num(value[cloud], 0, 0, 1_000_000);
-  }
-  return Object.keys(rates).length > 0 ? rates : undefined;
-}
-
-function cloudOf(value: unknown): Cloud | undefined {
-  return CLOUDS.includes(value as Cloud) ? (value as Cloud) : undefined;
-}
-
-function tierOf(value: unknown): Tier | undefined {
-  return TIERS.includes(value as Tier) ? (value as Tier) : undefined;
-}
-
-function base(record: Record<string, unknown>, fallbackName: string) {
-  const cloud = cloudOf(record.cloud);
-  const tier = tierOf(record.tier);
-  return {
-    id: str(record.id, uid()),
-    name: str(record.name, fallbackName).slice(0, 80),
-    ...(cloud ? { cloud } : {}),
-    ...(typeof record.region === "string" ? { region: record.region } : {}),
-    ...(tier ? { tier } : {}),
-    ...(typeof record.productId === "string" && /^[a-z0-9_]+$/.test(record.productId)
-      ? { productId: record.productId }
-      : {}),
-    ...(typeof record.partId === "string" && /^[a-z0-9_]+$/.test(record.partId) ? { partId: record.partId } : {}),
-    ...(inputsOf(record.inputs) ? { inputs: inputsOf(record.inputs) } : {}),
-  };
-}
-
-function inputsOf(value: unknown): Record<string, number | string> | undefined {
-  if (!isRecord(value)) return undefined;
-  const inputs: Record<string, number | string> = {};
-  for (const [key, item] of Object.entries(value)) {
-    if (!/^[A-Za-z][A-Za-z0-9]*$/.test(key)) continue;
-    if (typeof item === "number" && Number.isFinite(item)) inputs[key] = item;
-    else if (typeof item === "string" && item.length > 0 && item.length <= 40) inputs[key] = item;
-  }
-  return Object.keys(inputs).length > 0 ? inputs : undefined;
-}
-
-export function normalizeWorkload(input: unknown, cloud: Cloud): Workload | null {
-  if (!isRecord(input) || typeof input.kind !== "string") return null;
-  const kind = input.kind;
-  if (kind === "cluster") {
-    const sku = ["jobs_classic", "all_purpose_classic", "dlt_core", "dlt_pro", "dlt_advanced"].includes(
-      String(input.sku),
-    )
-      ? (input.sku as Extract<Workload, { kind: "cluster" }>["sku"])
-      : "jobs_classic";
-    const instanceCloud = cloudOf(input.cloud) ?? cloud;
-    return {
-      ...base(input, "Cluster"),
-      kind,
-      sku,
-      instanceId: str(input.instanceId, defaultInstanceId(instanceCloud)),
-      scale: scale(input.scale, 1, 2, 1),
-      photon: Boolean(input.photon),
-      spotShare: num(input.spotShare, 0, 0, 1),
-      spotDiscount: num(input.spotDiscount, skuCatalog.defaultSpotDiscount, 0, 0.95),
-      schedule: schedule(input.schedule, 8, 5),
-    };
-  }
-  if (kind === "serverless_compute") {
-    const sku = ["jobs_serverless", "all_purpose_serverless", "dlt_serverless"].includes(String(input.sku))
-      ? (input.sku as Extract<Workload, { kind: "serverless_compute" }>["sku"])
-      : "jobs_serverless";
-    return {
-      ...base(input, "Serverless"),
-      kind,
-      sku,
-      dbuPerHour: num(input.dbuPerHour, 4, 0, 100000),
-      schedule: schedule(input.schedule, 4, 5),
-    };
-  }
-  if (kind === "sql") {
-    const edition = input.edition === "pro" || input.edition === "serverless" ? input.edition : "classic";
-    const sizes = ["2xs", "xs", "s", "m", "l", "xl", "2xl", "3xl", "4xl"] as const;
-    const size = sizes.includes(input.size as (typeof sizes)[number]) ? (input.size as (typeof sizes)[number]) : "s";
-    return {
-      ...base(input, "SQL warehouse"),
-      kind,
-      edition,
-      size,
-      scale: scale(input.scale, 1, 1, 1),
-      schedule: schedule(input.schedule, 8, 5),
-      ...(input.vmPerDbuHour == null
-        ? {}
-        : { vmPerDbuHour: num(input.vmPerDbuHour, skuCatalog.sqlVmDollarsPerDbuHour, 0, 100) }),
-    };
-  }
-  if (kind === "model_serving") {
-    return {
-      ...base(input, "Model serving"),
-      kind,
-      mode: input.mode === "gpu" ? "gpu" : "cpu",
-      concurrency: num(input.concurrency, 1, 0, 10000),
-      gpuId: str(input.gpuId, "t4"),
-      replicas: num(input.replicas, 1, 0, 100),
-      schedule: schedule(input.schedule, 12, 7),
-    };
-  }
-  if (kind === "foundation_model") {
-    return {
-      ...base(input, "Foundation model"),
-      kind,
-      modelId: str(input.modelId, "llama-3.1-8b"),
-      inputTokensPerMonth: num(input.inputTokensPerMonth, 1_000_000, 0, 1e15),
-      outputTokensPerMonth: num(input.outputTokensPerMonth, 250_000, 0, 1e15),
-      provisionedHoursPerMonth: num(input.provisionedHoursPerMonth, 0, 0, 1000),
-    };
-  }
-  if (kind === "ai_search") {
-    return {
-      ...base(input, "AI Search"),
-      kind,
-      variant: input.variant === "storage_optimized" ? "storage_optimized" : "standard",
-      units: num(input.units, 1, 0, 1000),
-      storageGb: num(input.storageGb, 0, 0, 1e9),
-      schedule: schedule(input.schedule, 24, 7),
-    };
-  }
-  if (kind === "app") {
-    return {
-      ...base(input, "App"),
-      kind,
-      size: input.size === "large" ? "large" : "medium",
-      schedule: schedule(input.schedule, 10, 5),
-    };
-  }
-  if (kind === "lakebase") {
-    return {
-      ...base(input, "Lakebase"),
-      kind,
-      cu: num(input.cu, 1, 0, 10000),
-      storageGb: num(input.storageGb, 20, 0, 1e9),
-      schedule: schedule(input.schedule, 12, 7),
-    };
-  }
-  if (kind === "storage") {
-    return {
-      ...base(input, "Storage"),
-      kind,
-      gbMonth: num(input.gbMonth, 100, 0, 1e12),
-      managed: input.managed !== false,
-      ...(input.rateMultiplier == null ? {} : { rateMultiplier: num(input.rateMultiplier, 1, 0, 100) }),
-    };
-  }
-  if (kind === "egress") {
-    return {
-      ...base(input, "Egress"),
-      kind,
-      gbMonth: num(input.gbMonth, 100, 0, 1e12),
-      ...(input.pricePerGb == null ? {} : { pricePerGb: num(input.pricePerGb, 0.09, 0, 10) }),
-    };
-  }
-  if (kind === "metered") {
-    const sku = (METERED_SKUS as readonly string[]).includes(String(input.sku))
-      ? (input.sku as Extract<Workload, { kind: "metered" }>["sku"])
-      : "managed_services";
-    const rateByCloud = cloudRates(input.rateByCloud);
-    const fixedUsdByCloud = cloudRates(input.fixedUsdByCloud);
-    return {
-      ...base(input, "Metered DBUs"),
-      kind,
-      sku,
-      dbuPerMonth: num(input.dbuPerMonth, 100, 0, 1e12),
-      ...(rateByCloud ? { rateByCloud } : {}),
-      ...(fixedUsdByCloud ? { fixedUsdByCloud } : {}),
-    };
-  }
-  return null;
-}
 
 export function blankPortfolio(cloud: Cloud = "aws"): Portfolio {
   const region = listRegions(cloud)[0]?.id ?? "us-east-1";
@@ -354,6 +143,13 @@ function forecastOf(value: unknown): StoredSimple["usageForecast"] | undefined {
 
 export function encodePortfolio(portfolio: Portfolio): string {
   return compressToEncodedURIComponent(JSON.stringify(portfolio));
+}
+
+/** Decode a share link. A bad link is an error value, not an exception. */
+export function decodePortfolioResult(encoded: string): Result<Portfolio> {
+  const portfolio = decodePortfolio(encoded);
+  if (!portfolio) return err("That link is not a forecast.");
+  return ok(portfolio);
 }
 
 export function decodePortfolio(encoded: string): Portfolio | null {

@@ -32,6 +32,23 @@ function pricedAll(productId: string, cloud: Cloud = "aws") {
 }
 
 describe("product catalog", () => {
+  it("prices Zerobus per GB from the secondary card and leaves GCP unpriced", () => {
+    expect(productById("zerobus")?.confidence).toBe("secondary");
+    expect(productById("zerobus")?.confidenceScore).toBe(55);
+    expect(priced(workloadForProduct("zerobus")).total).toBe(5);
+    const enterprise = estimate({
+      ...blankPortfolio("aws"),
+      region: "us-east-1",
+      tier: "enterprise",
+      workloads: [workloadForProduct("zerobus")],
+    });
+    expect(enterprise.total).toBe(6.4);
+    expect(priced(workloadForProduct("zerobus"), "azure").total).toBe(6.4);
+    const gcp = priced(workloadForProduct("zerobus"), "gcp");
+    expect(gcp.total).toBe(0);
+    expect(gcp.lines[0]?.notes.join(" ")).toMatch(/No list rate is stored/);
+  });
+
   it("prices classic jobs with the cluster strategy", () => {
     const workload = workloadForProduct("jobs_classic");
     expect(workload.productId).toBe("jobs_classic");
@@ -43,7 +60,7 @@ describe("product catalog", () => {
   });
 
   it("leaves a line at $0 only when nothing billable is published", () => {
-    for (const id of ["zerobus", "databricks_one", "private_link", "nat_gateway", "delta_sharing"]) {
+    for (const id of ["databricks_one", "private_link", "nat_gateway", "delta_sharing"]) {
       expect(productById(id)?.listPrice).toBe("unpublished");
       expect(pricedAll(id).total).toBe(0);
     }

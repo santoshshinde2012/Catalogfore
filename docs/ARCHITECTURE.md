@@ -3,40 +3,42 @@
 Cayfore prices a portfolio by composing small units. The website and the MCP server both call the same engine. Neither one owns a rate table or a pricing formula.
 
 ```mermaid
-flowchart LR
-  subgraph clients
+flowchart TB
+  subgraph presentation
     Web[React UI]
     MCP[stdio MCP]
   end
-  subgraph engine
+  subgraph application
     Simple[simple forecast]
-    Estimate[estimate]
-    Forecast[forecast model]
-    Policies[scenario policies]
+    Products[product formulas]
+    Usage[usage import]
     Recs[savings ranker]
   end
-  subgraph costing
+  subgraph domain
+    Estimate[estimate]
     Registry[strategy registry]
-    Strategies[CostStrategy per kind]
+    Forecast[forecast model]
+    Policies[scenario policies]
   end
-  Catalog[PricingCatalog]
-  JSON[(versioned JSON)]
+  subgraph infrastructure
+    JSON[(versioned JSON)]
+    Scripts[refresh and catalog watch]
+  end
 
   Web --> Simple
+  Web --> Products
   Web --> Recs
+  MCP --> Estimate
+  MCP --> Products
   Simple --> Estimate
   Simple --> Forecast
-  MCP --> Estimate
-  MCP --> Forecast
-  MCP --> Policies
+  Products --> Estimate
+  Usage --> Products
   Estimate --> Registry
-  Registry --> Strategies
-  Strategies --> Catalog
-  Policies --> Catalog
+  Registry --> JSON
+  Policies --> Estimate
   Recs --> Policies
-  Recs --> Estimate
-  Forecast --> Estimate
-  Catalog --> JSON
+  Scripts --> JSON
 ```
 
 ## Units
@@ -76,6 +78,17 @@ Pricing, forecasting, policies, recommendations, and portfolio normalization are
 
 A missing strategy throws `MissingCostStrategyError`. A scenario id that is not in the supplied policy list throws `UnknownScenarioError`. A JSON file that is not a forecast is rejected in the session hook with a visible alert. PDF export reports a failure on the page instead of failing silently.
 
+## Review on 2026-10-16
+
+| Finding                                                                       | Fix                                                                                                                                                                   |
+| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Several modules mixed lookup, formulas, and forecasting, or passed 200 lines. | Split along the existing seams: formulas, product forecast, CSV parsing, portfolio normalization, forecast fits, plan edits, plan sections, MCP tools, price refresh. |
+| Exporters and usage importers were direct calls.                              | `forecastExporters` and `usageImporters` are registries. Formulas and cost strategies already were.                                                                   |
+| Strategy tests named kinds one by one.                                        | One contract test runs every registered strategy and every catalog formula.                                                                                           |
+| The engine could have imported React or `fetch` without a CI failure.         | `dependency-cruiser` plus ESLint restricted globals. Costing cannot import the product or simple modules.                                                             |
+| Confidence was a word, not a score, and proxy cells were not counted.         | `confidenceScore` on each product. `data/rate-confidence.json` scores every cloud, region, tier, and SKU cell.                                                        |
+| Actions used floating tags. Coverage had no threshold.                        | Action SHAs are pinned. Engine lines, functions, and statements must stay at or above 90%.                                                                            |
+
 ## Checks
 
-ESLint (including `@typescript-eslint/no-explicit-any`) and Prettier both run from `npm run lint`. Vitest covers the bundled estimate, each strategy against an injected catalog, and the scenario policy list.
+ESLint (including `@typescript-eslint/no-explicit-any` and a 200-line module cap), Prettier, and dependency-cruiser run from `npm run lint`. Vitest covers the bundled estimate, the strategy contract, and the formula registry. Engine coverage is enforced in that run.

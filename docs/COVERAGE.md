@@ -2,7 +2,7 @@
 
 Generated from `data/product-catalog.json`, `data/sku-rates.json`, and `data/azure-dbu-meters.json`. Estimates only. Cayfore is not affiliated with Databricks.
 
-Catalog coverage: 58 of 70 products (82.9%) have a stored rate or a priced underlying SKU. Azure meters fill 97.1% of region-and-SKU cells across 39 regions. AWS (16 regions) and GCP (6 regions) use the US East card times a Lakehouse Real-Time region factor, not a per-region meter.
+Catalog coverage: 59 of 70 products (84.3%) have a stored rate or a priced underlying SKU. Azure meters fill 97.1% of region-and-SKU cells across 39 regions. AWS (16 regions) and GCP (6 regions) use the US East card times a Lakehouse Real-Time region factor, not a per-region meter.
 
 ## By product
 
@@ -10,14 +10,14 @@ A product counts as covered when `listPrice` is `distinct` (its own rate) or `re
 
 |                    | Priced | Products | Coverage |
 | ------------------ | -----: | -------: | -------: |
-| All                |     58 |       70 |    82.9% |
-| data_engineering   |     14 |       17 |    82.4% |
+| All                |     59 |       70 |    84.3% |
+| data_engineering   |     15 |       17 |    88.2% |
 | warehousing_bi     |      6 |        7 |    85.7% |
 | ai_ml              |     25 |       27 |    92.6% |
 | apps_oltp          |      5 |        5 |     100% |
 | governance_sharing |      8 |       14 |    57.1% |
 
-Unpublished product ids: compliance_addon, databricks_one, delta_sharing, external_models, fm_other, free_edition, lakehouse_realtime, marketplace, nat_gateway, private_link, standard_tier, zerobus.
+Unpublished product ids: compliance_addon, databricks_one, delta_sharing, external_models, fm_other, free_edition, lakehouse_realtime, marketplace, nat_gateway, private_link, standard_tier.
 
 ## By cloud and region
 

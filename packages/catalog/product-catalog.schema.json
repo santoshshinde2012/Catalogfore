@@ -47,6 +47,7 @@
         "listPrice",
         "published",
         "confidence",
+        "confidenceScore",
         "automation",
         "template",
         "editor",
@@ -68,6 +69,7 @@
         "listPrice": { "enum": ["distinct", "reused_sku", "unpublished"] },
         "published": { "type": "boolean" },
         "confidence": { "enum": ["measured", "cited", "secondary", "unpublished"] },
+        "confidenceScore": { "type": "integer", "minimum": 0, "maximum": 100 },
         "automation": { "enum": ["azure-retail-prices", "manual"] },
         "template": {
           "enum": [
@@ -114,7 +116,8 @@
             "ai_parse",
             "custom_fm",
             "launch",
-            "azure_data_processed"
+            "azure_data_processed",
+            "zerobus_gb"
           ]
         },
         "parts": { "type": "array", "items": { "$ref": "#/$defs/part" } }

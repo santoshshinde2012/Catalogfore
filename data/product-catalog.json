@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-16.4",
+  "version": "2026-10-16.5",
   "verifiedOn": "2026-10-16",
   "disclaimer": "Estimates only. Not a quote, invoice, or commitment. Unpublished rows are $0 on purpose. Azure meters were checked on 2026-10-16. AWS and GCP $/DBU remain the curated table.",
   "categories": [
@@ -82,7 +82,8 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-16"
       },
-      "note": "Jobs Compute DBU. Photon uses the 2.9× calculator rule. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON."
+      "note": "Jobs Compute DBU. Photon uses the 2.9× calculator rule. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "confidenceScore": 92
     },
     {
       "id": "jobs_light",
@@ -126,7 +127,8 @@
       },
       "azureMeterNames": [
         "Premium Jobs Light Compute DBU"
-      ]
+      ],
+      "confidenceScore": 92
     },
     {
       "published": true,
@@ -157,7 +159,8 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-16"
       },
-      "note": "Automated Serverless Compute. Compute is included. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON."
+      "note": "Automated Serverless Compute. Compute is included. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "confidenceScore": 92
     },
     {
       "published": false,
@@ -185,7 +188,8 @@
         "url": "https://www.databricks.com/product/pricing",
         "fetchedOn": "2026-10-16"
       },
-      "note": "No separate performance-versus-standard meter was in the Azure map on 2026-10-16. This line uses the Jobs serverless SKU. Do not apply a guessed mode multiplier."
+      "note": "No separate performance-versus-standard meter was in the Azure map on 2026-10-16. This line uses the Jobs serverless SKU. Do not apply a guessed mode multiplier.",
+      "confidenceScore": 8
     },
     {
       "published": true,
@@ -217,7 +221,8 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-16"
       },
-      "note": "All-purpose Compute DBU plus the VM. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON."
+      "note": "All-purpose Compute DBU plus the VM. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "confidenceScore": 92
     },
     {
       "published": true,
@@ -248,7 +253,8 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-16"
       },
-      "note": "Interactive Serverless Compute. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON."
+      "note": "Interactive Serverless Compute. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "confidenceScore": 92
     },
     {
       "published": true,
@@ -282,7 +288,8 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-16"
       },
-      "note": "Classic Delta Live Tables Core meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON."
+      "note": "Classic Delta Live Tables Core meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "confidenceScore": 92
     },
     {
       "published": true,
@@ -314,7 +321,8 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-16"
       },
-      "note": "Classic Delta Live Tables Pro meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON."
+      "note": "Classic Delta Live Tables Pro meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "confidenceScore": 92
     },
     {
       "published": true,
@@ -348,7 +356,8 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-16"
       },
-      "note": "Classic Delta Live Tables Advanced meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON."
+      "note": "Classic Delta Live Tables Advanced meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "confidenceScore": 92
     },
     {
       "published": true,
@@ -379,7 +388,8 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-16"
       },
-      "note": "Serverless pipelines use the Automated Serverless meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON."
+      "note": "Serverless pipelines use the Automated Serverless meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "confidenceScore": 92
     },
     {
       "published": true,
@@ -410,7 +420,8 @@
         "url": "https://www.databricks.com/product/pricing",
         "fetchedOn": "2026-10-16"
       },
-      "note": "The curated table has a Lakeflow Connect $/DBU (AWS Premium $0.35, Azure and Enterprise $0.45) and marks compute as included. That SKU is not in the Azure meter map, so the dollar rate is manual."
+      "note": "The curated table has a Lakeflow Connect $/DBU (AWS Premium $0.35, Azure and Enterprise $0.45) and marks compute as included. That SKU is not in the Azure meter map, so the dollar rate is manual.",
+      "confidenceScore": 55
     },
     {
       "published": true,
@@ -443,7 +454,8 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-16"
       },
-      "note": "Premium Model Training DBU. Learn’s US East example is $0.65/DBU. Forecasting has a separate 4× line."
+      "note": "Premium Model Training DBU. Learn’s US East example is $0.65/DBU. Forecasting has a separate 4× line.",
+      "confidenceScore": 92
     },
     {
       "published": true,
@@ -483,7 +495,8 @@
         "url": "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Learn bills Forecasting at 4× the Model Training SKU. 400 DBU is an example quantity, not a typical workload. Replace it with usage."
+      "note": "Learn bills Forecasting at 4× the Model Training SKU. 400 DBU is an example quantity, not a typical workload. Replace it with usage.",
+      "confidenceScore": 78
     },
     {
       "published": false,
@@ -521,7 +534,8 @@
       "summary": "Serving GPU table, labeled as such",
       "category": "data_engineering",
       "billingUnit": "DBU-hour on the serving GPU table",
-      "note": "billing_origin_product AI_RUNTIME has no separate published GPU DBU/hour table. This line uses the model-serving GPU table (T4 10.48 DBU/hour, and the other curated shapes). If your AI_RUNTIME rate differs, replace the line with a usage import."
+      "note": "billing_origin_product AI_RUNTIME has no separate published GPU DBU/hour table. This line uses the model-serving GPU table (T4 10.48 DBU/hour, and the other curated shapes). If your AI_RUNTIME rate differs, replace the line with a usage import.",
+      "confidenceScore": 78
     },
     {
       "published": false,
@@ -552,38 +566,52 @@
       "summary": "Regional rates are factors only",
       "category": "data_engineering",
       "billingUnit": "Unpublished as its own line",
-      "note": "The Lakehouse Real-Time page publishes regional $/DBU for LAKEHOUSE_SERVERLESS_COMPUTE. Cayfore uses those ratios as region factors on other SKUs. It does not add a second DBU price for the same usage. This line stays at $0."
+      "note": "The Lakehouse Real-Time page publishes regional $/DBU for LAKEHOUSE_SERVERLESS_COMPUTE. Cayfore uses those ratios as region factors on other SKUs. It does not add a second DBU price for the same usage. This line stays at $0.",
+      "confidenceScore": 8
     },
     {
-      "published": false,
-      "confidence": "unpublished",
-      "automation": "manual",
-      "editor": "schema",
-      "listPrice": "unpublished",
-      "fields": [],
-      "patch": {
-        "sku": "managed_services",
-        "dbuPerMonth": 0
-      },
-      "azureMeterNames": [],
-      "sku": null,
-      "template": "metered",
-      "drivers": [
-        "Same-region traffic is not billed"
-      ],
-      "defaults": "The line is $0. Cross-region dollars are not published.",
-      "source": {
-        "title": "Databricks serverless network security, cost management",
-        "url": "https://docs.databricks.com/aws/en/security/network/serverless-network-security/cost-management",
-        "fetchedOn": "2026-10-16"
-      },
       "id": "zerobus",
       "name": "Zerobus",
       "menuLabel": "Zerobus",
-      "summary": "Same-region egress is not charged",
+      "summary": "Example 100 GB at the US East list",
       "category": "data_engineering",
-      "billingUnit": "No dollar rate is published",
-      "note": "Same-region Zerobus client egress is not charged (serverless network cost management, updated 2026-09-11). Cross-region and public-internet egress are billed under NETWORKING, and no Zerobus dollar rate is published. This line stays at $0. It does not reuse the internet-egress assumption."
+      "billingUnit": "$/GB",
+      "sku": null,
+      "listPrice": "distinct",
+      "published": true,
+      "confidence": "secondary",
+      "confidenceScore": 55,
+      "automation": "manual",
+      "template": "metered",
+      "editor": "schema",
+      "drivers": [
+        "Gigabytes ingested"
+      ],
+      "defaults": "Example of 100 GB. AWS Premium $0.050/GB. AWS Enterprise and Azure $0.064/GB. GCP is not priced.",
+      "source": {
+        "title": "Flexera Databricks pricing guide (2026), cross-checked SunnyData",
+        "url": "https://www.flexera.com/blog/finops/databricks-pricing-guide/",
+        "fetchedOn": "2026-10-16"
+      },
+      "note": "Secondary list rates, not a first-party number printed on a static page. Flexera (2026) lists Zerobus Ingest at $0.050/GB on AWS Premium and $0.064/GB on AWS Enterprise. The Azure table lists $0.064/GB, which matches Enterprise rather than a second Premium rate. SunnyData re-verified $0.064/GB for AWS Enterprise us-east on 2026-08-04 and says the rate includes compute. Official docs bill the usage against Jobs Serverless (AWS) or Automated Serverless (Azure) and point at the Lakeflow Connect price page, which does not render a dollar rate to a static fetch. The GA post calls the price volume-based and mentions a 6-month promotion with no end date, so the promotion is not applied. GCP is listed as coming soon. The example is 100 GB. The rate is not scaled by region. Same-region client egress is still not a second charge.",
+      "fields": [
+        {
+          "path": "inputs.gb",
+          "label": "GB / month",
+          "type": "number",
+          "min": 0,
+          "step": 1
+        }
+      ],
+      "patch": {
+        "sku": "managed_services",
+        "dbuPerMonth": 0,
+        "inputs": {
+          "gb": 100
+        }
+      },
+      "azureMeterNames": [],
+      "formula": "zerobus_gb"
     },
     {
       "id": "standard_tier",
@@ -619,7 +647,8 @@
         "Standard All-purpose Compute DBU",
         "Standard SQL Analytics DBU",
         "Standard Jobs Light Compute DBU"
-      ]
+      ],
+      "confidenceScore": 8
     },
     {
       "published": true,
@@ -654,7 +683,8 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-16"
       },
-      "note": "SQL Analytics DBU. Classic and Pro add the $0.22 VM-per-DBU-hour assumption, which is not a VM meter. Sizes run from 2XS (4 DBU/h) to 4XL (528 DBU/h)."
+      "note": "SQL Analytics DBU. Classic and Pro add the $0.22 VM-per-DBU-hour assumption, which is not a VM meter. Sizes run from 2XS (4 DBU/h) to 4XL (528 DBU/h).",
+      "confidenceScore": 92
     },
     {
       "published": true,
@@ -689,7 +719,8 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-16"
       },
-      "note": "SQL Compute Pro DBU, plus the same $0.22 VM assumption."
+      "note": "SQL Compute Pro DBU, plus the same $0.22 VM assumption.",
+      "confidenceScore": 92
     },
     {
       "published": true,
@@ -721,7 +752,8 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-16"
       },
-      "note": "Serverless SQL DBU. Compute is included. The four-input page’s Dashboards bucket uses this SKU."
+      "note": "Serverless SQL DBU. Compute is included. The four-input page’s Dashboards bucket uses this SKU.",
+      "confidenceScore": 92
     },
     {
       "published": false,
@@ -782,7 +814,8 @@
       "category": "warehousing_bi",
       "billingUnit": "SQL serverless DBU, from an assumption",
       "note": "AI/BI dashboards have no separate SKU. Cost is the SQL warehouse. This line is viewers × refreshes × an assumed SQL DBU per refresh, priced at the serverless SQL rate. 1 DBU per refresh is an assumption, not a Databricks list rate. Replace it with warehouse DBU ÷ refreshes from your usage. Do not also add that same warehouse.",
-      "formula": "dashboard_sql"
+      "formula": "dashboard_sql",
+      "confidenceScore": 78
     },
     {
       "published": false,
@@ -884,7 +917,8 @@
             }
           }
         }
-      ]
+      ],
+      "confidenceScore": 78
     },
     {
       "published": false,
@@ -938,7 +972,8 @@
       "category": "warehousing_bi",
       "billingUnit": "DBU above 150 per user, model-serving rate",
       "note": "Genie Code bills above 150 DBU per user per month. 150 DBU is $10.50 in US East, which is the $0.07 model-serving rate. Through 2027-01-31 the 25% discount is already inside usage_quantity, so this line multiplies billed DBU by 0.75 and does not discount again. DBU per user is an assumption, not a list rate. Classic Assistant has no separate SKU; this line uses the Genie Code allowance. The consumption guide says to use a discovery period rather than a fixed heuristic.",
-      "formula": "genie_code"
+      "formula": "genie_code",
+      "confidenceScore": 78
     },
     {
       "published": false,
@@ -969,7 +1004,8 @@
       "summary": "No separate SKU",
       "category": "warehousing_bi",
       "billingUnit": "No separate SKU is published",
-      "note": "Databricks One has no billing_origin_product of its own. Spend is on the products you open inside it, such as SQL, Genie, or jobs. This line stays at $0 because nothing extra is published."
+      "note": "Databricks One has no billing_origin_product of its own. Spend is on the products you open inside it, such as SQL, Genie, or jobs. This line stays at $0 because nothing extra is published.",
+      "confidenceScore": 8
     },
     {
       "published": true,
@@ -1001,7 +1037,8 @@
         "url": "https://www.databricks.com/product/pricing/model-serving",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Serverless Realtime Inferencing is $0.07/DBU on the East US meter. CPU concurrency is 1 DBU per concurrent request-hour."
+      "note": "Serverless Realtime Inferencing is $0.07/DBU on the East US meter. CPU concurrency is 1 DBU per concurrent request-hour.",
+      "confidenceScore": 92
     },
     {
       "published": true,
@@ -1035,7 +1072,8 @@
         "url": "https://www.databricks.com/product/pricing/model-serving",
         "fetchedOn": "2026-10-15"
       },
-      "note": "GPU DBU/hour is the curated serving table (T4 10.48, A10G 20, L40S 44.86, A100 80GB 78.6, H100 100) times the $0.07 inferencing meter. The page lists more shapes than this table."
+      "note": "GPU DBU/hour is the curated serving table (T4 10.48, A10G 20, L40S 44.86, A100 80GB 78.6, H100 100) times the $0.07 inferencing meter. The page lists more shapes than this table.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -1069,7 +1107,8 @@
         "url": "https://www.databricks.com/product/pricing/foundation-model-serving",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Provisioned throughput is DBU/hour on the model row, priced at the model-serving $/DBU. Reservations and cache-read columns on the live page are not in the curated table."
+      "note": "Provisioned throughput is DBU/hour on the model row, priced at the model-serving $/DBU. Reservations and cache-read columns on the live page are not in the curated table.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -1100,7 +1139,8 @@
         "url": "https://www.databricks.com/product/pricing/foundation-model-serving",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Llama 4 Maverick: 7.143 / 21.429 DBU per million input/output tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set."
+      "note": "Llama 4 Maverick: 7.143 / 21.429 DBU per million input/output tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -1131,7 +1171,8 @@
         "url": "https://www.databricks.com/product/pricing/foundation-model-serving",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Llama 3.3 70B: 7.143 / 21.429 DBU per million tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set."
+      "note": "Llama 3.3 70B: 7.143 / 21.429 DBU per million tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -1162,7 +1203,8 @@
         "url": "https://www.databricks.com/product/pricing/foundation-model-serving",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Llama 3.1 8B: 2.143 / 6.429 DBU per million tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set."
+      "note": "Llama 3.1 8B: 2.143 / 6.429 DBU per million tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -1193,7 +1235,8 @@
         "url": "https://www.databricks.com/product/pricing/foundation-model-serving",
         "fetchedOn": "2026-10-15"
       },
-      "note": "GPT OSS 20B: 1 / 4.286 DBU per million tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set."
+      "note": "GPT OSS 20B: 1 / 4.286 DBU per million tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -1224,7 +1267,8 @@
         "url": "https://www.databricks.com/product/pricing/foundation-model-serving",
         "fetchedOn": "2026-10-15"
       },
-      "note": "GPT OSS 120B: 2.143 / 8.571 DBU per million tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set."
+      "note": "GPT OSS 120B: 2.143 / 8.571 DBU per million tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -1255,7 +1299,8 @@
         "url": "https://www.databricks.com/product/pricing/foundation-model-serving",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Gemma 3 12B: 2.143 / 7.143 DBU per million tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set."
+      "note": "Gemma 3 12B: 2.143 / 7.143 DBU per million tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -1286,7 +1331,8 @@
         "url": "https://www.databricks.com/product/pricing/foundation-model-serving",
         "fetchedOn": "2026-10-15"
       },
-      "note": "GTE embeddings: 1.857 DBU per million input tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set."
+      "note": "GTE embeddings: 1.857 DBU per million input tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -1317,7 +1363,8 @@
         "url": "https://www.databricks.com/product/pricing/foundation-model-serving",
         "fetchedOn": "2026-10-15"
       },
-      "note": "BGE Large embeddings: 1.429 DBU per million input tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set."
+      "note": "BGE Large embeddings: 1.429 DBU per million input tokens. Dollars are those DBU times the model-serving rate ($0.07 in US East). The live page lists more models than this curated set.",
+      "confidenceScore": 78
     },
     {
       "published": false,
@@ -1385,7 +1432,8 @@
       "category": "ai_ml",
       "billingUnit": "DBU per million tokens you copy from the price page",
       "note": "Kimi, GLM, DeepSeek, Qwen, and other rows on the Foundation Model page are not in the curated DBU-per-million table. Their rates are not invented here. Copy DBU per million input and output from that page and the line prices them at the model-serving $/DBU. Until you do, the line stays at $0.",
-      "formula": "custom_fm"
+      "formula": "custom_fm",
+      "confidenceScore": 8
     },
     {
       "published": true,
@@ -1427,7 +1475,8 @@
         "url": "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Learn bills AI Gateway inference tables at 7.143 DBU per GB on the Model Serving SKU. The 10 GB quantity is an example."
+      "note": "Learn bills AI Gateway inference tables at 7.143 DBU per GB on the Model Serving SKU. The 10 GB quantity is an example.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -1469,7 +1518,8 @@
         "url": "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Learn bills usage tracking at 1.429 DBU per GB on Model Serving. The quantity is an example."
+      "note": "Learn bills usage tracking at 1.429 DBU per GB on Model Serving. The quantity is an example.",
+      "confidenceScore": 78
     },
     {
       "published": false,
@@ -1536,7 +1586,8 @@
       "category": "ai_ml",
       "billingUnit": "No platform fee is published",
       "note": "No Databricks platform fee for an external model was published. Usage tracking (1.429 DBU/GB) is its own product. If your list_prices row meters these tokens on model serving, type the DBU per million from that row. The defaults are 0, so the line stays at $0 until you do. Those typed rates are yours, not a Cayfore list price.",
-      "formula": "custom_fm"
+      "formula": "custom_fm",
+      "confidenceScore": 8
     },
     {
       "published": false,
@@ -1583,7 +1634,8 @@
           "patch": {},
           "fields": []
         }
-      ]
+      ],
+      "confidenceScore": 78
     },
     {
       "published": false,
@@ -1650,7 +1702,8 @@
             "dbuPerMonth": 100
           }
         }
-      ]
+      ],
+      "confidenceScore": 78
     },
     {
       "published": false,
@@ -1679,7 +1732,8 @@
       "summary": "Judges use foundation-model tokens",
       "category": "ai_ml",
       "billingUnit": "Foundation-model tokens",
-      "note": "billing_origin_product AGENT_EVALUATION has no separate list rate. Evaluation judges spend foundation-model tokens, so this line is that SKU. Query compute that runs the eval is not included."
+      "note": "billing_origin_product AGENT_EVALUATION has no separate list rate. Evaluation judges spend foundation-model tokens, so this line is that SKU. Query compute that runs the eval is not included.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -1709,7 +1763,8 @@
         "url": "https://www.databricks.com/product/pricing/ai-search",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Standard is 4 DBU/hour, about $0.28/unit-hour at $0.07/DBU, plus storage after 30 GB free. ai_search is not an Azure Retail Prices meter, so the $/DBU is the curated model-serving rate."
+      "note": "Standard is 4 DBU/hour, about $0.28/unit-hour at $0.07/DBU, plus storage after 30 GB free. ai_search is not an Azure Retail Prices meter, so the $/DBU is the curated model-serving rate.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -1741,7 +1796,8 @@
         "url": "https://www.databricks.com/product/pricing/ai-search",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Storage-optimized is 18.29 DBU/hour. There is no free storage allowance on this variant in the catalog."
+      "note": "Storage-optimized is 18.29 DBU/hour. There is no free storage allowance on this variant in the catalog.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -1783,7 +1839,8 @@
         "url": "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Learn bills the reranker at 28.571 DBU per 1,000 requests on Model Serving. The quantity is an example."
+      "note": "Learn bills the reranker at 28.571 DBU per 1,000 requests on Model Serving. The quantity is an example.",
+      "confidenceScore": 78
     },
     {
       "published": false,
@@ -1812,7 +1869,8 @@
       "summary": "serving_type FEATURE, same SKU",
       "category": "ai_ml",
       "billingUnit": "DBU-hour on model serving",
-      "note": "Feature Serving uses serving_type FEATURE on the model-serving SKU. There is no second rate. CPU concurrency is 1 DBU per concurrent request-hour, the same rule as Model serving."
+      "note": "Feature Serving uses serving_type FEATURE on the model-serving SKU. There is no second rate. CPU concurrency is 1 DBU per concurrent request-hour, the same rule as Model serving.",
+      "confidenceScore": 78
     },
     {
       "published": false,
@@ -1841,7 +1899,8 @@
       "summary": "Legacy ONLINE_TABLES, same SKU",
       "category": "ai_ml",
       "billingUnit": "DBU-hour on model serving",
-      "note": "Online tables are the legacy ONLINE_TABLES origin. No separate rate was published. Synced features are served on the model-serving SKU, and this line uses that CPU rate."
+      "note": "Online tables are the legacy ONLINE_TABLES origin. No separate rate was published. Synced features are served on the model-serving SKU, and this line uses that CPU rate.",
+      "confidenceScore": 78
     },
     {
       "published": false,
@@ -1871,7 +1930,8 @@
       "summary": "The tokens ai_query spends",
       "category": "ai_ml",
       "billingUnit": "Foundation-model tokens",
-      "note": "ai_query spends Foundation Model API tokens. This line is that SKU, so you can forecast it directly. The SQL warehouse or job that runs the query is billed separately and is not included. Do not also add the same model line."
+      "note": "ai_query spends Foundation Model API tokens. This line is that SKU, so you can forecast it directly. The SQL warehouse or job that runs the query is billed separately and is not included. Do not also add the same model line.",
+      "confidenceScore": 78
     },
     {
       "published": false,
@@ -1939,7 +1999,8 @@
       "category": "ai_ml",
       "billingUnit": "DBU per page, band midpoint, model-serving rate",
       "note": "Microsoft Learn estimates serverless real-time inference DBU per page: simple without captions 10–15, simple with captions 20–25, medium 60–65, high 85–90. This line uses the midpoint of the band you pick, times the model-serving $/DBU. It is the documented range, not a single list price. The 50% promo ended 2026-06-30 and is not applied. Query compute is not included.",
-      "formula": "ai_parse"
+      "formula": "ai_parse",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -1981,7 +2042,8 @@
         "url": "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Learn bills Shutterstock Image AI at 0.857 DBU per image on Model Serving. The quantity is an example."
+      "note": "Learn bills Shutterstock Image AI at 0.857 DBU per image on Model Serving. The quantity is an example.",
+      "confidenceScore": 78
     },
     {
       "id": "serving_launch_charge",
@@ -2026,7 +2088,8 @@
       "azureMeterNames": [
         "Launch Charge Serverless Realtime Inferencing DBU"
       ],
-      "formula": "launch"
+      "formula": "launch",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -2057,7 +2120,8 @@
         "url": "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Medium is 0.5× and large is 1× Interactive Serverless. There is no separate VM line."
+      "note": "Medium is 0.5× and large is 1× Interactive Serverless. There is no separate VM line.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -2089,7 +2153,8 @@
         "url": "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Azure compute is 0.213 × the East US Premium Database Serverless meter ($0.26), which is $0.05538 per CU-hour. Storage is 15× the $0.026 DSU rate. AWS uses $0.111 per CU-hour. The $0.0092 preview is not the default. GCP has no published Lakebase rate, so compute and the Lakebase storage price on GCP are $0. The line says so when the portfolio cloud is GCP."
+      "note": "Azure compute is 0.213 × the East US Premium Database Serverless meter ($0.26), which is $0.05538 per CU-hour. Storage is 15× the $0.026 DSU rate. AWS uses $0.111 per CU-hour. The $0.0092 preview is not the default. GCP has no published Lakebase rate, so compute and the Lakebase storage price on GCP are $0. The line says so when the portfolio cloud is GCP.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -2130,7 +2195,8 @@
         "url": "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Learn bills point-in-time restore at 8.7× the Databricks Storage DSU rate. 50 GB is an example. This is not the Lakebase compute line."
+      "note": "Learn bills point-in-time restore at 8.7× the Databricks Storage DSU rate. 50 GB is an example. This is not the Lakebase compute line.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -2171,7 +2237,8 @@
         "url": "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Learn bills snapshots at 3.91× the DSU rate. 50 GB is an example."
+      "note": "Learn bills snapshots at 3.91× the DSU rate. 50 GB is an example.",
+      "confidenceScore": 78
     },
     {
       "published": false,
@@ -2238,7 +2305,8 @@
             "rateMultiplier": 15
           }
         }
-      ]
+      ],
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -2266,7 +2334,8 @@
         "url": "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Learn bills predictive optimization at 1× Automated Serverless. There is no meter by this name. The line uses the managed-services $/DBU, which matches Automated Serverless in the curated table."
+      "note": "Learn bills predictive optimization at 1× Automated Serverless. There is no meter by this name. The line uses the managed-services $/DBU, which matches Automated Serverless in the curated table.",
+      "confidenceScore": 55
     },
     {
       "published": true,
@@ -2308,7 +2377,8 @@
         "url": "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Learn bills Data Quality Monitoring at 2× Automated Serverless. Enter DBU after the multiplier. 200 is an example."
+      "note": "Learn bills Data Quality Monitoring at 2× Automated Serverless. Enter DBU after the multiplier. 200 is an example.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -2350,7 +2420,8 @@
         "url": "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Learn bills Data Classification at 3× Automated Serverless. 300 DBU is an example."
+      "note": "Learn bills Data Classification at 3× Automated Serverless. 300 DBU is an example.",
+      "confidenceScore": 78
     },
     {
       "published": true,
@@ -2380,7 +2451,8 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-16"
       },
-      "note": "Managed storage is about 1 DSU per GB-month. East US Premium Databricks Storage is $0.026 per DSU on the Retail Prices API (2026-10-16), which matches the Azure rate already used. AWS and GCP stay on the curated DSU rates. Default storage in a new workspace uses this line."
+      "note": "Managed storage is about 1 DSU per GB-month. East US Premium Databricks Storage is $0.026 per DSU on the Retail Prices API (2026-10-16), which matches the Azure rate already used. AWS and GCP stay on the curated DSU rates. Default storage in a new workspace uses this line.",
+      "confidenceScore": 92
     },
     {
       "published": true,
@@ -2410,7 +2482,8 @@
         "url": "https://www.databricks.com/product/pricing",
         "fetchedOn": "2026-10-16"
       },
-      "note": "Customer-owned object storage is not a DSU. The $/GB-month is a pinned cloud list (AWS $0.023, Azure $0.018, GCP $0.02), not a live catalog download."
+      "note": "Customer-owned object storage is not a DSU. The $/GB-month is a pinned cloud list (AWS $0.023, Azure $0.018, GCP $0.02), not a live catalog download.",
+      "confidenceScore": 55
     },
     {
       "published": true,
@@ -2439,7 +2512,8 @@
         "url": "https://www.databricks.com/product/pricing",
         "fetchedOn": "2026-10-16"
       },
-      "note": "One editable $/GB, seeded near a US East internet-egress list. It is not a private-link, NAT, or cross-region tariff."
+      "note": "One editable $/GB, seeded near a US East internet-egress list. It is not a private-link, NAT, or cross-region tariff.",
+      "confidenceScore": 55
     },
     {
       "published": false,
@@ -2470,7 +2544,8 @@
       "summary": "Hourly is not billed yet; per-GB rate is unpublished",
       "category": "governance_sharing",
       "billingUnit": "No dollar rate is published",
-      "note": "Private endpoint $/hour is described as expected in the future and is not billed yet, so an hourly charge would be wrong. Private connectivity $/GB is billed, and the serverless network cost page (updated 2026-09-11) does not publish the dollar rate. This line stays at $0. It is not the internet-egress assumption."
+      "note": "Private endpoint $/hour is described as expected in the future and is not billed yet, so an hourly charge would be wrong. Private connectivity $/GB is billed, and the serverless network cost page (updated 2026-09-11) does not publish the dollar rate. This line stays at $0. It is not the internet-egress assumption. On 2026-10-16 the data-transfer pricing page lists Private Connectivity per GB and per hour as billed. AWS and GCP serverless private connectivity is a per-hour endpoint plus per GB. Azure per-GB data-processed charges are waived indefinitely; Azure still lists a per-hour endpoint. The AWS cost-management doc still says the hourly charge is expected in the future. Neither page prints a dollar rate. A 2025 SAP capacity-unit table is not a Databricks dollar rate and is not used. This line stays at $0.",
+      "confidenceScore": 8
     },
     {
       "published": false,
@@ -2501,7 +2576,8 @@
       "summary": "No Databricks NAT rate",
       "category": "governance_sharing",
       "billingUnit": "No Databricks NAT rate is published",
-      "note": "No Databricks NAT hourly or per-GB rate was published. NAT on your cloud account is that cloud’s bill, not a Databricks SKU. This line stays at $0."
+      "note": "No Databricks NAT hourly or per-GB rate was published. NAT on your cloud account is that cloud’s bill, not a Databricks SKU. This line stays at $0.",
+      "confidenceScore": 8
     },
     {
       "published": true,
@@ -2545,7 +2621,8 @@
       "summary": "No list rate stored",
       "category": "governance_sharing",
       "billingUnit": "$/collaborator-day",
-      "note": "East US Premium Clean Rooms Collaborator is $50 per day on the Retail Prices API (2026-10-16). The default is one day. AWS and GCP have no rate here, so those clouds are $0."
+      "note": "East US Premium Clean Rooms Collaborator is $50 per day on the Retail Prices API (2026-10-16). The default is one day. AWS and GCP have no rate here, so those clouds are $0.",
+      "confidenceScore": 92
     },
     {
       "published": false,
@@ -2576,7 +2653,8 @@
       "summary": "Same-region sharing is not charged",
       "category": "governance_sharing",
       "billingUnit": "No dollar rate is published",
-      "note": "Delta Sharing (DATA_SHARING / OpenSharing) does not charge same-region egress. Cross-region and public egress are billed under NETWORKING, and no Delta Sharing dollar rate is published. This line stays at $0. It does not reuse the internet-egress assumption."
+      "note": "Delta Sharing (DATA_SHARING / OpenSharing) does not charge same-region egress. Cross-region and public egress are billed under NETWORKING, and no Delta Sharing dollar rate is published. This line stays at $0. It does not reuse the internet-egress assumption. A first-party data-transfer PDF effective 2024-08-01 lists AWS US East cross-region at $0.02/GB and internet at $0.09/GB. The 2026 network docs still do not print a Delta Sharing cross-region rate, so that older PDF is not applied.",
+      "confidenceScore": 8
     },
     {
       "published": false,
@@ -2607,7 +2685,8 @@
       "summary": "No list rate stored",
       "category": "governance_sharing",
       "billingUnit": "Unpublished",
-      "note": "Marketplace has no platform SKU in the curated table or the Azure meter map. This line stays at $0."
+      "note": "Marketplace has no platform SKU in the curated table or the Azure meter map. This line stays at $0.",
+      "confidenceScore": 8
     },
     {
       "published": false,
@@ -2638,7 +2717,8 @@
       "summary": "No list rate stored",
       "category": "governance_sharing",
       "billingUnit": "Unpublished",
-      "note": "Free Edition is not a row in the Azure meter map or the curated $/DBU table. Account caps are not stored. This line stays at $0 and is not a quote of the free tier."
+      "note": "Free Edition is not a row in the Azure meter map or the curated $/DBU table. Account caps are not stored. This line stays at $0 and is not a quote of the free tier.",
+      "confidenceScore": 8
     },
     {
       "id": "data_processed",
@@ -2684,7 +2764,8 @@
       "azureMeterNames": [
         "Data Processed"
       ],
-      "formula": "azure_data_processed"
+      "formula": "azure_data_processed",
+      "confidenceScore": 92
     },
     {
       "id": "compliance_addon",
@@ -2718,7 +2799,8 @@
       "azureMeterNames": [
         "Premium Enhanced Security and Compliance DBU",
         "Premium Enhanced Security and Compliance - Mission Critical Add-on DBU"
-      ]
+      ],
+      "confidenceScore": 8
     }
   ]
 }

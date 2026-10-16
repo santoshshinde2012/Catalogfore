@@ -117,6 +117,13 @@ export async function exportPdf(portfolio: Portfolio, estimate: Estimate, points
   doc.save(`${slug(portfolio.name)}.pdf`);
 }
 
+/** Exporters the page can offer. A new format is a new entry. */
+export const forecastExporters = [
+  { id: "json", write: exportJson },
+  { id: "csv", write: exportCsv },
+  { id: "pdf", write: exportPdf },
+] as const;
+
 function csv(value: string): string {
   return `"${value.replace(/"/g, '""')}"`;
 }

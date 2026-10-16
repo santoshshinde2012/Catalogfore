@@ -1,16 +1,9 @@
 import { defaultInstanceId, skuCatalog, type Estimate, type Portfolio, type Workload } from "@cayfore/engine";
-import {
-  forecastProducts,
-  listProducts,
-  productById,
-  productCategories,
-  workloadsForProduct,
-  workloadsFromUsage,
-} from "@cayfore/engine/products";
-import { useEffect, useId, useRef, useState } from "react";
+import { forecastProducts, productById, workloadsForProduct, workloadsFromUsage } from "@cayfore/engine/products";
+import { useState } from "react";
 import { money } from "../format";
 import { Editor } from "./Editor";
-import { Button } from "./ui/button";
+import { LedgerMenu } from "./LedgerMenu";
 
 interface LedgerProps {
   portfolio: Portfolio;
@@ -23,13 +16,8 @@ interface LedgerProps {
 
 export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect, onRemove }: LedgerProps) {
   const selected = portfolio.workloads.find((workload) => workload.id === selectedId) ?? null;
-  const categories = productCategories();
   const breakdown = forecastProducts(estimate, portfolio);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [usageNote, setUsageNote] = useState("");
-  const menuRef = useRef<HTMLDivElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
-  const menuId = useId();
   function update(workload: Workload) {
     onPortfolio({
       ...portfolio,
@@ -43,7 +31,6 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
     );
     onPortfolio({ ...portfolio, workloads: [...portfolio.workloads, ...added] });
     onSelect(added[0]?.id ?? null);
-    setMenuOpen(false);
   }
 
   function onUsageFile(file: File) {
@@ -60,80 +47,11 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
     });
   }
 
-  useEffect(() => {
-    if (!menuOpen) return;
-    function onPointer(event: MouseEvent) {
-      if (!menuRef.current?.contains(event.target as Node)) setMenuOpen(false);
-    }
-    function onKey(event: KeyboardEvent) {
-      if (event.key === "Escape") setMenuOpen(false);
-    }
-    document.addEventListener("mousedown", onPointer);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onPointer);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [menuOpen]);
-
   return (
     <div className="grid gap-3">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-medium">Workloads</h2>
-        <div className="relative flex gap-2" ref={menuRef}>
-          <input
-            ref={fileRef}
-            type="file"
-            accept=".csv,text/csv"
-            className="sr-only"
-            aria-label="Usage CSV"
-            onChange={(event) => {
-              const file = event.target.files?.[0];
-              event.target.value = "";
-              if (file) onUsageFile(file);
-            }}
-          />
-          <Button type="button" size="sm" variant="outline" onClick={() => fileRef.current?.click()}>
-            From a usage file
-          </Button>
-          <Button
-            type="button"
-            size="sm"
-            aria-expanded={menuOpen}
-            aria-controls={menuId}
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            Add product
-          </Button>
-          {menuOpen && (
-            <div
-              id={menuId}
-              className="absolute right-0 z-20 mt-2 max-h-[70vh] w-80 overflow-auto rounded-lg border bg-popover p-2 shadow-lg"
-            >
-              {categories.map((category) => (
-                <div key={category.id}>
-                  <div className="px-2 pt-2 text-xs font-medium text-muted-foreground">{category.label}</div>
-                  {listProducts()
-                    .filter((item) => item.category === category.id)
-                    .map((item) => (
-                      <button
-                        key={item.id}
-                        type="button"
-                        className="block w-full rounded-md px-2 py-2 text-left hover:bg-muted"
-                        onClick={() => add(item.id)}
-                      >
-                        <span className="block text-sm font-medium">{item.menuLabel}</span>
-                        <span className="block text-xs text-muted-foreground">
-                          {item.summary}
-                          {item.listPrice === "unpublished" ? " · No list rate is published" : ""}
-                        </span>
-                      </button>
-                    ))}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <LedgerMenu onAdd={add} onUsageFile={onUsageFile} />
       </div>
       {usageNote && (
         <p className="text-xs text-muted-foreground" role="status">

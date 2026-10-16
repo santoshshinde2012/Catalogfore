@@ -74,7 +74,7 @@ if (!productBody.products.some((product) => product.id === "jobs_classic" && pro
   console.error("Product catalog missing jobs_classic");
   process.exit(1);
 }
-const unpublished = await client.callTool({ name: "estimate_product", arguments: { productId: "zerobus" } });
+const unpublished = await client.callTool({ name: "estimate_product", arguments: { productId: "databricks_one" } });
 const unpublishedBody = JSON.parse(unpublished.content[0].text);
 if (unpublishedBody.estimate.total !== 0 || unpublishedBody.product.published !== false) {
   console.error("Unpublished product was priced", unpublishedBody.estimate);

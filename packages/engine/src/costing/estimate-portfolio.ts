@@ -41,6 +41,11 @@ function finalize(raw: RawLine, scale: number): LineItem {
   };
 }
 
+/**
+ * Price every workload in a portfolio.
+ * Pass a catalog and a strategy list. The default is the bundled book.
+ * This function does not read the network, the clock, or React state.
+ */
 export function estimate(
   portfolio: Portfolio,
   dependencies: EstimateDependencies = defaultEstimateDependencies,

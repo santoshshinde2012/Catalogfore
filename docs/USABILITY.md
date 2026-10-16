@@ -1,6 +1,6 @@
 # Usability
 
-Checked in the running app on 2026-10-16. The four-input page uses rate card **2026-10-16.1**. The Advanced scenarios use catalog **2026-10-16.4**. Figures are estimates, not a quote. Cayfore is not affiliated with Databricks.
+Checked in the running app on 2026-10-16. The four-input page uses rate card **2026-10-16.1**. The Advanced scenarios use catalog **2026-10-16.5**. Figures are estimates, not a quote. Cayfore is not affiliated with Databricks.
 
 The page is one forecast. Cloud and tier, a starting monthly amount or a team size, a mix of pipelines / dashboards / models, and monthly growth. The year updates as those change. A shaded 12-month band, the year total, one sentence, and a month table are the result. Region, a commitment discount, a usage file, and the per-workload builder sit behind that.
 

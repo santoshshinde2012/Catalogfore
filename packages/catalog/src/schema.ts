@@ -32,6 +32,7 @@ export const FORMULAS = [
   "custom_fm",
   "launch",
   "azure_data_processed",
+  "zerobus_gb",
 ] as const;
 
 const fieldSchema = z.object({
@@ -73,6 +74,11 @@ export const productSchema = z.object({
   listPrice: z.enum(["distinct", "reused_sku", "unpublished"]),
   published: z.boolean(),
   confidence: z.enum(["measured", "cited", "secondary", "unpublished"]),
+  /**
+   * 90–100 measured, 70–89 cited, 40–69 secondary, 0–19 unpublished.
+   * The band has to match `confidence`. See docs/RESEARCH.md.
+   */
+  confidenceScore: z.number().int().min(0).max(100),
   automation: z.enum(["azure-retail-prices", "manual"]),
   template: z.enum(TEMPLATES),
   editor: z.enum(["builtin", "schema"]),
@@ -122,6 +128,21 @@ export const productCatalogSchema = z
         });
       }
       labels.add(product.menuLabel);
+      const scoreBand =
+        product.confidence === "measured"
+          ? [90, 100]
+          : product.confidence === "cited"
+            ? [70, 89]
+            : product.confidence === "secondary"
+              ? [40, 69]
+              : [0, 19];
+      if (product.confidenceScore < scoreBand[0] || product.confidenceScore > scoreBand[1]) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `${product.id} confidence score ${product.confidenceScore} is outside ${product.confidence}`,
+          path: ["products", index, "confidenceScore"],
+        });
+      }
       if (product.listPrice === "unpublished" && (product.published || product.confidence !== "unpublished")) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

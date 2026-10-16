@@ -6,6 +6,9 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Added
 
+- A confidence score on every product and on every cloud, region, tier, and SKU cell (`data/rate-confidence.json`). Azure meters score as measured. The US East card scores as secondary. Other AWS and GCP regions stay on the Lakehouse Real-Time proxy.
+- Zerobus Ingest at the secondary list: $0.050/GB on AWS Premium and $0.064/GB on AWS Enterprise and Azure. The example is 100 GB. GCP stays at $0. The undated launch promotion is not applied.
+- Layer checks (`dependency-cruiser`), an engine coverage threshold, CodeQL, Dependabot, CODEOWNERS, pinned GitHub Action SHAs, and a semver release workflow that reads CHANGELOG.md.
 - A versioned product catalog (`data/product-catalog.json`, `@cayfore/catalog`) covering Databricks products as of 2026-10-16. A row with a published rate or a documented underlying SKU is priced. A row with nothing billable stays at $0 and says so.
 - Usage-based estimators for Genie, Genie Code, AI/BI dashboards, and `ai_parse_document`. Allowance math follows the docs. DBU per question and DBU per refresh are labeled assumptions.
 - A usage CSV import that maps `sku_name` onto every catalog product it can, with `docs/usage-export.sql` and a Databricks notebook at `docs/cayfore-usage.py`.

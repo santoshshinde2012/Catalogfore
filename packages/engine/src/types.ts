@@ -1,5 +1,3 @@
-import type { UsageForecast } from "./forecast/series.js";
-
 export type Cloud = "aws" | "azure" | "gcp";
 export type Tier = "premium" | "enterprise";
 export type Addon = "none" | "compliance" | "mission_critical";
@@ -141,122 +139,23 @@ export type Workload =
       rateByCloud?: Partial<Record<Cloud, number>>;
       /** A non-DBU list charge, such as a daily collaborator fee. A missing cloud is unpriced. */
       fixedUsdByCloud?: Partial<Record<Cloud, number>>;
+      /** Quantity multiplied by `rateByPlacement`. Zerobus uses gigabytes. */
+      units?: number;
+      /** Dollars per unit for one cloud and tier. A missing cell is unpriced, not a guessed zero. */
+      rateByPlacement?: Partial<Record<Cloud, Partial<Record<Tier, number>>>>;
     });
 
-export interface ForecastSettings {
-  months: 12 | 24 | 36;
-  annualGrowth: number;
-  seasonality: SeasonalityPreset;
-  customSeasonality?: number[];
-}
-
-/** Share of work across the three simple-forecast groups. Values are non-negative and sum to 1. */
-export interface WorkloadMix {
-  etl: number;
-  sql: number;
-  ml: number;
-}
-
-/**
- * Visible size of the simple forecast's three archetypes.
- * Node hours and warehouse count are what the cost strategies already price.
- */
-export interface SimpleBasket {
-  etlNodes: number;
-  etlHoursPerDay: number;
-  sqlClusters: number;
-  mlInputTokens: number;
-}
-
-export interface StoredSimple {
-  monthlySpend: number;
-  mix: WorkloadMix;
-  monthlyGrowth: number;
-  commitDiscount: number;
-  basket: SimpleBasket;
-  /** Set when a usage file supplied the mix and the quantity. */
-  usageDbu?: number;
-  /** Set when the file had enough history to fit a trend. Ratios are versus the last observed month. */
-  usageForecast?: UsageForecast;
-}
-
-export interface Portfolio {
-  version: 1;
-  name: string;
-  cloud: Cloud;
-  region: string;
-  tier: Tier;
-  workloads: Workload[];
-  commitment: { dbuDiscount: number; cloudDiscount: number };
-  addon: Addon;
-  usageScale: number;
-  /** True when month zero was fit to an imported usage file, even if the residual scale is 1. */
-  usageCalibrated?: boolean;
-  /** Optional annual budget in dollars. Omitted when the user has not set one. */
-  budgetAnnual?: number;
-  /** Present when the four-input forecast owns this portfolio. */
-  simple?: StoredSimple;
-  forecast: ForecastSettings;
-}
-
-export interface LineItem {
-  workloadId: string;
-  name: string;
-  kind: Workload["kind"];
-  sku: string;
-  hours: number;
-  dbu: number;
-  dbuCost: number;
-  cloudCost: number;
-  total: number;
-  approximateVm: boolean;
-  notes: string[];
-}
-
-export interface Estimate {
-  catalogVersion: string;
-  verifiedOn: string;
-  disclaimer: string;
-  lines: LineItem[];
-  dbu: number;
-  dbuCost: number;
-  cloudCost: number;
-  addonCost: number;
-  total: number;
-  warnings: string[];
-  usageScale: number;
-}
-
-export interface ForecastPoint {
-  month: number;
-  dbuCost: number;
-  cloudCost: number;
-  addonCost: number;
-  total: number;
-}
-
-export type ScenarioPresetId =
-  "as_modeled" | "jobs_serverless" | "photon_on" | "photon_speedup_2" | "spot_70" | "commit_37" | "commit_37_cloud_30";
-
-export interface ScenarioResult {
-  id: ScenarioPresetId;
-  name: string;
-  description: string;
-  estimate: Estimate;
-  forecast: ForecastPoint[];
-  annual: number;
-}
-
-export interface Tip {
-  id: string;
-  tone: "info" | "warn";
-  text: string;
-}
-
-export interface UsageImport {
-  dbu: number;
-  bySku: { sku: string; dbu: number }[];
-  skippedRows: number;
-  usedRows: number;
-  warnings: string[];
-}
+export type {
+  ForecastSettings,
+  WorkloadMix,
+  SimpleBasket,
+  StoredSimple,
+  Portfolio,
+  LineItem,
+  Estimate,
+  ForecastPoint,
+  ScenarioPresetId,
+  ScenarioResult,
+  Tip,
+  UsageImport,
+} from "./plan-types.js";

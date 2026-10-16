@@ -1,6 +1,6 @@
 # Databricks product inventory
 
-Checked 2026-10-16. Catalog version `2026-10-16.4`. Figures are list estimates, not a quote. Cayfore is not affiliated with Databricks.
+Checked 2026-10-16. Catalog version `2026-10-16.5`. Figures are list estimates, not a quote. Cayfore is not affiliated with Databricks.
 
 A row marked **No** has no list rate in this catalog, and the forecast line is $0. **No distinct rate** means the line reuses another SKU and says so. **Yes** means a list rate is applied. Azure meter rows are re-checked by the price refresh. Manual rows are cited and go stale after 120 days.
 
@@ -23,7 +23,7 @@ The four-input page does not list these products. It maps Pipelines and jobs to 
 | AI Forecast                                 | Data Engineering     | DBU                                                 | Yes              | cited       | manual              | Microsoft Learn, Azure Databricks pricing and serverless multipliers (2026-10-15) |
 | Serverless GPU compute                      | Data Engineering     | DBU-hour on the serving GPU table                   | No distinct rate | cited       | manual              | Databricks model serving pricing (2026-10-16)                                     |
 | Lakehouse Real-Time                         | Data Engineering     | Unpublished as its own line                         | No               | unpublished | manual              | Databricks Lakehouse Real-Time regional $/DBU (2026-10-15)                        |
-| Zerobus                                     | Data Engineering     | No dollar rate is published                         | No               | unpublished | manual              | Databricks serverless network security, cost management (2026-10-16)              |
+| Zerobus                                     | Data Engineering     | $/GB                                                | Yes              | secondary   | manual              | Flexera 2026 guide, cross-checked SunnyData (2026-10-16)                          |
 | Standard tier                               | Data Engineering     | Unpublished in this forecast                        | No               | unpublished | manual              | Azure Retail Prices API, Azure Databricks consumption meters (2026-10-16)         |
 | SQL warehouse Classic                       | Warehousing & BI     | DBU-hour + VM assumption                            | Yes              | measured    | azure-retail-prices | Azure Retail Prices API, Azure Databricks consumption meters (2026-10-16)         |
 | SQL warehouse Pro                           | Warehousing & BI     | DBU-hour + VM assumption                            | Yes              | measured    | azure-retail-prices | Azure Retail Prices API, Azure Databricks consumption meters (2026-10-16)         |
@@ -90,7 +90,8 @@ The four-input page does not list these products. It maps Pipelines and jobs to 
 - `ai_parse_document` uses the midpoint of the published DBU-per-page band (10–15, 20–25, 60–65, 85–90) times the model-serving rate. The 50% promo ended 2026-06-30 and is not applied.
 - A model-serving scale-to-zero launch is 1 DBU. The line does not enforce the two-launches-per-hour cap.
 - Data Processed is $0.02/GB on Azure East US only. It is not the internet-egress assumption. AWS and GCP stay $0.
-- Zerobus, Delta Sharing, and Private Link stay at $0. Same-region egress is not charged, and the cross-region dollar rate is not published. Private Link hourly is not billed yet. NAT has no Databricks rate.
+- Zerobus uses a secondary $/GB card (AWS Premium $0.050, AWS Enterprise and Azure $0.064). The example row is 100 GB. GCP is not priced. Official docs name a DBU SKU and do not print the dollar rate. See [RESEARCH.md](RESEARCH.md).
+- Delta Sharing and Private Link stay at $0. Same-region egress is not charged, and no 2026 page prints a dollar rate. Private Link hourly is billed on the marketing page and still “expected in the future” on the AWS cost doc. NAT has no Databricks rate.
 - Databricks One, Marketplace, and Free Edition have no separate SKU. The line stays at $0 and says so.
 - Standard tier meters still exist. The tier is retired, so the line is $0.
 - Compliance meters ($0.10 and $0.15 per DBU on Azure East US) are not a second line. The portfolio add-on remains 10% or 30%.
