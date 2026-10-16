@@ -6,7 +6,7 @@ const transport = new StdioClientTransport({
   args: ["mcp/dist/index.js"],
   stderr: "pipe",
 });
-const client = new Client({ name: "dcf-smoke", version: "0.0.0" });
+const client = new Client({ name: "cayfore-smoke", version: "0.0.0" });
 await client.connect(transport);
 const listed = await client.listTools();
 const names = listed.tools.map((tool) => tool.name).sort();

@@ -31,7 +31,7 @@ jobs:
           body: |
             Automated refresh of on-demand VM rates and Azure Databricks DBU meters.
 
-            AWS rows come from the public EC2 offer files, for every AWS region in the catalog. Spot rates, when present, come from the Spot Instance advisor or the Azure Spot meter. Azure DBU meters come from the Retail Prices API. GCP runs only when the `GCP_BILLING_API_KEY` repository secret is set, and is skipped otherwise. Instance DBU ratings are checked against the Databricks Labs pricing bundle. Databricks does not publish a price JSON, so the curated $/DBU table is not rewritten.
+            AWS rows come from the public EC2 offer files, for every AWS region in the catalog. Spot rates, when present, come from the Spot Instance advisor or the Azure Spot meter. Azure DBU meters come from the Retail Prices API. GCP runs only when the `GCP_BILLING_API_KEY` repository secret is set, and is skipped otherwise. Instance DBU counts stay in the cited `data/instances.json` table and are not rewritten. Databricks does not publish a price JSON, so the curated $/DBU table is not rewritten either.
 
             Review the diff before merging. Figures are list prices for estimation, not a quote.
           branch: price-refresh

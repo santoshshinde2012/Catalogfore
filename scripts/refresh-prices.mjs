@@ -12,8 +12,6 @@ import { validateCatalog } from "./validate-catalog.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const today = new Date().toISOString().slice(0, 10);
-const LAKEMETER_CSV =
-  "https://raw.githubusercontent.com/databrickslabs/lakemeter-oss/main/backend/static/pricing/instance-dbu-rates.csv";
 const SPOT_ADVISOR = "https://spot-bid-advisor.s3.amazonaws.com/spot-advisor-data.json";
 const DATABRICKS_PROBES = [
   "https://www.databricks.com/en-pricing-assets/page-data/app-data.json",
@@ -279,32 +277,6 @@ async function probeDatabricks() {
   };
 }
 
-async function refreshInstanceRatings(instances) {
-  const csv = await fetchText(LAKEMETER_CSV);
-  const lines = csv.split(/\r?\n/).slice(1);
-  const ratings = new Map();
-  for (const line of lines) {
-    const [cloud, instanceType, , , dbuRate] = line.split(",");
-    const id = (instanceType ?? "").trim();
-    const rate = Number(dbuRate);
-    if (!id || !Number.isFinite(rate)) continue;
-    ratings.set(`${cloud.trim().toLowerCase()}:${id}`, rate);
-  }
-  let changed = 0;
-  for (const row of instances.instances) {
-    const published = ratings.get(`${row.cloud}:${row.id}`);
-    if (published == null || !(published >= 0.05 && published <= 40)) continue;
-    if (Math.abs(published - row.dbuPerHour) > 0.001) {
-      row.dbuPerHour = published;
-      changed += 1;
-    }
-  }
-  instances.verifiedOn = today;
-  instances.note =
-    "DBU/hour values are the non-Photon counts in the Databricks Labs LakeMeter pricing bundle (source column pricing_bundle), checked by scripts/refresh-prices.mjs. Standard_DS13_v2 is 2.0, which matches the Azure pricing FAQ. Confirm against the Databricks instance picker before a contract.";
-  return changed;
-}
-
 async function main() {
   const sku = await readJson("data/sku-rates.json");
   const instances = await readJson("data/instances.json");
@@ -391,12 +363,7 @@ async function main() {
     meters: meters.sort((a, b) => a.region.localeCompare(b.region) || a.sku.localeCompare(b.sku)),
   };
 
-  try {
-    const changed = await refreshInstanceRatings(instances);
-    summary.push(`instance dbu ratings changed: ${changed}`);
-  } catch (error) {
-    summary.push(`instance dbu ratings: ${error instanceof Error ? error.message : String(error)}`);
-  }
+  summary.push("instance dbu ratings: left unchanged (cited table, not refreshed)");
 
   const probe = await probeDatabricks();
   summary.push(`databricks json: ${probe.foundPublicJson ? "found" : "not found"}`);
@@ -408,7 +375,6 @@ async function main() {
   }
   await writeFile(path.join(root, "data/cloud-vm-prices.json"), `${JSON.stringify(prices, null, 2)}\n`);
   await writeFile(path.join(root, "data/azure-dbu-meters.json"), `${JSON.stringify(azureFile, null, 2)}\n`);
-  await writeFile(path.join(root, "data/instances.json"), `${JSON.stringify(instances, null, 2)}\n`);
   await writeFile(path.join(root, "data/pricing-probe.json"), `${JSON.stringify(probe, null, 2)}\n`);
   console.log(summary.join("\n"));
 }

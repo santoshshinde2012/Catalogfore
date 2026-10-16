@@ -1,0 +1,19 @@
+# Notices
+
+The code in this repository is under the MIT license. See `LICENSE`.
+
+The price files are published list rates and a cited manual table. They are inputs to an estimate. They are not a quote, and this project is not affiliated with Databricks, Amazon Web Services, Microsoft, or Google.
+
+| Data | What we keep | Terms |
+| --- | --- | --- |
+| AWS EC2 offer files | Linux on-demand hourly rates for the curated instances | Public AWS Price List offer files. The figures stay Amazon's. [How to download the files](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/using-the-aws-price-list-bulk-api-fetching-price-list-files-manually.html). |
+| AWS Spot Instance advisor | A spot hourly rate derived from the published savings percent | Public advisor JSON. Used only while the workload discount is still the catalog default. |
+| Azure Retail Prices | Linux VM hourly rates and Premium Azure Databricks DBU meters | Public Retail Prices API, no key. The figures stay Microsoft's. |
+| Azure Databricks pricing page | Non-Photon DBU counts for five curated VM sizes, the Jobs FAQ example, and the Lakeflow Photon sentence | Public Microsoft pricing page. Fetched as text on 2026-10-16. Dollar cells on that page did not render. |
+| GCP machine rates | Seeded hourly rates for six curated types | Not refreshed unless `GCP_BILLING_API_KEY` is set. A live refresh would use the Cloud Billing Catalog, which is Google's. |
+| AWS and GCP DBU per hour, and Azure `Standard_F4s_v2` | A manual table in `data/instances.json` | No allowed public feed publishes these counts. The Databricks website terms forbid scraping the instance picker, so these rows are not copied from that page. |
+| US East $/DBU card | `data/sku-rates.json` | Cited in `docs/RESEARCH.md`. Secondary where the vendor page did not return a number to a static fetch. |
+
+Databricks Labs LakeMeter-OSS is not a source. Its license allows the materials only in connection with the Databricks Services. This public calculator does not fetch or redistribute that pricing bundle.
+
+Do not copy a contract rate, a personal access token, or a customer invoice into this repository.

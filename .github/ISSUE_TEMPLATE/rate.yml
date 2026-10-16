@@ -1,0 +1,19 @@
+name: Rate question
+description: A list price, DBU count, or region factor looks wrong
+title: "Rate: "
+labels: []
+body:
+  - type: textarea
+    id: figure
+    attributes:
+      label: Which figure
+      description: Cloud, tier, region, SKU or instance, the number in Cayfore, and the number you expected.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source
+      description: A public page or a system.billing.list_prices row. Do not paste a contract or a personal access token.
+    validations:
+      required: true

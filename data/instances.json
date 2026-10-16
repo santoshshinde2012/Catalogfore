@@ -1,7 +1,7 @@
 {
   "version": "2026-10-15.1",
   "verifiedOn": "2026-10-16",
-  "note": "DBU/hour values are the non-Photon counts in the Databricks Labs LakeMeter pricing bundle (source column pricing_bundle), checked by scripts/refresh-prices.mjs. Standard_DS13_v2 is 2.0, which matches the Azure pricing FAQ. Confirm against the Databricks instance picker before a contract.",
+  "note": "Curated non-Photon DBU/hour. scripts/refresh-prices.mjs does not overwrite these counts. Azure counts published for All-Purpose, Jobs, and Jobs Light on the Microsoft pricing page (Premium, fetched 2026-10-16) are Standard_DS3_v2 0.75, Standard_DS4_v2 1.50, Standard_DS13_v2 2.00, Standard_D4s_v5 1.00, and Standard_E8s_v3 2.00. The Jobs Compute FAQ on that page uses 2.0 DBU per DS13 v2 node. Standard_F4s_v2 is not in those tables. AWS and GCP counts are a manual table: no allowed public feed publishes them, and the Databricks website terms forbid scraping the instance picker. Source: https://azure.microsoft.com/en-us/pricing/details/databricks/",
   "instances": [
     {
       "cloud": "aws",

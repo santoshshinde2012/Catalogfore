@@ -6,7 +6,7 @@ A 12-month forecast of Databricks spend. Four inputs, one range.
 [![Node 20+](https://img.shields.io/badge/node-20%2B-111111)](package.json)
 [![Live site](https://img.shields.io/badge/live-GitHub%20Pages-111111)](https://santoshshinde2012.github.io/databricks-cost-forecaster/)
 
-Cayfore is the interface. This repository is the forecast. It is an estimate, not a quote, and it is not affiliated with Databricks.
+Cayfore is the interface. This repository is the forecast. It is an estimate, not a quote, and it is not affiliated with Databricks. The calculation stays in the browser. See [docs/PRIVACY.md](docs/PRIVACY.md).
 
 ![Cayfore on a wide screen: four inputs and a year total with a confidence band](docs/screenshots/forecast-light.png)
 
@@ -55,20 +55,24 @@ The page JavaScript is about 346 KB gzipped, including the chart and the price c
 
 ## Repository
 
-| Path                         | Role                                                          |
-| ---------------------------- | ------------------------------------------------------------- |
-| `packages/engine`            | Pricing, the four-input forecast, scenarios, and usage import |
-| `data/`                      | Versioned rates, instance ratings, and virtual-machine prices |
-| `apps/web`                   | The forecast page                                             |
-| `mcp/`                       | The stdio server over the same engine                         |
-| `scripts/refresh-prices.mjs` | VM, Azure DBU meter, and instance-rating refresh              |
-| `docs/DATA-PIPELINE.md`      | Where those prices come from, and how the weekly job runs     |
-| `docs/RESEARCH.md`           | Source for every rate                                         |
-| `docs/NAMING.md`             | Why the product is called Cayfore                             |
-| `docs/ARCHITECTURE.md`       | How the pricing code is split                                 |
-| `docs/USABILITY.md`          | Walkthroughs for evaluating, budgeting, and a usage file      |
-| `docs/PLAN.md`               | What the page covers, and what the engine still prices        |
-| `docs/MCP.md`                | Tool arguments and a client config                            |
+| Path                         | Role                                                            |
+| ---------------------------- | --------------------------------------------------------------- |
+| `packages/engine`            | Pricing, the four-input forecast, scenarios, and usage import   |
+| `data/`                      | Versioned rates, instance ratings, and virtual-machine prices   |
+| `apps/web`                   | The forecast page                                               |
+| `mcp/`                       | The stdio server over the same engine                           |
+| `scripts/refresh-prices.mjs` | VM and Azure DBU meter refresh. Instance DBU counts stay cited. |
+| `docs/DATA-PIPELINE.md`      | Where those prices come from, and how the weekly job runs       |
+| `docs/RESEARCH.md`           | Source for every rate                                           |
+| `docs/NAMING.md`             | Why the product is called Cayfore                               |
+| `docs/ARCHITECTURE.md`       | How the pricing code is split                                   |
+| `docs/USABILITY.md`          | Walkthroughs for evaluating, budgeting, and a usage file        |
+| `docs/PLAN.md`               | What the page covers, and what the engine still prices          |
+| `docs/ROADMAP.md`            | Gaps versus other calculators, and what is not in this pass     |
+| `docs/PRIVACY.md`            | What stays in the browser                                       |
+| `docs/MCP.md`                | Tool arguments and a client config                              |
+| `CHANGELOG.md`               | What is unreleased. GitHub Releases are cut by the owner        |
+| `NOTICE`                     | License notice for the code and the price sources               |
 
 ## Publish
 
@@ -76,7 +80,7 @@ Pushes to `main` publish the site from `.github/workflows/pages.yml`. The addres
 
 Vite’s base path is `/databricks-cost-forecaster/`. Unknown addresses serve `404.html`.
 
-A weekly workflow opens a pull request when AWS or Azure list prices change: EC2 on-demand for every catalog region, Azure VM and Databricks DBU meters, and instance DBU ratings. GCP virtual-machine rates stay seeded unless `GCP_BILLING_API_KEY` is set. Do not commit that key. The curated $/DBU table is not rewritten. Details are in [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md).
+A weekly workflow opens a pull request when AWS or Azure list prices change: EC2 on-demand for every catalog region, and Azure VM and Databricks DBU meters. Instance DBU counts stay in the cited table. GCP virtual-machine rates stay seeded unless `GCP_BILLING_API_KEY` is set. Do not commit that key. The curated $/DBU table is not rewritten. Details are in [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md).
 
 ## MCP
 

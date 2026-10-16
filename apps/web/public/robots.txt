@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://santoshshinde2012.github.io/databricks-cost-forecaster/sitemap.xml

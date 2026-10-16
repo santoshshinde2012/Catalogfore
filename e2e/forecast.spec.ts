@@ -65,6 +65,7 @@ test("cloud, commitment, exports, and a usage file", async ({ page }) => {
   await expect(page.getByTestId("usage-summary")).toContainText("From your usage file");
 
   await expect(page.getByText("Estimates only").first()).toBeVisible();
+  await expect(page.getByText(/The calculation stays in this browser/)).toBeVisible();
   await page.getByRole("button", { name: "Export" }).click();
   const csvPromise = page.waitForEvent("download");
   await page.getByRole("menuitem", { name: "CSV", exact: true }).click();

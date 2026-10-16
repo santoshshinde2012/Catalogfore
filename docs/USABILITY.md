@@ -17,7 +17,7 @@ Land on the page. Medium is selected: 45% pipelines, 40% dashboards, 15% models,
 
 Nothing on this path asks for a DBU rate, an instance, or an hour count. “How we got this” names the archetypes and says Databricks bills usage in DBU, which the page converts from the dollars you typed.
 
-Why $12,000, and why that mix, is in [docs/RESEARCH.md](docs/RESEARCH.md) section 15. Short version: it is the top of a published $8,000–$12,000 band for a 10 TB analytics team, pipelines lead, and dashboards plus a little model use fill the rest.
+Why $12,000, and why that mix, is in [RESEARCH.md](RESEARCH.md) section 15. Short version: it is the top of a published $8,000–$12,000 band for a 10 TB analytics team, pipelines lead, and dashboards plus a little model use fill the rest.
 
 ## Budgeting — a small team growing 5% a month
 

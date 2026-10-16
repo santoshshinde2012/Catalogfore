@@ -31,15 +31,8 @@
       content="A 12-month forecast of Databricks spend from cloud, starting amount, workload mix, and growth. An independent estimate, not a quote."
     />
     <meta name="twitter:image" content="https://santoshshinde2012.github.io/databricks-cost-forecaster/og.png" />
-    <script>
-      try {
-        if (localStorage.getItem("dcf-theme") === "dark") {
-          document.documentElement.dataset.theme = "dark";
-          var themeColor = document.querySelector('meta[name="theme-color"]');
-          if (themeColor) themeColor.setAttribute("content", "#0B2026");
-        }
-      } catch (e) {}
-    </script>
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <script src="./theme-boot.js"></script>
   </head>
   <body>
     <div id="root"></div>

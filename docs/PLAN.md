@@ -50,11 +50,11 @@ The engine is the only place that multiplies rates. The web app and the MCP serv
 
 ## Pricing data
 
-| File                     | Contents                                                                                                                                                                   | Who updates it                                                                              |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `data/sku-rates.json`    | US East list $/DBU by cloud, tier, SKU; SQL DBU ladder; serving and FM API DBU factors; DSU and Lakebase assumptions; Photon multiplier; region factors; promotion windows | Human review. A workflow may open a PR later; it does not silently rewrite DBU list prices. |
-| `data/instances.json`    | Curated instances: cloud, id, family, vCPU, memory, DBU/hour, default on-demand $/hour                                                                                     | DBU/hour curated. `$/hour` overwritten by the refresh script when the API returns a match.  |
-| `data/catalog-meta.json` | `version`, `verifiedOn`, disclaimer string                                                                                                                                 | Bumped when either file changes.                                                            |
+| File                     | Contents                                                                                                                                                                   | Who updates it                                                                                                |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `data/sku-rates.json`    | US East list $/DBU by cloud, tier, SKU; SQL DBU ladder; serving and FM API DBU factors; DSU and Lakebase assumptions; Photon multiplier; region factors; promotion windows | Human review. A workflow may open a PR later; it does not silently rewrite DBU list prices.                   |
+| `data/instances.json`    | Curated instances: cloud, id, family, vCPU, memory, DBU/hour                                                                                                               | DBU/hour is a cited table. The refresh does not overwrite it. VM $/hour lives in `data/cloud-vm-prices.json`. |
+| `data/catalog-meta.json` | `version`, `verifiedOn`, disclaimer string                                                                                                                                 | Bumped when either file changes.                                                                              |
 
 Refresh workflow (weekly cron plus `workflow_dispatch`):
 

@@ -8,8 +8,9 @@
 | ---------------------------- | ---------------------------------------------------------------------------------------------------- |
 | `data/cloud-vm-prices.json`  | On-demand hourly VM rates for every region in the catalog. Spot hourly when a public source has one. |
 | `data/azure-dbu-meters.json` | Premium Azure Databricks $/DBU by region and catalog SKU.                                            |
-| `data/instances.json`        | DBU/hour per curated instance. Values change only when the LakeMeter bundle differs from the file.   |
 | `data/pricing-probe.json`    | Whether a public Databricks rate JSON was found. The probe does not scrape the pricing bundle.       |
+
+`data/instances.json` is read for the instance list and for validation. The script does not rewrite it.
 
 Each price file has `version` (`YYYY-MM-DD.N`) and `updatedOn`. The page prints “Prices updated” from the latest of the VM file, the Azure meter file, and `verifiedOn` on the curated rate card.
 
@@ -25,7 +26,13 @@ If a region returns no meters, the previous rows for that region are kept. A new
 
 **GCP Cloud Billing Catalog.** `https://cloudbilling.googleapis.com/v1/services/6F81-5844-456A/skus`. Compute Engine. A machine hour is cores times the “{Family} Instance Core” SKU plus memory times the “{Family} Instance Ram” SKU, usage type OnDemand, region in `serviceRegions`. The script runs only when `GCP_BILLING_API_KEY` is set. Otherwise it logs `gcp: skipped` and leaves the seeded rows.
 
-**Instance DBU ratings.** `https://raw.githubusercontent.com/databrickslabs/lakemeter-oss/main/backend/static/pricing/instance-dbu-rates.csv`, column `pricing_bundle`. This is a published extract of the Databricks pricing bundle, not a scrape of databricks.com. `Standard_DS13_v2` is 2.0 DBU/hour, which matches the Azure pricing FAQ.
+**Instance DBU ratings.** `data/instances.json` is a cited table. The refresh does not download or overwrite it.
+
+Azure counts that the [Microsoft pricing page](https://azure.microsoft.com/en-us/pricing/details/databricks/) publishes for All-Purpose Compute, Jobs Compute, and Jobs Light Compute (Premium, non-Photon, fetched 2026-10-16) are `Standard_DS3_v2` 0.75, `Standard_DS4_v2` 1.50, `Standard_DS13_v2` 2.00, `Standard_D4s_v5` 1.00, and `Standard_E8s_v3` 2.00. The Jobs Compute FAQ on that page uses 2.0 DBU per DS13 v2 node. `Standard_F4s_v2` does not appear in those tables, so its 0.75 stays a manual figure.
+
+AWS and GCP counts are a manual table. No allowed public feed publishes them. The [Databricks website terms of use](https://www.databricks.com/legal/terms-of-use) forbid scrapers and interfaces Databricks does not provide, so the refresh does not read the instance picker.
+
+Databricks Labs LakeMeter-OSS is not a source. Its GitHub license is the Databricks License (Copyright 2026 Databricks, Inc.). That license allows the materials only in connection with use of the Databricks Services under the [Master Cloud Services Agreement](https://www.databricks.com/legal/mcsa). A public calculator is outside that grant, so this repo does not fetch or redistribute the pricing bundle.
 
 **Databricks.com.** The script fetches two URLs the pricing app references: `/en-pricing-assets/page-data/app-data.json` and `/page-data/product/pricing/page-data.json`. It looks for rate fields. It does not download or parse the client bundle. The [website terms of use](https://www.databricks.com/legal/terms-of-use) forbid scrapers and other interfaces Databricks does not provide. No rate JSON means the curated $/DBU table stays.
 
@@ -44,4 +51,4 @@ npm run refresh-prices
 SKIP_AWS=1 npm run refresh-prices
 ```
 
-Do not commit a GCP key. Put it in the Actions secret if you want the weekly job to refresh GCE rates.
+Do not commit a GCP key. Put it in the Actions secret if you want the weekly job to refresh GCE rates. `NOTICE` records which price files come from which public source.

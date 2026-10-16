@@ -13,6 +13,15 @@ test("checked-in catalogs pass schema and sanity checks", async () => {
   assert.deepEqual(validateCatalog({ sku, instances, prices, azureMeters }), []);
 });
 
+test("instance ratings are a cited table and are not downloaded", async () => {
+  const instances = await readJson("data/instances.json");
+  const script = await readFile(new URL("./refresh-prices.mjs", import.meta.url), "utf8");
+  assert.equal(/lakemeter/i.test(script), false);
+  assert.equal(/lakemeter/i.test(JSON.stringify(instances)), false);
+  assert.match(instances.note, /azure\.microsoft\.com\/en-us\/pricing\/details\/databricks/);
+  assert.match(script, /left unchanged/);
+});
+
 test("a zero vm price and a duplicate meter fail", async () => {
   const [sku, instances, prices, azureMeters] = await Promise.all([
     readJson("data/sku-rates.json"),

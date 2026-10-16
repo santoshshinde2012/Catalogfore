@@ -146,7 +146,8 @@ export function ResultsPanel({
         </ul>
       </div>
       <p className="text-xs text-muted-foreground">
-        Estimates only. Prices updated {pricesUpdatedOn}. Not a Databricks quote, and not affiliated with Databricks.
+        Estimates only. Prices updated {pricesUpdatedOn}. The calculation stays in this browser. Not a Databricks quote,
+        and not affiliated with Databricks.
       </p>
     </div>
   );
