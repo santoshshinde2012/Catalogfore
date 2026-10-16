@@ -579,6 +579,42 @@
       "note": "Zerobus has no SKU in the curated table or the Azure meter map checked on 2026-10-16. This line stays at $0."
     },
     {
+      "id": "standard_tier",
+      "name": "Standard tier",
+      "menuLabel": "Standard tier",
+      "summary": "Retired, not a forecast template",
+      "category": "data_engineering",
+      "billingUnit": "Unpublished in this forecast",
+      "sku": null,
+      "listPrice": "unpublished",
+      "published": false,
+      "confidence": "unpublished",
+      "automation": "manual",
+      "template": "metered",
+      "editor": "schema",
+      "drivers": [
+        "Not offered"
+      ],
+      "defaults": "The line is $0.",
+      "source": {
+        "title": "Azure Retail Prices API, Azure Databricks consumption meters",
+        "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
+        "fetchedOn": "2026-10-16"
+      },
+      "note": "Azure still lists Standard jobs, all-purpose, SQL, and Jobs Light meters. Standard is retired and is not a Cayfore template, so this line stays at $0. East US examples on 2026-10-16: Jobs $0.15, All-purpose $0.40, SQL $0.22, Jobs Light $0.07.",
+      "fields": [],
+      "patch": {
+        "sku": "managed_services",
+        "dbuPerMonth": 0
+      },
+      "azureMeterNames": [
+        "Standard Jobs Compute DBU",
+        "Standard All-purpose Compute DBU",
+        "Standard SQL Analytics DBU",
+        "Standard Jobs Light Compute DBU"
+      ]
+    },
+    {
       "published": true,
       "confidence": "measured",
       "automation": "azure-retail-prices",
@@ -1662,6 +1698,39 @@
       "note": "Learn bills Shutterstock Image AI at 0.857 DBU per image on Model Serving. The quantity is an example."
     },
     {
+      "id": "serving_launch_charge",
+      "name": "Model serving launch charge",
+      "menuLabel": "Serving launch charge",
+      "summary": "Meter unit is ambiguous",
+      "category": "ai_ml",
+      "billingUnit": "Unpublished unit",
+      "sku": null,
+      "listPrice": "unpublished",
+      "published": false,
+      "confidence": "unpublished",
+      "automation": "manual",
+      "template": "metered",
+      "editor": "schema",
+      "drivers": [
+        "Launch events, unit not an hour"
+      ],
+      "defaults": "The line is $0.",
+      "source": {
+        "title": "Azure Retail Prices API, Azure Databricks consumption meters",
+        "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
+        "fetchedOn": "2026-10-16"
+      },
+      "note": "East US lists Launch Charge Serverless Realtime Inferencing DBU at $0.07 per unit labeled 1, not per hour (2026-10-16). The unit is not clear enough to multiply, so this line stays at $0.",
+      "fields": [],
+      "patch": {
+        "sku": "model_serving",
+        "dbuPerMonth": 0
+      },
+      "azureMeterNames": [
+        "Launch Charge Serverless Realtime Inferencing DBU"
+      ]
+    },
+    {
       "published": true,
       "confidence": "cited",
       "automation": "azure-retail-prices",
@@ -2236,75 +2305,6 @@
       "category": "governance_sharing",
       "billingUnit": "Unpublished",
       "note": "Free Edition is not a row in the Azure meter map or the curated $/DBU table. Account caps are not stored. This line stays at $0 and is not a quote of the free tier."
-    },
-    {
-      "id": "standard_tier",
-      "name": "Standard tier",
-      "menuLabel": "Standard tier",
-      "summary": "Retired, not a forecast template",
-      "category": "data_engineering",
-      "billingUnit": "Unpublished in this forecast",
-      "sku": null,
-      "listPrice": "unpublished",
-      "published": false,
-      "confidence": "unpublished",
-      "automation": "manual",
-      "template": "metered",
-      "editor": "schema",
-      "drivers": [
-        "Not offered"
-      ],
-      "defaults": "The line is $0.",
-      "source": {
-        "title": "Azure Retail Prices API, Azure Databricks consumption meters",
-        "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
-      },
-      "note": "Azure still lists Standard jobs, all-purpose, SQL, and Jobs Light meters. Standard is retired and is not a Cayfore template, so this line stays at $0. East US examples on 2026-10-16: Jobs $0.15, All-purpose $0.40, SQL $0.22, Jobs Light $0.07.",
-      "fields": [],
-      "patch": {
-        "sku": "managed_services",
-        "dbuPerMonth": 0
-      },
-      "azureMeterNames": [
-        "Standard Jobs Compute DBU",
-        "Standard All-purpose Compute DBU",
-        "Standard SQL Analytics DBU",
-        "Standard Jobs Light Compute DBU"
-      ]
-    },
-    {
-      "id": "serving_launch_charge",
-      "name": "Model serving launch charge",
-      "menuLabel": "Serving launch charge",
-      "summary": "Meter unit is ambiguous",
-      "category": "ai_ml",
-      "billingUnit": "Unpublished unit",
-      "sku": null,
-      "listPrice": "unpublished",
-      "published": false,
-      "confidence": "unpublished",
-      "automation": "manual",
-      "template": "metered",
-      "editor": "schema",
-      "drivers": [
-        "Launch events, unit not an hour"
-      ],
-      "defaults": "The line is $0.",
-      "source": {
-        "title": "Azure Retail Prices API, Azure Databricks consumption meters",
-        "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
-      },
-      "note": "East US lists Launch Charge Serverless Realtime Inferencing DBU at $0.07 per unit labeled 1, not per hour (2026-10-16). The unit is not clear enough to multiply, so this line stays at $0.",
-      "fields": [],
-      "patch": {
-        "sku": "model_serving",
-        "dbuPerMonth": 0
-      },
-      "azureMeterNames": [
-        "Launch Charge Serverless Realtime Inferencing DBU"
-      ]
     },
     {
       "id": "data_processed",
