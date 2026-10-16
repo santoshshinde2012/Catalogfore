@@ -17,3 +17,4 @@ export * from "./usage.js";
 export * from "./portfolio.js";
 export { skuCatalog as catalog } from "./catalog.js";
 export { defaultCostStrategies } from "./costing/strategies/index.js";
+export { createWorkload, type MenuKind } from "./workload-seeds.js";

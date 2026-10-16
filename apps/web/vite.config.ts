@@ -75,6 +75,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),
+        "@cayfore/engine/products": path.resolve(__dirname, "../../packages/engine/src/products.ts"),
         "@cayfore/engine": path.resolve(__dirname, "../../packages/engine/src/index.ts"),
       },
     },

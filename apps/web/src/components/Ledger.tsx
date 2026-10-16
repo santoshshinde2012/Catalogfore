@@ -1,7 +1,13 @@
 import { defaultInstanceId, skuCatalog, type Estimate, type Portfolio, type Workload } from "@cayfore/engine";
+import {
+  forecastProducts,
+  listProducts,
+  productById,
+  productCategories,
+  workloadForProduct,
+} from "@cayfore/engine/products";
 import { useEffect, useId, useRef, useState } from "react";
 import { money } from "../format";
-import { MENU, createWorkload, type MenuKind } from "../templates";
 import { Editor } from "./Editor";
 import { Button } from "./ui/button";
 
@@ -16,7 +22,8 @@ interface LedgerProps {
 
 export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect, onRemove }: LedgerProps) {
   const selected = portfolio.workloads.find((workload) => workload.id === selectedId) ?? null;
-  const groups = [...new Set(MENU.map((item) => item.group))];
+  const categories = productCategories();
+  const breakdown = forecastProducts(estimate, portfolio);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
@@ -27,8 +34,8 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
     });
   }
 
-  function add(kind: MenuKind) {
-    const workload = createWorkload(kind);
+  function add(productId: string) {
+    const workload = workloadForProduct(productId);
     if (workload.kind === "cluster") workload.instanceId = defaultInstanceId(portfolio.cloud);
     onPortfolio({ ...portfolio, workloads: [...portfolio.workloads, workload] });
     onSelect(workload.id);
@@ -63,27 +70,32 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
             aria-controls={menuId}
             onClick={() => setMenuOpen((open) => !open)}
           >
-            Add
+            Add product
           </Button>
           {menuOpen && (
             <div
               id={menuId}
               className="absolute right-0 z-20 mt-2 max-h-[70vh] w-80 overflow-auto rounded-lg border bg-popover p-2 shadow-lg"
             >
-              {groups.map((group) => (
-                <div key={group}>
-                  <div className="px-2 pt-2 text-xs font-medium text-muted-foreground">{group}</div>
-                  {MENU.filter((item) => item.group === group).map((item) => (
-                    <button
-                      key={item.kind}
-                      type="button"
-                      className="block w-full rounded-md px-2 py-2 text-left hover:bg-muted"
-                      onClick={() => add(item.kind)}
-                    >
-                      <span className="block text-sm font-medium">{item.label}</span>
-                      <span className="block text-xs text-muted-foreground">{item.blurb}</span>
-                    </button>
-                  ))}
+              {categories.map((category) => (
+                <div key={category.id}>
+                  <div className="px-2 pt-2 text-xs font-medium text-muted-foreground">{category.label}</div>
+                  {listProducts()
+                    .filter((item) => item.category === category.id)
+                    .map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        className="block w-full rounded-md px-2 py-2 text-left hover:bg-muted"
+                        onClick={() => add(item.id)}
+                      >
+                        <span className="block text-sm font-medium">{item.menuLabel}</span>
+                        <span className="block text-xs text-muted-foreground">
+                          {item.summary}
+                          {item.published ? "" : " · Rate not published"}
+                        </span>
+                      </button>
+                    ))}
                 </div>
               ))}
             </div>
@@ -94,6 +106,12 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
       <div className="grid gap-2">
         {portfolio.workloads.map((workload) => {
           const line = estimate.lines.find((item) => item.workloadId === workload.id);
+          const product = workload.productId ? productById(workload.productId) : undefined;
+          const subtitle = product
+            ? product.published
+              ? product.billingUnit
+              : "Rate not published"
+            : (skuCatalog.skuLabels[line?.sku as keyof typeof skuCatalog.skuLabels] ?? line?.sku);
           return (
             <button
               key={workload.id}
@@ -109,15 +127,44 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
               <span className="flex items-center justify-between gap-3">
                 <span>
                   <span className="block text-sm font-medium">{workload.name}</span>
-                  <span className="block text-xs text-muted-foreground">
-                    {skuCatalog.skuLabels[line?.sku as keyof typeof skuCatalog.skuLabels] ?? line?.sku}
-                  </span>
+                  <span className="block text-xs text-muted-foreground">{subtitle}</span>
                 </span>
                 <span className="text-sm font-medium tabular-nums">{money(line?.total ?? 0)}</span>
               </span>
             </button>
           );
         })}
+        {breakdown.lines.length > 0 && (
+          <div className="rounded-lg border px-3 py-3">
+            <h3 className="text-sm font-medium">By product</h3>
+            <p className="text-xs text-muted-foreground">
+              This month, and the next 12 months at this portfolio’s growth.
+            </p>
+            <div className="mt-2 grid gap-2">
+              {breakdown.lines.map((line) => (
+                <div key={line.workloadId} className="flex items-center justify-between gap-3 text-sm">
+                  <span>
+                    <span className="block font-medium">{line.name}</span>
+                    <span className="block text-xs text-muted-foreground">
+                      {line.published === false ? "Rate not published" : (line.billingUnit ?? "This month")}
+                    </span>
+                  </span>
+                  <span className="text-right tabular-nums">
+                    <span className="block">{money(line.monthly)}</span>
+                    <span className="block text-xs text-muted-foreground">{money(line.year)} / 12 mo</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-2 flex items-center justify-between gap-3 border-t pt-2 text-sm font-medium">
+              <span>Total</span>
+              <span className="text-right tabular-nums">
+                <span className="block">{money(breakdown.monthly)}</span>
+                <span className="block text-xs font-normal text-muted-foreground">{money(breakdown.year)} / 12 mo</span>
+              </span>
+            </div>
+          </div>
+        )}
         {portfolio.workloads.length === 0 && (
           <div className="rounded-lg border border-dashed px-3 py-4">
             <p className="text-sm font-medium">No workloads yet.</p>

@@ -20,14 +20,14 @@
   ],
   "scripts": {
     "dev": "npm run dev -w @cayfore/web",
-    "build": "npm run typecheck -w @cayfore/engine && npm run build -w @cayfore/web && npm run build -w @cayfore/mcp",
-    "test": "vitest run && node --test scripts/parse-prices.test.mjs scripts/validate-catalog.test.mjs",
+    "build": "npm run typecheck -w @cayfore/catalog && npm run typecheck -w @cayfore/engine && npm run build -w @cayfore/web && npm run build -w @cayfore/mcp",
+    "test": "vitest run && node --test scripts/parse-prices.test.mjs scripts/validate-catalog.test.mjs scripts/catalog-watch.test.mjs",
     "cayfore": "vite-node scripts/cayfore.ts",
     "test:e2e": "playwright test",
     "test:mcp": "node scripts/mcp-smoke.mjs",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
-    "typecheck": "npm run typecheck -w @cayfore/engine && npm run typecheck -w @cayfore/web && npm run typecheck -w @cayfore/mcp",
+    "typecheck": "npm run typecheck -w @cayfore/catalog && npm run typecheck -w @cayfore/engine && npm run typecheck -w @cayfore/web && npm run typecheck -w @cayfore/mcp",
     "preview": "npm run preview -w @cayfore/web",
     "refresh-prices": "node scripts/refresh-prices.mjs"
   },

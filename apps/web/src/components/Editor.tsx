@@ -1,4 +1,6 @@
+import { productById } from "@cayfore/engine/products";
 import { listRegions, type Cloud, type Portfolio, type Tier, type Workload } from "@cayfore/engine";
+import { SchemaFields } from "./editor/SchemaFields";
 import { workloadEditors } from "./editor/registry";
 import { Button } from "./ui/button";
 
@@ -13,6 +15,8 @@ interface EditorProps {
 
 export function Editor({ workload, portfolio, onChange, onDuplicate, onRemove, onClose }: EditorProps) {
   const cloud = workload.cloud ?? portfolio.cloud;
+  const product = workload.productId ? productById(workload.productId) : undefined;
+  const schema = product?.editor === "schema";
   const Fields = workloadEditors[workload.kind];
   return (
     <div className="mt-2 rounded-lg border p-4">
@@ -41,7 +45,12 @@ export function Editor({ workload, portfolio, onChange, onDuplicate, onRemove, o
         </label>
         <SkuSelect workload={workload} onChange={onChange} />
       </div>
-      <Fields workload={workload} portfolio={portfolio} onChange={onChange} />
+      {schema && product ? (
+        <SchemaFields workload={workload} fields={product.fields} onChange={onChange} />
+      ) : (
+        <Fields workload={workload} portfolio={portfolio} onChange={onChange} />
+      )}
+      {product && <p className="hint mt-3">{product.note}</p>}
       <details className="mt-3">
         <summary>Run this workload somewhere else</summary>
         <div className="mt-2 grid-3">

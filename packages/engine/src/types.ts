@@ -27,7 +27,15 @@ export type SkuId =
 export type SqlSize = "2xs" | "xs" | "s" | "m" | "l" | "xl" | "2xl" | "3xl" | "4xl";
 export type ClusterSku = "jobs_classic" | "all_purpose_classic" | "dlt_core" | "dlt_pro" | "dlt_advanced";
 export type ServerlessSku = "jobs_serverless" | "all_purpose_serverless" | "dlt_serverless";
-export type MeteredSku = "managed_services" | "lakeflow_connect" | "model_training";
+export const METERED_SKUS = [
+  "managed_services",
+  "lakeflow_connect",
+  "model_training",
+  "jobs_serverless",
+  "model_serving",
+  "apps",
+] as const;
+export type MeteredSku = (typeof METERED_SKUS)[number];
 
 export interface Schedule {
   hoursPerDay: number;
@@ -43,6 +51,8 @@ export interface Scale {
 interface WorkloadBase {
   id: string;
   name: string;
+  /** Set when Advanced added this row from the product catalog. */
+  productId?: string;
   cloud?: Cloud;
   region?: string;
   tier?: Tier;
@@ -110,6 +120,8 @@ export type Workload =
       kind: "storage";
       gbMonth: number;
       managed: boolean;
+      /** Multiplier on the DSU or object rate. Omitted means 1. Point-in-time restore uses 8.7. */
+      rateMultiplier?: number;
     })
   | (WorkloadBase & {
       kind: "egress";
@@ -120,6 +132,10 @@ export type Workload =
       kind: "metered";
       sku: MeteredSku;
       dbuPerMonth: number;
+      /** Dollars per DBU for clouds that publish one. A missing cloud is unpriced, not zero by assumption. */
+      rateByCloud?: Partial<Record<Cloud, number>>;
+      /** A non-DBU list charge, such as a daily collaborator fee. A missing cloud is unpriced. */
+      fixedUsdByCloud?: Partial<Record<Cloud, number>>;
     });
 
 export interface ForecastSettings {

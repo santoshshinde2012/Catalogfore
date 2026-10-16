@@ -1,5 +1,14 @@
 import { readFileSync } from "node:fs";
-import { defaultPlan, planFromUsage, projectSimple } from "../packages/engine/src/index.ts";
+import {
+  blankPortfolio,
+  defaultInstanceId,
+  defaultPlan,
+  estimate,
+  planFromUsage,
+  projectSimple,
+  referenceRegion,
+} from "../packages/engine/src/index.ts";
+import { forecastProducts, listProducts, productById, workloadForProduct } from "../packages/engine/src/products.ts";
 
 const [command, file] = process.argv.slice(2);
 
@@ -23,6 +32,38 @@ if (command === "sql") {
       2,
     ),
   );
+} else if (command === "products") {
+  for (const product of listProducts()) {
+    const price = product.published
+      ? "published"
+      : product.listPrice === "reused_sku"
+        ? "reuses another SKU"
+        : "unpublished";
+    console.log(`${product.id}\t${product.category}\t${product.billingUnit}\t${price}`);
+  }
+} else if (command === "product") {
+  if (!file) fail("product needs an id from `products`");
+  const product = productById(file);
+  if (!product) fail(`Unknown product "${file}"`);
+  const workload = workloadForProduct(product.id);
+  if (workload.kind === "cluster") workload.instanceId = defaultInstanceId("aws");
+  const portfolio = { ...blankPortfolio("aws"), region: referenceRegion.aws, workloads: [workload] };
+  const result = estimate(portfolio);
+  const projected = forecastProducts(result, portfolio);
+  console.log(
+    JSON.stringify(
+      {
+        id: product.id,
+        name: product.name,
+        published: product.published,
+        monthly: result.total,
+        year: projected.year,
+        note: product.note,
+      },
+      null,
+      2,
+    ),
+  );
 } else if (command === "estimate" || !command) {
   const projected = projectSimple(defaultPlan());
   console.log(
@@ -38,7 +79,7 @@ if (command === "sql") {
     ),
   );
 } else {
-  fail("commands: estimate, usage <file.csv>, sql");
+  fail("commands: estimate, usage <file.csv>, sql, products, product <id>");
 }
 
 function fail(message: string): never {

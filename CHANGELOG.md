@@ -6,6 +6,11 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Added
 
+- A versioned product catalog (`data/product-catalog.json`, `@cayfore/catalog`) covering Databricks products as of 2026-10-16, including rows whose list price is unpublished and therefore forecast at $0.
+- Advanced “Add product”, grouped by category, with schema-driven inputs for products that do not have their own editor.
+- Per-product month and 12-month totals in Advanced.
+- MCP tools `list_products` and `estimate_product`, and CLI commands `products` and `product <id>`.
+- A Monday catalog watch that flags unknown Azure meters, stale manual citations, and possible new billable features from the Databricks RSS feed.
 - A 12-month forecast from cloud, starting amount, workload mix, and growth, with a low-to-high band.
 - Usage CSV import. One month sets the run rate. Six or more months fit a trend. The sample files are in `apps/web/public/`.
 - CSV, JSON, and PDF export, and a share link that keeps the plan in the URL.

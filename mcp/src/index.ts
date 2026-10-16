@@ -12,6 +12,8 @@ import {
   pricesUpdatedOn,
   projectSimple,
   listRegions,
+  blankPortfolio,
+  defaultInstanceId,
   normalizePortfolio,
   referenceRegion,
   skuRate,
@@ -20,6 +22,13 @@ import {
   type ScenarioPresetId,
   type Tier,
 } from "../../packages/engine/src/index.ts";
+import {
+  forecastProducts,
+  listProducts,
+  productById,
+  productCatalogMeta,
+  workloadForProduct,
+} from "../../packages/engine/src/products.ts";
 
 const DISCLAIMER = catalog.disclaimer;
 
@@ -182,6 +191,85 @@ export function createServer(): McpServer {
         annual: projected.annual,
         spreadPercent: projected.spreadPercent,
         months: projected.months,
+      });
+    },
+  );
+
+  server.registerTool(
+    "list_products",
+    {
+      title: "List Databricks products",
+      description:
+        "List every Cayfore product: billing unit, whether a list rate is published, confidence, and the source. Unpublished rows are not given a guessed price.",
+      inputSchema: {},
+    },
+    async () => {
+      const meta = productCatalogMeta();
+      return text({
+        disclaimer: DISCLAIMER,
+        productCatalogVersion: meta.version,
+        verifiedOn: meta.verifiedOn,
+        products: listProducts().map((product) => ({
+          id: product.id,
+          name: product.name,
+          category: product.category,
+          billingUnit: product.billingUnit,
+          sku: product.sku,
+          listPrice: product.listPrice,
+          published: product.published,
+          confidence: product.confidence,
+          automation: product.automation,
+          source: product.source,
+          note: product.note,
+        })),
+      });
+    },
+  );
+
+  server.registerTool(
+    "estimate_product",
+    {
+      title: "Estimate one Databricks product",
+      description:
+        "Forecast one catalog product with its defaults. Returns this month and 12 months. Unpublished products are $0. Estimates only, not a quote.",
+      inputSchema: {
+        productId: z.string().describe("Product id from list_products."),
+        cloud: z.enum(["aws", "azure", "gcp"]).optional(),
+        region: z.string().optional(),
+        tier: z.enum(["premium", "enterprise"]).optional(),
+      },
+    },
+    async ({ productId, cloud = "aws", region, tier = "premium" }) => {
+      const product = productById(productId);
+      if (!product) {
+        return text({
+          disclaimer: DISCLAIMER,
+          error: `Unknown product "${productId}".`,
+          ids: listProducts().map((item) => item.id),
+        });
+      }
+      const selected = cloud as Cloud;
+      const workload = workloadForProduct(product.id);
+      if (workload.kind === "cluster") workload.instanceId = defaultInstanceId(selected);
+      const portfolio = {
+        ...blankPortfolio(selected),
+        region: region || referenceRegion[selected],
+        tier: tier as Tier,
+        workloads: [workload],
+      };
+      const result = estimate(portfolio);
+      return text({
+        disclaimer: DISCLAIMER,
+        product: {
+          id: product.id,
+          name: product.name,
+          billingUnit: product.billingUnit,
+          published: product.published,
+          confidence: product.confidence,
+          note: product.note,
+        },
+        estimate: result,
+        forecast: forecastProducts(result, portfolio),
       });
     },
   );

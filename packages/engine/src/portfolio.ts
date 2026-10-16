@@ -2,16 +2,17 @@ import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from
 import { defaultInstanceId, listRegions, skuCatalog } from "./catalog.js";
 import { clamp, uid } from "./money.js";
 import { FLAT_SEASONALITY } from "./forecast.js";
-import type {
-  Addon,
-  Cloud,
-  Portfolio,
-  SeasonalityPreset,
-  SimpleBasket,
-  StoredSimple,
-  Tier,
-  Workload,
-  WorkloadMix,
+import {
+  METERED_SKUS,
+  type Addon,
+  type Cloud,
+  type Portfolio,
+  type SeasonalityPreset,
+  type SimpleBasket,
+  type StoredSimple,
+  type Tier,
+  type Workload,
+  type WorkloadMix,
 } from "./types.js";
 
 const CLOUDS: Cloud[] = ["aws", "azure", "gcp"];
@@ -49,6 +50,15 @@ function scale(value: unknown, fallbackMin: number, fallbackMax: number, fallbac
   };
 }
 
+function cloudRates(value: unknown): Partial<Record<Cloud, number>> | undefined {
+  if (!isRecord(value)) return undefined;
+  const rates: Partial<Record<Cloud, number>> = {};
+  for (const cloud of CLOUDS) {
+    if (value[cloud] != null) rates[cloud] = num(value[cloud], 0, 0, 1_000_000);
+  }
+  return Object.keys(rates).length > 0 ? rates : undefined;
+}
+
 function cloudOf(value: unknown): Cloud | undefined {
   return CLOUDS.includes(value as Cloud) ? (value as Cloud) : undefined;
 }
@@ -66,6 +76,9 @@ function base(record: Record<string, unknown>, fallbackName: string) {
     ...(cloud ? { cloud } : {}),
     ...(typeof record.region === "string" ? { region: record.region } : {}),
     ...(tier ? { tier } : {}),
+    ...(typeof record.productId === "string" && /^[a-z0-9_]+$/.test(record.productId)
+      ? { productId: record.productId }
+      : {}),
   };
 }
 
@@ -173,6 +186,7 @@ export function normalizeWorkload(input: unknown, cloud: Cloud): Workload | null
       kind,
       gbMonth: num(input.gbMonth, 100, 0, 1e12),
       managed: input.managed !== false,
+      ...(input.rateMultiplier == null ? {} : { rateMultiplier: num(input.rateMultiplier, 1, 0, 100) }),
     };
   }
   if (kind === "egress") {
@@ -184,10 +198,19 @@ export function normalizeWorkload(input: unknown, cloud: Cloud): Workload | null
     };
   }
   if (kind === "metered") {
-    const sku = ["managed_services", "lakeflow_connect", "model_training"].includes(String(input.sku))
+    const sku = (METERED_SKUS as readonly string[]).includes(String(input.sku))
       ? (input.sku as Extract<Workload, { kind: "metered" }>["sku"])
       : "managed_services";
-    return { ...base(input, "Metered DBUs"), kind, sku, dbuPerMonth: num(input.dbuPerMonth, 100, 0, 1e12) };
+    const rateByCloud = cloudRates(input.rateByCloud);
+    const fixedUsdByCloud = cloudRates(input.fixedUsdByCloud);
+    return {
+      ...base(input, "Metered DBUs"),
+      kind,
+      sku,
+      dbuPerMonth: num(input.dbuPerMonth, 100, 0, 1e12),
+      ...(rateByCloud ? { rateByCloud } : {}),
+      ...(fixedUsdByCloud ? { fixedUsdByCloud } : {}),
+    };
   }
   return null;
 }

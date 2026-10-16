@@ -41,24 +41,26 @@ flowchart LR
 
 ## Units
 
-| Unit                            | Responsibility                                                                                                                             | Depends on                                             |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
-| `catalog/pricing-catalog.ts`    | `PricingCatalog`. The bundled object reads the versioned JSON. A test can pass a different book.                                           | JSON files, via `catalog.ts`                           |
-| `costing/strategies/*`          | One `CostStrategy` per workload kind. Each file prices that kind only.                                                                     | `PricingCatalog`, pure helpers in `costing/support.ts` |
-| `costing/estimate-portfolio.ts` | Walks the portfolio, finds a strategy, scales lines, adds the add-on. It does not know how a SKU is priced.                                | `CostStrategy[]`, `PricingCatalog`                     |
-| `forecast/model.ts`             | Turns one month’s estimate into 12–36 points. Growth and seasonality only.                                                                 | An `Estimate`                                          |
-| `forecast/series.ts`            | Fits an imported usage history to twelve months, with an approximate interval.                                                             | Usage points                                           |
-| `policies/scenario-policies.ts` | Named mutations: serverless, Photon, spot, commits. Each policy is data plus `apply`.                                                      | `PricingCatalog` when a policy needs a rate            |
-| `recommend.ts`                  | Ranks policies and the autostop / right-size adjustments by annual dollars.                                                                | `estimate`, `forecast`, `applyScenario`                |
-| `simple/`                       | Turns four inputs into a portfolio. Mix, presets, monthly growth, and a usage file set workload sizes. It does not price a SKU itself.     | `estimate`, `forecast`, `uncertaintyFactors`           |
-| `apps/web/src/hooks`            | Session and derived view state: URL, theme, bands, recommendations.                                                                        | Engine functions                                       |
-| `apps/web/src/components`       | Presentational pieces. They receive data and callbacks. They do not import the estimator, except where a leaf still needs a catalog label. | Props                                                  |
+| Unit                            | Responsibility                                                                                                                                 | Depends on                                             |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `@cayfore/catalog`              | Product inventory: SKU, billing unit, confidence, citation, and the inputs a new row needs. Zod validates it.                                  | `data/product-catalog.json`                            |
+| `products.ts`                   | Turns a catalog id into a workload on an existing strategy, and splits a 12-month forecast across those lines.                                 | `@cayfore/catalog`, `createWorkload`                   |
+| `catalog/pricing-catalog.ts`    | `PricingCatalog`. The bundled object reads the versioned JSON. A test can pass a different book.                                               | JSON files, via `catalog.ts`                           |
+| `costing/strategies/*`          | One `CostStrategy` per workload kind. Each file prices that kind only.                                                                         | `PricingCatalog`, pure helpers in `costing/support.ts` |
+| `costing/estimate-portfolio.ts` | Walks the portfolio, finds a strategy, scales lines, adds the add-on. It does not know how a SKU is priced.                                    | `CostStrategy[]`, `PricingCatalog`                     |
+| `forecast/model.ts`             | Turns one month’s estimate into 12–36 points. Growth and seasonality only.                                                                     | An `Estimate`                                          |
+| `forecast/series.ts`            | Fits an imported usage history to twelve months, with an approximate interval.                                                                 | Usage points                                           |
+| `policies/scenario-policies.ts` | Named mutations: serverless, Photon, spot, commits. Each policy is data plus `apply`.                                                          | `PricingCatalog` when a policy needs a rate            |
+| `recommend.ts`                  | Ranks policies and the autostop / right-size adjustments by annual dollars.                                                                    | `estimate`, `forecast`, `applyScenario`                |
+| `simple/`                       | Turns four inputs into a portfolio. Mix, presets, monthly growth, and a usage file set workload sizes. It does not price a SKU itself.         | `estimate`, `forecast`, `uncertaintyFactors`           |
+| `apps/web/src/hooks`            | Session and derived view state: URL, theme, bands, recommendations.                                                                            | Engine functions                                       |
+| `apps/web/src/components`       | Presentational pieces. They receive data and callbacks. The Advanced ledger reads the product catalog for the picker and the per-product year. | Props, product catalog                                 |
 
 ## How SOLID shows up
 
 **Single responsibility.** A cluster file does not forecast. The forecast file does not know what a DBU is. A React card does not encode the URL hash. `useSimpleForecast` does. The simple module only chooses workload sizes. `estimate()` still prices them.
 
-**Open/closed.** A new workload kind is a new strategy file added to `defaultCostStrategies`, plus a presentational editor registered in `components/editor/registry.tsx`. `estimate()` does not grow a switch. A new what-if is a new `ScenarioPolicy` in the policy list. `applyScenario` looks the policy up. The four-input page is another caller of those interfaces. Changing the mix does not add a formula to the strategies.
+**Open/closed.** A new workload kind is a new strategy file added to `defaultCostStrategies`, plus a presentational editor registered in `components/editor/registry.tsx`. `estimate()` does not grow a switch. A new product that uses a kind already in the registry is a row in `data/product-catalog.json`. The Advanced picker and the schema-driven fields read that row, so the new product does not need a new React component. A new what-if is a new `ScenarioPolicy` in the policy list. `applyScenario` looks the policy up. The four-input page is another caller of those interfaces. Changing the mix does not add a formula to the strategies.
 
 **Liskov.** Every `CostStrategy` accepts a workload and a `CostContext` and returns a `RawLine`. Callers do not special-case the kind after the quote. Every `ScenarioPolicy` returns a new portfolio and leaves the input alone.
 
