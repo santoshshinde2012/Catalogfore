@@ -1,5 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { writeCoverageReport } from "./coverage-report.mjs";
+import { assertAllowedUrl, fetchAllowed } from "./https-allowlist.mjs";
 
 const STATE_PATH = new URL("../data/catalog-watch-state.json", import.meta.url);
 const REPORT_PATH = new URL("../data/catalog-watch-report.md", import.meta.url);
@@ -88,10 +89,11 @@ export function renderWatchReport({ version, stale, unknown, posts, liveNote }) 
 }
 
 export async function fetchAzureMeterNames(region = "eastus") {
+  if (!/^[a-z0-9]+$/.test(region)) throw new Error("Unexpected Azure region");
   const names = [];
   let url = AZURE_PRICES + encodeURIComponent(`serviceName eq 'Azure Databricks' and armRegionName eq '${region}'`);
   for (let page = 0; page < 8 && url; page += 1) {
-    const response = await fetch(url, { headers: { "user-agent": "cayfore-catalog-watch" } });
+    const response = await fetchAllowed(url, "cayfore-catalog-watch");
     if (!response.ok) throw new Error(String(response.status));
     const body = await response.json();
     for (const item of body.Items ?? []) {
@@ -99,13 +101,14 @@ export async function fetchAzureMeterNames(region = "eastus") {
       if (!(item.unitPrice > 0)) continue;
       if (item.meterName) names.push(String(item.meterName));
     }
-    url = body.NextPageLink || "";
+    url = typeof body.NextPageLink === "string" ? body.NextPageLink : "";
+    if (url) assertAllowedUrl(url);
   }
   return names;
 }
 
 export async function fetchRss() {
-  const response = await fetch(RSS_URL, { headers: { "user-agent": "cayfore-catalog-watch" } });
+  const response = await fetchAllowed(RSS_URL, "cayfore-catalog-watch");
   if (!response.ok) throw new Error(String(response.status));
   return parseRssItems(await response.text());
 }

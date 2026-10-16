@@ -1,6 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import {
+  UPLOAD_MAX_CHARS,
   catalog,
   compareScenarios,
   defaultPlan,
@@ -150,7 +151,9 @@ export function registerForecastTools(server: McpServer) {
       title: "Forecast from a usage CSV",
       description:
         "Fit a 12-month forecast from a system.billing.usage CSV. Include list_price when you joined system.billing.list_prices. A single month scales the run rate. Six or more months fit a trend. Estimates only.",
-      inputSchema: { csv: z.string().describe("CSV text with a header row.") },
+      inputSchema: {
+        csv: z.string().max(UPLOAD_MAX_CHARS).describe("CSV text with a header row. 8 MB at most."),
+      },
     },
     async ({ csv }) => {
       const loaded = planFromUsage(defaultPlan(), csv);

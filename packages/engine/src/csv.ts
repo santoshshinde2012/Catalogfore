@@ -1,4 +1,7 @@
+import { DANGEROUS_KEYS, UPLOAD_MAX_ROWS, UploadError, assertUploadText } from "./untrusted.js";
+
 export function parseCsv(text: string): Record<string, string>[] {
+  assertUploadText(text);
   const rows: string[][] = [];
   let cell = "";
   let row: string[] = [];
@@ -39,10 +42,12 @@ export function parseCsv(text: string): Record<string, string>[] {
     if (row.some((value) => value.trim() !== "")) rows.push(row);
   }
   if (!rows.length) return [];
+  if (rows.length - 1 > UPLOAD_MAX_ROWS) throw new UploadError("That file has too many rows.");
   const header = rows[0].map((value) => value.trim().toLowerCase());
   return rows.slice(1).map((values) => {
-    const record: Record<string, string> = {};
+    const record: Record<string, string> = Object.create(null);
     header.forEach((key, index) => {
+      if (!key || DANGEROUS_KEYS.has(key)) return;
       record[key] = values[index] ?? "";
     });
     return record;

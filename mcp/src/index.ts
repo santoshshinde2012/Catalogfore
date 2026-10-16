@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { redactSecrets } from "./redact.js";
 import { registerForecastTools } from "./register-forecast.js";
 import { registerProductTools } from "./register-products.js";
 
@@ -20,7 +21,8 @@ async function main() {
 const entry = process.argv[1] ?? "";
 if (entry.endsWith("index.ts") || entry.endsWith("index.js")) {
   main().catch((error: unknown) => {
-    console.error(error);
+    const message = error instanceof Error ? error.message : "MCP server failed";
+    console.error(redactSecrets(message));
     process.exit(1);
   });
 }

@@ -4,6 +4,7 @@ import { FLAT_SEASONALITY } from "./forecast.js";
 import { normalizeWorkload } from "./normalize-workload.js";
 import { cloudOf, isRecord, num, str, tierOf } from "./portfolio-fields.js";
 import { err, ok, type Result } from "./result.js";
+import { JSON_MAX_CHARS, SHARE_MAX_CHARS, parseUntrustedJson } from "./untrusted.js";
 import type {
   Addon,
   Cloud,
@@ -153,11 +154,11 @@ export function decodePortfolioResult(encoded: string): Result<Portfolio> {
 }
 
 export function decodePortfolio(encoded: string): Portfolio | null {
-  if (!encoded) return null;
+  if (!encoded || encoded.length > SHARE_MAX_CHARS) return null;
   const json = decompressFromEncodedURIComponent(encoded);
-  if (!json) return null;
+  if (!json || json.length > JSON_MAX_CHARS) return null;
   try {
-    return normalizePortfolio(JSON.parse(json));
+    return normalizePortfolio(parseUntrustedJson(json));
   } catch {
     return null;
   }

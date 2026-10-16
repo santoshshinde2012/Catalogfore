@@ -102,10 +102,14 @@ export function sessionActions(
     loadUsageText,
     loadUsageFile: (file) => {
       setUsageBusy(true);
-      void file.text().then((text) => {
-        loadUsageText(text);
-        setUsageBusy(false);
-      });
+      void import("../security/read-upload")
+        .then(({ readUsageFile }) => readUsageFile(file))
+        .then((result) => {
+          if (!result.ok) setUsageError(result.error);
+          else loadUsageText(result.value);
+        })
+        .catch(() => setUsageError("That file could not be read."))
+        .finally(() => setUsageBusy(false));
     },
     loadSample: () => {
       setUsageBusy(true);
@@ -134,9 +138,14 @@ export function sessionActions(
     reset: () => replacePlan(defaultPlan()),
     toggleTheme: () => setTheme((current) => (current === "light" ? "dark" : "light")),
     loadForecastFile: (file) => {
-      void file.text().then((text) => {
-        try {
-          const parsed = JSON.parse(text) as { portfolio?: unknown };
+      void import("../security/read-upload")
+        .then(({ readForecastFile }) => readForecastFile(file))
+        .then((result) => {
+          if (!result.ok) {
+            window.alert(result.error);
+            return;
+          }
+          const parsed = result.value as { portfolio?: unknown };
           const decoded = normalizePortfolio(parsed.portfolio ?? parsed);
           const simple = planFromPortfolio(decoded);
           if (simple) replacePlan(simple);
@@ -147,10 +156,8 @@ export function sessionActions(
             setOverride(detached);
             setSelectedId(detached.workloads[0]?.id ?? null);
           }
-        } catch {
-          window.alert("That file is not a forecast JSON.");
-        }
-      });
+        })
+        .catch(() => window.alert("That file is not a forecast JSON."));
     },
     editPortfolio: (next) => {
       const detached = { ...next };

@@ -25,12 +25,14 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 - `robots.txt`, a sitemap, a web manifest, and JSON-LD (`WebSite`, `WebApplication`, `SoftwareApplication`) on the production page.
 - A static FAQ at `/faq.html` and `docs/FAQ.md`. The forecast page layout is unchanged.
 - A production Content-Security-Policy meta tag and a referrer policy. See `docs/ROADMAP.md` for what GitHub Pages cannot set.
-- Optional Plausible analytics, off unless `VITE_PLAUSIBLE_DOMAIN` is set at build time.
+- Optional Plausible analytics, off unless `VITE_PLAUSIBLE_DOMAIN` is set at build time. Removed in the security pass below. The page no longer has a path that loads it.
 - Issue forms, a pull request template, and `NOTICE` for the price sources.
 - `docs/PRIVACY.md`. The calculation stays in the browser.
 
 ### Changed
 
+- Uploads, share links, and forecast JSON are size-capped and parsed as plain data. CSV export neutralizes spreadsheet formulas. The production page does not load a third-party script. The unused `@radix-ui/react-label` package is removed. Dependabot waits 7 days before opening a version-update pull request.
+- Price refresh and catalog watch fetch only allow-listed HTTPS hosts. The billing SQL stays a fixed `SELECT`.
 - The product name is Cayfore. The theme is stored as `cayfore-theme`. A browser that still has `dcf-theme` is copied once, then the old key is removed.
 - The GitHub repository, the Pages path, and the root package are `cayfore` (https://santoshshinde2012.github.io/cayfore/). They were previously `databricks-cost-forecaster`.
 - Instance DBU counts are a cited table. Azure rows that Microsoft publishes are cited to the Azure Databricks pricing page. AWS, GCP, and `Standard_F4s_v2` stay manual. The refresh does not download LakeMeter-OSS.

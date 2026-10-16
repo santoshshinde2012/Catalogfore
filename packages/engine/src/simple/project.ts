@@ -10,6 +10,7 @@ import { importUsageCsv } from "../usage.js";
 import { bucketDbu, normalizeMix } from "./mix.js";
 import { explain } from "./explain.js";
 import { rollForward, spreadPercent } from "./roll-forward.js";
+import { UploadError } from "../untrusted.js";
 import { annualGrowthFromMonthly, basketForDbu, portfolioShell, regionFor, workloadsFromBasket } from "./shape.js";
 
 export interface SimplePlan {
@@ -116,6 +117,19 @@ export function withRates(
 }
 
 export function planFromUsage(
+  plan: SimplePlan,
+  text: string,
+  dependencies?: EstimateDependencies,
+): { ok: true; plan: SimplePlan } | { ok: false; error: string } {
+  try {
+    return planFromUsageText(plan, text, dependencies);
+  } catch (error) {
+    if (error instanceof UploadError) return { ok: false, error: error.message };
+    throw error;
+  }
+}
+
+function planFromUsageText(
   plan: SimplePlan,
   text: string,
   dependencies?: EstimateDependencies,

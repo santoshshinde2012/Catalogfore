@@ -1,5 +1,7 @@
 import {
   annualTotal,
+  neutralizeSpreadsheetFormula,
+  pdfPlain,
   recommendations,
   uncertaintyBand,
   type Estimate,
@@ -71,7 +73,7 @@ export async function exportPdf(portfolio: Portfolio, estimate: Estimate, points
   let y = 48;
   const write = (text: string, size = 11, gap = 16) => {
     doc.setFontSize(size);
-    const rows = doc.splitTextToSize(text, width - 72);
+    const rows = doc.splitTextToSize(pdfPlain(text), width - 72);
     if (y + rows.length * gap > 740) {
       doc.addPage();
       y = 48;
@@ -125,7 +127,7 @@ export const forecastExporters = [
 ] as const;
 
 function csv(value: string): string {
-  return `"${value.replace(/"/g, '""')}"`;
+  return `"${neutralizeSpreadsheetFormula(value).replace(/"/g, '""')}"`;
 }
 
 function usd(value: number): string {

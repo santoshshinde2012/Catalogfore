@@ -1,8 +1,16 @@
+import { assertAllowedUrl } from "./https-allowlist.mjs";
+
 export async function streamAws(region, instanceIds) {
-  const url = `https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/${region}/index.csv`;
+  if (!/^[a-z0-9-]+$/.test(region)) throw new Error("Unexpected AWS region");
+  const url = assertAllowedUrl(
+    `https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/${region}/index.csv`,
+  );
   const controller = new AbortController();
-  const response = await fetch(url, { headers: { "user-agent": "cayfore-price-refresh" }, signal: controller.signal });
-  if (!response.ok || !response.body) throw new Error(`${response.status} ${url}`);
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, 120_000);
   const wanted = new Set(instanceIds);
   const found = new Map();
   const decoder = new TextDecoder();
@@ -10,6 +18,12 @@ export async function streamAws(region, instanceIds) {
   let header = null;
   let index = null;
   try {
+    const response = await fetch(url, {
+      headers: { "user-agent": "cayfore-price-refresh" },
+      signal: controller.signal,
+      redirect: "error",
+    });
+    if (!response.ok || !response.body) throw new Error(`${response.status} ${url.hostname}`);
     for await (const chunk of response.body) {
       buffer += decoder.decode(chunk, { stream: true });
       let newline = buffer.indexOf("\n");
@@ -51,7 +65,10 @@ export async function streamAws(region, instanceIds) {
       }
     }
   } catch (error) {
+    if (timedOut) throw new Error("AWS price download timed out");
     if (!(error instanceof Error) || error.name !== "AbortError") throw error;
+  } finally {
+    clearTimeout(timer);
   }
   return [...found.entries()].map(([instanceId, onDemandHourly]) => ({ instanceId, onDemandHourly }));
 }

@@ -1,4 +1,7 @@
 -- Columns Cayfore reads. Run in a workspace that can see system tables.
+-- Least privilege: USE CATALOG system; USE SCHEMA billing; SELECT on usage and list_prices.
+-- This text is fixed. The CLI prints it. It does not concatenate a workspace, a token, or a filter.
+-- A personal access token stays in the environment of the Databricks CLI or the SQL editor. Cayfore does not read it.
 -- Download the result as CSV and use Advanced → From a usage file.
 -- list_price is pricing.default, the published list rate.
 -- ORIGINAL and RETRACTION rows both belong in the file. RETRACTION quantities are negative.

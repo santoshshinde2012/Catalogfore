@@ -7,7 +7,12 @@ export default defineConfig({
     alias: { "@": path.resolve(__dirname, "apps/web/src") },
   },
   test: {
-    include: ["packages/engine/src/**/*.test.ts", "packages/catalog/src/**/*.test.ts", "apps/web/src/**/*.test.tsx"],
+    include: [
+      "packages/engine/src/**/*.test.ts",
+      "packages/catalog/src/**/*.test.ts",
+      "apps/web/src/**/*.test.ts",
+      "apps/web/src/**/*.test.tsx",
+    ],
     coverage: {
       provider: "v8",
       reporter: ["text", "json-summary"],

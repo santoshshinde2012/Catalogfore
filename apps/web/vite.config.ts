@@ -1,14 +1,12 @@
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import { createHash } from "node:crypto";
 import path from "node:path";
-import { defineConfig, loadEnv, type Plugin } from "vite";
+import { defineConfig, type Plugin } from "vite";
+import { productionCsp } from "./src/csp";
 import { BASE_PATH, PAGE_DESCRIPTION, SITE } from "./src/site";
 
 /** Production-only CSP and JSON-LD. Dev keeps the Vite client, which needs inline scripts. */
-function productionPolicy(env: Record<string, string>): Plugin {
-  const plausible = (env.VITE_PLAUSIBLE_DOMAIN ?? "").trim();
-  const usePlausible = /^[a-z0-9.-]+$/i.test(plausible);
+function productionPolicy(): Plugin {
   const json = JSON.stringify({
     "@context": "https://schema.org",
     "@graph": [
@@ -36,42 +34,25 @@ function productionPolicy(env: Record<string, string>): Plugin {
       },
     ],
   });
-  const hash = createHash("sha256").update(json).digest("base64");
-  const scriptSrc = ["'self'", `'sha256-${hash}'`];
-  const connectSrc = ["'self'"];
-  if (usePlausible) {
-    scriptSrc.push("https://plausible.io");
-    connectSrc.push("https://plausible.io");
-  }
-  const csp = [
-    "default-src 'self'",
-    `script-src ${scriptSrc.join(" ")}`,
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob:",
-    "font-src 'self'",
-    `connect-src ${connectSrc.join(" ")}`,
-    "worker-src 'self' blob:",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-  ].join("; ");
+  const csp = productionCsp(json);
   return {
     name: "cayfore-production-policy",
     apply: "build",
     enforce: "post",
     transformIndexHtml(html) {
+      const note =
+        "    <!-- frame-ancestors is ignored in a meta policy. GitHub Pages cannot send it as a response header. -->";
       const cspTag = `    <meta http-equiv="Content-Security-Policy" content="${csp}" />`;
       const jsonTag = `    <script type="application/ld+json">${json}</script>`;
-      return html.replace("<head>", `<head>\n${cspTag}`).replace("</head>", `${jsonTag}\n  </head>`);
+      return html.replace("<head>", `<head>\n${note}\n${cspTag}`).replace("</head>", `${jsonTag}\n  </head>`);
     },
   };
 }
 
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, __dirname, "");
+export default defineConfig(() => {
   return {
     base: BASE_PATH,
-    plugins: [react(), tailwindcss(), productionPolicy(env)],
+    plugins: [react(), tailwindcss(), productionPolicy()],
     build: {
       // The landing chunk is the calculator. The product catalog stays on the Advanced chunk.
       chunkSizeWarningLimit: 1000,

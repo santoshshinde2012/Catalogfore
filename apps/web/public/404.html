@@ -6,9 +6,10 @@
     <meta name="theme-color" content="#F6F6F7" />
     <meta name="robots" content="noindex" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <!-- frame-ancestors is ignored in a meta policy. GitHub Pages cannot send it as a response header. -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; style-src 'unsafe-inline'; img-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+      content="default-src 'self'; style-src 'unsafe-inline'; style-src-elem 'sha256-43QzgvxnmbKHpjC7BFCAvsuNjZP1j4txH+K3/+UiST8='; style-src-attr 'none'; img-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
     />
     <title>Page not found — Cayfore</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
