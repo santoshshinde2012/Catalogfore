@@ -10,7 +10,17 @@ import { PlanForm } from "./PlanForm";
 import { SavingsAside } from "./SavingsAside";
 import { UsagePanel } from "./UsagePanel";
 
-export function SimplePage({ session }: { session: SimpleSession }) {
+export function SimplePage({
+  session,
+  howOpen,
+  onHowOpen,
+  advancedAsk,
+}: {
+  session: SimpleSession;
+  howOpen: boolean;
+  onHowOpen: (open: boolean) => void;
+  advancedAsk: number;
+}) {
   return (
     <article className="mx-auto w-full max-w-6xl px-4 pt-8 pb-10 sm:px-6 lg:pb-16">
       <header className="max-w-2xl">
@@ -53,6 +63,7 @@ export function SimplePage({ session }: { session: SimpleSession }) {
             />
             <AdvancedBuilder
               open={session.usingDetail}
+              ask={advancedAsk}
               portfolio={session.portfolio}
               estimate={session.estimate}
               selectedId={session.selectedId}
@@ -74,6 +85,7 @@ export function SimplePage({ session }: { session: SimpleSession }) {
               portfolio={session.portfolio}
               estimate={session.estimate}
               points={session.points}
+              plan={session.plan}
               notice={session.notice}
               busy={session.usageBusy}
               onShare={() => void session.share()}
@@ -83,7 +95,7 @@ export function SimplePage({ session }: { session: SimpleSession }) {
       </div>
 
       <div className="mt-6 grid gap-3">
-        <Fold title="How we got this">
+        <Fold id="how-it-works" title="How we got this" open={howOpen} onOpenChange={onHowOpen}>
           <ul className="grid list-disc gap-2 pl-5 text-sm text-muted-foreground">
             {session.assumptions.map((line) => (
               <li key={line}>{line}</li>
@@ -107,9 +119,21 @@ export function SimplePage({ session }: { session: SimpleSession }) {
   );
 }
 
-function Fold({ title, children }: { title: string; children: ReactNode }) {
+function Fold({
+  id,
+  title,
+  open,
+  onOpenChange,
+  children,
+}: {
+  id: string;
+  title: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  children: ReactNode;
+}) {
   return (
-    <Collapsible className="rounded-lg border bg-card shadow-sm">
+    <Collapsible id={id} open={open} onOpenChange={onOpenChange} className="rounded-lg border bg-card shadow-sm">
       <CollapsibleTrigger className="group flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium hover:bg-muted/70">
         {title}
         <ChevronDown className="size-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />

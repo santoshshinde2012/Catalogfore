@@ -7,6 +7,7 @@ import { Ledger } from "../Ledger";
 
 export function AdvancedBuilder({
   open,
+  ask = 0,
   portfolio,
   estimate,
   selectedId,
@@ -15,6 +16,7 @@ export function AdvancedBuilder({
   onRemove,
 }: {
   open: boolean;
+  ask?: number;
   portfolio: Portfolio;
   estimate: Estimate;
   selectedId: string | null;
@@ -24,8 +26,8 @@ export function AdvancedBuilder({
 }) {
   const [opened, setOpened] = useState(open);
   useEffect(() => {
-    if (open) setOpened(true);
-  }, [open]);
+    if (open || ask > 0) setOpened(true);
+  }, [open, ask]);
   return (
     <Sheet open={opened} onOpenChange={setOpened}>
       <SheetTrigger asChild>

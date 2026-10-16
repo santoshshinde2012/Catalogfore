@@ -12,16 +12,16 @@ Fathom is the interface. This repository is the forecast. It is an estimate, not
 
 ## What it answers
 
-Cloud and tier, a starting monthly amount or a team size, a mix of pipelines, dashboards, and models, and monthly growth. The page returns a low-to-high year, a sentence, and a month table.
+Cloud and tier, a starting monthly amount or a team size, a mix of pipelines, dashboards, and models, and monthly growth. The page returns a low-to-high year, a sentence, a chart, and a month table.
 
-| Input          | Default                                   |
-| -------------- | ----------------------------------------- |
-| Cloud and tier | AWS, Premium, reference region            |
-| Starting point | Medium, $12,000 a month                   |
-| Mix            | 45% pipelines, 40% dashboards, 15% models |
-| Growth         | 0%, with an optional commitment discount  |
+| Input          | Default                                          |
+| -------------- | ------------------------------------------------ |
+| Cloud and tier | AWS, Premium, reference region                   |
+| Starting point | Medium, $12,000 a month                          |
+| Mix            | 45% pipelines, 40% dashboards, 15% models        |
+| Growth         | 3% a month, with an optional commitment discount |
 
-On that default the page reads **about $143,960 per year, ±20%**. First month **$11,997**. **29%** of the bill is cloud machines. The sources for the presets and the rates are in [docs/RESEARCH.md](docs/RESEARCH.md).
+On that default the page reads **about $170,258 per year, ±20%**. First month **$11,997**. **29%** of the bill is cloud machines. The sources for the presets and the rates are in [docs/RESEARCH.md](docs/RESEARCH.md).
 
 A usage CSV replaces the monthly amount and the mix. Advanced opens the per-workload editor. Savings stay under the result, each with an annual amount.
 
@@ -51,7 +51,7 @@ npm run test:mcp  # stdio MCP smoke test
 npm run test:e2e  # Playwright, desktop and mobile, including axe
 ```
 
-The page JavaScript is about 279 KB gzipped, including the chart. CSS is about 7 KB gzipped, before the font files. PDF export loads on demand.
+The page JavaScript is about 335 KB gzipped, including the chart. CSS is about 8 KB gzipped, before the font files. PDF export loads on demand.
 
 ## Repository
 

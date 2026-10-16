@@ -7,7 +7,8 @@ import {
   type Tier,
   type WorkloadMix,
 } from "@dcf/engine";
-import { useState } from "react";
+import { Building2, Landmark, Users, type LucideIcon } from "lucide-react";
+import { useRef, useState, type ReactNode } from "react";
 import { money } from "../../format";
 import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
@@ -15,11 +16,17 @@ import { Separator } from "../ui/separator";
 import { Slider } from "../ui/slider";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 
-const CLOUDS: { id: Cloud; label: string }[] = [
-  { id: "aws", label: "AWS" },
-  { id: "azure", label: "Azure" },
-  { id: "gcp", label: "GCP" },
+const CLOUDS: { id: Cloud; label: string; glyph: ReactNode }[] = [
+  { id: "aws", label: "AWS", glyph: <AwsGlyph /> },
+  { id: "azure", label: "Azure", glyph: <AzureGlyph /> },
+  { id: "gcp", label: "GCP", glyph: <GcpGlyph /> },
 ];
+
+const TEAM_ICONS: Record<TeamPresetId, LucideIcon> = {
+  small: Users,
+  medium: Building2,
+  large: Landmark,
+};
 
 const TIERS: { id: Tier; label: string }[] = [
   { id: "premium", label: "Premium" },
@@ -82,8 +89,7 @@ export function PlanForm({
         event.preventDefault();
       }}
     >
-      <fieldset className="grid gap-4" disabled={false}>
-        <legend className="text-sm font-medium">Cloud and tier</legend>
+      <Step n="1" title="Cloud">
         <ToggleGroup
           type="single"
           value={plan.cloud}
@@ -92,7 +98,8 @@ export function PlanForm({
           className="grid grid-cols-3"
         >
           {CLOUDS.map((cloud) => (
-            <ToggleGroupItem key={cloud.id} value={cloud.id} className="h-9">
+            <ToggleGroupItem key={cloud.id} value={cloud.id} className="h-auto flex-col gap-1 py-2">
+              {cloud.glyph}
               {cloud.label}
             </ToggleGroupItem>
           ))}
@@ -126,12 +133,11 @@ export function PlanForm({
           </Select>
         </label>
         <p className="text-sm text-muted-foreground">Optional. Each cloud starts in its reference region.</p>
-      </fieldset>
+      </Step>
 
       <Separator />
 
-      <fieldset className="grid gap-4" disabled={usageLocked}>
-        <legend className="text-sm font-medium">Starting point</legend>
+      <Step n="2" title="Starting point" disabled={usageLocked}>
         <label className="grid gap-2 text-sm font-medium">
           Starting monthly spend
           <span className="relative block font-normal">
@@ -164,29 +170,37 @@ export function PlanForm({
           value={pressedPreset(plan, listMonthly, usageLocked) ?? ""}
           onValueChange={(value) => value && onPreset(value as TeamPresetId)}
           aria-label="Team size"
-          className="grid grid-cols-3"
+          className="grid grid-cols-1 gap-2 bg-transparent p-0"
           disabled={usageLocked}
         >
-          {TEAM_PRESETS.map((preset) => (
-            <ToggleGroupItem
-              key={preset.id}
-              value={preset.id}
-              className="h-auto flex-col items-start gap-0.5 px-3 py-2"
-            >
-              {preset.label}
-              <span className="text-xs font-normal text-muted-foreground tabular-nums">
-                {money(preset.monthlySpend, 0)}
-              </span>
-            </ToggleGroupItem>
-          ))}
+          {TEAM_PRESETS.map((preset) => {
+            const Icon = TEAM_ICONS[preset.id];
+            return (
+              <ToggleGroupItem
+                key={preset.id}
+                value={preset.id}
+                className="h-auto items-start justify-start gap-3 rounded-lg border bg-card px-3 py-3 text-left shadow-none ring-0 data-[state=on]:border-foreground data-[state=on]:shadow-sm data-[state=on]:ring-1 data-[state=on]:ring-foreground"
+              >
+                <Icon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                <span className="grid gap-0.5">
+                  <span>
+                    {preset.label}
+                    <span className="ml-2 font-normal text-muted-foreground tabular-nums">
+                      {money(preset.monthlySpend, 0)}
+                    </span>
+                  </span>
+                  <span className="text-xs font-normal text-muted-foreground">{preset.detail}</span>
+                </span>
+              </ToggleGroupItem>
+            );
+          })}
         </ToggleGroup>
         <p className="text-sm text-muted-foreground" data-testid="mix-assumption">
           {mixLine}. {describePreset(plan)}
         </p>
-      </fieldset>
+      </Step>
 
-      <fieldset className="grid gap-4" disabled={usageLocked}>
-        <legend className="text-sm font-medium">Workload mix</legend>
+      <Step n="3" title="Mix" disabled={usageLocked}>
         {MIX_FIELDS.map((field) => (
           <div key={field.key} className="grid gap-2">
             <div className="flex items-center justify-between text-sm font-medium">
@@ -208,12 +222,8 @@ export function PlanForm({
             />
           </div>
         ))}
-        <div className="flex h-2 overflow-hidden rounded-full bg-muted" aria-hidden="true">
-          <span className="bg-lava" style={{ width: `${plan.mix.etl * 100}%` }} />
-          <span className="bg-[#146c43]" style={{ width: `${plan.mix.sql * 100}%` }} />
-          <span className="bg-[#b45309]" style={{ width: `${plan.mix.ml * 100}%` }} />
-        </div>
-      </fieldset>
+        <MixBar mix={plan.mix} disabled={usageLocked} onMix={onMix} />
+      </Step>
 
       {usageLocked && (
         <p className="text-sm text-muted-foreground" data-testid="usage-summary">
@@ -230,8 +240,7 @@ export function PlanForm({
 
       <Separator />
 
-      <fieldset className="grid gap-4">
-        <legend className="text-sm font-medium">Growth and discount</legend>
+      <Step n="4" title="Growth">
         <ToggleGroup
           type="single"
           value={growthValue(plan.monthlyGrowth)}
@@ -286,8 +295,108 @@ export function PlanForm({
           />
         </div>
         <p className="text-sm text-muted-foreground">Applies to the Databricks portion only, not cloud machines.</p>
-      </fieldset>
+      </Step>
     </form>
+  );
+}
+
+function Step({ n, title, disabled, children }: { n: string; title: string; disabled?: boolean; children: ReactNode }) {
+  return (
+    <fieldset className="grid gap-4" disabled={disabled}>
+      <legend className="mb-1 flex items-center gap-2 text-sm font-semibold">
+        <span className="flex size-6 items-center justify-center rounded-full bg-foreground text-xs text-background">
+          {n}
+        </span>
+        {title}
+      </legend>
+      {children}
+    </fieldset>
+  );
+}
+
+function MixBar({
+  mix,
+  disabled,
+  onMix,
+}: {
+  mix: WorkloadMix;
+  disabled: boolean;
+  onMix: (key: keyof WorkloadMix, value: number) => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  function share(clientX: number): number {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect || rect.width <= 0) return 0;
+    return Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+  }
+  return (
+    <div className="relative h-3" aria-hidden="true">
+      <div
+        ref={ref}
+        className="flex h-full overflow-hidden rounded-full bg-muted"
+        onPointerDown={(event) => {
+          if (disabled) return;
+          const start = share(event.clientX);
+          const boundary = mix.etl + mix.sql;
+          const key: keyof WorkloadMix = Math.abs(start - mix.etl) <= Math.abs(start - boundary) ? "etl" : "ml";
+          const apply = (clientX: number) => {
+            const next = share(clientX);
+            onMix(key, key === "etl" ? next : 1 - next);
+          };
+          apply(event.clientX);
+          const move = (pointer: PointerEvent) => apply(pointer.clientX);
+          const stop = () => {
+            window.removeEventListener("pointermove", move);
+            window.removeEventListener("pointerup", stop);
+          };
+          window.addEventListener("pointermove", move);
+          window.addEventListener("pointerup", stop);
+        }}
+      >
+        <span className="bg-lava" style={{ width: `${mix.etl * 100}%` }} />
+        <span className="bg-[#146c43]" style={{ width: `${mix.sql * 100}%` }} />
+        <span className="bg-[#b45309]" style={{ width: `${mix.ml * 100}%` }} />
+      </div>
+      <span
+        className="pointer-events-none absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-foreground bg-card shadow-sm"
+        style={{ left: `${mix.etl * 100}%` }}
+      />
+      <span
+        className="pointer-events-none absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-foreground bg-card shadow-sm"
+        style={{ left: `${(mix.etl + mix.sql) * 100}%` }}
+      />
+    </div>
+  );
+}
+
+function AwsGlyph() {
+  return (
+    <svg viewBox="0 0 16 16" className="size-4" aria-hidden="true">
+      <path d="M2 4h12M2 8h8M2 12h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function AzureGlyph() {
+  return (
+    <svg viewBox="0 0 16 16" className="size-4" aria-hidden="true">
+      <rect x="2.5" y="2.5" width="11" height="11" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M8 4.5v7M4.5 8h7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function GcpGlyph() {
+  return (
+    <svg viewBox="0 0 16 16" className="size-4" aria-hidden="true">
+      <path
+        d="M8 2.2 13 5.1v5.8L8 13.8 3 10.9V5.1L8 2.2Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
 

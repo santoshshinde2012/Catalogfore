@@ -65,14 +65,17 @@ test("cloud, commitment, exports, and a usage file", async ({ page }) => {
   await expect(page.getByTestId("usage-summary")).toContainText("From your usage file");
 
   await expect(page.getByText("Estimates only").first()).toBeVisible();
+  await page.getByRole("button", { name: "Export" }).click();
   const csvPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "CSV", exact: true }).click();
+  await page.getByRole("menuitem", { name: "CSV", exact: true }).click();
   expect((await csvPromise).suggestedFilename()).toMatch(/\.csv$/);
+  await page.getByRole("button", { name: "Export" }).click();
   const jsonPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "JSON", exact: true }).click();
+  await page.getByRole("menuitem", { name: "JSON", exact: true }).click();
   expect((await jsonPromise).suggestedFilename()).toMatch(/\.json$/);
+  await page.getByRole("button", { name: "Export" }).click();
   const pdfPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "PDF" }).click();
+  await page.getByRole("menuitem", { name: "PDF" }).click();
   expect((await pdfPromise).suggestedFilename()).toMatch(/\.pdf$/);
 });
 
@@ -80,7 +83,7 @@ test("advanced builder, how we got this, and theme", async ({ page }) => {
   await page.goto("./");
   await page.getByText("How we got this").click();
   await expect(page.getByText(/You enter dollars/)).toBeVisible();
-  await page.getByText("Advanced", { exact: true }).click();
+  await page.getByRole("button", { name: "Advanced", exact: true }).last().click();
   await page.getByRole("button", { name: "Add" }).click();
   await page.getByRole("button", { name: /Serverless jobs/ }).click();
   await expect(page.getByRole("button", { name: /Serverless jobs/ }).first()).toBeVisible();
@@ -113,7 +116,7 @@ test("has no serious accessibility violations", async ({ page }, testInfo) => {
   expect(home.violations).toEqual([]);
   await page.getByText("How we got this").click();
   await page.getByText("Ways to pay less").click();
-  await page.getByText("Advanced", { exact: true }).click();
+  await page.getByRole("button", { name: "Advanced", exact: true }).last().click();
   await page.keyboard.press("Escape");
   const open = await new AxeBuilder({ page }).analyze();
   expect(open.violations).toEqual([]);
@@ -146,7 +149,7 @@ test("mobile layout does not overflow the viewport", async ({ page }, testInfo) 
   );
   expect(homeOverflow).toBeLessThanOrEqual(1);
   await expect(page.getByTestId("year-total")).toBeVisible();
-  await page.getByRole("button", { name: "Advanced", exact: true }).click();
+  await page.getByRole("button", { name: "Advanced", exact: true }).last().click();
   const opened = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(opened).toBeLessThanOrEqual(1);
 });

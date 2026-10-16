@@ -1,8 +1,6 @@
 import type { Recommendation, RecommendationId } from "@dcf/engine";
-import { ChevronDown } from "lucide-react";
 import { money } from "../../format";
 import { Button } from "../ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 
 const PLAIN: Record<RecommendationId, { title: string; detail: string }> = {
   jobs_serverless: {
@@ -47,36 +45,34 @@ export function SavingsAside({
   onApply: (id: RecommendationId) => void;
 }) {
   return (
-    <Collapsible className="rounded-lg border bg-card shadow-sm">
-      <CollapsibleTrigger className="group flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium hover:bg-muted/70">
+    <section className="grid gap-3" aria-labelledby="savings-heading">
+      <h2 id="savings-heading" className="text-sm font-semibold">
         Ways to pay less
-        <ChevronDown className="size-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-      </CollapsibleTrigger>
-      <CollapsibleContent className="px-4 pb-4">
-        {recommendations.length === 0 ? (
-          <p className="text-sm text-muted-foreground">None of these changes lower the forecast.</p>
-        ) : (
-          <ul className="grid gap-3">
-            {recommendations.map((item) => {
-              const plain = PLAIN[item.id];
-              return (
-                <li
-                  key={item.id}
-                  className="flex flex-col gap-3 border-t pt-3 sm:flex-row sm:items-center sm:justify-between"
-                >
-                  <div>
-                    <p className="text-sm font-medium">{plain.title}</p>
-                    <p className="text-sm text-muted-foreground">{plain.detail}</p>
-                  </div>
-                  <Button type="button" variant="outline" onClick={() => onApply(item.id)}>
-                    Apply, save {money(item.annualSavings, 0)} a year
-                  </Button>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </CollapsibleContent>
-    </Collapsible>
+      </h2>
+      {recommendations.length === 0 ? (
+        <p className="text-sm text-muted-foreground">None of these changes lower the forecast.</p>
+      ) : (
+        <ul className="grid gap-3 md:grid-cols-3">
+          {recommendations.map((item) => {
+            const plain = PLAIN[item.id];
+            return (
+              <li key={item.id} className="flex flex-col gap-3 rounded-lg border bg-card p-4 shadow-sm">
+                <p className="text-xl font-semibold tracking-tight tabular-nums">
+                  {money(item.annualSavings, 0)}
+                  <span className="ml-1.5 text-xs font-medium text-muted-foreground">a year</span>
+                </p>
+                <div>
+                  <p className="text-sm font-medium">{plain.title}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{plain.detail}</p>
+                </div>
+                <Button type="button" variant="outline" className="mt-auto" onClick={() => onApply(item.id)}>
+                  Apply, save {money(item.annualSavings, 0)} a year
+                </Button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
   );
 }

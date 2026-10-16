@@ -2,7 +2,7 @@
 
 Last updated: **2026-10-16**. Sources live in [RESEARCH.md](./RESEARCH.md). Module boundaries live in [ARCHITECTURE.md](./ARCHITECTURE.md).
 
-The public page opens on four inputs: cloud and tier, a starting monthly amount or a team size, a mix of pipelines, dashboards, and models, and monthly growth with an optional commitment discount. It answers with a 12-month range. Advanced opens the per-workload editor. Prices come from the engine.
+The public page opens on four inputs: cloud and tier, a starting monthly amount or a team size, a mix of pipelines, dashboards, and models, and monthly growth (3% a month by default) with an optional commitment discount. It answers with a 12-month range. Advanced opens the per-workload editor. Prices come from the engine.
 
 ## Product
 

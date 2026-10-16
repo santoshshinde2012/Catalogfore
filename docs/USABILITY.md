@@ -8,12 +8,12 @@ Light is the default. Dark mode is optional. Databricks’ own forecast (Usage D
 
 ## Evaluating — what does a medium team cost on AWS?
 
-Land on the page. Medium is selected: 45% pipelines, 40% dashboards, 15% models, about $12,000 a month before a discount. AWS, Premium, US East (N. Virginia). Growth is 0%.
+Land on the page. Medium is selected: 45% pipelines, 40% dashboards, 15% models, about $12,000 a month before a discount. AWS, Premium, US East (N. Virginia). Growth is 3% a month, so the chart rises.
 
-- Sentence: **About $143,960 per year, ±20%.**
-- First month: **$11,997**. The three dollars are rounding on the priced lines.
+- Sentence: **About $170,258 per year, ±20%.**
+- First month: **$11,997**. The three dollars are rounding on the priced lines. Month 12 is higher because each month is 3% above the one before.
 - **29% of the bill is cloud machines.** That share is the classic-job portion. Dashboards are serverless, and models are token usage, so they do not add a machine line.
-- The shaded band is 15% under to 20% over, because no usage file has been loaded. The table lists all 12 months.
+- The shaded band is 15% under to 20% over, because no usage file has been loaded. Chart is the default view. Months lists all 12 months.
 
 Nothing on this path asks for a DBU rate, an instance, or an hour count. “How we got this” names the archetypes and says Databricks bills usage in DBU, which the page converts from the dollars you typed.
 
@@ -21,9 +21,9 @@ Why $12,000, and why that mix, is in [docs/RESEARCH.md](docs/RESEARCH.md) sectio
 
 ## Budgeting — a small team growing 5% a month
 
-Click Small. The mix becomes 35% pipelines, 55% dashboards, 10% models, and the first month is **$2,000**. Flat year: **About $23,996 per year, ±20%.** Cloud machines are **23%** of the bill.
+Click Small. The mix becomes 35% pipelines, 55% dashboards, 10% models, and the first month is **$2,000**. Growth stays at 3% a month, so the year is **About $28,379 per year, ±20%.** Cloud machines are **23%** of the bill.
 
-Click 5% monthly growth. The first month stays **$2,000**. The year becomes **About $31,828 per year, ±20%.** Each month is 5% above the one before it. The label says monthly, so a 5% click is not a 5% year.
+Click 5% monthly growth. The first month stays **$2,000**. The year becomes **About $31,828 per year, ±20%.** Each month is 5% above the one before it. The label says monthly, so a 5% click is not a 5% year. Setting growth to 0% is the flat year, **About $23,996**.
 
 A commitment discount, if you set one, lowers the Databricks portion and leaves the machine portion alone. The starting-spend field stays the pre-discount amount.
 
@@ -37,7 +37,7 @@ A commitment discount, if you set one, lowers the Databricks portion and leaves 
 
 ## Same work on another cloud
 
-Medium on AWS is about **$11,997** in month one. Switch the cloud to Azure and keep the same mix. The first month becomes **$16,063**, and the year **About $192,752 per year, ±20%.** Cloud machines are **33%** of that bill. The workloads did not get larger. The rate card changed, including the East US virtual-machine prices read from the Azure Retail Prices API on 2026-10-16. The mix line still reads 45% / 40% / 15%.
+Medium on AWS is about **$11,997** in month one. Switch the cloud to Azure and keep the same mix and the 3% growth. The first month becomes **$16,063**, and the year **About $227,962 per year, ±20%.** Cloud machines are **33%** of that bill. The workloads did not get larger. The rate card changed, including the East US virtual-machine prices read from the Azure Retail Prices API on 2026-10-16. The mix line still reads 45% / 40% / 15%.
 
 ## What is better than the other tools
 
@@ -47,4 +47,4 @@ Medium on AWS is about **$11,997** in month one. Switch the cloud to Azure and k
 
 ## What moved off the front door
 
-The four opening questions, the portfolio name, and the side-by-side scenario board are gone from the first screen. Savings stay under “Ways to pay less,” each with an annual dollar amount. A share link, CSV, JSON, and PDF sit with the chart.
+The four opening questions, the portfolio name, and the side-by-side scenario board are gone from the first screen. Savings stay under “Ways to pay less,” each with an annual dollar amount. Copy link is the primary action. CSV, JSON, and PDF sit in the Export menu.

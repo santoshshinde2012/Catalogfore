@@ -25,6 +25,12 @@ export function ForecastChart({ months, label }: { months: SimpleMonth[]; label:
     <div className="h-64 w-full" role="img" aria-label={label}>
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+          <defs>
+            <linearGradient id="expectedFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="var(--lava)" stopOpacity={0.32} />
+              <stop offset="100%" stopColor="var(--lava)" stopOpacity={0} />
+            </linearGradient>
+          </defs>
           <CartesianGrid vertical={false} stroke="var(--border)" />
           <XAxis
             dataKey="month"
@@ -54,7 +60,15 @@ export function ForecastChart({ months, label }: { months: SimpleMonth[]; label:
             stackId="band"
             stroke="none"
             fill="var(--lava)"
-            fillOpacity={0.18}
+            fillOpacity={0.16}
+            isAnimationActive={!reduceMotion}
+            animationDuration={500}
+          />
+          <Area
+            dataKey="expected"
+            stroke="none"
+            fill="url(#expectedFill)"
+            type="monotone"
             isAnimationActive={!reduceMotion}
             animationDuration={500}
           />

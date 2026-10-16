@@ -134,7 +134,7 @@ export function defaultPlan(dependencies?: EstimateDependencies): SimplePlan {
       region: referenceRegion.aws,
       monthlySpend: 0,
       mix: { etl: 1, sql: 0, ml: 0 },
-      monthlyGrowth: 0,
+      monthlyGrowth: 0.03,
       commitDiscount: 0,
       basket: EMPTY_BASKET,
     },

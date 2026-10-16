@@ -20,12 +20,13 @@ describe("simple forecast", () => {
     const projected = projectSimple(plan);
     expect(projected.listMonthly).toBeGreaterThan(11_900);
     expect(projected.listMonthly).toBeLessThan(12_100);
+    expect(plan.monthlyGrowth).toBe(0.03);
     expect(projected.months).toHaveLength(12);
     expect(projected.spreadPercent).toBeGreaterThan(0);
   });
 
   it("keeps a flat year near twelve times the first month", () => {
-    const projected = projectSimple(defaultPlan());
+    const projected = projectSimple(withGrowth(defaultPlan(), 0));
     const year = projected.months.reduce((sum, month) => sum + month.expected, 0);
     expect(Math.abs(year - projected.estimate.total * 12)).toBeLessThan(2);
   });
