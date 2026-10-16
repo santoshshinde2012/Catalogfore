@@ -1,12 +1,11 @@
 import { readFile, writeFile } from "node:fs/promises";
+import { writeCoverageReport } from "./coverage-report.mjs";
 
 const STATE_PATH = new URL("../data/catalog-watch-state.json", import.meta.url);
 const REPORT_PATH = new URL("../data/catalog-watch-report.md", import.meta.url);
 const CATALOG_PATH = new URL("../data/product-catalog.json", import.meta.url);
 const RSS_URL = "https://www.databricks.com/feed";
-const AZURE_URL =
-  "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview&$filter=" +
-  encodeURIComponent("serviceName eq 'Azure Databricks' and armRegionName eq 'eastus'");
+const AZURE_PRICES = "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview&$filter=";
 const BILLING_TITLE = /\b(pricing|list price|per dbu|generally available|now available|new sku)\b/i;
 
 export function validateProductCatalogShape(catalog) {
@@ -88,9 +87,9 @@ export function renderWatchReport({ version, stale, unknown, posts, liveNote }) 
   return lines.join("\n");
 }
 
-export async function fetchAzureMeterNames() {
+export async function fetchAzureMeterNames(region = "eastus") {
   const names = [];
-  let url = AZURE_URL;
+  let url = AZURE_PRICES + encodeURIComponent(`serviceName eq 'Azure Databricks' and armRegionName eq '${region}'`);
   for (let page = 0; page < 8 && url; page += 1) {
     const response = await fetch(url, { headers: { "user-agent": "cayfore-catalog-watch" } });
     if (!response.ok) throw new Error(String(response.status));
@@ -127,6 +126,7 @@ async function main() {
     console.error(errors.join("\n"));
     process.exit(1);
   }
+  await writeCoverageReport();
   const state = JSON.parse(await readFile(STATE_PATH, "utf8"));
   const today = new Date().toISOString().slice(0, 10);
   const stale = staleProductIds(catalog.products, today);
@@ -135,7 +135,7 @@ async function main() {
   const notes = [];
   if (!process.argv.includes("--offline")) {
     try {
-      unknown = unknownMeterNames(await fetchAzureMeterNames(), catalog.knownAzureMeters);
+      unknown = unknownMeterNames(await fetchAzureMeterNamesAll(), catalog.knownAzureMeters);
     } catch {
       notes.push("Azure Retail Prices request failed. The previous meter list was kept.");
       unknown = state.unknownMeters ?? [];
@@ -175,6 +175,22 @@ async function main() {
   console.log(
     `catalog watch: wrote report (${unknown.length} unknown meters, ${posts.length} posts, ${stale.length} stale)`,
   );
+}
+
+async function fetchAzureMeterNamesAll() {
+  const sku = JSON.parse(await readFile(new URL("../data/sku-rates.json", import.meta.url), "utf8"));
+  const regions = sku.regions.filter((region) => region.cloud === "azure").map((region) => region.id);
+  const names = [];
+  let cursor = 0;
+  async function run() {
+    while (cursor < regions.length) {
+      const region = regions[cursor];
+      cursor += 1;
+      names.push(...(await fetchAzureMeterNames(region)));
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(3, regions.length) }, () => run()));
+  return names;
 }
 
 const entry = process.argv[1] ?? "";

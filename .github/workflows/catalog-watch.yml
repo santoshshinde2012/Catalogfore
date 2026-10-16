@@ -29,10 +29,12 @@ jobs:
           body: |
             Automated check of the Cayfore product catalog.
 
-            The job validates the catalog, compares East US Azure Databricks consumption meters with `knownAzureMeters`, and reads the public Databricks RSS feed for titles that may be new billable features. Manual citations older than 120 days are listed as stale. Databricks does not publish a price JSON, so AWS and GCP $/DBU and unpublished products are not rewritten.
+            The job validates the catalog, compares Azure Databricks consumption meters in every rate-card region with `knownAzureMeters`, refreshes the coverage report, and reads the public Databricks RSS feed for titles that may be new billable features. Manual citations older than 120 days are listed as stale. Databricks does not publish a price JSON, so AWS and GCP $/DBU are not rewritten.
 
             Review the report before merging. Figures are list signals for an estimate, not a quote.
           branch: catalog-watch
           add-paths: |
             data/catalog-watch-report.md
             data/catalog-watch-state.json
+            data/coverage-summary.json
+            docs/COVERAGE.md

@@ -100,6 +100,7 @@ describe("simple forecast", () => {
     expect(fitted.plan.usageForecast?.method).toBe("log-linear-seasonal");
     const fittedProjection = projectSimple(fitted.plan);
     expect(fittedProjection.assumptions.some((line) => line.startsWith("Prices updated"))).toBe(true);
+    expect(fittedProjection.assumptions.some((line) => line.startsWith("Catalog coverage"))).toBe(true);
     expect(fittedProjection.annual).toBeGreaterThan(fittedProjection.months[0].expected);
   });
 

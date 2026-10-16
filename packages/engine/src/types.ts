@@ -32,6 +32,7 @@ export const METERED_SKUS = [
   "lakeflow_connect",
   "model_training",
   "jobs_serverless",
+  "sql_serverless",
   "model_serving",
   "apps",
 ] as const;
@@ -53,6 +54,10 @@ interface WorkloadBase {
   name: string;
   /** Set when Advanced added this row from the product catalog. */
   productId?: string;
+  /** Which composition part this row is, when the product bills more than one SKU. */
+  partId?: string;
+  /** Editable drivers for a catalog formula. Quantities here are not list rates unless the note says so. */
+  inputs?: Record<string, number | string>;
   cloud?: Cloud;
   region?: string;
   tier?: Tier;

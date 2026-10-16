@@ -21,7 +21,7 @@
   "scripts": {
     "dev": "npm run dev -w @cayfore/web",
     "build": "npm run typecheck -w @cayfore/catalog && npm run typecheck -w @cayfore/engine && npm run build -w @cayfore/web && npm run build -w @cayfore/mcp",
-    "test": "vitest run && node --test scripts/parse-prices.test.mjs scripts/validate-catalog.test.mjs scripts/catalog-watch.test.mjs",
+    "test": "vitest run && node --test scripts/parse-prices.test.mjs scripts/validate-catalog.test.mjs scripts/catalog-watch.test.mjs scripts/coverage-report.test.mjs",
     "cayfore": "vite-node scripts/cayfore.ts",
     "test:e2e": "playwright test",
     "test:mcp": "node scripts/mcp-smoke.mjs",

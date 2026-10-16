@@ -6,7 +6,10 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Added
 
-- A versioned product catalog (`data/product-catalog.json`, `@cayfore/catalog`) covering Databricks products as of 2026-10-16, including rows whose list price is unpublished and therefore forecast at $0.
+- A versioned product catalog (`data/product-catalog.json`, `@cayfore/catalog`) covering Databricks products as of 2026-10-16. A row with a published rate or a documented underlying SKU is priced. A row with nothing billable stays at $0 and says so.
+- Usage-based estimators for Genie, Genie Code, AI/BI dashboards, and `ai_parse_document`. Allowance math follows the docs. DBU per question and DBU per refresh are labeled assumptions.
+- A usage CSV import that maps `sku_name` onto every catalog product it can, with `docs/usage-export.sql` and a Databricks notebook at `docs/cayfore-usage.py`.
+- A coverage report (`docs/COVERAGE.md`) for products and for Azure region-and-SKU cells. The same sentence is in “How we got this”.
 - Advanced “Add product”, grouped by category, with schema-driven inputs for products that do not have their own editor.
 - Per-product month and 12-month totals in Advanced.
 - MCP tools `list_products` and `estimate_product`, and CLI commands `products` and `product <id>`.

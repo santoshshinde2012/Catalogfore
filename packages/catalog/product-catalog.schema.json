@@ -104,7 +104,34 @@
         "note": { "type": "string" },
         "fields": { "type": "array", "items": { "$ref": "#/$defs/field" } },
         "patch": { "type": "object" },
-        "azureMeterNames": { "type": "array", "items": { "type": "string" } }
+        "azureMeterNames": { "type": "array", "items": { "type": "string" } },
+        "formula": {
+          "enum": [
+            "genie_code",
+            "genie_llm_free",
+            "genie_sql",
+            "dashboard_sql",
+            "ai_parse",
+            "custom_fm",
+            "launch",
+            "azure_data_processed"
+          ]
+        },
+        "parts": { "type": "array", "items": { "$ref": "#/$defs/part" } }
+      }
+    },
+    "part": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "template"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "name": { "type": "string", "maxLength": 80 },
+        "template": { "$ref": "#/$defs/product/properties/template" },
+        "editor": { "enum": ["builtin", "schema"] },
+        "formula": { "$ref": "#/$defs/product/properties/formula" },
+        "fields": { "type": "array", "items": { "$ref": "#/$defs/field" } },
+        "patch": { "type": "object" }
       }
     },
     "field": {

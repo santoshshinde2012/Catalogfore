@@ -8,6 +8,7 @@ import { annualTotal, forecast } from "../forecast.js";
 import { clamp, roundMoney } from "../money.js";
 import { uncertaintyBand, uncertaintyFactors, type UncertaintyBand } from "../recommend.js";
 import type { Cloud, Estimate, ForecastPoint, Portfolio, SimpleBasket, Tier, WorkloadMix } from "../types.js";
+import coverageSummary from "../../../../data/coverage-summary.json";
 import { importUsageCsv } from "../usage.js";
 import { bucketDbu, normalizeMix } from "./mix.js";
 import { teamPreset, type TeamPresetId } from "./presets.js";
@@ -285,6 +286,7 @@ export function explain(plan: SimplePlan, result: Estimate, band: UncertaintyBan
     lines.push("Azure publishes one plan, so Enterprise uses the same list as Premium.");
   }
   lines.push(`Prices updated ${pricesUpdatedOn}.`);
+  lines.push(coverageSummary.assumption);
   lines.push(
     "Estimates only. A private contract, a promotion, or support charges will differ. The Lakehouse Real-Time promotion is not applied.",
   );

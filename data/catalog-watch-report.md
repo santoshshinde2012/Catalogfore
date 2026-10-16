@@ -1,6 +1,6 @@
 # Product catalog watch
 
-Catalog `2026-10-16.3`. This report is estimates and public list signals, not a quote.
+Catalog `2026-10-16.4`. This report is estimates and public list signals, not a quote.
 
 Live check: Azure Retail Prices (East US) and the Databricks RSS feed, 2026-10-16.
 

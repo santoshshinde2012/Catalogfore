@@ -79,7 +79,20 @@ function base(record: Record<string, unknown>, fallbackName: string) {
     ...(typeof record.productId === "string" && /^[a-z0-9_]+$/.test(record.productId)
       ? { productId: record.productId }
       : {}),
+    ...(typeof record.partId === "string" && /^[a-z0-9_]+$/.test(record.partId) ? { partId: record.partId } : {}),
+    ...(inputsOf(record.inputs) ? { inputs: inputsOf(record.inputs) } : {}),
   };
+}
+
+function inputsOf(value: unknown): Record<string, number | string> | undefined {
+  if (!isRecord(value)) return undefined;
+  const inputs: Record<string, number | string> = {};
+  for (const [key, item] of Object.entries(value)) {
+    if (!/^[A-Za-z][A-Za-z0-9]*$/.test(key)) continue;
+    if (typeof item === "number" && Number.isFinite(item)) inputs[key] = item;
+    else if (typeof item === "string" && item.length > 0 && item.length <= 40) inputs[key] = item;
+  }
+  return Object.keys(inputs).length > 0 ? inputs : undefined;
 }
 
 export function normalizeWorkload(input: unknown, cloud: Cloud): Workload | null {

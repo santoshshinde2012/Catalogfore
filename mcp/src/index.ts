@@ -27,7 +27,7 @@ import {
   listProducts,
   productById,
   productCatalogMeta,
-  workloadForProduct,
+  workloadsForProduct,
 } from "../../packages/engine/src/products.ts";
 
 const DISCLAIMER = catalog.disclaimer;
@@ -231,7 +231,7 @@ export function createServer(): McpServer {
     {
       title: "Estimate one Databricks product",
       description:
-        "Forecast one catalog product with its defaults. Returns this month and 12 months. Unpublished products are $0. Estimates only, not a quote.",
+        "Forecast one catalog product with its defaults, including every underlying SKU when the product is a composition. Returns this month and 12 months. A product with no published rate is $0. Estimates only, not a quote.",
       inputSchema: {
         productId: z.string().describe("Product id from list_products."),
         cloud: z.enum(["aws", "azure", "gcp"]).optional(),
@@ -249,13 +249,14 @@ export function createServer(): McpServer {
         });
       }
       const selected = cloud as Cloud;
-      const workload = workloadForProduct(product.id);
-      if (workload.kind === "cluster") workload.instanceId = defaultInstanceId(selected);
+      const workloads = workloadsForProduct(product.id).map((workload) =>
+        workload.kind === "cluster" ? { ...workload, instanceId: defaultInstanceId(selected) } : workload,
+      );
       const portfolio = {
         ...blankPortfolio(selected),
         region: region || referenceRegion[selected],
         tier: tier as Tier,
-        workloads: [workload],
+        workloads,
       };
       const result = estimate(portfolio);
       return text({

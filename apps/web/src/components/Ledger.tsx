@@ -4,7 +4,8 @@ import {
   listProducts,
   productById,
   productCategories,
-  workloadForProduct,
+  workloadsForProduct,
+  workloadsFromUsage,
 } from "@cayfore/engine/products";
 import { useEffect, useId, useRef, useState } from "react";
 import { money } from "../format";
@@ -25,7 +26,9 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
   const categories = productCategories();
   const breakdown = forecastProducts(estimate, portfolio);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [usageNote, setUsageNote] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const menuId = useId();
   function update(workload: Workload) {
     onPortfolio({
@@ -35,11 +38,26 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
   }
 
   function add(productId: string) {
-    const workload = workloadForProduct(productId);
-    if (workload.kind === "cluster") workload.instanceId = defaultInstanceId(portfolio.cloud);
-    onPortfolio({ ...portfolio, workloads: [...portfolio.workloads, workload] });
-    onSelect(workload.id);
+    const added = workloadsForProduct(productId).map((workload) =>
+      workload.kind === "cluster" ? { ...workload, instanceId: defaultInstanceId(portfolio.cloud) } : workload,
+    );
+    onPortfolio({ ...portfolio, workloads: [...portfolio.workloads, ...added] });
+    onSelect(added[0]?.id ?? null);
     setMenuOpen(false);
+  }
+
+  function onUsageFile(file: File) {
+    file.text().then((text) => {
+      const loaded = workloadsFromUsage(text);
+      if (!loaded.workloads.length) {
+        setUsageNote(loaded.warnings[0] ?? "That file did not contain mapped usage rows.");
+        return;
+      }
+      onPortfolio({ ...portfolio, workloads: [...portfolio.workloads, ...loaded.workloads] });
+      onSelect(loaded.workloads[0]?.id ?? null);
+      const skipped = loaded.unmapped.length ? ` ${loaded.unmapped.length} sku names were not mapped.` : "";
+      setUsageNote(`Added ${loaded.workloads.length} products from the usage file.${skipped}`);
+    });
   }
 
   useEffect(() => {
@@ -62,7 +80,22 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
     <div className="grid gap-3">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-medium">Workloads</h2>
-        <div className="relative" ref={menuRef}>
+        <div className="relative flex gap-2" ref={menuRef}>
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".csv,text/csv"
+            className="sr-only"
+            aria-label="Usage CSV"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              event.target.value = "";
+              if (file) onUsageFile(file);
+            }}
+          />
+          <Button type="button" size="sm" variant="outline" onClick={() => fileRef.current?.click()}>
+            From a usage file
+          </Button>
           <Button
             type="button"
             size="sm"
@@ -92,7 +125,7 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
                         <span className="block text-sm font-medium">{item.menuLabel}</span>
                         <span className="block text-xs text-muted-foreground">
                           {item.summary}
-                          {item.published ? "" : " · Rate not published"}
+                          {item.listPrice === "unpublished" ? " · No list rate is published" : ""}
                         </span>
                       </button>
                     ))}
@@ -102,16 +135,22 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
           )}
         </div>
       </div>
+      {usageNote && (
+        <p className="text-xs text-muted-foreground" role="status">
+          {usageNote}
+        </p>
+      )}
 
       <div className="grid gap-2">
         {portfolio.workloads.map((workload) => {
           const line = estimate.lines.find((item) => item.workloadId === workload.id);
           const product = workload.productId ? productById(workload.productId) : undefined;
           const subtitle = product
-            ? product.published
-              ? product.billingUnit
-              : "Rate not published"
+            ? product.listPrice === "unpublished"
+              ? "No list rate is published"
+              : product.billingUnit
             : (skuCatalog.skuLabels[line?.sku as keyof typeof skuCatalog.skuLabels] ?? line?.sku);
+          const gap = line?.notes.find((note) => /not priced|No list rate is stored/i.test(note));
           return (
             <button
               key={workload.id}
@@ -128,6 +167,7 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
                 <span>
                   <span className="block text-sm font-medium">{workload.name}</span>
                   <span className="block text-xs text-muted-foreground">{subtitle}</span>
+                  {gap && <span className="block text-xs text-muted-foreground">{gap}</span>}
                 </span>
                 <span className="text-sm font-medium tabular-nums">{money(line?.total ?? 0)}</span>
               </span>
@@ -146,7 +186,9 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
                   <span>
                     <span className="block font-medium">{line.name}</span>
                     <span className="block text-xs text-muted-foreground">
-                      {line.published === false ? "Rate not published" : (line.billingUnit ?? "This month")}
+                      {line.listPrice === "unpublished"
+                        ? "No list rate is published"
+                        : (line.billingUnit ?? "This month")}
                     </span>
                   </span>
                   <span className="text-right tabular-nums">

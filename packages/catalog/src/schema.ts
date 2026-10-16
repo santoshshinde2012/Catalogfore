@@ -22,6 +22,18 @@ export const TEMPLATES = [
 
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
+/** Named conversions. The engine applies these. The catalog does not store executable formulas. */
+export const FORMULAS = [
+  "genie_code",
+  "genie_llm_free",
+  "genie_sql",
+  "dashboard_sql",
+  "ai_parse",
+  "custom_fm",
+  "launch",
+  "azure_data_processed",
+] as const;
+
 const fieldSchema = z.object({
   path: z.string().regex(/^[A-Za-z][A-Za-z0-9]*(\.[A-Za-z][A-Za-z0-9]*)?$/),
   label: z.string().min(1),
@@ -38,6 +50,16 @@ const patchValue = z.union([
   z.boolean(),
   z.record(z.union([z.string(), z.number(), z.boolean()])),
 ]);
+
+const partSchema = z.object({
+  id: z.string().regex(/^[a-z0-9_]+$/),
+  name: z.string().min(1).max(80),
+  template: z.enum(TEMPLATES),
+  editor: z.enum(["builtin", "schema"]).default("schema"),
+  formula: z.enum(FORMULAS).optional(),
+  fields: z.array(fieldSchema).default([]),
+  patch: z.record(patchValue).default({}),
+});
 
 export const productSchema = z.object({
   id: z.string().regex(/^[a-z0-9_]+$/),
@@ -65,6 +87,10 @@ export const productSchema = z.object({
   fields: z.array(fieldSchema).default([]),
   patch: z.record(patchValue).default({}),
   azureMeterNames: z.array(z.string().min(1)).default([]),
+  /** Converts editable inputs into DBU or dollars. Omitted when `parts` owns the formulas. */
+  formula: z.enum(FORMULAS).optional(),
+  /** One product, several billable SKUs. Each part becomes its own workload. */
+  parts: z.array(partSchema).optional(),
 });
 
 export const productCatalogSchema = z
@@ -117,12 +143,34 @@ export const productCatalogSchema = z
           path: ["products", index, "published"],
         });
       }
-      if (product.editor === "schema" && product.listPrice !== "unpublished" && product.fields.length === 0) {
+      const hasParts = (product.parts?.length ?? 0) > 0;
+      if (
+        product.editor === "schema" &&
+        product.listPrice !== "unpublished" &&
+        product.fields.length === 0 &&
+        !hasParts
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: `${product.id} needs input fields`,
           path: ["products", index, "fields"],
         });
+      }
+      if (product.formula && product.fields.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `${product.id} formula needs input fields`,
+          path: ["products", index, "formula"],
+        });
+      }
+      for (const [partIndex, part] of (product.parts ?? []).entries()) {
+        if (part.formula && part.fields.length === 0) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `${product.id} part ${part.id} formula needs input fields`,
+            path: ["products", index, "parts", partIndex, "fields"],
+          });
+        }
       }
       for (const meter of product.azureMeterNames) {
         if (!catalog.knownAzureMeters.includes(meter)) {

@@ -8,7 +8,7 @@ import {
   projectSimple,
   referenceRegion,
 } from "../packages/engine/src/index.ts";
-import { forecastProducts, listProducts, productById, workloadForProduct } from "../packages/engine/src/products.ts";
+import { forecastProducts, listProducts, productById, workloadsForProduct } from "../packages/engine/src/products.ts";
 
 const [command, file] = process.argv.slice(2);
 
@@ -45,9 +45,10 @@ if (command === "sql") {
   if (!file) fail("product needs an id from `products`");
   const product = productById(file);
   if (!product) fail(`Unknown product "${file}"`);
-  const workload = workloadForProduct(product.id);
-  if (workload.kind === "cluster") workload.instanceId = defaultInstanceId("aws");
-  const portfolio = { ...blankPortfolio("aws"), region: referenceRegion.aws, workloads: [workload] };
+  const workloads = workloadsForProduct(product.id).map((workload) =>
+    workload.kind === "cluster" ? { ...workload, instanceId: defaultInstanceId("aws") } : workload,
+  );
+  const portfolio = { ...blankPortfolio("aws"), region: referenceRegion.aws, workloads };
   const result = estimate(portfolio);
   const projected = forecastProducts(result, portfolio);
   console.log(

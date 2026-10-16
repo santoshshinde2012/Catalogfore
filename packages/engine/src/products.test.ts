@@ -1,11 +1,34 @@
 import { describe, expect, it } from "vitest";
 import { estimate } from "./estimate.js";
 import { blankPortfolio } from "./portfolio.js";
-import { forecastProducts, productById, workloadForProduct } from "./products.js";
-import type { Workload } from "./types.js";
+import {
+  forecastProducts,
+  geniePromoFactor,
+  genieUserUsageFree,
+  productById,
+  recomputeProduct,
+  workloadForProduct,
+  workloadsForProduct,
+  workloadsFromUsage,
+} from "./products.js";
+import type { Cloud, Workload } from "./types.js";
 
-function priced(workload: Workload) {
-  return estimate({ ...blankPortfolio("aws"), region: "us-east-1", tier: "premium", workloads: [workload] });
+function priced(workload: Workload, cloud: Cloud = "aws") {
+  return estimate({
+    ...blankPortfolio(cloud),
+    region: cloud === "aws" ? "us-east-1" : cloud === "azure" ? "eastus" : "us-central1",
+    tier: "premium",
+    workloads: [workload],
+  });
+}
+
+function pricedAll(productId: string, cloud: Cloud = "aws") {
+  return estimate({
+    ...blankPortfolio(cloud),
+    region: cloud === "aws" ? "us-east-1" : cloud === "azure" ? "eastus" : "us-central1",
+    tier: "premium",
+    workloads: workloadsForProduct(productId),
+  });
 }
 
 describe("product catalog", () => {
@@ -19,11 +42,76 @@ describe("product catalog", () => {
     expect(result.cloudCost).toBeGreaterThan(0);
   });
 
-  it("does not invent a rate for an unpublished product", () => {
-    expect(productById("genie")?.listPrice).toBe("unpublished");
-    expect(priced(workloadForProduct("genie")).total).toBe(0);
-    expect(priced(workloadForProduct("ai_parse_document")).total).toBe(0);
-    expect(priced(workloadForProduct("zerobus")).total).toBe(0);
+  it("leaves a line at $0 only when nothing billable is published", () => {
+    for (const id of ["zerobus", "databricks_one", "private_link", "nat_gateway", "delta_sharing"]) {
+      expect(productById(id)?.listPrice).toBe("unpublished");
+      expect(pricedAll(id).total).toBe(0);
+    }
+  });
+
+  it("prices Genie Code above the 150 DBU allowance and leaves Genie LLM free inside the window", () => {
+    const code = priced(workloadForProduct("assistant_agent"));
+    const excess = Math.max(0, 10 * 200 - 10 * 150) * geniePromoFactor();
+    expect(code.dbuCost).toBe(Math.round(excess * 0.07 * 100) / 100);
+    const genie = pricedAll("genie");
+    const llm = genie.lines.find((line) => line.name === "Genie LLM");
+    const sql = genie.lines.find((line) => line.name === "Genie SQL warehouse");
+    expect(llm?.dbuCost).toBe(genieUserUsageFree() ? 0 : llm?.dbuCost);
+    expect(sql?.dbu).toBe(100);
+    expect(sql?.dbuCost).toBe(70);
+  });
+
+  it("prices ai_parse_document at the midpoint of the selected band", () => {
+    expect(priced(workloadForProduct("ai_parse_document")).total).toBe(875);
+    const edited = recomputeProduct({
+      ...workloadForProduct("ai_parse_document"),
+      inputs: { pages: 1000, complexity: "high" },
+    });
+    expect(priced(edited).total).toBe(6125);
+  });
+
+  it("prices a launch as one model-serving DBU and Azure data processed at $0.02/GB", () => {
+    expect(priced(workloadForProduct("serving_launch_charge")).total).toBe(7);
+    expect(priced(workloadForProduct("data_processed"), "azure").total).toBe(2);
+    expect(priced(workloadForProduct("data_processed"), "aws").total).toBe(0);
+  });
+
+  it("composes Agent Bricks from serving, vector search, and training", () => {
+    const result = pricedAll("agent_bricks");
+    expect(result.lines.map((line) => line.name)).toEqual([
+      "Agent Bricks serving",
+      "Agent Bricks vector search",
+      "Agent Bricks training",
+    ]);
+    expect(result.total).toBe(319.8);
+  });
+
+  it("prices other foundation models only after a DBU-per-million figure is entered", () => {
+    expect(priced(workloadForProduct("fm_other")).total).toBe(0);
+    const entered = recomputeProduct({
+      ...workloadForProduct("fm_other"),
+      inputs: { inputTokens: 1_000_000, outputTokens: 0, inputDbuPerMillion: 10, outputDbuPerMillion: 0 },
+    });
+    expect(priced(entered).total).toBe(0.7);
+  });
+
+  it("maps a usage export onto a product forecast", () => {
+    const csv = [
+      "sku_name,billing_origin_product,usage_quantity,usage_unit,list_price",
+      "PREMIUM_JOBS_COMPUTE,JOBS,10,DBU,0.15",
+      "PREMIUM_SERVERLESS_SQL,SQL,4,DBU,0.70",
+      "SOMETHING_NEW,UNKNOWN,3,DBU,1",
+    ].join("\n");
+    const loaded = workloadsFromUsage(csv);
+    expect(loaded.unmapped).toEqual(["SOMETHING_NEW"]);
+    expect(loaded.workloads.map((workload) => workload.productId)).toEqual(["sql_serverless", "jobs_classic"]);
+    const result = estimate({
+      ...blankPortfolio("aws"),
+      region: "us-east-1",
+      tier: "premium",
+      workloads: loaded.workloads,
+    });
+    expect(result.total).toBe(4.3);
   });
 
   it("prices data quality as automated serverless DBU", () => {

@@ -8,11 +8,11 @@ Databricks does not publish a machine-readable price list. Cayfore keeps its own
 
 A product row has an id, a category, a billing unit, a list-price status, a confidence, an automation flag, a workload template, a citation, and optional input fields.
 
-| `listPrice`   | Meaning                                                                                        |
-| ------------- | ---------------------------------------------------------------------------------------------- |
-| `distinct`    | A list rate is applied. The forecast uses the existing strategy for `template`.                |
-| `reused_sku`  | No separate public rate. The line uses another SKU and the note says which one.                |
-| `unpublished` | No rate is stored. The workload is zero DBU, and the month is $0. A guessed price is not used. |
+| `listPrice`   | Meaning                                                                                |
+| ------------- | -------------------------------------------------------------------------------------- |
+| `distinct`    | A list rate is applied. The forecast uses the existing strategy for `template`.        |
+| `reused_sku`  | No separate public rate. The line uses another SKU and the note says which one.        |
+| `unpublished` | No rate is stored. The month is $0, and the row says why. A guessed price is not used. |
 
 | `confidence`  | Meaning                                                                             |
 | ------------- | ----------------------------------------------------------------------------------- |
@@ -35,10 +35,10 @@ A new kind, one the strategies do not price yet, is still a new file under `pack
 
 ## What the app does with a row
 
-`workloadForProduct` starts from `createWorkload(template)` and applies `patch`. Advanced lists rows by the five categories. Builtin editors stay in charge of clusters, SQL, serving, and the other kinds that already had forms. Schema fields render `number`, `select`, and `boolean` inputs from the row, which is why a new multiplier product does not need a new component.
+`workloadsForProduct` starts from `createWorkload(template)` and applies `patch`. A row with `parts` adds one workload per underlying SKU. A `formula` turns editable inputs into DBU or dollars before `estimate` runs, so the strategies stay free of product names. Advanced lists rows by the five categories. Builtin editors stay in charge of clusters, SQL, serving, and the other kinds that already had forms. Schema fields render `number`, `select`, and `boolean` inputs from the row.
 
 The four-input page is unchanged. It still builds classic jobs, serverless SQL, and the Llama 3.1 8B foundation-model line.
 
 ## Watch
 
-`node scripts/catalog-watch.mjs` validates the file, compares East US Azure Databricks meter names with `knownAzureMeters`, and reads `https://www.databricks.com/feed`. `--offline` skips the network. The workflow is `.github/workflows/catalog-watch.yml`. It does not scrape Databricks price pages. The site terms disallow that, and those pages are not a rate feed.
+`node scripts/catalog-watch.mjs` validates the file, compares Azure Databricks meter names in every rate-card region with `knownAzureMeters`, rewrites the coverage report, and reads `https://www.databricks.com/feed`. `--offline` skips the network. The workflow is `.github/workflows/catalog-watch.yml`. It does not scrape Databricks price pages. The site terms disallow that, and those pages are not a rate feed.
