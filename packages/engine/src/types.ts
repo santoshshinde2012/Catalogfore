@@ -127,6 +127,34 @@ export interface ForecastSettings {
   customSeasonality?: number[];
 }
 
+/** Share of work across the three simple-forecast groups. Values are non-negative and sum to 1. */
+export interface WorkloadMix {
+  etl: number;
+  sql: number;
+  ml: number;
+}
+
+/**
+ * Visible size of the simple forecast's three archetypes.
+ * Node hours and warehouse count are what the cost strategies already price.
+ */
+export interface SimpleBasket {
+  etlNodes: number;
+  etlHoursPerDay: number;
+  sqlClusters: number;
+  mlInputTokens: number;
+}
+
+export interface StoredSimple {
+  monthlySpend: number;
+  mix: WorkloadMix;
+  monthlyGrowth: number;
+  commitDiscount: number;
+  basket: SimpleBasket;
+  /** Set when a usage file supplied the mix and the quantity. */
+  usageDbu?: number;
+}
+
 export interface Portfolio {
   version: 1;
   name: string;
@@ -137,8 +165,12 @@ export interface Portfolio {
   commitment: { dbuDiscount: number; cloudDiscount: number };
   addon: Addon;
   usageScale: number;
+  /** True when month zero was fit to an imported usage file, even if the residual scale is 1. */
+  usageCalibrated?: boolean;
   /** Optional annual budget in dollars. Omitted when the user has not set one. */
   budgetAnnual?: number;
+  /** Present when the four-input forecast owns this portfolio. */
+  simple?: StoredSimple;
   forecast: ForecastSettings;
 }
 

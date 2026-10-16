@@ -1,6 +1,8 @@
 # Plan
 
-Last updated: **2026-10-15**. Pricing assumptions and sources live in [RESEARCH.md](./RESEARCH.md). This file is the build plan those findings imply.
+Last updated: **2026-10-16**. Pricing assumptions and sources live in [RESEARCH.md](./RESEARCH.md). This file is the build plan those findings imply.
+
+The public page now opens on a four-input year forecast (cloud and tier, starting spend or a team preset, workload mix, monthly growth and an optional commitment discount). The portfolio builder below is the Advanced disclosure. The simple forecast only assembles workloads; prices still come from the strategies in [ARCHITECTURE.md](./ARCHITECTURE.md).
 
 ## Product
 

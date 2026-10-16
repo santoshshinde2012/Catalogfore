@@ -1,37 +1,31 @@
-import { money } from "../format";
-import type { ForecastSession } from "../hooks/useForecastSession";
-import { Answer } from "./Answer";
-import { Home } from "./Home";
+import type { SimpleSession } from "../hooks/useSimpleForecast";
+import { SimplePage } from "./simple/SimplePage";
 import { Mark, MoonIcon, SunIcon } from "./icons";
 
-export function AppShell({ session }: { session: ForecastSession }) {
-  const { mode, theme, notice, undo, portfolio, points, estimate, selectedId } = session;
+export function AppShell({ session }: { session: SimpleSession }) {
   return (
     <div className="shell">
-      <a className="skip" href={mode === "answer" ? "#forecast" : "#questions"}>
+      <a className="skip" href="#forecast">
         Skip to content
       </a>
       <header className="nav">
         <div className="wrap nav-inner">
-          <button type="button" className="brand" onClick={session.goHome}>
+          <button type="button" className="brand" onClick={session.reset}>
             <Mark />
             Fathom
           </button>
           <div className="nav-actions">
-            {mode === "answer" && <span className="nav-stat">{money(session.annual, 0)} / yr</span>}
             <button
               type="button"
               className="icon-btn"
-              aria-label={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
+              aria-label={session.theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
               onClick={session.toggleTheme}
             >
-              {theme === "light" ? <MoonIcon /> : <SunIcon />}
+              {session.theme === "light" ? <MoonIcon /> : <SunIcon />}
             </button>
-            {mode === "answer" && (
-              <button type="button" className="btn btn-ghost" onClick={() => void session.share()}>
-                {notice || "Copy link"}
-              </button>
-            )}
+            <button type="button" className="btn btn-ghost" onClick={() => void session.share()}>
+              {session.notice || "Copy link"}
+            </button>
             <label className="btn btn-ghost">
               Open
               <input
@@ -42,41 +36,24 @@ export function AppShell({ session }: { session: ForecastSession }) {
                 onChange={(event) => {
                   const file = event.target.files?.[0];
                   event.target.value = "";
-                  if (file) session.loadFile(file);
+                  if (file) session.loadForecastFile(file);
                 }}
               />
             </label>
           </div>
         </div>
       </header>
-      <main className="app-main" id={mode === "ask" ? "questions" : undefined}>
-        {mode === "ask" ? (
-          <Home
-            canReturn={session.hasForecast}
-            onChoose={session.showAnswer}
-            onReturn={session.returnToAnswer}
-            onBlank={session.startBlank}
-          />
-        ) : (
-          <Answer
-            portfolio={portfolio}
-            estimate={estimate}
-            points={points}
-            selectedId={selectedId}
-            onPortfolio={session.setPortfolio}
-            onSelect={session.setSelectedId}
-            onRemove={session.remove}
-          />
-        )}
+      <main className="app-main">
+        <SimplePage session={session} />
       </main>
       <footer className="site-foot wrap">
         <p>Fathom is an estimate. It is not a Databricks quote.</p>
         <a href="https://github.com/santoshshinde2012/databricks-cost-forecaster">Source</a>
       </footer>
       <p className="sr-only" role="status">
-        {notice}
+        {session.notice}
       </p>
-      {undo && (
+      {session.canUndo && (
         <div className="toast" role="status">
           Workload removed
           <button type="button" className="btn" onClick={session.undoRemove}>

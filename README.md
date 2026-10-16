@@ -1,27 +1,27 @@
 # Databricks Cost Forecaster
 
-An open-source forecast for Databricks spend. It prices a portfolio of jobs, notebooks, SQL warehouses, Lakeflow pipelines, serverless compute, model serving, and the cloud bill next to the DBU bill, then projects 12 to 36 months with growth, seasonality, and commitment scenarios.
+An open-source 12-month forecast for Databricks spend. The page asks for four things: cloud and tier, a starting monthly amount or a Small / Medium / Large team, a mix of pipelines, dashboards, and models, and a monthly growth rate. It answers with one sentence, a low-to-high chart, and a month table.
 
-It is deliberately not a quote. List rates are versioned, sourced, and labeled when a figure is a proxy. The interface is Fathom: Inter, JetBrains Mono, near-black and off-white surfaces, hairline cards, and one indigo accent. How the pricing code is split is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+It is deliberately not a quote. List rates are versioned and sourced. The interface is Fathom: Inter, JetBrains Mono, near-black and off-white surfaces, hairline cards, and one indigo accent. How the pricing code is split is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Who the page is for is in [docs/USABILITY.md](docs/USABILITY.md).
 
-![Four questions, each with a starting monthly figure](docs/screenshots/home-dark.png)
+![A year sentence, a team preset, and the workload mix](docs/screenshots/forecast-dark.png)
 
-![The answer: this month, a yearly range, and the split between DBU and cloud](docs/screenshots/answer-dark.png)
+![The same forecast in the light theme](docs/screenshots/forecast-light.png)
 
-The running total is the point. Templates, edits, scenarios, and a usage-file scale all move the same number.
+The simple forecast builds three workloads and hands them to the existing pricing engine. It does not keep a second rate table. Advanced opens the per-workload builder. A `system.billing.usage` CSV replaces the monthly amount and the mix.
 
 ## What you can do
 
-- Build a portfolio: classic and serverless jobs, all-purpose clusters, Lakeflow pipelines, SQL warehouses, model serving, foundation-model APIs, AI Search, Apps, Lakebase, storage, and egress.
-- Pick cloud, region, and tier. AWS covers every region on the Lakehouse Real-Time price page. Azure covers all 39 regions on the Microsoft Learn table that took effect on 2026-10-10. Those ratios are applied as a proxy to other SKUs and the page says so. GCP regions outside the reference region stay labeled as proxies.
-- Set hours per day, days per week, and autoscaling min, max, and utilization. Photon, spot, and commits each touch only the line they are supposed to.
-- See this month split into DBU, cloud infrastructure, and add-ons, plus a 12, 24, or 36 month chart.
-- Compare classic vs serverless, Photon, an explicit Photon speedup assumption, spot, and commitment discounts side by side.
-- Share the forecast in the URL, save and open JSON, and export CSV or PDF.
-- Import a `system.billing.usage` CSV and scale the forecast to last month’s DBUs. The file is not a price list, and it has no VM bill, so cloud dollars scale with DBUs and the page says that.
-- Switch light and dark. The layout fits a phone.
+- Pick AWS, Azure, or GCP, and Premium or Enterprise. Region defaults to the reference region and can be changed.
+- Start from Small ($2,000), Medium ($8,000), or Large ($25,000), or type a monthly amount. The preset shows the mix it assumes.
+- Move the mix. Pipelines carry a cloud machine charge. Dashboards are serverless. Models are token usage. The engine prices each, so the machine share of the bill changes with the mix.
+- Set monthly growth to 0, 3, 5, or 10 percent, or type another rate. An optional commitment discount applies to the Databricks portion only.
+- Read a 12-month band, the year total, and “About $X per year, ±Y%.” Export CSV, JSON, or PDF, or copy a link.
+- Upload a usage CSV when you have one. The range gets tighter. Growth, cloud, and the discount stay.
+- Open Advanced for jobs, SQL, pipelines, serving, and the rest of the workload editor.
+- If you already have an account admin, the footer links to Usage Dashboard 2.0, budgets, and `ai_forecast`. Those need billing history. This page does not.
 
-![Savings with a dollar impact you can apply](docs/screenshots/savings-dark.png)
+![Twelve months, low to high](docs/screenshots/chart-dark.png)
 
 ![The same forecast on a narrow screen](docs/screenshots/mobile-dark.png)
 
@@ -51,7 +51,7 @@ npm run test:mcp  # stdio MCP smoke test
 npm run test:e2e  # Playwright, desktop and mobile, including axe
 ```
 
-Node 20 or newer. The production bundle is about 95 KB of JavaScript and 20 KB of CSS, gzipped, before fonts. PDF export loads on demand.
+Node 20 or newer. The production bundle is about 99 KB of JavaScript and 20 KB of CSS, gzipped, before fonts. PDF export loads on demand.
 
 ## MCP
 
@@ -74,17 +74,17 @@ A weekly workflow opens a pull request when AWS or Azure VM prices for the curat
 
 ## Layout
 
-| Path                         | Role                                                                |
-| ---------------------------- | ------------------------------------------------------------------- |
-| `packages/engine`            | Pricing, forecast, scenarios, usage import, URL codec. Unit tested. |
-| `data/`                      | Versioned SKU rates, instance DBU ratings, VM prices.               |
-| `apps/web`                   | The calculator.                                                     |
-| `mcp/`                       | The stdio server.                                                   |
-| `scripts/refresh-prices.mjs` | Unauthenticated VM price refresh.                                   |
-| `docs/RESEARCH.md`           | Sources for every rate.                                             |
-| `docs/ARCHITECTURE.md`       | Modules, injected catalog and strategies, and how SOLID is applied. |
-| `docs/PLAN.md`               | How the pieces fit together.                                        |
-| `docs/USABILITY.md`          | Persona walkthroughs and how this compares with other calculators.  |
+| Path                         | Role                                                                    |
+| ---------------------------- | ----------------------------------------------------------------------- |
+| `packages/engine`            | Pricing, the four-input forecast, scenarios, usage import. Unit tested. |
+| `data/`                      | Versioned SKU rates, instance DBU ratings, VM prices.                   |
+| `apps/web`                   | The calculator.                                                         |
+| `mcp/`                       | The stdio server.                                                       |
+| `scripts/refresh-prices.mjs` | Unauthenticated VM price refresh.                                       |
+| `docs/RESEARCH.md`           | Sources for every rate.                                                 |
+| `docs/ARCHITECTURE.md`       | Modules, injected catalog and strategies, and how SOLID is applied.     |
+| `docs/PLAN.md`               | How the pieces fit together.                                            |
+| `docs/USABILITY.md`          | Persona walkthroughs and how this compares with other calculators.      |
 
 ## License
 
