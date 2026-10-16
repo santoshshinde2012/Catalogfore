@@ -33,7 +33,7 @@ export function SimplePage({
       </header>
 
       <div className="mt-10 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
-        <Card className="p-6 shadow-sm">
+        <Card className="min-w-0 p-6 shadow-sm">
           {session.usingDetail && (
             <p className="mb-4 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm" role="status">
               The detailed workloads are driving this forecast. Change an input below to go back to the four-input

@@ -3,8 +3,8 @@ import type { Dispatch, SetStateAction } from "react";
 import { money } from "../../format";
 import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
-import { CLOUDS, TIERS, Step, TEAM_ICONS, describePreset, pressedPreset } from "./plan-widgets";
+import { SegmentedStrip, SegmentedStripItem } from "../ui/segmented-strip";
+import { CLOUDS, TIERS, Step, describePreset, pressedPreset } from "./plan-widgets";
 
 export function CloudSection({
   plan,
@@ -22,33 +22,26 @@ export function CloudSection({
   return (
     <>
       <Step n="1" title="Cloud">
-        <ToggleGroup
-          type="single"
-          value={plan.cloud}
-          onValueChange={(value) => value && onCloud(value as Cloud)}
-          aria-label="Cloud"
-          className="grid grid-cols-3"
-        >
+        <SegmentedStrip label="Cloud" value={plan.cloud} onValueChange={(value) => value && onCloud(value as Cloud)}>
           {CLOUDS.map((cloud) => (
-            <ToggleGroupItem key={cloud.id} value={cloud.id} className="h-auto flex-col gap-1 py-2">
+            <SegmentedStripItem key={cloud.id} value={cloud.id}>
               {cloud.glyph}
               {cloud.label}
-            </ToggleGroupItem>
+            </SegmentedStripItem>
           ))}
-        </ToggleGroup>
-        <ToggleGroup
-          type="single"
+        </SegmentedStrip>
+        <SegmentedStrip
+          label="Tier"
+          className="w-fit max-w-full"
           value={plan.tier}
           onValueChange={(value) => value && onTier(value as Tier)}
-          aria-label="Tier"
-          className="grid grid-cols-2"
         >
           {TIERS.map((tier) => (
-            <ToggleGroupItem key={tier.id} value={tier.id} className="h-9">
+            <SegmentedStripItem key={tier.id} value={tier.id}>
               {tier.label}
-            </ToggleGroupItem>
+            </SegmentedStripItem>
           ))}
-        </ToggleGroup>
+        </SegmentedStrip>
         <label className="grid gap-2 text-sm font-medium">
           Region
           <Select value={plan.region} onValueChange={onRegion}>
@@ -123,36 +116,21 @@ export function SpendSection({
         <p id="spend-hint" className="text-sm text-muted-foreground">
           Before any commitment discount. Or choose a team size.
         </p>
-        <ToggleGroup
-          type="single"
+        <SegmentedStrip
+          label="Team size"
+          variant="rail"
+          disabled={usageLocked}
           value={pressedPreset(plan, listMonthly, usageLocked) ?? ""}
           onValueChange={(value) => value && onPreset(value as TeamPresetId)}
-          aria-label="Team size"
-          className="grid grid-cols-1 gap-2 bg-transparent p-0"
-          disabled={usageLocked}
         >
-          {TEAM_PRESETS.map((preset) => {
-            const Icon = TEAM_ICONS[preset.id];
-            return (
-              <ToggleGroupItem
-                key={preset.id}
-                value={preset.id}
-                className="h-auto items-start justify-start gap-3 rounded-lg border bg-card px-3 py-3 text-left shadow-none ring-0 data-[state=on]:border-foreground data-[state=on]:shadow-sm data-[state=on]:ring-1 data-[state=on]:ring-foreground"
-              >
-                <Icon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-                <span className="grid gap-0.5">
-                  <span>
-                    {preset.label}
-                    <span className="ml-2 font-normal text-muted-foreground tabular-nums">
-                      {money(preset.monthlySpend, 0)}
-                    </span>
-                  </span>
-                  <span className="text-xs font-normal text-muted-foreground">{preset.detail}</span>
-                </span>
-              </ToggleGroupItem>
-            );
-          })}
-        </ToggleGroup>
+          {TEAM_PRESETS.map((preset) => (
+            <SegmentedStripItem key={preset.id} value={preset.id}>
+              <span className="text-sm font-semibold">{preset.label}</span>
+              <span className="text-sm font-medium tabular-nums">{money(preset.monthlySpend, 0)}</span>
+              <span className="text-xs font-normal text-muted-foreground">{preset.detail}</span>
+            </SegmentedStripItem>
+          ))}
+        </SegmentedStrip>
         <p className="text-sm text-muted-foreground" data-testid="mix-assumption">
           {mixLine}. {describePreset(plan)}
         </p>

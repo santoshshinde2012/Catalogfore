@@ -87,11 +87,11 @@ test("advanced builder, how we got this, and theme", async ({ page }) => {
   await page.getByRole("button", { name: "Advanced", exact: true }).last().click();
   await expect(page.getByRole("heading", { name: "By product" })).toBeVisible();
   await page.getByRole("button", { name: "Add product" }).click();
-  await expect(page.getByText("Data Engineering")).toBeVisible();
-  await expect(page.getByText("Warehousing & BI")).toBeVisible();
-  await expect(page.getByText("AI/ML")).toBeVisible();
-  await expect(page.getByText("Apps & OLTP")).toBeVisible();
-  await expect(page.getByText("Governance & Sharing")).toBeVisible();
+  await expect(page.getByText("Data Engineering").first()).toBeVisible();
+  await expect(page.getByText("Warehousing & BI").first()).toBeVisible();
+  await expect(page.getByText("AI/ML").first()).toBeVisible();
+  await expect(page.getByText("Apps & OLTP").first()).toBeVisible();
+  await expect(page.getByText("Governance & Sharing").first()).toBeVisible();
   await page.getByRole("button", { name: /Serverless jobs/ }).click();
   await expect(page.getByRole("button", { name: /Serverless jobs/ }).first()).toBeVisible();
   await expect(page.getByText(/detailed workloads are driving/)).toBeVisible();

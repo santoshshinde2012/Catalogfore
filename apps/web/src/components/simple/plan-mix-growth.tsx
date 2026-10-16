@@ -2,7 +2,7 @@ import { type SimplePlan, type WorkloadMix } from "@cayfore/engine";
 import type { Dispatch, SetStateAction } from "react";
 import { Input } from "../ui/input";
 import { Slider } from "../ui/slider";
-import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { SegmentedStrip, SegmentedStripItem } from "../ui/segmented-strip";
 import { GROWTH, MIX_DOT, MIX_FIELDS, MixBar, Step, growthValue, pct } from "./plan-widgets";
 
 export function MixSection({
@@ -66,20 +66,19 @@ export function GrowthSection({
   return (
     <>
       <Step n="4" title="Growth">
-        <ToggleGroup
-          type="single"
+        <SegmentedStrip
+          label="Monthly growth"
           value={growthValue(plan.monthlyGrowth)}
           onValueChange={(value) => {
             if (value) onGrowth(Number(value));
           }}
-          aria-label="Monthly growth"
         >
           {GROWTH.map((rate) => (
-            <ToggleGroupItem key={rate} value={String(rate)} className="h-9 min-w-14">
+            <SegmentedStripItem key={rate} value={String(rate)}>
               {Math.round(rate * 100)}%
-            </ToggleGroupItem>
+            </SegmentedStripItem>
           ))}
-        </ToggleGroup>
+        </SegmentedStrip>
         <label className="flex items-center justify-between gap-4 text-sm font-medium">
           Custom
           <span className="relative block w-28 font-normal">

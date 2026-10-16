@@ -1,8 +1,13 @@
+import path from "node:path";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  esbuild: { jsx: "automatic" },
+  resolve: {
+    alias: { "@": path.resolve(__dirname, "apps/web/src") },
+  },
   test: {
-    include: ["packages/engine/src/**/*.test.ts", "packages/catalog/src/**/*.test.ts"],
+    include: ["packages/engine/src/**/*.test.ts", "packages/catalog/src/**/*.test.ts", "apps/web/src/**/*.test.tsx"],
     coverage: {
       provider: "v8",
       reporter: ["text", "json-summary"],

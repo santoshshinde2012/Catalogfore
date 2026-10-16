@@ -1,27 +1,40 @@
 import * as TabsPrimitive from "@radix-ui/react-tabs";
-import type { ComponentProps } from "react";
+import { createContext, useContext, useId, type ComponentProps } from "react";
 import { cn } from "@/lib/utils";
+import { StripPresence } from "./segmented-strip";
+
+const TabsStripContext = createContext("tabs");
 
 export const Tabs = TabsPrimitive.Root;
 
 export function TabsList({ className, ...props }: ComponentProps<typeof TabsPrimitive.List>) {
+  const layoutId = useId();
   return (
-    <TabsPrimitive.List
-      className={cn("inline-flex h-9 items-center rounded-lg bg-muted p-1 text-muted-foreground", className)}
-      {...props}
-    />
+    <TabsStripContext.Provider value={layoutId}>
+      <TabsPrimitive.List
+        className={cn(
+          "inline-flex overflow-hidden rounded-xl border border-border bg-card text-muted-foreground",
+          className,
+        )}
+        {...props}
+      />
+    </TabsStripContext.Provider>
   );
 }
 
-export function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsPrimitive.Trigger>) {
+export function TabsTrigger({ className, children, ...props }: ComponentProps<typeof TabsPrimitive.Trigger>) {
+  const layoutId = useContext(TabsStripContext);
   return (
     <TabsPrimitive.Trigger
       className={cn(
-        "inline-flex h-7 items-center rounded-md px-3 text-sm font-medium transition-colors data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+        "strip-item relative inline-flex min-h-11 min-w-16 items-center justify-center border-l border-border px-4 text-sm font-medium text-muted-foreground first:border-l-0 hover:text-foreground data-[state=active]:text-foreground",
         className,
       )}
       {...props}
-    />
+    >
+      <StripPresence layoutId={layoutId} edge="bottom" />
+      <span className="relative z-10">{children}</span>
+    </TabsPrimitive.Trigger>
   );
 }
 

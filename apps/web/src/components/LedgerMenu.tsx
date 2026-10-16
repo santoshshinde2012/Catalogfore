@@ -1,6 +1,7 @@
 import { listProducts, productCategories } from "@cayfore/engine/products";
 import { useEffect, useId, useRef, useState } from "react";
 import { Button } from "./ui/button";
+import { SegmentedStrip, SegmentedStripItem } from "./ui/segmented-strip";
 
 /** Add-product menu and the usage-file button. Owns its open state. */
 export function LedgerMenu({
@@ -11,6 +12,7 @@ export function LedgerMenu({
   onUsageFile: (file: File) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [category, setCategory] = useState("all");
   const menuRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const menuId = useId();
@@ -63,30 +65,40 @@ export function LedgerMenu({
           id={menuId}
           className="absolute right-0 z-20 mt-2 max-h-[70vh] w-80 overflow-auto rounded-lg border bg-popover p-2 shadow-lg"
         >
-          {categories.map((category) => (
-            <div key={category.id}>
-              <div className="px-2 pt-2 text-xs font-medium text-muted-foreground">{category.label}</div>
-              {listProducts()
-                .filter((item) => item.category === category.id)
-                .map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    className="block w-full rounded-md px-2 py-2 text-left hover:bg-muted"
-                    onClick={() => {
-                      onAdd(item.id);
-                      setMenuOpen(false);
-                    }}
-                  >
-                    <span className="block text-sm font-medium">{item.menuLabel}</span>
-                    <span className="block text-xs text-muted-foreground">
-                      {item.summary}
-                      {item.listPrice === "unpublished" ? " · No list rate is published" : ""}
-                    </span>
-                  </button>
-                ))}
-            </div>
-          ))}
+          <SegmentedStrip label="Product category" variant="scroll" value={category} onValueChange={setCategory}>
+            <SegmentedStripItem value="all">All</SegmentedStripItem>
+            {categories.map((item) => (
+              <SegmentedStripItem key={item.id} value={item.id}>
+                {item.label}
+              </SegmentedStripItem>
+            ))}
+          </SegmentedStrip>
+          {categories
+            .filter((item) => category === "all" || item.id === category)
+            .map((group) => (
+              <div key={group.id}>
+                <div className="px-2 pt-2 text-xs font-medium text-muted-foreground">{group.label}</div>
+                {listProducts()
+                  .filter((item) => item.category === group.id)
+                  .map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className="block w-full rounded-md px-2 py-2 text-left hover:bg-muted"
+                      onClick={() => {
+                        onAdd(item.id);
+                        setMenuOpen(false);
+                      }}
+                    >
+                      <span className="block text-sm font-medium">{item.menuLabel}</span>
+                      <span className="block text-xs text-muted-foreground">
+                        {item.summary}
+                        {item.listPrice === "unpublished" ? " · No list rate is published" : ""}
+                      </span>
+                    </button>
+                  ))}
+              </div>
+            ))}
         </div>
       )}
     </div>

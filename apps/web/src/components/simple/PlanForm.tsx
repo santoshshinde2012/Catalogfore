@@ -50,7 +50,7 @@ export function PlanForm({
 
   return (
     <form
-      className="grid gap-6"
+      className="grid min-w-0 gap-6"
       onSubmit={(event) => {
         event.preventDefault();
       }}

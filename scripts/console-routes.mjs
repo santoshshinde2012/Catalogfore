@@ -47,7 +47,7 @@ for (const viewport of viewports) {
   await page.getByRole("heading", { name: "By product" }).waitFor();
 
   await page.getByRole("button", { name: "Add product" }).click();
-  await page.getByText("Data Engineering").waitFor();
+  await page.getByText("Data Engineering").first().waitFor();
   await page.keyboard.press("Escape");
 
   await page.goto(new URL("faq.html", base).href, { waitUntil: "networkidle" });

@@ -1,7 +1,7 @@
-import { Building2, Landmark, Users, type LucideIcon } from "lucide-react";
 import { useRef, type ReactNode } from "react";
 import type { Cloud, SimplePlan, TeamPresetId, Tier, WorkloadMix } from "@cayfore/engine";
 import { TEAM_PRESETS } from "@cayfore/engine";
+import { AwsMark, AzureMark, GcpMark } from "../ui/cloud-marks";
 
 export function Step({
   n,
@@ -15,7 +15,7 @@ export function Step({
   children: ReactNode;
 }) {
   return (
-    <fieldset className="grid gap-4" disabled={disabled}>
+    <fieldset className="grid min-w-0 gap-4" disabled={disabled}>
       <legend className="mb-1 flex items-center gap-2 text-sm font-semibold">
         <span className="flex size-6 items-center justify-center rounded-full bg-foreground text-xs text-background">
           {n}
@@ -83,34 +83,15 @@ export function MixBar({
 }
 
 export function AwsGlyph() {
-  return (
-    <svg viewBox="0 0 16 16" className="size-4" aria-hidden="true">
-      <path d="M2 4h12M2 8h8M2 12h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
-  );
+  return <AwsMark />;
 }
 
 export function AzureGlyph() {
-  return (
-    <svg viewBox="0 0 16 16" className="size-4" aria-hidden="true">
-      <rect x="2.5" y="2.5" width="11" height="11" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M8 4.5v7M4.5 8h7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
-  );
+  return <AzureMark />;
 }
 
 export function GcpGlyph() {
-  return (
-    <svg viewBox="0 0 16 16" className="size-4" aria-hidden="true">
-      <path
-        d="M8 2.2 13 5.1v5.8L8 13.8 3 10.9V5.1L8 2.2Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
+  return <GcpMark />;
 }
 
 export function pct(value: number): string {
@@ -167,10 +148,4 @@ export const MIX_DOT: Record<keyof WorkloadMix, string> = {
   etl: "bg-lava",
   sql: "bg-[#146c43]",
   ml: "bg-[#b45309]",
-};
-
-export const TEAM_ICONS: Record<TeamPresetId, LucideIcon> = {
-  small: Users,
-  medium: Building2,
-  large: Landmark,
 };
