@@ -7,12 +7,12 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: "list",
   use: {
-    baseURL: "http://127.0.0.1:5173/databricks-cost-forecaster/",
+    baseURL: "http://127.0.0.1:5173/cayfore/",
     trace: "retain-on-failure",
   },
   webServer: {
     command: "npm run dev",
-    url: "http://127.0.0.1:5173/databricks-cost-forecaster/",
+    url: "http://127.0.0.1:5173/cayfore/",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

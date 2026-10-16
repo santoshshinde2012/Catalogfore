@@ -1,0 +1,45 @@
+{
+  "id": "/cayfore/",
+  "name": "Cayfore",
+  "short_name": "Cayfore",
+  "description": "Databricks cost calculator and DBU forecast. A year of spend from four inputs. Independent estimate, not a quote.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "/cayfore/",
+  "scope": "/cayfore/",
+  "display": "standalone",
+  "background_color": "#F6F6F7",
+  "theme_color": "#F6F6F7",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -2,10 +2,15 @@
   "name": "@cayfore/web",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/santoshshinde2012/cayfore.git",
+    "directory": "apps/web"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node ../../scripts/prerender-landing.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"
   },

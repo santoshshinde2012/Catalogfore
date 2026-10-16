@@ -11,7 +11,8 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 - CSV, JSON, and PDF export, and a share link that keeps the plan in the URL.
 - CLI (`npm run cayfore`) and a stdio MCP server with the same engine.
 - Weekly price refresh for AWS on-demand rates and Azure VM and DBU meters. See `docs/DATA-PIPELINE.md`.
-- `robots.txt`, a sitemap, and JSON-LD on the production page.
+- `robots.txt`, a sitemap, a web manifest, and JSON-LD (`WebSite`, `WebApplication`, `SoftwareApplication`) on the production page.
+- A static FAQ at `/faq.html` and `docs/FAQ.md`. The forecast page layout is unchanged.
 - A production Content-Security-Policy meta tag and a referrer policy. See `docs/ROADMAP.md` for what GitHub Pages cannot set.
 - Optional Plausible analytics, off unless `VITE_PLAUSIBLE_DOMAIN` is set at build time.
 - Issue forms, a pull request template, and `NOTICE` for the price sources.
@@ -19,5 +20,6 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Changed
 
-- The product name is Cayfore. The repository name, the Pages path, and the theme key `dcf-theme` are unchanged.
+- The product name is Cayfore. The theme key stays `dcf-theme`.
+- The GitHub repository, the Pages path, and the root package are `cayfore` (https://santoshshinde2012.github.io/cayfore/). They were previously `databricks-cost-forecaster`.
 - Instance DBU counts are a cited table. Azure rows that Microsoft publishes are cited to the Azure Databricks pricing page. AWS, GCP, and `Standard_F4s_v2` stay manual. The refresh does not download LakeMeter-OSS.

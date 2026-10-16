@@ -1,9 +1,17 @@
 {
-  "name": "databricks-cost-forecaster",
+  "name": "cayfore",
   "private": true,
   "version": "0.1.0",
-  "description": "Open-source Databricks cost forecasting calculator",
+  "description": "Cayfore is an independent Databricks cost calculator and DBU forecast.",
   "license": "MIT",
+  "homepage": "https://santoshshinde2012.github.io/cayfore/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/santoshshinde2012/cayfore.git"
+  },
+  "bugs": {
+    "url": "https://github.com/santoshshinde2012/cayfore/issues"
+  },
   "type": "module",
   "workspaces": [
     "packages/*",
@@ -32,6 +40,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
+    "jsdom": "^29.1.1",
     "prettier": "^3.9.10",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.39.0",

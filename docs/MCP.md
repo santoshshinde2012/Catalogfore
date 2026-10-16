@@ -27,7 +27,7 @@ The process speaks MCP over stdin and stdout. A client config looks like this (u
   "mcpServers": {
     "cayfore": {
       "command": "node",
-      "args": ["/absolute/path/databricks-cost-forecaster/mcp/dist/index.js"]
+      "args": ["/absolute/path/cayfore/mcp/dist/index.js"]
     }
   }
 }

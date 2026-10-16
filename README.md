@@ -4,7 +4,7 @@ A 12-month forecast of Databricks spend. Four inputs, one range.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-111111)](LICENSE)
 [![Node 20+](https://img.shields.io/badge/node-20%2B-111111)](package.json)
-[![Live site](https://img.shields.io/badge/live-GitHub%20Pages-111111)](https://santoshshinde2012.github.io/databricks-cost-forecaster/)
+[![Live site](https://img.shields.io/badge/live-GitHub%20Pages-111111)](https://santoshshinde2012.github.io/cayfore/)
 
 Cayfore is the interface. This repository is the forecast. It is an estimate, not a quote, and it is not affiliated with Databricks. The calculation stays in the browser. See [docs/PRIVACY.md](docs/PRIVACY.md).
 
@@ -38,7 +38,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173/databricks-cost-forecaster/
+Open http://localhost:5173/cayfore/
 
 Node 20 or newer.
 
@@ -70,15 +70,16 @@ The page JavaScript is about 346 KB gzipped, including the chart and the price c
 | `docs/PLAN.md`               | What the page covers, and what the engine still prices          |
 | `docs/ROADMAP.md`            | Gaps versus other calculators, and what is not in this pass     |
 | `docs/PRIVACY.md`            | What stays in the browser                                       |
+| `docs/FAQ.md`                | Short answers for the public FAQ page                           |
 | `docs/MCP.md`                | Tool arguments and a client config                              |
 | `CHANGELOG.md`               | What is unreleased. GitHub Releases are cut by the owner        |
 | `NOTICE`                     | License notice for the code and the price sources               |
 
 ## Publish
 
-Pushes to `main` publish the site from `.github/workflows/pages.yml`. The address is https://santoshshinde2012.github.io/databricks-cost-forecaster/
+Pushes to `main` publish the site from `.github/workflows/pages.yml`. The address is https://santoshshinde2012.github.io/cayfore/
 
-Vite’s base path is `/databricks-cost-forecaster/`. Unknown addresses serve `404.html`.
+Vite’s base path is `/cayfore/`. Unknown addresses serve `404.html`. The repository social-preview image is `.github/social-preview.png` (1280×640). Upload that file in the repository settings if GitHub has not picked it up. Topics and the description belong on the repository, not in the page.
 
 A weekly workflow opens a pull request when AWS or Azure list prices change: EC2 on-demand for every catalog region, and Azure VM and Databricks DBU meters. Instance DBU counts stay in the cited table. GCP virtual-machine rates stay seeded unless `GCP_BILLING_API_KEY` is set. Do not commit that key. The curated $/DBU table is not rewritten. Details are in [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md).
 
