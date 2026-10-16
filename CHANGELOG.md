@@ -31,6 +31,6 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Changed
 
-- The product name is Cayfore. The theme key stays `dcf-theme`.
+- The product name is Cayfore. The theme is stored as `cayfore-theme`. A browser that still has `dcf-theme` is copied once, then the old key is removed.
 - The GitHub repository, the Pages path, and the root package are `cayfore` (https://santoshshinde2012.github.io/cayfore/). They were previously `databricks-cost-forecaster`.
 - Instance DBU counts are a cited table. Azure rows that Microsoft publishes are cited to the Azure Databricks pricing page. AWS, GCP, and `Standard_F4s_v2` stay manual. The refresh does not download LakeMeter-OSS.

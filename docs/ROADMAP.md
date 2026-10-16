@@ -49,7 +49,7 @@ These do not change the page layout.
 - Jobs Light on AWS and GCP. It is still missing from the cited $/DBU card.
 - Invoice ingest, showback, anomaly alerts, and email budgets.
 - A saved estimate on a server. The hash is the copy.
-- The theme key `dcf-theme` stays. The repository and the Pages path are now `cayfore`.
+- The theme key is `cayfore-theme`. A browser that still has `dcf-theme` is copied once. The repository and the Pages path are now `cayfore`.
 
 ## Owner
 
@@ -57,5 +57,5 @@ These do not change the page layout.
 - Optional: add the `GCP_BILLING_API_KEY` repository secret if GCP VM rows should refresh.
 - Optional: publish a GitHub Release from `CHANGELOG.md`. Nothing in this repo does that automatically.
 - Optional: put a host in front of Pages if you want HTTP security headers. The meta policy is what Pages can carry.
-- The repository is `cayfore`. Pages publishes at https://santoshshinde2012.github.io/cayfore/ after this merges to `main`. The product name is Cayfore. The theme key stays `dcf-theme`.
+- The repository is `cayfore`. Pages publishes at https://santoshshinde2012.github.io/cayfore/ after this merges to `main`. The product name is Cayfore. The theme key is `cayfore-theme`.
 - Upload `.github/social-preview.png` as the repository social preview if Settings does not show it yet.

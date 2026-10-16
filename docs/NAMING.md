@@ -52,4 +52,4 @@ Databricks is a registered mark (USPTO registrations 5003730 and 6365720, owner 
 
 The wordmark, page title, Open Graph and Twitter titles, the 404 page, the PDF heading, the README, the docs, the MCP server name (`cayfore`), the workspace packages (`@cayfore/engine`, `@cayfore/web`, `@cayfore/mcp`), and the shell command `npm run cayfore`.
 
-The repository, the Pages path, and the root npm package were renamed to `cayfore` on 2026-10-16. They had been `databricks-cost-forecaster`. The theme key stays `dcf-theme`, so a browser that already chose dark mode keeps it.
+The repository, the Pages path, and the root npm package were renamed to `cayfore` on 2026-10-16. They had been `databricks-cost-forecaster`. The theme was stored as `dcf-theme`. It is now `cayfore-theme`. A browser that still has the old key is copied once, so an existing dark-mode choice stays.

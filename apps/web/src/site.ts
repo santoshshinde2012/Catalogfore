@@ -1,4 +1,4 @@
-/** Public addresses. The theme key stays `dcf-theme` and is not derived from these. */
+/** Public addresses. The stored theme key is `cayfore-theme` and is not derived from these. */
 export const REPO = "https://github.com/santoshshinde2012/cayfore";
 export const BASE_PATH = "/cayfore/";
 export const SITE = "https://santoshshinde2012.github.io/cayfore/";

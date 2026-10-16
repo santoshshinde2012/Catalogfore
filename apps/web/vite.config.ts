@@ -72,6 +72,10 @@ export default defineConfig(({ mode }) => {
   return {
     base: BASE_PATH,
     plugins: [react(), tailwindcss(), productionPolicy(env)],
+    build: {
+      // The landing chunk is the calculator. The product catalog stays on the Advanced chunk.
+      chunkSizeWarningLimit: 1000,
+    },
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),

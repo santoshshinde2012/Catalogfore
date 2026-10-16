@@ -8,6 +8,7 @@ import {
   type Portfolio,
 } from "@cayfore/engine";
 import { useEffect, useMemo, useState } from "react";
+import { readStoredTheme, storeTheme } from "../theme-storage";
 import { readInitial, type SimpleSession, type Theme } from "./forecast-session";
 import { sessionActions } from "./session-actions";
 
@@ -22,9 +23,10 @@ export function useSimpleForecast(): SimpleSession {
   const [notice, setNotice] = useState("");
   const [usageError, setUsageError] = useState("");
   const [usageBusy, setUsageBusy] = useState(false);
-  const [theme, setTheme] = useState<Theme>(() =>
-    document.documentElement.dataset.theme === "dark" ? "dark" : "light",
-  );
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (document.documentElement.dataset.theme === "dark") return "dark";
+    return readStoredTheme() === "dark" ? "dark" : "light";
+  });
 
   const projection = useMemo(() => projectSimple(plan), [plan]);
   const portfolio = override ?? projection.portfolio;
@@ -45,7 +47,7 @@ export function useSimpleForecast(): SimpleSession {
     root.classList.add("theme-swap");
     if (theme === "dark") root.dataset.theme = "dark";
     else delete root.dataset.theme;
-    localStorage.setItem("dcf-theme", theme);
+    storeTheme(theme);
     document
       .querySelector('meta[name="theme-color"]')
       ?.setAttribute("content", theme === "dark" ? "#0B2026" : "#F6F6F7");

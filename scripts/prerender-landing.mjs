@@ -71,10 +71,9 @@ try {
 
   const boot = readFileSync(path.join(webRoot, "public/theme-boot.js"), "utf8").trim();
   const bootHash = createHash("sha256").update(boot).digest("base64");
-  if (!index.includes('<script src="./theme-boot.js"></script>')) {
-    throw new Error("Built index.html is missing theme-boot.js");
-  }
-  index = index.replace('<script src="./theme-boot.js"></script>', `<script>${boot}</script>`);
+  const bootTag = index.match(/<script src="(?:\.\/|\/cayfore\/|\/)theme-boot\.js"><\/script>/);
+  if (!bootTag) throw new Error("Built index.html is missing theme-boot.js");
+  index = index.replace(bootTag[0], `<script>${boot}</script>`);
   const moduleTag = index.match(/<script type="module" crossorigin src="([^"]+)"><\/script>/);
   if (!moduleTag) throw new Error("Built index.html is missing the module script");
   const loader = `import("${moduleTag[1]}");`;

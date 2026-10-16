@@ -21,4 +21,22 @@ jobs:
       - run: npm run build
       - run: npm run test:mcp
       - run: npx playwright install --with-deps chromium
+      - name: Console on the built app
+        run: |
+          npm run preview -w @cayfore/web -- --host 127.0.0.1 --port 4175 --strictPort > /tmp/cayfore-preview.log 2>&1 &
+          echo "$!" > /tmp/cayfore-preview.pid
+          trap 'kill "$(cat /tmp/cayfore-preview.pid)" || true' EXIT
+          ready=0
+          for _ in $(seq 1 40); do
+            if curl -sf -o /dev/null http://127.0.0.1:4175/cayfore/; then
+              ready=1
+              break
+            fi
+            sleep 0.5
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/cayfore-preview.log
+            exit 1
+          fi
+          node scripts/console-routes.mjs
       - run: npm run test:e2e
