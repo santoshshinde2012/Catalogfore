@@ -13,7 +13,8 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "paths": {
-      "@dcf/engine": ["../../packages/engine/src/index.ts"]
+      "@/*": ["./src/*"],
+      "@cayfore/engine": ["../../packages/engine/src/index.ts"]
     }
   },
   "include": ["src"]

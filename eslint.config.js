@@ -5,14 +5,27 @@ import hooks from "eslint-plugin-react-hooks";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["**/dist/**", "**/node_modules/**", "coverage/**", "playwright-report/**", "test-results/**"] },
+  {
+    ignores: [
+      "**/dist/**",
+      "**/node_modules/**",
+      "coverage/**",
+      "playwright-report/**",
+      "test-results/**",
+      "apps/web/public/**",
+    ],
+  },
   {
     files: ["scripts/**/*.mjs", "eslint.config.js", "playwright.config.ts", "vitest.config.ts"],
     languageOptions: {
       globals: {
+        AbortController: "readonly",
         console: "readonly",
-        process: "readonly",
         fetch: "readonly",
+        process: "readonly",
+        setTimeout: "readonly",
+        TextDecoder: "readonly",
+        URL: "readonly",
       },
     },
   },

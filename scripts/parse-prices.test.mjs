@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { parseAwsOfferCsv, pickAzureLinuxHour } from "./parse-prices.mjs";
+import {
+  gcpMachineHour,
+  parseAwsOfferCsv,
+  pickAzureDbuMeters,
+  pickAzureLinuxHour,
+  pickAzureSpotHour,
+  spotHourFromSavings,
+} from "./parse-prices.mjs";
 
 const awsCsv = [
   '"FormatVersion","v1.0"',
@@ -50,4 +57,86 @@ test("azure picker skips windows and spot meters", () => {
     "Standard_DS3_v2",
   );
   assert.equal(picked.onDemandHourly, 0.229);
+});
+
+test("azure spot picker ignores windows and on-demand", () => {
+  const picked = pickAzureSpotHour(
+    [
+      {
+        armSkuName: "Standard_D4s_v5",
+        priceType: "Consumption",
+        unitPrice: 0.192,
+        unitOfMeasure: "1 Hour",
+        productName: "Virtual Machines Dsv5 Series",
+        meterName: "D4s v5",
+      },
+      {
+        armSkuName: "Standard_D4s_v5",
+        priceType: "Consumption",
+        unitPrice: 0.04,
+        unitOfMeasure: "1 Hour",
+        productName: "Virtual Machines Dsv5 Series",
+        meterName: "D4s v5 Spot",
+      },
+    ],
+    "Standard_D4s_v5",
+  );
+  assert.equal(picked.spotHourly, 0.04);
+});
+
+test("azure dbu meters map premium names and skip photon", () => {
+  const rows = pickAzureDbuMeters([
+    { priceType: "Consumption", unitPrice: 0.3, meterName: "Premium Jobs Compute DBU" },
+    { priceType: "Consumption", unitPrice: 0.3, meterName: "Premium Jobs Compute Photon DBU" },
+    { priceType: "Consumption", unitPrice: 0, meterName: "Premium Jobs Compute DBU" },
+    { priceType: "Consumption", unitPrice: 0.95, meterName: "Premium Interactive Serverless Compute DBU" },
+  ]);
+  assert.deepEqual(
+    rows.map((row) => row.sku),
+    ["jobs_classic", "all_purpose_serverless", "apps"],
+  );
+  assert.equal(spotHourFromSavings(0.192, 68), 0.06144);
+  assert.equal(spotHourFromSavings(0.192, 99), null);
+});
+
+test("azure picker treats a missing priceType as consumption", () => {
+  const picked = pickAzureLinuxHour(
+    [
+      {
+        armSkuName: "Standard_DS3_v2",
+        unitPrice: 0.293,
+        unitOfMeasure: "1 Hour",
+        productName: "Virtual Machines DSv2 Series",
+        meterName: "DS3 v2",
+      },
+    ],
+    "Standard_DS3_v2",
+  );
+  assert.equal(picked.onDemandHourly, 0.293);
+});
+
+test("gcp machine hour is cores times the core sku plus memory times the ram sku", () => {
+  const skus = [
+    {
+      description: "N2 Instance Core running in Americas",
+      serviceRegions: ["us-central1"],
+      category: { usageType: "OnDemand" },
+      pricingInfo: [{ pricingExpression: { tieredRates: [{ unitPrice: { units: "0", nanos: 31492251 } }] } }],
+    },
+    {
+      description: "N2 Instance Ram running in Americas",
+      serviceRegions: ["us-central1"],
+      category: { usageType: "OnDemand" },
+      pricingInfo: [{ pricingExpression: { tieredRates: [{ unitPrice: { units: "0", nanos: 4237429 } }] } }],
+    },
+    {
+      description: "N2 Instance Core running in Americas",
+      serviceRegions: ["us-central1"],
+      category: { usageType: "Preemptible" },
+      pricingInfo: [{ pricingExpression: { tieredRates: [{ unitPrice: { units: "0", nanos: 1 } }] } }],
+    },
+  ];
+  const hourly = gcpMachineHour(skus, "us-central1", { family: "N2", cores: 4, memory: 16 });
+  assert.equal(hourly, Math.round((4 * 0.031492251 + 16 * 0.004237429) * 1e6) / 1e6);
+  assert.equal(gcpMachineHour(skus, "europe-west1", { family: "N2", cores: 4, memory: 16 }), null);
 });

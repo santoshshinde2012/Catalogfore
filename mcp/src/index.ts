@@ -4,9 +4,13 @@ import { z } from "zod";
 import {
   catalog,
   compareScenarios,
+  defaultPlan,
   estimate,
   forecast,
   listInstances,
+  planFromUsage,
+  pricesUpdatedOn,
+  projectSimple,
   listRegions,
   normalizePortfolio,
   referenceRegion,
@@ -31,7 +35,7 @@ function portfolioSchema() {
 
 export function createServer(): McpServer {
   const server = new McpServer({
-    name: "databricks-cost-forecaster",
+    name: "cayfore",
     version: "0.1.0",
   });
 
@@ -154,6 +158,31 @@ export function createServer(): McpServer {
         annual: result.annual,
       }));
       return text({ disclaimer: DISCLAIMER, catalogVersion: catalog.version, results });
+    },
+  );
+
+  server.registerTool(
+    "forecast_usage",
+    {
+      title: "Forecast from a usage CSV",
+      description:
+        "Fit a 12-month forecast from a system.billing.usage CSV. Include list_price when you joined system.billing.list_prices. A single month scales the run rate. Six or more months fit a trend. Estimates only.",
+      inputSchema: { csv: z.string().describe("CSV text with a header row.") },
+    },
+    async ({ csv }) => {
+      const loaded = planFromUsage(defaultPlan(), csv);
+      if (!loaded.ok) return text({ disclaimer: DISCLAIMER, error: loaded.error });
+      const projected = projectSimple(loaded.plan);
+      return text({
+        disclaimer: DISCLAIMER,
+        catalogVersion: catalog.version,
+        pricesUpdatedOn,
+        method: loaded.plan.usageForecast?.method ?? "run-rate",
+        mape: loaded.plan.usageForecast?.mape ?? null,
+        annual: projected.annual,
+        spreadPercent: projected.spreadPercent,
+        months: projected.months,
+      });
     },
   );
 

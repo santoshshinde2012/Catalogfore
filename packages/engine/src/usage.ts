@@ -1,3 +1,4 @@
+import type { UsagePoint } from "./forecast/series.js";
 import type { UsageImport } from "./types.js";
 
 const SKU_RULES: { pattern: RegExp; sku: string }[] = [
@@ -72,8 +73,62 @@ export function parseCsv(text: string): Record<string, string>[] {
   });
 }
 
-export function importUsageCsv(text: string): UsageImport {
+export interface UsageHistory {
+  months: UsagePoint[];
+  days: UsagePoint[];
+  unit: "usd" | "dbu";
+}
+
+const PRICE_KEYS = ["list_price", "price", "pricing_default", "effective_list"];
+
+export function usageHistory(text: string): UsageHistory {
   const records = parseCsv(text);
+  const priced = records.some((record) => priceOf(record) != null);
+  const days = new Map<string, number>();
+  const months = new Map<string, number>();
+  for (const record of records) {
+    const date = usageDate(record);
+    if (!date) continue;
+    const unit = (record.usage_unit ?? record.unit ?? "DBU").trim().toUpperCase();
+    if (unit && unit !== "DBU") continue;
+    const quantity = Number((record.usage_quantity ?? record.dbus ?? record.dbu ?? "").replace(/,/g, ""));
+    if (!Number.isFinite(quantity)) continue;
+    const price = priceOf(record);
+    const amount = priced ? quantity * (price ?? 0) : quantity;
+    if (priced && price == null) continue;
+    const day = date.slice(0, 10);
+    const month = day.slice(0, 7);
+    days.set(day, (days.get(day) ?? 0) + amount);
+    months.set(month, (months.get(month) ?? 0) + amount);
+  }
+  return {
+    unit: priced ? "usd" : "dbu",
+    days: [...days.entries()].sort().map(([period, amount]) => ({ period, amount })),
+    months: [...months.entries()].sort().map(([period, amount]) => ({ period, amount })),
+  };
+}
+
+function priceOf(record: Record<string, string>): number | null {
+  for (const key of PRICE_KEYS) {
+    if (!(key in record)) continue;
+    const value = Number(record[key].replace(/[$,\s]/g, ""));
+    if (Number.isFinite(value) && value > 0) return value;
+  }
+  return null;
+}
+
+function usageDate(record: Record<string, string>): string | null {
+  const raw = (record.usage_date ?? record.date ?? "").trim();
+  const match = raw.match(/^(\d{4}-\d{2}-\d{2})/);
+  return match ? match[1] : null;
+}
+
+export function importUsageCsv(text: string, month?: string): UsageImport {
+  const records = parseCsv(text).filter((record) => {
+    if (!month) return true;
+    const date = usageDate(record);
+    return date ? date.slice(0, 7) === month : false;
+  });
   const warnings: string[] = [];
   if (!records.length) warnings.push("No data rows found. Export system.billing.usage as CSV with a header row.");
   const quantityKey = records[0]

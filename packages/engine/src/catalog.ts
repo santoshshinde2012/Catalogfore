@@ -1,3 +1,4 @@
+import azureMetersJson from "../../../data/azure-dbu-meters.json";
 import skuRatesJson from "../../../data/sku-rates.json";
 import instancesJson from "../../../data/instances.json";
 import vmPricesJson from "../../../data/cloud-vm-prices.json";
@@ -26,8 +27,17 @@ export interface VmPrice {
   region: string;
   instanceId: string;
   onDemandHourly: number;
+  /** Spot Instance advisor hourly rate, when the public advisor has this instance. */
+  spotHourly?: number;
   source: string;
   asOf: string;
+}
+
+export interface AzureDbuMeter {
+  region: string;
+  sku: SkuId;
+  usdPerDbu: number;
+  meterName: string;
 }
 
 export interface SkuCatalog {
@@ -72,10 +82,16 @@ export const skuCatalog = skuRatesJson as SkuCatalog;
 export const instances = instancesJson.instances as InstanceInfo[];
 export const vmPrices = vmPricesJson.prices as VmPrice[];
 export const referenceRegion = vmPricesJson.referenceRegion as Record<Cloud, string>;
+export const azureDbuMeters = azureMetersJson.meters as AzureDbuMeter[];
+export const pricesUpdatedOn = [vmPricesJson.updatedOn, azureMetersJson.updatedOn, skuCatalog.verifiedOn]
+  .filter((value) => typeof value === "string")
+  .sort()
+  .at(-1) as string;
 
 const instanceKey = (cloud: Cloud, id: string) => `${cloud}:${id}`;
 const instanceMap = new Map(instances.map((row) => [instanceKey(row.cloud, row.id), row]));
 const priceMap = new Map(vmPrices.map((row) => [`${row.cloud}:${row.region}:${row.instanceId}`, row]));
+const azureRateMap = new Map(azureDbuMeters.map((row) => [`${row.region}:${row.sku}`, row.usdPerDbu]));
 
 export function regionInfo(cloud: Cloud, regionId: string): RegionInfo {
   return (
@@ -105,14 +121,34 @@ export function vmHourly(
   cloud: Cloud,
   region: string,
   instanceId: string,
-): { hourly: number; approximate: boolean; source: string } {
+): { hourly: number; spotHourly: number | null; approximate: boolean; source: string } {
   const exact = priceMap.get(`${cloud}:${region}:${instanceId}`);
-  if (exact) return { hourly: exact.onDemandHourly, approximate: false, source: exact.source };
+  if (exact) {
+    return {
+      hourly: exact.onDemandHourly,
+      spotHourly: exact.spotHourly ?? null,
+      approximate: false,
+      source: exact.source,
+    };
+  }
   const fallbackRegion = referenceRegion[cloud];
   const fallback = priceMap.get(`${cloud}:${fallbackRegion}:${instanceId}`);
-  if (fallback)
-    return { hourly: fallback.onDemandHourly, approximate: region !== fallbackRegion, source: fallback.source };
-  return { hourly: 0, approximate: true, source: "missing" };
+  if (fallback) {
+    return {
+      hourly: fallback.onDemandHourly,
+      spotHourly: null,
+      approximate: region !== fallbackRegion,
+      source: fallback.source,
+    };
+  }
+  return { hourly: 0, spotHourly: null, approximate: true, source: "missing" };
+}
+
+/** Azure Retail Prices meter for this region, or null when the curated rate and region factor still apply. */
+export function regionalSkuRate(cloud: Cloud, region: string, tier: Tier, sku: SkuId): number | null {
+  if (cloud !== "azure") return null;
+  if (tier !== "premium" && tier !== "enterprise") return null;
+  return azureRateMap.get(`${region}:${sku}`) ?? null;
 }
 
 export function skuRate(cloud: Cloud, tier: Tier, sku: SkuId): number {

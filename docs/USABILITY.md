@@ -1,53 +1,50 @@
 # Usability
 
-Checked in the running app on 2026-10-15, catalog **2026-10-15.2**. Figures are what the page showed. They are estimates, not a quote.
+Checked in the running app on 2026-10-16, catalog **2026-10-16.1**. Figures are what the page showed. They are estimates, not a quote. Cayfore is not affiliated with Databricks.
 
-The page opens on a question, not a form. Each question loads a portfolio with the assumptions already filled, so the first number is on screen in one click. The arithmetic is under the number. A change that saves money shows the annual dollars and an Apply button. The year is a low / expected / high band, not a single false-precision total.
+The page is one forecast. Cloud and tier, a starting monthly amount or a team size, a mix of pipelines / dashboards / models, and monthly growth. The year updates as those change. A shaded 12-month band, the year total, one sentence, and a month table are the result. Region, a commitment discount, a usage file, and the per-workload builder sit behind that.
 
-## Platform lead — what will the team cost next year?
+Light is the default. Dark mode is optional. Databricks’ own forecast (Usage Dashboard 2.0, budgets, `ai_forecast`) needs an account admin and billing history. Public cloud calculators price one SKU and assume you already know DBU rates. This page is the public 12-month number for a team that is evaluating, new, or writing a budget.
 
-Starting point: nightly transforms (2 workers, 3 hours, 7 days), analyst notebooks (6 hours, 5 days), a small serverless SQL warehouse, 400 GB storage, 80 GB egress. AWS Premium, US East, 8% growth, 12 months.
+## Evaluating — what does a medium team cost on AWS?
 
-- This month: **$1,829**
-- First 12 months: **$19,331 low / $22,742 expected / $27,291 high**
-- The year is higher than 12 × $1,829 because growth compounds inside the year. This month stays the run rate.
-- Why, as printed:
-  - Nightly transforms **$80.68** — 3 nodes × 0.69 DBU/h × 91 h × $0.15/DBU, plus VM $0.192/h.
-  - Analyst notebooks **$148.59** — 2 nodes × 0.69 DBU/h × 130 h × $0.55/DBU, plus the VM line.
-  - BI warehouse **$1,583** — 12 DBU/h × 1.45 × 130 h × $0.70/DBU. The 1.45 is one warehouse plus 45% of the way from min 1 to max 2. Serverless SQL has no VM line.
-- An annual budget of $25,000 reads **$2,258 under** the expected year.
-- Largest lever on the page: a 37% DBU commit plus 30% off VMs, about **$8,250** in the first year. The card says both numbers are planning assumptions, not an offer.
+Land on the page. Medium is selected: 45% pipelines, 40% dashboards, 15% models, about $12,000 a month before a discount. AWS, Premium, US East (N. Virginia). Growth is 3% a month, so the chart rises.
 
-Spot-check of the nightly line against the catalog: 3 × 0.69 DBU/h × (3 × 7 × 52/12) h × $0.15 = $28.27 of DBU, and 3 × $0.192/h × 91 h = $52.42 of VM. Sum $80.68. The $0.15 jobs rate and the 0.69 DBU/h rating are the catalog values cited in [RESEARCH.md](./RESEARCH.md).
+- Sentence: **About $170,258 per year, ±20%.**
+- First month: **$11,997**. The three dollars are rounding on the priced lines. Month 12 is higher because each month is 3% above the one before.
+- **29% of the bill is cloud machines.** That share is the classic-job portion. Dashboards are serverless, and models are token usage, so they do not add a machine line.
+- The shaded band is 15% under to 20% over, because no usage file has been loaded. Chart is the default view. Months lists all 12 months.
 
-## FinOps — where can we cut spend?
+Nothing on this path asks for a DBU rate, an instance, or an hour count. “How we got this” names the archetypes and says Databricks bills usage in DBU, which the page converts from the dollars you typed.
 
-Starting point: notebooks left on 14 hours, a fixed 6-node job with no spot, a classic medium warehouse pinned 24×7, 2 TB storage. No growth.
+Why $12,000, and why that mix, is in [RESEARCH.md](RESEARCH.md) section 15. Short version: it is the top of a published $8,000–$12,000 band for a 10 TB analytics team, pipelines lead, and dashboards plus a little model use fill the rest.
 
-- This month: **$8,612**
-- First 12 months: **$87,845 / $103,347 / $132,285**
-- The high side is wider because the classic SQL VM rate is the $0.22 per DBU-hour assumption, and the page says so.
-- The warehouse is **$7,688** of the month (24 DBU/h × 728 h × $0.22, plus the VM assumption). 728 hours is 24 × 7 × 52/12.
-- Applying “Stop the warehouse overnight” cuts the month to **$4,128** and the expected year to **$49,534**. The card’s saving was **$53,814** a year. The next cards stay, with new dollar amounts, including auto-stop on the 14-hour notebooks (**$2,675** before that apply) and spot on the job.
+## Budgeting — a small team growing 5% a month
 
-## Architect — classic or serverless for this job?
+Click Small. The mix becomes 35% pipelines, 55% dashboards, 10% models, and the first month is **$2,000**. Growth stays at 3% a month, so the year is **About $28,379 per year, ±20%.** Cloud machines are **23%** of the bill.
 
-One classic job, m5.xlarge, 4 workers, 4 hours a day, 7 days a week. No growth.
+Click 5% monthly growth. The first month stays **$2,000**. The year becomes **About $31,828 per year, ±20%.** Each month is 5% above the one before it. The label says monthly, so a 5% click is not a 5% year. Setting growth to 0% is the flat year, **About $23,996**.
 
-- Classic: **$179.27** this month. The line is 5 nodes × 0.69 DBU/h × 121.3 h × $0.15/DBU, plus VM $0.192/h.
-- First year: **$1,829 / $2,151 / $2,581**
-- “Move classic jobs to serverless” is **$393.12** a year. After Apply the month is **$146.51**, the VM line is gone, and the note is 3.45 DBU/h × 121.3 h × $0.35/DBU. 3.45 is the same 5 × 0.69 DBU/h the classic job emitted. The rate changed from $0.15 to $0.35 and the VM bill dropped. That is the whole decision.
-- Photon is listed only with the explicit “you measured a 2× speedup” assumption, at **$359.76** a year if that assumption holds.
+A commitment discount, if you set one, lowers the Databricks portion and leaves the machine portion alone. The starting-spend field stays the pre-discount amount.
 
-## What is better than the other calculators
+## Already spending — replace the guess with a usage file
 
-Compared again with the AWS Pricing Calculator, the Azure Pricing Calculator, the Google Cloud Pricing Calculator, and Databricks’ own instance calculator. Sources and the earlier table are in [RESEARCH.md](./RESEARCH.md) section 11.
+“Use my real usage” takes a `system.billing.usage` CSV. The sample file (jobs, notebooks, serverless SQL) replaces the monthly amount and the mix:
 
-- Those calculators price a cloud SKU, or a single Databricks instance’s DBUs. This page prices **DBU and VM on the same workload**, then a whole portfolio, and it drops the VM line only when the SKU is actually serverless.
-- None of them turn “what will next year cost?” into a 12-month band with growth. This one does, and the band widens when a VM rate is a stand-in and tightens after a `system.billing.usage` import.
-- Databricks’ calculator does not put classic against serverless with the VM removed, and it does not attach a dollar saving to auto-stop, spot, or a commit. Those are Apply buttons here, each computed by re-running the same estimate.
-- The hyperscaler tools are better at full SKU coverage inside one cloud, and at looking like a procurement worksheet. This one does not pretend to be a quote, and it does not apply the Lakehouse Real-Time 30% promo to jobs or SQL.
+- **From your usage file: about $1,573 this month. 65% pipelines, 35% dashboards, 0% models.**
+- Year: **About $18,878 per year, ±6%.** The range tightens because the file supplied the quantity. Machine cost is still inferred, because the file does not list virtual machines. Cloud machines are **34%** of that bill.
+- Cloud, tier, region, growth, and the discount stay where you left them. “Use the sliders instead” returns to a typed amount.
 
-## What was removed
+## Same work on another cloud
 
-The old Desk / Scenarios / Actuals / Method tabs asked the user to know the feature list. The scenarios are now the savings cards. Usage import and the method note sit on the same page as the number. Templates are behind “More starting points” so they stay available without being the front door.
+Medium on AWS is about **$11,997** in month one. Switch the cloud to Azure and keep the same mix and the 3% growth. The first month becomes **$16,063**, and the year **About $227,962 per year, ±20%.** Cloud machines are **33%** of that bill. The workloads did not get larger. The rate card changed, including the East US virtual-machine prices read from the Azure Retail Prices API on 2026-10-16. The mix line still reads 45% / 40% / 15%.
+
+## What is better than the other tools
+
+- Usage Dashboard 2.0, budgets, and `ai_forecast` forecast from `system.billing.usage`. They are the right tool once an admin can open the account console. This page does not ask for that login, and it says so, with links, at the bottom.
+- The AWS, Azure, and Google calculators, and Databricks’ instance calculator, price a SKU you already know how to name. This page asks for a monthly amount and a mix, and the engine turns that into classic jobs, serverless SQL, and token usage.
+- The per-workload builder is still there, under Advanced, for someone who wants to change an instance or a schedule. It is not the front door.
+
+## What moved off the front door
+
+The four opening questions, the portfolio name, and the side-by-side scenario board are gone from the first screen. Savings stay under “Ways to pay less,” each with an annual dollar amount. Copy link is the primary action. CSV, JSON, and PDF sit in the Export menu.

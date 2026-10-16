@@ -1,9 +1,9 @@
 {
-  "name": "@dcf/engine",
+  "name": "@cayfore/engine",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Shared Databricks cost estimate and forecast engine",
+  "description": "Shared estimate and forecast engine for Cayfore",
   "exports": {
     ".": "./src/index.ts"
   },

@@ -1,7 +1,7 @@
 import { AppShell } from "./components/AppShell";
-import { useForecastSession } from "./hooks/useForecastSession";
+import { useSimpleForecast } from "./hooks/useSimpleForecast";
 
 export function App() {
-  const session = useForecastSession();
+  const session = useSimpleForecast();
   return <AppShell session={session} />;
 }

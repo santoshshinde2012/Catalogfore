@@ -1,0 +1,19 @@
+name: Bug
+description: Something in the forecast, the page, or the tools is wrong
+title: "Bug: "
+labels: []
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what you saw. Include cloud, tier, region, and the year total if the number looks wrong.
+    validations:
+      required: true
+  - type: textarea
+    id: version
+    attributes:
+      label: Where
+      description: The live site, a local checkout, the CLI, or the MCP server. A commit or the "Prices updated" date helps.
+    validations:
+      required: true

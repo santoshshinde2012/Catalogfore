@@ -1,4 +1,4 @@
-name: Refresh cloud VM prices
+name: Refresh list prices
 
 on:
   schedule:
@@ -12,6 +12,7 @@ permissions:
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -20,13 +21,22 @@ jobs:
           cache: npm
       - run: npm ci
       - run: node scripts/refresh-prices.mjs
+        env:
+          GCP_BILLING_API_KEY: ${{ secrets.GCP_BILLING_API_KEY }}
+      - run: node --test scripts/validate-catalog.test.mjs
       - uses: peter-evans/create-pull-request@v7
         with:
-          commit-message: "Refresh cloud VM list prices"
-          title: "Refresh cloud VM list prices"
+          commit-message: "Refresh list prices"
+          title: "Refresh list prices"
           body: |
-            Automated refresh of on-demand VM rates from the Azure Retail Prices API and the public AWS Price List offer files.
+            Automated refresh of on-demand VM rates and Azure Databricks DBU meters.
 
-            DBU list rates are not changed. Review the diff before merging. Figures are list prices for estimation, not a quote.
+            AWS rows come from the public EC2 offer files, for every AWS region in the catalog. Spot rates, when present, come from the Spot Instance advisor or the Azure Spot meter. Azure DBU meters come from the Retail Prices API. GCP runs only when the `GCP_BILLING_API_KEY` repository secret is set, and is skipped otherwise. Instance DBU counts stay in the cited `data/instances.json` table and are not rewritten. Databricks does not publish a price JSON, so the curated $/DBU table is not rewritten either.
+
+            Review the diff before merging. Figures are list prices for estimation, not a quote.
           branch: price-refresh
-          add-paths: data/cloud-vm-prices.json
+          add-paths: |
+            data/cloud-vm-prices.json
+            data/azure-dbu-meters.json
+            data/instances.json
+            data/pricing-probe.json

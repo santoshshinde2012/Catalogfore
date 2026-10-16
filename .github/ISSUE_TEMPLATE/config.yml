@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Where the rates come from
+    url: https://github.com/santoshshinde2012/databricks-cost-forecaster/blob/main/docs/RESEARCH.md
+    about: Sources, dates, and what is still an estimate

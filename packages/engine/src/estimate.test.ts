@@ -54,15 +54,31 @@ describe("classic jobs estimate", () => {
 
   it("discounts spot worker VMs and not DBUs or the driver", () => {
     const result = estimate(jobPortfolio({ spotShare: 0.5, spotDiscount: 0.6 }));
+    const driver = 0.192 * hours;
+    const workerOnDemand = 0.192 * hours;
+    const workerSpot = 0.06144 * hours;
     expect(result.dbuCost).toBe(53.82);
-    expect(result.cloudCost).toBe(79.87);
+    expect(result.cloudCost).toBe(roundMoney(driver + workerOnDemand + workerSpot));
+    expect(result.lines[0].notes.some((note) => note.includes("Spot advisor"))).toBe(true);
+  });
+
+  it("uses the slider discount when it is not the default advisor rate", () => {
+    const result = estimate(jobPortfolio({ spotShare: 0.5, spotDiscount: 0.5 }));
+    const driver = 0.192 * hours;
+    const workerOnDemand = 0.192 * hours;
+    const workerSpot = 0.192 * 0.5 * hours;
+    expect(result.cloudCost).toBe(roundMoney(driver + workerOnDemand + workerSpot));
+    expect(result.lines[0].notes.some((note) => note.includes("50% spot discount"))).toBe(true);
   });
 
   it("applies a cloud commit to on-demand hours only", () => {
     const portfolio = jobPortfolio({ spotShare: 0.5, spotDiscount: 0.6 });
     portfolio.commitment.cloudDiscount = 0.3;
     const result = estimate(portfolio);
-    expect(result.cloudCost).toBe(59.9);
+    const driver = 0.192 * hours * 0.7;
+    const workerOnDemand = 0.192 * hours * 0.7;
+    const workerSpot = 0.06144 * hours;
+    expect(result.cloudCost).toBe(roundMoney(driver + workerOnDemand + workerSpot));
     expect(result.dbuCost).toBe(53.82);
   });
 
@@ -81,7 +97,18 @@ describe("classic jobs estimate", () => {
     const dbu = 3 * 0.69 * hours;
     expect(factor).toBeCloseTo(0.87 / 0.55, 5);
     expect(result.dbuCost).toBe(roundMoney(dbu * 0.15 * factor));
-    expect(result.cloudCost).toBe(99.84);
+    expect(result.cloudCost).toBe(roundMoney(3 * 0.306 * hours));
+    expect(result.lines[0].approximateVm).toBe(false);
+  });
+
+  it("flags a VM when the instance is not in the price file", () => {
+    const portfolio = jobPortfolio();
+    const workload = portfolio.workloads[0];
+    if (workload.kind !== "cluster") throw new Error("expected a cluster");
+    workload.instanceId = "no.such";
+    const result = estimate(portfolio);
+    expect(result.dbu).toBe(0);
+    expect(result.cloudCost).toBe(0);
     expect(result.lines[0].approximateVm).toBe(true);
   });
 });
@@ -185,7 +212,11 @@ describe("scenarios", () => {
     expect(spot.dbuCost).toBe(53.82);
     expect(spot.cloudCost).toBeLessThan(99.84);
     expect(both.dbuCost).toBe(roundMoney(53.82 * 0.63));
-    expect(both.cloudCost).toBeLessThan(spot.cloudCost);
+    const stacked = jobPortfolio({ spotShare: 0.7, spotDiscount: 0.6 });
+    stacked.commitment.cloudDiscount = 0.3;
+    const combined = estimate(stacked);
+    expect(combined.cloudCost).toBeLessThan(spot.cloudCost);
+    expect(combined.cloudCost).toBeGreaterThan(roundMoney(spot.cloudCost * 0.7));
   });
 });
 
@@ -286,6 +317,20 @@ describe("other products", () => {
     ];
     const hours = 10 * 5 * MONTH_WEEKS;
     expect(estimate(portfolio).dbuCost).toBe(roundMoney(2 * hours * 0.07));
+  });
+
+  it("prices Azure Lakebase from the Database Serverless meter", () => {
+    const portfolio = blankPortfolio("azure");
+    portfolio.region = "eastus";
+    portfolio.workloads = [
+      { id: "lb", name: "LB", kind: "lakebase", cu: 4, storageGb: 10, schedule: { hoursPerDay: 24, daysPerWeek: 7 } },
+    ];
+    const hours = 24 * 7 * MONTH_WEEKS;
+    const cuHour = 0.213 * 0.26;
+    expect(skuCatalog.lakebase.usdPerCuHour.azure).toBeCloseTo(cuHour, 5);
+    const result = estimate(portfolio);
+    expect(result.dbuCost).toBe(roundMoney(4 * hours * cuHour));
+    expect(result.cloudCost).toBe(roundMoney(10 * 0.39));
   });
 
   it("does not price Lakebase on GCP", () => {

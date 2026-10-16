@@ -1,8 +1,9 @@
-import { defaultInstanceId, skuCatalog, type Estimate, type Portfolio, type Workload } from "@dcf/engine";
+import { defaultInstanceId, skuCatalog, type Estimate, type Portfolio, type Workload } from "@cayfore/engine";
 import { useEffect, useId, useRef, useState } from "react";
 import { money } from "../format";
 import { MENU, createWorkload, type MenuKind } from "../templates";
 import { Editor } from "./Editor";
+import { Button } from "./ui/button";
 
 interface LedgerProps {
   portfolio: Portfolio;
@@ -51,28 +52,36 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
   }, [menuOpen]);
 
   return (
-    <div className="workloads">
-      <div className="ledger-head">
-        <h2>Workloads</h2>
-        <div className="add-menu" ref={menuRef}>
-          <button
+    <div className="grid gap-3">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-sm font-medium">Workloads</h2>
+        <div className="relative" ref={menuRef}>
+          <Button
             type="button"
-            className="add-trigger"
+            size="sm"
             aria-expanded={menuOpen}
             aria-controls={menuId}
             onClick={() => setMenuOpen((open) => !open)}
           >
             Add
-          </button>
+          </Button>
           {menuOpen && (
-            <div className="add-panel" id={menuId}>
+            <div
+              id={menuId}
+              className="absolute right-0 z-20 mt-2 max-h-[70vh] w-80 overflow-auto rounded-lg border bg-popover p-2 shadow-lg"
+            >
               {groups.map((group) => (
                 <div key={group}>
-                  <div className="add-group">{group}</div>
+                  <div className="px-2 pt-2 text-xs font-medium text-muted-foreground">{group}</div>
                   {MENU.filter((item) => item.group === group).map((item) => (
-                    <button key={item.kind} type="button" className="add-item" onClick={() => add(item.kind)}>
-                      <strong>{item.label}</strong>
-                      <span>{item.blurb}</span>
+                    <button
+                      key={item.kind}
+                      type="button"
+                      className="block w-full rounded-md px-2 py-2 text-left hover:bg-muted"
+                      onClick={() => add(item.kind)}
+                    >
+                      <span className="block text-sm font-medium">{item.label}</span>
+                      <span className="block text-xs text-muted-foreground">{item.blurb}</span>
                     </button>
                   ))}
                 </div>
@@ -82,33 +91,39 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
         </div>
       </div>
 
-      <div className="entry-list">
+      <div className="grid gap-2">
         {portfolio.workloads.map((workload) => {
           const line = estimate.lines.find((item) => item.workloadId === workload.id);
           return (
             <button
               key={workload.id}
               type="button"
-              className={workload.id === selectedId ? "entry is-selected" : "entry"}
+              className={
+                workload.id === selectedId
+                  ? "rounded-lg border border-primary bg-primary/5 px-3 py-3 text-left"
+                  : "rounded-lg border px-3 py-3 text-left hover:bg-muted"
+              }
               aria-pressed={workload.id === selectedId}
               onClick={() => onSelect(workload.id)}
             >
-              <span className="entry-row">
+              <span className="flex items-center justify-between gap-3">
                 <span>
-                  <span className="entry-name">{workload.name}</span>
-                  <span className="entry-meta block">
+                  <span className="block text-sm font-medium">{workload.name}</span>
+                  <span className="block text-xs text-muted-foreground">
                     {skuCatalog.skuLabels[line?.sku as keyof typeof skuCatalog.skuLabels] ?? line?.sku}
                   </span>
                 </span>
-                <span className="entry-cost">{money(line?.total ?? 0)}</span>
+                <span className="text-sm font-medium tabular-nums">{money(line?.total ?? 0)}</span>
               </span>
             </button>
           );
         })}
         {portfolio.workloads.length === 0 && (
-          <div className="empty">
-            <p className="entry-name">Nothing is on this forecast yet.</p>
-            <p className="hint">Add a job or a warehouse. The month updates as you type.</p>
+          <div className="rounded-lg border border-dashed px-3 py-4">
+            <p className="text-sm font-medium">No workloads yet.</p>
+            <p className="text-sm text-muted-foreground">
+              Add a job or a warehouse. The month total updates as you edit.
+            </p>
           </div>
         )}
       </div>

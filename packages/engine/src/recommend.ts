@@ -197,12 +197,14 @@ export function recommendations(portfolio: Portfolio): Recommendation[] {
   return found.slice(0, 6);
 }
 
-export function uncertaintyBand(amount: number, portfolio: Portfolio, result: Estimate): UncertaintyBand {
-  const safe = Number.isFinite(amount) ? amount : 0;
-  const calibrated = Math.abs(portfolio.usageScale - 1) > 0.0001;
+export function uncertaintyFactors(
+  portfolio: Portfolio,
+  result: Estimate,
+): { low: number; high: number; calibrated: boolean; reasons: string[] } {
+  const calibrated = Math.abs(portfolio.usageScale - 1) > 0.0001 || portfolio.usageCalibrated === true;
   const approximateVm = result.lines.some((line) => line.approximateVm);
-  const lowFactor = calibrated ? 0.95 : 0.85;
-  let highFactor = calibrated ? 1.06 : 1.2;
+  const low = calibrated ? 0.95 : 0.85;
+  let high = calibrated ? 1.06 : 1.2;
   const reasons: string[] = [];
   if (calibrated) {
     reasons.push(
@@ -212,16 +214,22 @@ export function uncertaintyBand(amount: number, portfolio: Portfolio, result: Es
     reasons.push("No usage file yet. Treat this as about 15% under to 20% over the point estimate.");
   }
   if (!calibrated && approximateVm) {
-    highFactor = 1.28;
+    high = 1.28;
     reasons.push(
       "A VM line is a reference-region stand-in or the SQL warehouse equivalence. The high side is wider until you replace that rate.",
     );
   }
+  return { low, high, calibrated, reasons };
+}
+
+export function uncertaintyBand(amount: number, portfolio: Portfolio, result: Estimate): UncertaintyBand {
+  const safe = Number.isFinite(amount) ? amount : 0;
+  const factors = uncertaintyFactors(portfolio, result);
   return {
-    low: roundMoney(safe * lowFactor),
+    low: roundMoney(safe * factors.low),
     expected: roundMoney(safe),
-    high: roundMoney(safe * highFactor),
-    calibrated,
-    reasons,
+    high: roundMoney(safe * factors.high),
+    calibrated: factors.calibrated,
+    reasons: factors.reasons,
   };
 }

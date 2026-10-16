@@ -6,11 +6,11 @@ const transport = new StdioClientTransport({
   args: ["mcp/dist/index.js"],
   stderr: "pipe",
 });
-const client = new Client({ name: "dcf-smoke", version: "0.0.0" });
+const client = new Client({ name: "cayfore-smoke", version: "0.0.0" });
 await client.connect(transport);
 const listed = await client.listTools();
 const names = listed.tools.map((tool) => tool.name).sort();
-const expected = ["compare_scenarios", "estimate_workload", "forecast", "list_skus"];
+const expected = ["compare_scenarios", "estimate_workload", "forecast", "forecast_usage", "list_skus"];
 if (JSON.stringify(names) !== JSON.stringify(expected)) {
   console.error("Unexpected tools", names);
   process.exit(1);
@@ -47,6 +47,17 @@ if (body.estimate.dbuCost !== 53.82 || body.estimate.cloudCost !== 99.84) {
 }
 if (!String(body.disclaimer).toLowerCase().includes("estimates only")) {
   console.error("Missing disclaimer");
+  process.exit(1);
+}
+const fitted = await client.callTool({
+  name: "forecast_usage",
+  arguments: {
+    csv: ["sku_name,usage_quantity,usage_unit", "JOBS_COMPUTE,1000,DBU", "SERVERLESS_SQL,400,DBU"].join("\n"),
+  },
+});
+const usageBody = JSON.parse(fitted.content[0].text);
+if (usageBody.method !== "run-rate" || !(usageBody.annual > 0)) {
+  console.error("Unexpected usage forecast", usageBody);
   process.exit(1);
 }
 await client.close();

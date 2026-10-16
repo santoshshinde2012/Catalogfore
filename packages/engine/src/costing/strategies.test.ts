@@ -40,7 +40,7 @@ function catalog(partial: Partial<PricingCatalog> = {}): PricingCatalog {
       memoryGiB: 16,
       dbuPerHour: 0.69,
     }),
-    vmHourly: (): VmQuote => ({ hourly: 0.192, approximate: false, source: "test" }),
+    vmHourly: (): VmQuote => ({ hourly: 0.192, spotHourly: null, approximate: false, source: "test" }),
     ...partial,
   };
 }

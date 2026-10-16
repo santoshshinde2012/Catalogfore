@@ -1,6 +1,9 @@
-import type { Estimate, ForecastPoint, Portfolio } from "@dcf/engine";
+import type { Estimate, ForecastPoint, Portfolio } from "@cayfore/engine";
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { exportCsv, exportJson, exportPdf } from "../../export";
+import { Button } from "../ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 export function ExportBar({
   portfolio,
@@ -28,18 +31,22 @@ export function ExportBar({
 
   return (
     <>
-      <div className="row-actions">
-        <button type="button" className="btn" onClick={() => exportCsv(portfolio, estimate, points)}>
-          CSV
-        </button>
-        <button type="button" className="btn" onClick={() => exportJson(portfolio, estimate, points)}>
-          JSON
-        </button>
-        <button type="button" className="btn" onClick={() => void downloadPdf()} disabled={pdfBusy} aria-busy={pdfBusy}>
-          {pdfBusy ? "Preparing PDF…" : "PDF"}
-        </button>
-      </div>
-      {pdfError && <p className="tip warn">{pdfError}</p>}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button type="button" variant="outline">
+            Export
+            <ChevronDown />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onSelect={() => exportCsv(portfolio, estimate, points)}>CSV</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => exportJson(portfolio, estimate, points)}>JSON</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => void downloadPdf()} disabled={pdfBusy}>
+            {pdfBusy ? "Preparing PDF…" : "PDF"}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {pdfError && <p className="w-full text-sm text-destructive">{pdfError}</p>}
     </>
   );
 }

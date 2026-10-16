@@ -2,7 +2,17 @@ import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from
 import { defaultInstanceId, listRegions, skuCatalog } from "./catalog.js";
 import { clamp, uid } from "./money.js";
 import { FLAT_SEASONALITY } from "./forecast.js";
-import type { Addon, Cloud, Portfolio, SeasonalityPreset, Tier, Workload } from "./types.js";
+import type {
+  Addon,
+  Cloud,
+  Portfolio,
+  SeasonalityPreset,
+  SimpleBasket,
+  StoredSimple,
+  Tier,
+  Workload,
+  WorkloadMix,
+} from "./types.js";
 
 const CLOUDS: Cloud[] = ["aws", "azure", "gcp"];
 const TIERS: Tier[] = ["premium", "enterprise"];
@@ -33,8 +43,8 @@ function schedule(value: unknown, fallbackHours: number, fallbackDays: number) {
 function scale(value: unknown, fallbackMin: number, fallbackMax: number, fallbackUtil: number) {
   const record = isRecord(value) ? value : {};
   return {
-    min: num(record.min, fallbackMin, 0, 500),
-    max: num(record.max, fallbackMax, 0, 500),
+    min: num(record.min, fallbackMin, 0, 1_000_000),
+    max: num(record.max, fallbackMax, 0, 1_000_000),
     utilization: num(record.utilization, fallbackUtil, 0, 1),
   };
 }
@@ -218,6 +228,7 @@ export function normalizePortfolio(input: unknown): Portfolio {
     : [];
   const addon = ADDONS.includes(input.addon as Addon) ? (input.addon as Addon) : "none";
   const budget = num(input.budgetAnnual, 0, 0, 1e12);
+  const simple = normalizeSimple(input.simple);
   return {
     version: 1,
     name: str(input.name, fallback.name).slice(0, 80),
@@ -232,15 +243,77 @@ export function normalizePortfolio(input: unknown): Portfolio {
     addon,
     usageScale: num(input.usageScale, 1, 0.0001, 1000),
     ...(budget > 0 ? { budgetAnnual: budget } : {}),
+    ...(input.usageCalibrated === true ? { usageCalibrated: true } : {}),
+    ...(simple ? { simple } : {}),
     forecast: {
       months,
-      annualGrowth: num(forecast.annualGrowth, 0, -0.9, 5),
+      annualGrowth: num(forecast.annualGrowth, 0, -0.9, 10),
       seasonality,
       customSeasonality: Array.from({ length: 12 }, (_, index) =>
         num(Array.isArray(forecast.customSeasonality) ? forecast.customSeasonality[index] : 1, 1, 0.05, 5),
       ),
     },
   };
+}
+
+function mixOf(value: unknown): WorkloadMix {
+  const record = isRecord(value) ? value : {};
+  const etl = Math.max(0, num(record.etl, 0, 0, 1_000_000));
+  const sql = Math.max(0, num(record.sql, 0, 0, 1_000_000));
+  const ml = Math.max(0, num(record.ml, 0, 0, 1_000_000));
+  const sum = etl + sql + ml;
+  if (sum <= 0) return { etl: 1 / 3, sql: 1 / 3, ml: 1 / 3 };
+  return { etl: etl / sum, sql: sql / sum, ml: ml / sum };
+}
+
+function basketOf(value: unknown): SimpleBasket {
+  const record = isRecord(value) ? value : {};
+  return {
+    etlNodes: num(record.etlNodes, 0, 0, 1_000_000),
+    etlHoursPerDay: num(record.etlHoursPerDay, 8, 0, 24),
+    sqlClusters: num(record.sqlClusters, 0, 0, 1_000_000),
+    mlInputTokens: num(record.mlInputTokens, 0, 0, 1e15),
+  };
+}
+
+function normalizeSimple(value: unknown): StoredSimple | undefined {
+  if (!isRecord(value)) return undefined;
+  const usage = num(value.usageDbu, 0, 0, 1e15);
+  const usageForecast = forecastOf(value.usageForecast);
+  return {
+    monthlySpend: num(value.monthlySpend, 0, 0, 1e12),
+    mix: mixOf(value.mix),
+    monthlyGrowth: num(value.monthlyGrowth, 0, 0, 0.2),
+    commitDiscount: num(value.commitDiscount, 0, 0, 0.95),
+    basket: basketOf(value.basket),
+    ...(usage > 0 ? { usageDbu: usage } : {}),
+    ...(usageForecast ? { usageForecast } : {}),
+  };
+}
+
+function forecastOf(value: unknown): StoredSimple["usageForecast"] | undefined {
+  if (!isRecord(value) || !Array.isArray(value.ratios) || value.ratios.length < 12) return undefined;
+  const method = value.method;
+  if (
+    method !== "holt-winters" &&
+    method !== "log-linear-seasonal" &&
+    method !== "log-linear-weekly" &&
+    method !== "log-linear"
+  ) {
+    return undefined;
+  }
+  const ratios = value.ratios.slice(0, 12).map((ratio) => {
+    const row = isRecord(ratio) ? ratio : {};
+    const expected = num(row.expected, 1, 0, 100);
+    return {
+      low: num(row.low, expected, 0, 100),
+      expected,
+      high: num(row.high, expected, 0, 100),
+    };
+  });
+  const mape = typeof value.mape === "number" && Number.isFinite(value.mape) ? value.mape : null;
+  const holdout = num(value.holdout, 0, 0, 36);
+  return { method, mape, holdout, monthlyGrowth: num(value.monthlyGrowth, 0, -0.9, 10), ratios };
 }
 
 export function encodePortfolio(portfolio: Portfolio): string {

@@ -12,12 +12,20 @@ npm run build
 node mcp/dist/index.js
 ```
 
+The GitHub Pages site cannot call a workspace. The SQL Statement API does not send `Access-Control-Allow-Origin` ([Databricks, CORS policy error](https://kb.databricks.com/security/cors-policy-error-when-trying-to-run-databricks-api-from-a-browser-based-application)), and a personal access token does not belong in browser JavaScript. Export usage with `docs/usage-export.sql`, then pass the CSV to `forecast_usage` or to the shell:
+
+```bash
+npm run cayfore
+npm run cayfore -- usage apps/web/public/sample-usage-history.csv
+npm run cayfore -- sql
+```
+
 The process speaks MCP over stdin and stdout. A client config looks like this (use the absolute path on your machine):
 
 ```json
 {
   "mcpServers": {
-    "databricks-cost-forecaster": {
+    "cayfore": {
       "command": "node",
       "args": ["/absolute/path/databricks-cost-forecaster/mcp/dist/index.js"]
     }
@@ -91,6 +99,10 @@ Same `portfolio`. Returns the monthly estimate plus one point per forecast month
 | `commit_37_cloud_30` | 37% off DBUs and 30% off on-demand VM hours                                                           |
 
 The default comparison is `as_modeled`, `jobs_serverless`, and `commit_37`.
+
+### `forecast_usage`
+
+`csv` is the text of a `system.billing.usage` export. Include `list_price` when the query joined `system.billing.list_prices` (`docs/usage-export.sql`). One month scales the default plan. Six or more months fit a trend and return `method`, `mape`, and twelve month bands. The response includes `pricesUpdatedOn`.
 
 ## What this server will not do
 

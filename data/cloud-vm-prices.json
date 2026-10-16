@@ -1,29 +1,3453 @@
 {
-  "version": "2026-10-15.1",
-  "updatedOn": "2026-10-15",
-  "note": "On-demand hourly VM rates for the reference region of each cloud. AWS figures match the long-standing us-east-1 Linux shared on-demand list (m5.xlarge $0.192, i3.xlarge $0.312, g4dn.xlarge $0.526) cited by public pricing maps and 2026 guides. Azure DS13 v2 $0.598 is the figure printed in the Azure Databricks pricing FAQ. Other Azure and GCP rows are labeled seeds until scripts/refresh-prices.mjs replaces them. A price for a non-reference region is absent on purpose: the estimator reuses the reference hourly rate and flags it.",
-  "referenceRegion": { "aws": "us-east-1", "azure": "eastus", "gcp": "us-central1" },
+  "version": "2026-10-16.2",
+  "updatedOn": "2026-10-16",
+  "note": "On-demand hourly VM rates for every Databricks region in data/sku-rates.json. AWS rows come from the public EC2 offer file. Azure rows come from the Retail Prices API. spotHourly, when present, is the Spot Instance advisor or the Azure Spot meter, not a live quote. GCP stays seeded unless GCP_BILLING_API_KEY is set.",
+  "referenceRegion": {
+    "aws": "us-east-1",
+    "azure": "eastus",
+    "gcp": "us-central1"
+  },
   "prices": [
-    { "cloud": "aws", "region": "us-east-1", "instanceId": "m5.xlarge", "onDemandHourly": 0.192, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "aws", "region": "us-east-1", "instanceId": "m5.2xlarge", "onDemandHourly": 0.384, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "aws", "region": "us-east-1", "instanceId": "m5d.large", "onDemandHourly": 0.113, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "aws", "region": "us-east-1", "instanceId": "m5d.2xlarge", "onDemandHourly": 0.452, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "aws", "region": "us-east-1", "instanceId": "i3.xlarge", "onDemandHourly": 0.312, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "aws", "region": "us-east-1", "instanceId": "i3.2xlarge", "onDemandHourly": 0.624, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "aws", "region": "us-east-1", "instanceId": "r5d.xlarge", "onDemandHourly": 0.288, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "aws", "region": "us-east-1", "instanceId": "r5d.2xlarge", "onDemandHourly": 0.576, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "aws", "region": "us-east-1", "instanceId": "g4dn.xlarge", "onDemandHourly": 0.526, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "azure", "region": "eastus", "instanceId": "Standard_DS3_v2", "onDemandHourly": 0.229, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "azure", "region": "eastus", "instanceId": "Standard_DS4_v2", "onDemandHourly": 0.458, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "azure", "region": "eastus", "instanceId": "Standard_DS13_v2", "onDemandHourly": 0.598, "source": "azure-pricing-faq", "asOf": "2026-10-15" },
-    { "cloud": "azure", "region": "eastus", "instanceId": "Standard_D4s_v5", "onDemandHourly": 0.192, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "azure", "region": "eastus", "instanceId": "Standard_E8s_v3", "onDemandHourly": 0.504, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "azure", "region": "eastus", "instanceId": "Standard_F4s_v2", "onDemandHourly": 0.169, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "gcp", "region": "us-central1", "instanceId": "n2-standard-4", "onDemandHourly": 0.1942, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "gcp", "region": "us-central1", "instanceId": "n2-standard-8", "onDemandHourly": 0.3885, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "gcp", "region": "us-central1", "instanceId": "n1-standard-4", "onDemandHourly": 0.19, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "gcp", "region": "us-central1", "instanceId": "n1-standard-8", "onDemandHourly": 0.38, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "gcp", "region": "us-central1", "instanceId": "n2-highmem-4", "onDemandHourly": 0.262, "source": "seed", "asOf": "2026-10-15" },
-    { "cloud": "gcp", "region": "us-central1", "instanceId": "c2-standard-8", "onDemandHourly": 0.8356, "source": "seed", "asOf": "2026-10-15" }
+    {
+      "cloud": "aws",
+      "region": "us-east-1",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.192,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16",
+      "spotHourly": 0.06144
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-1",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.384,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16",
+      "spotHourly": 0.13824
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-1",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.113,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16",
+      "spotHourly": 0.05424
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-1",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.452,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16",
+      "spotHourly": 0.2486
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-1",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.312,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16",
+      "spotHourly": 0.13728
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-1",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.624,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16",
+      "spotHourly": 0.33072
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-1",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.288,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16",
+      "spotHourly": 0.16704
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-1",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.576,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16",
+      "spotHourly": 0.3168
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-1",
+      "instanceId": "g4dn.xlarge",
+      "onDemandHourly": 0.526,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16",
+      "spotHourly": 0.2104
+    },
+    {
+      "cloud": "azure",
+      "region": "eastus",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.293,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16",
+      "spotHourly": 0.068181
+    },
+    {
+      "cloud": "azure",
+      "region": "eastus",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.585,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16",
+      "spotHourly": 0.13613
+    },
+    {
+      "cloud": "azure",
+      "region": "eastus",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.741,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16",
+      "spotHourly": 0.172431
+    },
+    {
+      "cloud": "azure",
+      "region": "eastus",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.192,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16",
+      "spotHourly": 0.040531
+    },
+    {
+      "cloud": "azure",
+      "region": "eastus",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.504,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16",
+      "spotHourly": 0.098784
+    },
+    {
+      "cloud": "azure",
+      "region": "eastus",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.169,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16",
+      "spotHourly": 0.03718
+    },
+    {
+      "cloud": "gcp",
+      "region": "us-central1",
+      "instanceId": "n2-standard-4",
+      "onDemandHourly": 0.1942,
+      "source": "seed",
+      "asOf": "2026-10-15"
+    },
+    {
+      "cloud": "gcp",
+      "region": "us-central1",
+      "instanceId": "n2-standard-8",
+      "onDemandHourly": 0.3885,
+      "source": "seed",
+      "asOf": "2026-10-15"
+    },
+    {
+      "cloud": "gcp",
+      "region": "us-central1",
+      "instanceId": "n1-standard-4",
+      "onDemandHourly": 0.19,
+      "source": "seed",
+      "asOf": "2026-10-15"
+    },
+    {
+      "cloud": "gcp",
+      "region": "us-central1",
+      "instanceId": "n1-standard-8",
+      "onDemandHourly": 0.38,
+      "source": "seed",
+      "asOf": "2026-10-15"
+    },
+    {
+      "cloud": "gcp",
+      "region": "us-central1",
+      "instanceId": "n2-highmem-4",
+      "onDemandHourly": 0.262,
+      "source": "seed",
+      "asOf": "2026-10-15"
+    },
+    {
+      "cloud": "gcp",
+      "region": "us-central1",
+      "instanceId": "c2-standard-8",
+      "onDemandHourly": 0.8356,
+      "source": "seed",
+      "asOf": "2026-10-15"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-2",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.452,
+      "spotHourly": 0.1808,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-2",
+      "instanceId": "g4dn.xlarge",
+      "onDemandHourly": 0.526,
+      "spotHourly": 0.17358,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-2",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.312,
+      "spotHourly": 0.08736,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-2",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.192,
+      "spotHourly": 0.05376,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-2",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.288,
+      "spotHourly": 0.10368,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-2",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.113,
+      "spotHourly": 0.04746,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-2",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.384,
+      "spotHourly": 0.12672,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-2",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.576,
+      "spotHourly": 0.19584,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-east-2",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.624,
+      "spotHourly": 0.26832,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-1",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.648,
+      "spotHourly": 0.31104,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-1",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.324,
+      "spotHourly": 0.15552,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-1",
+      "instanceId": "g4dn.xlarge",
+      "onDemandHourly": 0.631,
+      "spotHourly": 0.29657,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-1",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.688,
+      "spotHourly": 0.4816,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-1",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.344,
+      "spotHourly": 0.1376,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-1",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.133,
+      "spotHourly": 0.05453,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-1",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.532,
+      "spotHourly": 0.20216,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-1",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.448,
+      "spotHourly": 0.13888,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-1",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.224,
+      "spotHourly": 0.07392,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-2",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.113,
+      "spotHourly": 0.05085,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-2",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.624,
+      "spotHourly": 0.29952,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-2",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.452,
+      "spotHourly": 0.1808,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-2",
+      "instanceId": "g4dn.xlarge",
+      "onDemandHourly": 0.526,
+      "spotHourly": 0.2367,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-2",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.576,
+      "spotHourly": 0.29952,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-2",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.384,
+      "spotHourly": 0.1728,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-2",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.192,
+      "spotHourly": 0.06336,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-2",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.288,
+      "spotHourly": 0.14976,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "us-west-2",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.312,
+      "spotHourly": 0.13104,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ca-central-1",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.214,
+      "spotHourly": 0.05992,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ca-central-1",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.344,
+      "spotHourly": 0.11008,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ca-central-1",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.688,
+      "spotHourly": 0.24768,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ca-central-1",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.428,
+      "spotHourly": 0.15408,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ca-central-1",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.316,
+      "spotHourly": 0.14852,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ca-central-1",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.126,
+      "spotHourly": 0.0504,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ca-central-1",
+      "instanceId": "g4dn.xlarge",
+      "onDemandHourly": 0.584,
+      "spotHourly": 0.19856,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ca-central-1",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.632,
+      "spotHourly": 0.27176,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ca-central-1",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.504,
+      "spotHourly": 0.18648,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-1",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.214,
+      "spotHourly": 0.09416,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-1",
+      "instanceId": "g4dn.xlarge",
+      "onDemandHourly": 0.587,
+      "spotHourly": 0.29937,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-1",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.688,
+      "spotHourly": 0.45408,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-1",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.504,
+      "spotHourly": 0.3024,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-1",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.32,
+      "spotHourly": 0.2144,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-1",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.344,
+      "spotHourly": 0.172,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-1",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.64,
+      "spotHourly": 0.4032,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-1",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.126,
+      "spotHourly": 0.06804,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-1",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.428,
+      "spotHourly": 0.20972,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-2",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.444,
+      "spotHourly": 0.11544,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-2",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.676,
+      "spotHourly": 0.39884,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-2",
+      "instanceId": "g4dn.xlarge",
+      "onDemandHourly": 0.615,
+      "spotHourly": 0.19065,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-2",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.362,
+      "spotHourly": 0.11946,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-2",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.338,
+      "spotHourly": 0.169,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-2",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.131,
+      "spotHourly": 0.04585,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-2",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.222,
+      "spotHourly": 0.05328,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-2",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.524,
+      "spotHourly": 0.2358,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-2",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.724,
+      "spotHourly": 0.26788,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-3",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.528,
+      "spotHourly": 0.2112,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-3",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.362,
+      "spotHourly": 0.11946,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-3",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.132,
+      "spotHourly": 0.0396,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-3",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.224,
+      "spotHourly": 0.05824,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-3",
+      "instanceId": "g4dn.xlarge",
+      "onDemandHourly": 0.615,
+      "spotHourly": 0.16605,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-3",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.676,
+      "spotHourly": 0.338,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-3",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.724,
+      "spotHourly": 0.2896,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-3",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.338,
+      "spotHourly": 0.13858,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-west-3",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.448,
+      "spotHourly": 0.12096,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-central-1",
+      "instanceId": "g4dn.xlarge",
+      "onDemandHourly": 0.658,
+      "spotHourly": 0.25004,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-central-1",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.544,
+      "spotHourly": 0.25024,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-central-1",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.372,
+      "spotHourly": 0.15996,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-central-1",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.23,
+      "spotHourly": 0.0667,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-central-1",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.136,
+      "spotHourly": 0.05984,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-central-1",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.692,
+      "spotHourly": 0.35292,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-central-1",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.46,
+      "spotHourly": 0.1472,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-central-1",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.744,
+      "spotHourly": 0.34224,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "eu-central-1",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.346,
+      "spotHourly": 0.17646,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-south-1",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.354,
+      "spotHourly": 0.1239,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-south-1",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.122,
+      "spotHourly": 0.05368,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-south-1",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.604,
+      "spotHourly": 0.26576,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-south-1",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.302,
+      "spotHourly": 0.16006,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-south-1",
+      "instanceId": "g4dn.xlarge",
+      "onDemandHourly": 0.579,
+      "spotHourly": 0.26634,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-south-1",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.404,
+      "spotHourly": 0.1616,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-south-1",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.488,
+      "spotHourly": 0.25376,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-south-1",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.202,
+      "spotHourly": 0.06868,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-south-1",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.708,
+      "spotHourly": 0.30444,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-1",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.348,
+      "spotHourly": 0.14616,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-1",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.248,
+      "spotHourly": 0.07192,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-1",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.696,
+      "spotHourly": 0.26448,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-1",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.584,
+      "spotHourly": 0.27448,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-1",
+      "instanceId": "g4dn.xlarge",
+      "onDemandHourly": 0.71,
+      "spotHourly": 0.2769,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-1",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.366,
+      "spotHourly": 0.13176,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-1",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.732,
+      "spotHourly": 0.28548,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-1",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.496,
+      "spotHourly": 0.17856,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-1",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.146,
+      "spotHourly": 0.05694,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-2",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.236,
+      "spotHourly": 0.06608,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-2",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.139,
+      "spotHourly": 0.05282,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-2",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.692,
+      "spotHourly": 0.26296,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-2",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.472,
+      "spotHourly": 0.1652,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-2",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.346,
+      "spotHourly": 0.14878,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-2",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.556,
+      "spotHourly": 0.20016,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-2",
+      "instanceId": "g4dn.xlarge",
+      "onDemandHourly": 0.647,
+      "spotHourly": 0.26527,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-2",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.366,
+      "spotHourly": 0.10614,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-northeast-2",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.732,
+      "spotHourly": 0.24156,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-1",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.348,
+      "spotHourly": 0.18792,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-1",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.141,
+      "spotHourly": 0.06486,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-1",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.564,
+      "spotHourly": 0.29328,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-1",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.696,
+      "spotHourly": 0.39672,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-1",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.374,
+      "spotHourly": 0.13464,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-1",
+      "instanceId": "g4dn.xlarge",
+      "onDemandHourly": 0.736,
+      "spotHourly": 0.33856,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-1",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.48,
+      "spotHourly": 0.168,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-1",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.748,
+      "spotHourly": 0.35156,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-1",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.24,
+      "spotHourly": 0.0792,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-2",
+      "instanceId": "g4dn.xlarge",
+      "onDemandHourly": 0.684,
+      "spotHourly": 0.3078,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-2",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.142,
+      "spotHourly": 0.06106,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-2",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.568,
+      "spotHourly": 0.31808,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-2",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.696,
+      "spotHourly": 0.33408,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-2",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.48,
+      "spotHourly": 0.1728,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-2",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.374,
+      "spotHourly": 0.15334,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-2",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.748,
+      "spotHourly": 0.29172,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-2",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.24,
+      "spotHourly": 0.0792,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-2",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.348,
+      "spotHourly": 0.16704,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "sa-east-1",
+      "instanceId": "g4dn.xlarge",
+      "onDemandHourly": 0.894,
+      "spotHourly": 0.12516,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "sa-east-1",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.498,
+      "spotHourly": 0.13446,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "sa-east-1",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.306,
+      "spotHourly": 0.04284,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "sa-east-1",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.18,
+      "spotHourly": 0.0342,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "sa-east-1",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.996,
+      "spotHourly": 0.23904,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "sa-east-1",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.612,
+      "spotHourly": 0.08568,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "sa-east-1",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.456,
+      "spotHourly": 0.07752,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "sa-east-1",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.912,
+      "spotHourly": 0.2736,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "sa-east-1",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.72,
+      "spotHourly": 0.1296,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-3",
+      "instanceId": "m5d.2xlarge",
+      "onDemandHourly": 0.564,
+      "spotHourly": 0.11844,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-3",
+      "instanceId": "m5d.large",
+      "onDemandHourly": 0.141,
+      "spotHourly": 0.03666,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-3",
+      "instanceId": "i3.xlarge",
+      "onDemandHourly": 0.374,
+      "spotHourly": 0.08228,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-3",
+      "instanceId": "i3.2xlarge",
+      "onDemandHourly": 0.748,
+      "spotHourly": 0.17204,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-3",
+      "instanceId": "r5d.2xlarge",
+      "onDemandHourly": 0.696,
+      "spotHourly": 0.19488,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-3",
+      "instanceId": "m5.2xlarge",
+      "onDemandHourly": 0.48,
+      "spotHourly": 0.1584,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-3",
+      "instanceId": "r5d.xlarge",
+      "onDemandHourly": 0.348,
+      "spotHourly": 0.09396,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "aws",
+      "region": "ap-southeast-3",
+      "instanceId": "m5.xlarge",
+      "onDemandHourly": 0.24,
+      "spotHourly": 0.0576,
+      "source": "aws-offer-file",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiacentral",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.336,
+      "spotHourly": 0.075432,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiacentral",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.798,
+      "spotHourly": 0.179071,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiacentral",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.24,
+      "spotHourly": 0.044352,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiacentral",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.638,
+      "spotHourly": 0.117902,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiacentral",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.222,
+      "spotHourly": 0.041026,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiacentral2",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.336,
+      "spotHourly": 0.0336,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiacentral2",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.673,
+      "spotHourly": 0.0673,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiacentral2",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.798,
+      "spotHourly": 0.0798,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiacentral2",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.24,
+      "spotHourly": 0.024,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiacentral2",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.638,
+      "spotHourly": 0.0638,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiacentral2",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.222,
+      "spotHourly": 0.0222,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiaeast",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.336,
+      "spotHourly": 0.075432,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiaeast",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.673,
+      "spotHourly": 0.151021,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiaeast",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.798,
+      "spotHourly": 0.179071,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiaeast",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.24,
+      "spotHourly": 0.044352,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiaeast",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.638,
+      "spotHourly": 0.117902,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiaeast",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.222,
+      "spotHourly": 0.041026,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiasoutheast",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.311,
+      "spotHourly": 0.06982,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiasoutheast",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.623,
+      "spotHourly": 0.139801,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiasoutheast",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.798,
+      "spotHourly": 0.179071,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiasoutheast",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.25,
+      "spotHourly": 0.0462,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiasoutheast",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.638,
+      "spotHourly": 0.117902,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiasoutheast",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.223,
+      "spotHourly": 0.04121,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "brazilsouth",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.343,
+      "spotHourly": 0.076969,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "brazilsouth",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.685,
+      "spotHourly": 0.153714,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "brazilsouth",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.94,
+      "spotHourly": 0.210936,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "brazilsouth",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.306,
+      "spotHourly": 0.056549,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "brazilsouth",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.94,
+      "spotHourly": 0.173712,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "brazilsouth",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.262,
+      "spotHourly": 0.048418,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "canadacentral",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.28,
+      "spotHourly": 0.10878,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "canadacentral",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.56,
+      "spotHourly": 0.21756,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "canadacentral",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.732,
+      "spotHourly": 0.284382,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "canadacentral",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.214,
+      "spotHourly": 0.075135,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "canadacentral",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.584,
+      "spotHourly": 0.167374,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "canadacentral",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.185,
+      "spotHourly": 0.061901,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "canadaeast",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.28,
+      "spotHourly": 0.062832,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "canadaeast",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.56,
+      "spotHourly": 0.125664,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "canadaeast",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.732,
+      "spotHourly": 0.164334,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "canadaeast",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.214,
+      "spotHourly": 0.039547,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "canadaeast",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.584,
+      "spotHourly": 0.107923,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "canadaeast",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.185,
+      "spotHourly": 0.034188,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "centralindia",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.337,
+      "spotHourly": 0.075656,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "centralindia",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.675,
+      "spotHourly": 0.15147,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "centralindia",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.758,
+      "spotHourly": 0.170095,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "centralindia",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.202,
+      "spotHourly": 0.03733,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "centralindia",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.548,
+      "spotHourly": 0.10127,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "centralindia",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.17,
+      "spotHourly": 0.031416,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "centralus",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.293,
+      "spotHourly": 0.054117,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "centralus",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.585,
+      "spotHourly": 0.10805,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "centralus",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.741,
+      "spotHourly": 0.136863,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "centralus",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.217,
+      "spotHourly": 0.040058,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "centralus",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.583,
+      "spotHourly": 0.09637,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "centralus",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.204,
+      "spotHourly": 0.0367,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "eastasia",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.428,
+      "spotHourly": 0.096043,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "eastasia",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.857,
+      "spotHourly": 0.192396,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "eastasia",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.918,
+      "spotHourly": 0.205999,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "eastasia",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.264,
+      "spotHourly": 0.048787,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "eastasia",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.668,
+      "spotHourly": 0.123446,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "eastasia",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.216,
+      "spotHourly": 0.039917,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "eastus2",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.229,
+      "spotHourly": 0.112714,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "eastus2",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.458,
+      "spotHourly": 0.225428,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "eastus2",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.598,
+      "spotHourly": 0.294336,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "eastus2",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.192,
+      "spotHourly": 0.061171,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "eastus2",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.532,
+      "spotHourly": 0.203756,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "eastus2",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.169,
+      "spotHourly": 0.067211,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "francecentral",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.351,
+      "spotHourly": 0.0788,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "francecentral",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.702,
+      "spotHourly": 0.157599,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "francecentral",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.937,
+      "spotHourly": 0.210356,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "francecentral",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.224,
+      "spotHourly": 0.041395,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "francecentral",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.624,
+      "spotHourly": 0.115315,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "francecentral",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.202,
+      "spotHourly": 0.03733,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "germanywestcentral",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.266,
+      "spotHourly": 0.059717,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "germanywestcentral",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.532,
+      "spotHourly": 0.119434,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "germanywestcentral",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.664,
+      "spotHourly": 0.149002,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "germanywestcentral",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.23,
+      "spotHourly": 0.042504,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "germanywestcentral",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.608,
+      "spotHourly": 0.112358,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "germanywestcentral",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.194,
+      "spotHourly": 0.035851,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "japaneast",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.409,
+      "spotHourly": 0.09178,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "japaneast",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.818,
+      "spotHourly": 0.183559,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "japaneast",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.918,
+      "spotHourly": 0.205999,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "japaneast",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.248,
+      "spotHourly": 0.04583,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "japaneast",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.64,
+      "spotHourly": 0.118272,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "japaneast",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.214,
+      "spotHourly": 0.039547,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "japanwest",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.365,
+      "spotHourly": 0.081906,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "japanwest",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.729,
+      "spotHourly": 0.163588,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "japanwest",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.798,
+      "spotHourly": 0.179071,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "japanwest",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.248,
+      "spotHourly": 0.04583,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "japanwest",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.64,
+      "spotHourly": 0.118272,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "japanwest",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.235,
+      "spotHourly": 0.043569,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "koreacentral",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.33,
+      "spotHourly": 0.074052,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "koreacentral",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.66,
+      "spotHourly": 0.148104,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "koreacentral",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.798,
+      "spotHourly": 0.179071,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "koreacentral",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.236,
+      "spotHourly": 0.043613,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "koreacentral",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.64,
+      "spotHourly": 0.118272,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "koreacentral",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.192,
+      "spotHourly": 0.035482,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "malaysiawest",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.292,
+      "spotHourly": 0.065554,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "malaysiawest",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.584,
+      "spotHourly": 0.13105,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "malaysiawest",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.742,
+      "spotHourly": 0.166579,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "malaysiawest",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.216,
+      "spotHourly": 0.039917,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "malaysiawest",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.576,
+      "spotHourly": 0.106445,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "mexicocentral",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.251,
+      "spotHourly": 0.05635,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "mexicocentral",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.502,
+      "spotHourly": 0.112699,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "mexicocentral",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.637,
+      "spotHourly": 0.143006,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "mexicocentral",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.211,
+      "spotHourly": 0.038993,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "mexicocentral",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.186,
+      "spotHourly": 0.034373,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "northcentralus",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.293,
+      "spotHourly": 0.065749,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "northcentralus",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.585,
+      "spotHourly": 0.131274,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "northcentralus",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.741,
+      "spotHourly": 0.16628,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "northcentralus",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.192,
+      "spotHourly": 0.035482,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "northcentralus",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.504,
+      "spotHourly": 0.093139,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "northcentralus",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.17,
+      "spotHourly": 0.031416,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "northeurope",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.263,
+      "spotHourly": 0.059017,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "northeurope",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.527,
+      "spotHourly": 0.118312,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "northeurope",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.741,
+      "spotHourly": 0.16628,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "northeurope",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.214,
+      "spotHourly": 0.05472,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "northeurope",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.564,
+      "spotHourly": 0.104227,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "northeurope",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.192,
+      "spotHourly": 0.042701,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "norwayeast",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.299,
+      "spotHourly": 0.067096,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "norwayeast",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.598,
+      "spotHourly": 0.134191,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "norwayeast",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.835,
+      "spotHourly": 0.187374,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "norwayeast",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.253,
+      "spotHourly": 0.046754,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "norwayeast",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.704,
+      "spotHourly": 0.130099,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "norwayeast",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.214,
+      "spotHourly": 0.039547,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "qatarcentral",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.275,
+      "spotHourly": 0.06171,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "qatarcentral",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.55,
+      "spotHourly": 0.12342,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "qatarcentral",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.718,
+      "spotHourly": 0.161119,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "qatarcentral",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.235,
+      "spotHourly": 0.043428,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "qatarcentral",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.62,
+      "spotHourly": 0.114576,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "qatarcentral",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.211,
+      "spotHourly": 0.038993,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southafricanorth",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.307,
+      "spotHourly": 0.068922,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southafricanorth",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.614,
+      "spotHourly": 0.137782,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southafricanorth",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.801,
+      "spotHourly": 0.179744,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southafricanorth",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.254,
+      "spotHourly": 0.046939,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southafricanorth",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.672,
+      "spotHourly": 0.124186,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southafricanorth",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.228,
+      "spotHourly": 0.042134,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southcentralus",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.254,
+      "spotHourly": 0.056998,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southcentralus",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.509,
+      "spotHourly": 0.11422,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southcentralus",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.665,
+      "spotHourly": 0.149226,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southcentralus",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.23,
+      "spotHourly": 0.042504,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southcentralus",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.583,
+      "spotHourly": 0.107738,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southcentralus",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.204,
+      "spotHourly": 0.037699,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southindia",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.337,
+      "spotHourly": 0.075656,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southindia",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.675,
+      "spotHourly": 0.15147,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southindia",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.758,
+      "spotHourly": 0.170095,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southindia",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.271,
+      "spotHourly": 0.050081,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southindia",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.667,
+      "spotHourly": 0.123262,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southindia",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.187,
+      "spotHourly": 0.034558,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southeastasia",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.316,
+      "spotHourly": 0.0711,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southeastasia",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.631,
+      "spotHourly": 0.141975,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southeastasia",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.765,
+      "spotHourly": 0.172125,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southeastasia",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.24,
+      "spotHourly": 0.044496,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southeastasia",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.64,
+      "spotHourly": 0.118272,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "southeastasia",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.196,
+      "spotHourly": 0.036221,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "swedencentral",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.272,
+      "spotHourly": 0.061064,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "swedencentral",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.544,
+      "spotHourly": 0.122074,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "swedencentral",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.691,
+      "spotHourly": 0.15506,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "swedencentral",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.536,
+      "spotHourly": 0.098946,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "swedencentral",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.194,
+      "spotHourly": 0.035851,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "switzerlandnorth",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.2992,
+      "spotHourly": 0.06714,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "switzerlandnorth",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.5984,
+      "spotHourly": 0.134281,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "switzerlandnorth",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.8349,
+      "spotHourly": 0.187435,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "switzerlandnorth",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.253,
+      "spotHourly": 0.046881,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "switzerlandnorth",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.704,
+      "spotHourly": 0.130099,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "switzerlandnorth",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.2134,
+      "spotHourly": 0.039436,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "switzerlandwest",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.77801,
+      "spotHourly": 0.174585,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "switzerlandwest",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 1.08574,
+      "spotHourly": 0.24364,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "switzerlandwest",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.329,
+      "spotHourly": 0.060799,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "switzerlandwest",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.91483,
+      "spotHourly": 0.169061,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "switzerlandwest",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.27751,
+      "spotHourly": 0.051284,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "uaenorth",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.275,
+      "spotHourly": 0.061875,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "uaenorth",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.718,
+      "spotHourly": 0.16155,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "uaenorth",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.235,
+      "spotHourly": 0.043428,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "uaenorth",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.605,
+      "spotHourly": 0.112106,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "uaenorth",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.211,
+      "spotHourly": 0.038993,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "uksouth",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.351,
+      "spotHourly": 0.0788,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "uksouth",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.702,
+      "spotHourly": 0.157599,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "uksouth",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.937,
+      "spotHourly": 0.210356,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "uksouth",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.222,
+      "spotHourly": 0.039538,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "uksouth",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.624,
+      "spotHourly": 0.099778,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "ukwest",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.351,
+      "spotHourly": 0.0788,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "ukwest",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.702,
+      "spotHourly": 0.157599,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "ukwest",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.937,
+      "spotHourly": 0.210356,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "ukwest",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.232,
+      "spotHourly": 0.042874,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "ukwest",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.624,
+      "spotHourly": 0.115315,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "ukwest",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.202,
+      "spotHourly": 0.03733,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westcentralus",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.254,
+      "spotHourly": 0.056998,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westcentralus",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.509,
+      "spotHourly": 0.11422,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westcentralus",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.665,
+      "spotHourly": 0.149226,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westcentralus",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.23,
+      "spotHourly": 0.042504,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westcentralus",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.583,
+      "spotHourly": 0.107738,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westcentralus",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.204,
+      "spotHourly": 0.037699,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westeurope",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.272,
+      "spotHourly": 0.061064,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westeurope",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.544,
+      "spotHourly": 0.122074,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westeurope",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.759,
+      "spotHourly": 0.17032,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westeurope",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.23,
+      "spotHourly": 0.042504,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westeurope",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.64,
+      "spotHourly": 0.118272,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westeurope",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.194,
+      "spotHourly": 0.035851,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westindia",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.337,
+      "spotHourly": 0.075656,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westindia",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.675,
+      "spotHourly": 0.15147,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westindia",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.758,
+      "spotHourly": 0.170095,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westindia",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.246,
+      "spotHourly": 0.045461,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westindia",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.608,
+      "spotHourly": 0.112358,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westindia",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.17,
+      "spotHourly": 0.031416,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.279,
+      "spotHourly": 0.062608,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.559,
+      "spotHourly": 0.12544,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.741,
+      "spotHourly": 0.16628,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.224,
+      "spotHourly": 0.041395,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.56,
+      "spotHourly": 0.103488,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus2",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.229,
+      "spotHourly": 0.051388,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus2",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.458,
+      "spotHourly": 0.102775,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus2",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.598,
+      "spotHourly": 0.134191,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus2",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.192,
+      "spotHourly": 0.035482,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus2",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.504,
+      "spotHourly": 0.093139,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus2",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.169,
+      "spotHourly": 0.031231,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus3",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.229,
+      "spotHourly": 0.051548,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus3",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.458,
+      "spotHourly": 0.103096,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus3",
+      "instanceId": "Standard_DS13_v2",
+      "onDemandHourly": 0.598,
+      "spotHourly": 0.13461,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus3",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.192,
+      "spotHourly": 0.035597,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus3",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.504,
+      "spotHourly": 0.093139,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus3",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.169,
+      "spotHourly": 0.031231,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "australiacentral",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.673,
+      "spotHourly": 0.151021,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "malaysiawest",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.176,
+      "spotHourly": 0.032525,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "mexicocentral",
+      "instanceId": "Standard_E8s_v3",
+      "onDemandHourly": 0.554,
+      "spotHourly": 0.102379,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "swedencentral",
+      "instanceId": "Standard_D4s_v5",
+      "onDemandHourly": 0.204,
+      "spotHourly": 0.037699,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "switzerlandwest",
+      "instanceId": "Standard_DS3_v2",
+      "onDemandHourly": 0.38914,
+      "spotHourly": 0.087323,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "uaenorth",
+      "instanceId": "Standard_DS4_v2",
+      "onDemandHourly": 0.55,
+      "spotHourly": 0.12375,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "uksouth",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.202,
+      "spotHourly": 0.037168,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    },
+    {
+      "cloud": "azure",
+      "region": "westus",
+      "instanceId": "Standard_F4s_v2",
+      "onDemandHourly": 0.212,
+      "spotHourly": 0.039178,
+      "source": "azure-retail-prices",
+      "asOf": "2026-10-16"
+    }
   ]
 }

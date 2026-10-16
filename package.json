@@ -11,15 +11,16 @@
     "mcp"
   ],
   "scripts": {
-    "dev": "npm run dev -w @dcf/web",
-    "build": "npm run typecheck -w @dcf/engine && npm run build -w @dcf/web && npm run build -w @dcf/mcp",
-    "test": "vitest run && node --test scripts/parse-prices.test.mjs",
+    "dev": "npm run dev -w @cayfore/web",
+    "build": "npm run typecheck -w @cayfore/engine && npm run build -w @cayfore/web && npm run build -w @cayfore/mcp",
+    "test": "vitest run && node --test scripts/parse-prices.test.mjs scripts/validate-catalog.test.mjs",
+    "cayfore": "vite-node scripts/cayfore.ts",
     "test:e2e": "playwright test",
     "test:mcp": "node scripts/mcp-smoke.mjs",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
-    "typecheck": "npm run typecheck -w @dcf/engine && npm run typecheck -w @dcf/web && npm run typecheck -w @dcf/mcp",
-    "preview": "npm run preview -w @dcf/web",
+    "typecheck": "npm run typecheck -w @cayfore/engine && npm run typecheck -w @cayfore/web && npm run typecheck -w @cayfore/mcp",
+    "preview": "npm run preview -w @cayfore/web",
     "refresh-prices": "node scripts/refresh-prices.mjs"
   },
   "devDependencies": {
@@ -34,7 +35,8 @@
     "prettier": "^3.9.10",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.39.0",
-    "vitest": "^3.2.4"
+    "vite-node": "^3.2.4",
+    "vitest": "^4.1.12"
   },
   "engines": {
     "node": ">=20"
