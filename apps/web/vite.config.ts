@@ -3,8 +3,7 @@ import react from "@vitejs/plugin-react";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import { defineConfig, loadEnv, type Plugin } from "vite";
-
-const SITE = "https://santoshshinde2012.github.io/databricks-cost-forecaster/";
+import { BASE_PATH, PAGE_DESCRIPTION, SITE } from "./src/site";
 
 /** Production-only CSP and JSON-LD. Dev keeps the Vite client, which needs inline scripts. */
 function productionPolicy(env: Record<string, string>): Plugin {
@@ -12,15 +11,30 @@ function productionPolicy(env: Record<string, string>): Plugin {
   const usePlausible = /^[a-z0-9.-]+$/i.test(plausible);
   const json = JSON.stringify({
     "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: "Cayfore",
-    applicationCategory: "BusinessApplication",
-    operatingSystem: "Web",
-    url: SITE,
-    description:
-      "A 12-month forecast of Databricks spend from cloud, starting amount, workload mix, and growth. An independent estimate, not a quote.",
-    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-    isAccessibleForFree: true,
+    "@graph": [
+      {
+        "@type": "WebSite",
+        name: "Cayfore",
+        url: SITE,
+        description: PAGE_DESCRIPTION,
+        inLanguage: "en",
+      },
+      {
+        "@type": ["WebApplication", "SoftwareApplication"],
+        name: "Cayfore",
+        applicationCategory: "BusinessApplication",
+        applicationSubCategory: "Databricks cost calculator",
+        operatingSystem: "Web",
+        browserRequirements: "Requires JavaScript",
+        url: SITE,
+        image: `${SITE}og.png`,
+        description: PAGE_DESCRIPTION,
+        featureList: ["Databricks cost calculator", "DBU forecast", "Databricks pricing estimator"],
+        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        isAccessibleForFree: true,
+        inLanguage: "en",
+      },
+    ],
   });
   const hash = createHash("sha256").update(json).digest("base64");
   const scriptSrc = ["'self'", `'sha256-${hash}'`];
@@ -56,7 +70,7 @@ function productionPolicy(env: Record<string, string>): Plugin {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, "");
   return {
-    base: "/databricks-cost-forecaster/",
+    base: BASE_PATH,
     plugins: [react(), tailwindcss(), productionPolicy(env)],
     resolve: {
       alias: {

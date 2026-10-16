@@ -92,7 +92,10 @@ test("advanced builder, how we got this, and theme", async ({ page }) => {
   const footer = page.locator("footer");
   await expect(footer).toContainText("not affiliated with Databricks");
   await page.keyboard.press("Escape");
-  await expect(footer.getByRole("link", { name: "Source" })).toHaveAttribute("href", /databricks-cost-forecaster$/);
+  await expect(footer.getByRole("link", { name: "Source" })).toHaveAttribute(
+    "href",
+    "https://github.com/santoshshinde2012/cayfore",
+  );
   await expect(footer.getByRole("link", { name: "License" })).toHaveAttribute("href", /LICENSE/);
   await expect(footer.getByRole("link", { name: "Rates" })).toHaveAttribute("href", /RESEARCH\.md/);
   await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
@@ -132,14 +135,25 @@ test("has no serious accessibility violations", async ({ page }, testInfo) => {
 test("unknown address explains that the page is not part of the forecast", async ({ page }, testInfo) => {
   await page.goto("./404.html");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Page not found");
-  await expect(page.getByRole("link", { name: "Back to the forecast" })).toHaveAttribute(
-    "href",
-    "/databricks-cost-forecaster/",
-  );
+  await expect(page.getByRole("link", { name: "Back to the forecast" })).toHaveAttribute("href", "/cayfore/");
   await expect(page.locator("footer")).toContainText("not affiliated with Databricks");
   if (testInfo.project.name !== "desktop") return;
   const result = await new AxeBuilder({ page }).analyze();
   expect(result.violations).toEqual([]);
+});
+
+test("search and share metadata point at the Cayfore pages address", async ({ page }) => {
+  await page.goto("./");
+  await expect(page).toHaveTitle("Cayfore — Databricks cost calculator and DBU forecast");
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    "https://santoshshinde2012.github.io/cayfore/",
+  );
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /Databricks pricing estimator/);
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /\/cayfore\/og\.png$/);
+  await expect(page.locator('link[rel="manifest"]')).toHaveAttribute("href", /manifest\.webmanifest$/);
+  await expect(page.locator("#crawl-content")).toHaveCount(0);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
 });
 
 test("mobile layout does not overflow the viewport", async ({ page }, testInfo) => {

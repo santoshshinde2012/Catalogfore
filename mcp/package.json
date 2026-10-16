@@ -2,6 +2,11 @@
   "name": "@cayfore/mcp",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/santoshshinde2012/cayfore.git",
+    "directory": "mcp"
+  },
   "type": "module",
   "description": "MCP server for the Cayfore forecast engine",
   "scripts": {

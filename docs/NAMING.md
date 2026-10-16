@@ -1,6 +1,6 @@
 # Naming
 
-The product is **Cayfore**. The GitHub repository stays `databricks-cost-forecaster`. The owner decides whether that repository name changes. The Pages address stays `https://santoshshinde2012.github.io/databricks-cost-forecaster/`.
+The product is **Cayfore**. The GitHub repository is [cayfore](https://github.com/santoshshinde2012/cayfore). The Pages address is https://santoshshinde2012.github.io/cayfore/. The root package name is `cayfore`.
 
 Cayfore is not affiliated with Databricks. The name does not use Databricks, Lakehouse, or DBU. A cay is a small island; “fore” is ahead. The wordmark is the forecast you can see before you commit.
 
@@ -52,4 +52,4 @@ Databricks is a registered mark (USPTO registrations 5003730 and 6365720, owner 
 
 The wordmark, page title, Open Graph and Twitter titles, the 404 page, the PDF heading, the README, the docs, the MCP server name (`cayfore`), the workspace packages (`@cayfore/engine`, `@cayfore/web`, `@cayfore/mcp`), and the shell command `npm run cayfore`.
 
-The repository name, the Pages path, and the root npm package name stay `databricks-cost-forecaster`. The theme key stays `dcf-theme`, so a browser that already chose dark mode keeps it.
+The repository, the Pages path, and the root npm package were renamed to `cayfore` on 2026-10-16. They had been `databricks-cost-forecaster`. The theme key stays `dcf-theme`, so a browser that already chose dark mode keeps it.

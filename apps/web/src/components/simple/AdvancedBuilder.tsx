@@ -1,9 +1,10 @@
 import type { Estimate, Portfolio } from "@cayfore/engine";
 import { ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
-import { Ledger } from "../Ledger";
+
+const Ledger = lazy(() => import("../Ledger").then((module) => ({ default: module.Ledger })));
 
 export function AdvancedBuilder({
   open,
@@ -44,14 +45,16 @@ export function AdvancedBuilder({
             page.
           </SheetDescription>
         </SheetHeader>
-        <Ledger
-          portfolio={portfolio}
-          estimate={estimate}
-          selectedId={selectedId}
-          onPortfolio={onPortfolio}
-          onSelect={onSelect}
-          onRemove={onRemove}
-        />
+        <Suspense fallback={null}>
+          <Ledger
+            portfolio={portfolio}
+            estimate={estimate}
+            selectedId={selectedId}
+            onPortfolio={onPortfolio}
+            onSelect={onSelect}
+            onRemove={onRemove}
+          />
+        </Suspense>
       </SheetContent>
     </Sheet>
   );
