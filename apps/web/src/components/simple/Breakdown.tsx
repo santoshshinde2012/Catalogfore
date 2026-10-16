@@ -1,6 +1,7 @@
 import type { Estimate } from "@cayfore/engine";
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { useEffect, useState } from "react";
 import { money } from "../../format";
+import type { MixPie as MixPieComponent } from "./MixPie";
 
 const FILLS: Record<string, string> = {
   "mix-etl": "#ff3621",
@@ -25,42 +26,21 @@ export function Breakdown({ estimate }: { estimate: Estimate }) {
   ].filter((part) => part.value > 0);
   const partSum = parts.reduce((sum, part) => sum + part.value, 0);
   const summary = workloads.map((row) => `${row.name} ${money(row.value, 0)}`).join(", ");
+  const [PieView, setPieView] = useState<typeof MixPieComponent | null>(null);
+  useEffect(() => {
+    let live = true;
+    void import("./MixPie").then((module) => {
+      if (live) setPieView(() => module.MixPie);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
 
   return (
     <div className="grid gap-4 sm:grid-cols-[9rem_minmax(0,1fr)] sm:items-center">
       <div className="h-36" role="img" aria-label={summary || "No workload split yet"}>
-        {workloads.length > 0 && (
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={workloads}
-                dataKey="value"
-                nameKey="name"
-                innerRadius={42}
-                outerRadius={62}
-                paddingAngle={2}
-                stroke="none"
-                isAnimationActive={false}
-              >
-                {workloads.map((row) => (
-                  <Cell key={row.name} fill={row.fill} />
-                ))}
-              </Pie>
-              <Tooltip
-                content={({ active, payload }) => {
-                  const row = payload?.[0]?.payload as { name?: string; value?: number } | undefined;
-                  if (!active || !row) return null;
-                  return (
-                    <div className="rounded-lg border bg-popover px-3 py-2 text-xs shadow-md">
-                      <p className="font-medium">{row.name}</p>
-                      <p className="tabular-nums">{money(row.value ?? 0, 0)} this month</p>
-                    </div>
-                  );
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        )}
+        {PieView && workloads.length > 0 ? <PieView workloads={workloads} /> : null}
       </div>
       <div className="grid gap-3">
         <ul className="grid gap-1.5 text-sm">

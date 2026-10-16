@@ -1,5 +1,6 @@
 import type { Estimate, ForecastPoint, Portfolio, SimpleMonth, SimplePlan } from "@cayfore/engine";
 import { pricesUpdatedOn } from "@cayfore/engine";
+import { useEffect, useState } from "react";
 import { money } from "../../format";
 import { Rise } from "../../lib/rise";
 import { useAnimatedNumber } from "../../lib/use-animated-number";
@@ -9,8 +10,23 @@ import { Skeleton } from "../ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Breakdown } from "./Breakdown";
-import { ForecastChart } from "./ForecastChart";
+import type { ForecastChart as ForecastChartComponent } from "./ForecastChart";
 import { MonthTable } from "./MonthTable";
+
+function DeferredChart({ months, label }: { months: SimpleMonth[]; label: string }) {
+  const [Chart, setChart] = useState<typeof ForecastChartComponent | null>(null);
+  useEffect(() => {
+    let live = true;
+    void import("./ForecastChart").then((module) => {
+      if (live) setChart(() => module.ForecastChart);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
+  if (!Chart) return <div className="h-64 w-full" role="img" aria-label={label} />;
+  return <Chart months={months} label={label} />;
+}
 
 export function yearCopy(annual: number, spreadPercent: number, cloudShare: number) {
   const sentence =
@@ -60,7 +76,7 @@ export function ResultsPanel({
       <Rise className="grid gap-4">
         <div>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm font-medium text-muted-foreground">Next year</p>
+            <h2 className="text-sm font-medium text-muted-foreground">Next year</h2>
             <div className="flex flex-wrap items-center gap-2">
               <Button type="button" onClick={onShare}>
                 {notice || "Copy link"}
@@ -109,7 +125,7 @@ export function ResultsPanel({
           {busy ? (
             <Skeleton className="h-64 w-full" />
           ) : (
-            <ForecastChart months={months} label={`${sentence} ${split}`} />
+            <DeferredChart months={months} label={`${sentence} ${split}`} />
           )}
           <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
             <li className="flex items-center gap-2">

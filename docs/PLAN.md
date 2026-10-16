@@ -88,7 +88,7 @@ Refresh workflow (weekly cron plus `workflow_dispatch`):
 
 ## Web app
 
-Vite `base` is `/databricks-cost-forecaster/` so GitHub Pages resolves assets. The interface is React, Tailwind, and Radix. Light is the default. Dark mode sets `data-theme="dark"`.
+Vite `base` is `/cayfore/` so GitHub Pages resolves assets. The interface is React, Tailwind, and Radix. Light is the default. Dark mode sets `data-theme="dark"`.
 
 Layout:
 

@@ -1,13 +1,12 @@
 import { FolderOpen, Menu, Moon, Star, Sun } from "lucide-react";
 import { useState } from "react";
 import type { SimpleSession } from "../hooks/useSimpleForecast";
+import { REPO } from "../site";
 import { SimplePage } from "./simple/SimplePage";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Toaster } from "./ui/sonner";
 import { TooltipProvider } from "./ui/tooltip";
-
-const REPO = "https://github.com/santoshshinde2012/databricks-cost-forecaster";
 
 export function AppShell({ session }: { session: SimpleSession }) {
   const [howOpen, setHowOpen] = useState(false);

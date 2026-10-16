@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#F6F6F7" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'sha256-E/8u475mHwt6BpD0CDgsZgexXXHIMVd3KfzbMtoGMEE='; style-src 'unsafe-inline'; img-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+    />
+    <title>FAQ — Cayfore Databricks cost calculator</title>
+    <meta
+      name="description"
+      content="Answers about the Cayfore Databricks cost calculator: what the DBU forecast includes, how it differs from a pricing estimator, and that the calculation stays in the browser."
+    />
+    <link rel="canonical" href="https://santoshshinde2012.github.io/cayfore/faq.html" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Cayfore" />
+    <meta property="og:title" content="FAQ — Cayfore Databricks cost calculator" />
+    <meta
+      property="og:description"
+      content="What Cayfore estimates, what a DBU forecast includes, and why the calculation stays in the browser."
+    />
+    <meta property="og:url" content="https://santoshshinde2012.github.io/cayfore/faq.html" />
+    <meta property="og:image" content="https://santoshshinde2012.github.io/cayfore/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Cayfore, a Databricks cost calculator and DBU forecast" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="FAQ — Cayfore Databricks cost calculator" />
+    <meta
+      name="twitter:description"
+      content="What Cayfore estimates, what a DBU forecast includes, and why the calculation stays in the browser."
+    />
+    <meta name="twitter:image" content="https://santoshshinde2012.github.io/cayfore/og.png" />
+    <meta name="twitter:image:alt" content="Cayfore, a Databricks cost calculator and DBU forecast" />
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: #f6f6f7;
+        color: #0b2026;
+      }
+      main {
+        max-width: 40rem;
+        margin: 0 auto;
+        padding: 4rem 1.5rem 3rem;
+      }
+      .mark {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-decoration: none;
+        color: inherit;
+      }
+      .dot {
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: 0.375rem;
+        background: #0b2026;
+        position: relative;
+      }
+      .dot::after {
+        content: "";
+        position: absolute;
+        width: 0.375rem;
+        height: 0.375rem;
+        border-radius: 999px;
+        background: #ff3621;
+        left: 0.4375rem;
+        top: 0.4375rem;
+      }
+      h1 {
+        font-size: 2rem;
+        line-height: 1.2;
+        margin: 2rem 0 0.75rem;
+      }
+      h2 {
+        font-size: 1.05rem;
+        margin: 0 0 0.4rem;
+      }
+      p {
+        line-height: 1.5;
+        color: #3e4c53;
+      }
+      section {
+        margin-top: 1.5rem;
+      }
+      a.home {
+        color: #9e1e0c;
+      }
+      a:focus-visible {
+        outline: 2px solid #c42812;
+        outline-offset: 2px;
+      }
+      footer {
+        margin-top: 3rem;
+        font-size: 0.875rem;
+      }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "url": "https://santoshshinde2012.github.io/cayfore/faq.html",
+        "isPartOf": { "@type": "WebSite", "name": "Cayfore", "url": "https://santoshshinde2012.github.io/cayfore/" },
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Cayfore?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Cayfore is an independent Databricks cost calculator. It forecasts a year of DBU and cloud spend from four inputs: cloud and tier, a starting amount or team size, a mix of pipelines, dashboards, and models, and monthly growth. It is an estimate, not a Databricks quote, and it is not affiliated with Databricks."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What does the DBU forecast include?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The forecast prices Databricks usage, measured in DBU, and the cloud machines under those workloads for 12 months. The default is AWS Premium in US East with 3 percent monthly growth: about $170,258 a year. A usage file can replace the starting amount. The year is shown as a low-to-high range."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How is this different from a Databricks pricing estimator?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A vendor pricing estimator prices one product configuration. Cayfore prices a year of mixed workloads — pipelines, dashboards, and models — and keeps the calculation in the browser. It does not sign in to a workspace and it does not read an invoice."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Cayfore upload a usage file or the estimate?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The usage file stays in this browser. The share link is only the URL hash. Cayfore does not save the estimate on a server."
+            }
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <main>
+      <a class="mark" href="/cayfore/">
+        <span class="dot" aria-hidden="true"></span>
+        Cayfore
+      </a>
+      <h1>Questions about the forecast</h1>
+      <p>
+        Cayfore is a Databricks cost calculator and DBU forecast. These answers describe the estimate. They are not a
+        Databricks quote, and Cayfore is not affiliated with Databricks.
+      </p>
+      <section>
+        <h2>What is Cayfore?</h2>
+        <p>
+          Cayfore is an independent Databricks cost calculator. It forecasts a year of DBU and cloud spend from four
+          inputs: cloud and tier, a starting amount or team size, a mix of pipelines, dashboards, and models, and
+          monthly growth. It is an estimate, not a Databricks quote, and it is not affiliated with Databricks.
+        </p>
+      </section>
+      <section>
+        <h2>What does the DBU forecast include?</h2>
+        <p>
+          The forecast prices Databricks usage, measured in DBU, and the cloud machines under those workloads for 12
+          months. The default is AWS Premium in US East with 3 percent monthly growth: about $170,258 a year. A usage
+          file can replace the starting amount. The year is shown as a low-to-high range.
+        </p>
+      </section>
+      <section>
+        <h2>How is this different from a Databricks pricing estimator?</h2>
+        <p>
+          A vendor pricing estimator prices one product configuration. Cayfore prices a year of mixed workloads —
+          pipelines, dashboards, and models — and keeps the calculation in the browser. It does not sign in to a
+          workspace and it does not read an invoice.
+        </p>
+      </section>
+      <section>
+        <h2>Does Cayfore upload a usage file or the estimate?</h2>
+        <p>
+          No. The usage file stays in this browser. The share link is only the URL hash. Cayfore does not save the
+          estimate on a server.
+        </p>
+      </section>
+      <footer>
+        <p><a class="home" href="/cayfore/">Back to the forecast</a></p>
+        <p>An independent estimate of Databricks spend. Not a quote, and not affiliated with Databricks.</p>
+      </footer>
+    </main>
+  </body>
+</html>

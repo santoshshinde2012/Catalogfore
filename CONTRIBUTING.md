@@ -10,7 +10,7 @@ npm test
 npm run dev
 ```
 
-The site is at http://localhost:5173/databricks-cost-forecaster/.
+The site is at http://localhost:5173/cayfore/.
 
 Before a pull request:
 

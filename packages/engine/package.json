@@ -2,6 +2,11 @@
   "name": "@cayfore/engine",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/santoshshinde2012/cayfore.git",
+    "directory": "packages/engine"
+  },
   "type": "module",
   "description": "Shared estimate and forecast engine for Cayfore",
   "exports": {
