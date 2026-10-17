@@ -10,7 +10,8 @@
   "type": "module",
   "description": "Shared estimate and forecast engine for Cayfore",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./products": "./src/products.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

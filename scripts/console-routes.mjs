@@ -37,6 +37,25 @@ for (const viewport of viewports) {
   await page.locator("#forecast").scrollIntoViewIfNeeded();
   await page.getByTestId("year-total").waitFor();
 
+  const planHash = new URL(page.url()).hash;
+  if (viewport.name === "mobile") {
+    await page.getByRole("button", { name: "Menu", exact: true }).click();
+    await page.getByRole("menuitem", { name: /^Product map\b/ }).click();
+  } else await page.getByRole("banner").getByRole("button", { name: "Product map", exact: true }).click();
+  await page.locator("#product-map").waitFor();
+  await page.getByLabel("Search Databricks products", { exact: true }).fill("Unity Catalog");
+  await page
+    .getByRole("region", { name: "Product directory", exact: true })
+    .getByRole("button", { name: /^Unity Catalog\b/ })
+    .click();
+  await page.getByRole("region", { name: "Product details", exact: true }).waitFor();
+  if (new URL(page.url()).hash !== planHash) throw new Error(`${label}: product map changed the saved plan`);
+  if (viewport.name === "mobile") {
+    await page.getByRole("button", { name: "Menu", exact: true }).click();
+    await page.getByRole("menuitem", { name: /^Forecast\b/ }).click();
+  } else await page.getByRole("banner").getByRole("button", { name: "Forecast", exact: true }).click();
+  await page.getByTestId("year-total").waitFor();
+
   const advanced = page.getByRole("button", { name: "Advanced", exact: true });
   if (viewport.name === "mobile") {
     await page.getByRole("button", { name: "Menu" }).click();

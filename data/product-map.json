@@ -1,0 +1,2221 @@
+{
+  "version": "2026-10-17.1",
+  "reviewedOn": "2026-10-17",
+  "disclaimer": "A learning map, not an official exclusive taxonomy or an availability promise. Relationships and journeys illustrate possible uses, not mandatory dependencies. Billing labels and estimates come from the separate pricing catalog; a missing rate does not mean free. Cloud, region, edition, release state, and account requirements vary.",
+  "domains": [
+    {
+      "id": "ingestion",
+      "name": "Ingestion",
+      "verb": "Bring data in",
+      "summary": "Move database changes, application records, files, and events into the lakehouse.",
+      "useCases": [
+        "Database change capture",
+        "SaaS ingestion",
+        "Event and file ingestion"
+      ],
+      "billingContext": "Connector execution, data volume, storage, and networking can contribute to the bill.",
+      "sourceIds": [
+        "connect",
+        "zerobus",
+        "auto_loader"
+      ]
+    },
+    {
+      "id": "engineering",
+      "name": "Data engineering",
+      "verb": "Build reliable pipelines",
+      "summary": "Transform and orchestrate repeatable batch and streaming workloads.",
+      "useCases": [
+        "ETL and ELT",
+        "Streaming transformations",
+        "Scheduled workflow automation"
+      ],
+      "billingContext": "Estimate the compute used by each task or pipeline; orchestration is not a second copy of that compute.",
+      "sourceIds": [
+        "engineering",
+        "pipelines",
+        "jobs"
+      ]
+    },
+    {
+      "id": "analytics",
+      "name": "Analytics & BI",
+      "verb": "Turn data into decisions",
+      "summary": "Query governed data and deliver dashboards, conversational analysis, and business insights.",
+      "useCases": [
+        "SQL warehousing",
+        "Business dashboards",
+        "Natural-language analytics"
+      ],
+      "billingContext": "Warehouse execution drives many BI costs; map the interface to its underlying compute and usage.",
+      "sourceIds": [
+        "sql",
+        "ai_bi",
+        "genie_one"
+      ]
+    },
+    {
+      "id": "ai_ml",
+      "name": "AI & machine learning",
+      "verb": "Train, retrieve, and serve",
+      "summary": "Develop models and agents, retrieve context, run inference, and evaluate quality.",
+      "useCases": [
+        "Model training and serving",
+        "Retrieval-augmented generation",
+        "Document and time-series analysis"
+      ],
+      "billingContext": "Training, serving capacity, tokens, retrieval, and evaluation may be separate cost drivers.",
+      "sourceIds": [
+        "training",
+        "serving",
+        "agents",
+        "ai_functions"
+      ]
+    },
+    {
+      "id": "apps",
+      "name": "Apps & databases",
+      "verb": "Build operational experiences",
+      "summary": "Deliver data applications and transactional Postgres services alongside the lakehouse.",
+      "useCases": [
+        "Internal data apps",
+        "Application backends",
+        "Agent state and low-latency features"
+      ],
+      "billingContext": "An app can consume database, warehouse, or AI services in addition to its own running capacity.",
+      "sourceIds": [
+        "apps",
+        "lakebase"
+      ]
+    },
+    {
+      "id": "governance",
+      "name": "Governance & quality",
+      "verb": "Keep data and AI trusted",
+      "summary": "Control access, discover assets, trace lineage, monitor quality, and govern AI interactions.",
+      "useCases": [
+        "Access and lineage",
+        "Quality and classification",
+        "AI traffic governance"
+      ],
+      "billingContext": "Built-in governance is distinct from billable monitoring, maintenance, storage, and AI usage.",
+      "sourceIds": [
+        "unity",
+        "gateway",
+        "quality",
+        "optimization"
+      ]
+    },
+    {
+      "id": "sharing",
+      "name": "Sharing & collaboration",
+      "verb": "Collaborate across organizations",
+      "summary": "Exchange data products and collaborate with partners through governed sharing services.",
+      "useCases": [
+        "Partner data exchange",
+        "Marketplace distribution",
+        "Privacy-preserving collaboration"
+      ],
+      "billingContext": "Sharing can involve compute, storage, transfer, and provider charges; a missing catalog rate does not mean free.",
+      "sourceIds": [
+        "sharing",
+        "opensharing",
+        "marketplace",
+        "clean_rooms"
+      ]
+    },
+    {
+      "id": "platform",
+      "name": "Platform & infrastructure",
+      "verb": "Run and connect the platform",
+      "summary": "Understand compute, notebooks, storage, networking, and development experiences beneath workloads.",
+      "useCases": [
+        "Interactive development",
+        "Compute selection",
+        "Storage and private connectivity"
+      ],
+      "billingContext": "Classic VM charges, retained data, and network traffic can sit outside a workload's Databricks usage.",
+      "sourceIds": [
+        "compute",
+        "notebooks",
+        "networking",
+        "delta"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "engineering",
+      "title": "Data engineering with Databricks",
+      "url": "https://docs.databricks.com/aws/en/data-engineering/"
+    },
+    {
+      "id": "connect",
+      "title": "Lakeflow Connect connector concepts",
+      "url": "https://docs.databricks.com/aws/en/ingestion/lakeflow-connect/"
+    },
+    {
+      "id": "zerobus",
+      "title": "Zerobus Ingest overview",
+      "url": "https://docs.databricks.com/aws/en/ingestion/zerobus-overview"
+    },
+    {
+      "id": "pipelines",
+      "title": "What are Lakeflow pipelines?",
+      "url": "https://docs.databricks.com/aws/en/ldp/concepts"
+    },
+    {
+      "id": "pipelines_alias",
+      "title": "What happened to Delta Live Tables?",
+      "url": "https://docs.databricks.com/aws/en/ldp/concepts/where-is-dlt"
+    },
+    {
+      "id": "jobs",
+      "title": "Lakeflow Jobs",
+      "url": "https://docs.databricks.com/aws/en/jobs/"
+    },
+    {
+      "id": "compute",
+      "title": "Databricks compute",
+      "url": "https://docs.databricks.com/aws/en/compute/"
+    },
+    {
+      "id": "sql",
+      "title": "SQL warehouse types",
+      "url": "https://docs.databricks.com/aws/en/compute/sql-warehouse/warehouse-types"
+    },
+    {
+      "id": "realtime",
+      "title": "Lakehouse Real-Time dashboards and limitations",
+      "url": "https://docs.databricks.com/aws/en/compute/sql-warehouse/real-time-dashboards"
+    },
+    {
+      "id": "ai_bi",
+      "title": "Databricks AI/BI concepts",
+      "url": "https://docs.databricks.com/aws/en/ai-bi/concepts"
+    },
+    {
+      "id": "genie_one",
+      "title": "Use Genie One, formerly Databricks One",
+      "url": "https://docs.databricks.com/aws/en/genie-one/"
+    },
+    {
+      "id": "genie_releases",
+      "title": "AI/BI and Genie One release notes 2026",
+      "url": "https://docs.databricks.com/aws/en/ai-bi/release-notes/2026"
+    },
+    {
+      "id": "genie_cost",
+      "title": "Monitor Genie Code usage and cost",
+      "url": "https://docs.databricks.com/aws/en/genie/monitor-cost"
+    },
+    {
+      "id": "training",
+      "title": "Train AI and ML models",
+      "url": "https://docs.databricks.com/aws/en/machine-learning/train-model/"
+    },
+    {
+      "id": "serving",
+      "title": "Deploy models using Model Serving",
+      "url": "https://docs.databricks.com/aws/en/machine-learning/model-serving/"
+    },
+    {
+      "id": "foundation",
+      "title": "Databricks Foundation Model APIs",
+      "url": "https://docs.databricks.com/aws/en/machine-learning/foundation-model-apis/"
+    },
+    {
+      "id": "ai_functions",
+      "title": "Transform unstructured data using AI Functions",
+      "url": "https://docs.databricks.com/aws/en/large-language-models/ai-functions"
+    },
+    {
+      "id": "search",
+      "title": "Databricks AI Search, formerly Vector Search",
+      "url": "https://docs.databricks.com/aws/en/ai-search/ai-search"
+    },
+    {
+      "id": "agents",
+      "title": "Develop agents on Databricks",
+      "url": "https://docs.databricks.com/aws/en/agents"
+    },
+    {
+      "id": "agent_runtime",
+      "title": "Agent Runtime on Databricks Apps",
+      "url": "https://docs.databricks.com/aws/en/agents/deploy/agent-runtime"
+    },
+    {
+      "id": "agent_memory",
+      "title": "Agent memory and sessions",
+      "url": "https://docs.databricks.com/aws/en/agents/custom-agents/stateful-agents"
+    },
+    {
+      "id": "agent_sandbox",
+      "title": "Databricks Sandbox and Beta pricing boundaries",
+      "url": "https://docs.databricks.com/aws/en/compute/serverless/sandbox"
+    },
+    {
+      "id": "mlflow",
+      "title": "MLflow on Databricks",
+      "url": "https://docs.databricks.com/aws/en/mlflow/"
+    },
+    {
+      "id": "unity",
+      "title": "What is Unity Catalog?",
+      "url": "https://docs.databricks.com/aws/en/data-governance/unity-catalog/"
+    },
+    {
+      "id": "gateway",
+      "title": "AI governance with Unity Gateway",
+      "url": "https://docs.databricks.com/aws/en/ai-gateway/"
+    },
+    {
+      "id": "glossary",
+      "title": "Databricks technical terminology glossary",
+      "url": "https://docs.databricks.com/aws/en/resources/glossary"
+    },
+    {
+      "id": "delta",
+      "title": "What is Delta Lake in Databricks?",
+      "url": "https://docs.databricks.com/aws/en/delta"
+    },
+    {
+      "id": "apps",
+      "title": "Databricks Apps",
+      "url": "https://docs.databricks.com/aws/en/dev-tools/databricks-apps/"
+    },
+    {
+      "id": "lakebase",
+      "title": "Lakebase Postgres",
+      "url": "https://docs.databricks.com/aws/en/oltp/projects"
+    },
+    {
+      "id": "sharing",
+      "title": "Share data and AI assets securely",
+      "url": "https://docs.databricks.com/aws/en/data-sharing/"
+    },
+    {
+      "id": "opensharing",
+      "title": "What is OpenSharing?",
+      "url": "https://docs.databricks.com/aws/en/opensharing"
+    },
+    {
+      "id": "sharing_alias",
+      "title": "Delta Sharing is now OpenSharing",
+      "url": "https://www.databricks.com/product/delta-sharing"
+    },
+    {
+      "id": "clean_rooms",
+      "title": "What is Databricks Clean Rooms?",
+      "url": "https://docs.databricks.com/aws/en/clean-rooms/"
+    },
+    {
+      "id": "marketplace",
+      "title": "What is Databricks Marketplace?",
+      "url": "https://docs.databricks.com/aws/en/marketplace/"
+    },
+    {
+      "id": "networking",
+      "title": "Serverless compute plane networking",
+      "url": "https://docs.databricks.com/aws/en/security/network/serverless-network-security/"
+    },
+    {
+      "id": "network_cost",
+      "title": "Understand Databricks networking costs",
+      "url": "https://docs.databricks.com/aws/en/security/network/serverless-network-security/cost-management"
+    },
+    {
+      "id": "optimization",
+      "title": "Predictive optimization for Unity Catalog managed tables",
+      "url": "https://docs.databricks.com/aws/en/optimizations/predictive-optimization"
+    },
+    {
+      "id": "quality",
+      "title": "Data quality monitoring",
+      "url": "https://docs.databricks.com/aws/en/data-governance/unity-catalog/data-quality-monitoring/"
+    },
+    {
+      "id": "classification",
+      "title": "Data Classification",
+      "url": "https://docs.databricks.com/aws/en/data-governance/unity-catalog/data-classification"
+    },
+    {
+      "id": "auto_loader",
+      "title": "What is Auto Loader?",
+      "url": "https://docs.databricks.com/aws/en/ingestion/cloud-object-storage/auto-loader/"
+    },
+    {
+      "id": "notebooks",
+      "title": "Databricks notebooks",
+      "url": "https://docs.databricks.com/aws/en/notebooks/"
+    },
+    {
+      "id": "photon",
+      "title": "What is Photon?",
+      "url": "https://docs.databricks.com/aws/en/compute/photon"
+    },
+    {
+      "id": "free",
+      "title": "Databricks Free Edition",
+      "url": "https://docs.databricks.com/aws/en/getting-started/free-edition"
+    },
+    {
+      "id": "billing",
+      "title": "Billable usage system table reference",
+      "url": "https://docs.databricks.com/aws/en/admin/system-tables/billing"
+    },
+    {
+      "id": "azure_pricing",
+      "title": "Azure Databricks pricing and serverless usage",
+      "url": "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing"
+    },
+    {
+      "id": "pricing",
+      "title": "Databricks product pricing",
+      "url": "https://www.databricks.com/product/pricing"
+    }
+  ],
+  "entries": [
+    {
+      "id": "jobs_classic",
+      "productId": "jobs_classic",
+      "aliases": [
+        "Jobs clusters",
+        "Workflows"
+      ],
+      "domainId": "engineering",
+      "relatedDomainIds": [],
+      "summary": "Run scheduled tasks on configurable classic jobs compute.",
+      "useCases": [
+        "Scheduled ETL",
+        "Repeatable Python or Spark tasks"
+      ],
+      "sourceIds": [
+        "jobs",
+        "compute"
+      ],
+      "billingContext": "Classic jobs combine Databricks usage and cloud VM runtime."
+    },
+    {
+      "id": "jobs_light",
+      "productId": "jobs_light",
+      "aliases": [],
+      "domainId": "engineering",
+      "relatedDomainIds": [],
+      "summary": "Recognize a specialized jobs compute meter in the pricing inventory.",
+      "useCases": [
+        "Reconcile a Jobs Light usage record"
+      ],
+      "sourceIds": [
+        "billing",
+        "pricing"
+      ],
+      "billingContext": "This catalog row is limited to the supported Azure meter; it is not a general recommendation."
+    },
+    {
+      "id": "jobs_serverless",
+      "productId": "jobs_serverless",
+      "aliases": [],
+      "domainId": "engineering",
+      "relatedDomainIds": [],
+      "summary": "Execute jobs on automatically managed serverless compute.",
+      "useCases": [
+        "Scheduled notebooks",
+        "Managed production jobs"
+      ],
+      "sourceIds": [
+        "jobs",
+        "compute"
+      ],
+      "billingContext": "Use serverless task usage; avoid adding classic VMs for the same execution."
+    },
+    {
+      "id": "jobs_performance_mode",
+      "productId": "jobs_performance_mode",
+      "aliases": [],
+      "domainId": "engineering",
+      "relatedDomainIds": [],
+      "summary": "Understand performance settings within serverless job execution.",
+      "useCases": [
+        "Compare job performance targets"
+      ],
+      "sourceIds": [
+        "jobs",
+        "billing"
+      ],
+      "billingContext": "A mode is a workload setting, not evidence of a separately priced service. Check this catalog row's coverage."
+    },
+    {
+      "id": "all_purpose_classic",
+      "productId": "all_purpose_classic",
+      "aliases": [
+        "Interactive clusters"
+      ],
+      "domainId": "platform",
+      "relatedDomainIds": [
+        "engineering",
+        "ai_ml"
+      ],
+      "summary": "Develop and explore interactively on configurable classic compute.",
+      "useCases": [
+        "Notebook development",
+        "Exploratory data analysis"
+      ],
+      "sourceIds": [
+        "compute",
+        "notebooks"
+      ],
+      "billingContext": "Include Databricks usage and the cloud VMs while compute is running."
+    },
+    {
+      "id": "all_purpose_serverless",
+      "productId": "all_purpose_serverless",
+      "aliases": [
+        "All-Purpose (serverless)"
+      ],
+      "domainId": "platform",
+      "relatedDomainIds": [
+        "engineering",
+        "ai_ml"
+      ],
+      "summary": "Run interactive notebook work with managed serverless resources.",
+      "useCases": [
+        "Interactive Python and SQL",
+        "Collaborative exploration"
+      ],
+      "sourceIds": [
+        "compute",
+        "notebooks"
+      ],
+      "name": "Serverless notebooks compute"
+    },
+    {
+      "id": "dlt_core",
+      "productId": "dlt_core",
+      "aliases": [
+        "Delta Live Tables",
+        "DLT",
+        "Lakeflow Declarative Pipelines",
+        "Spark Declarative Pipelines"
+      ],
+      "domainId": "engineering",
+      "relatedDomainIds": [],
+      "summary": "Build declarative data pipelines using the classic Core catalog edition.",
+      "useCases": [
+        "Batch and streaming transformations"
+      ],
+      "sourceIds": [
+        "pipelines",
+        "pipelines_alias"
+      ],
+      "name": "Lakeflow pipelines · Core",
+      "billingContext": "The pricing inventory retains its classic DLT SKU names. Include classic infrastructure costs."
+    },
+    {
+      "id": "dlt_pro",
+      "productId": "dlt_pro",
+      "aliases": [
+        "Delta Live Tables",
+        "DLT",
+        "Lakeflow Declarative Pipelines",
+        "Spark Declarative Pipelines"
+      ],
+      "domainId": "engineering",
+      "relatedDomainIds": [],
+      "summary": "Build declarative data pipelines using the classic Pro catalog edition.",
+      "useCases": [
+        "Batch and streaming transformations"
+      ],
+      "sourceIds": [
+        "pipelines",
+        "pipelines_alias"
+      ],
+      "name": "Lakeflow pipelines · Pro",
+      "billingContext": "The pricing inventory retains its classic DLT SKU names. Include classic infrastructure costs."
+    },
+    {
+      "id": "dlt_advanced",
+      "productId": "dlt_advanced",
+      "aliases": [
+        "Delta Live Tables",
+        "DLT",
+        "Lakeflow Declarative Pipelines",
+        "Spark Declarative Pipelines"
+      ],
+      "domainId": "engineering",
+      "relatedDomainIds": [],
+      "summary": "Build declarative data pipelines using the classic Advanced catalog edition.",
+      "useCases": [
+        "Batch and streaming transformations"
+      ],
+      "sourceIds": [
+        "pipelines",
+        "pipelines_alias"
+      ],
+      "name": "Lakeflow pipelines · Advanced",
+      "billingContext": "The pricing inventory retains its classic DLT SKU names. Include classic infrastructure costs."
+    },
+    {
+      "id": "dlt_serverless",
+      "productId": "dlt_serverless",
+      "aliases": [
+        "Delta Live Tables",
+        "DLT",
+        "Lakeflow Declarative Pipelines",
+        "Spark Declarative Pipelines"
+      ],
+      "domainId": "engineering",
+      "relatedDomainIds": [],
+      "summary": "Build declarative pipelines without managing their infrastructure.",
+      "useCases": [
+        "Incremental data transformations",
+        "Streaming tables and materialized views"
+      ],
+      "sourceIds": [
+        "pipelines",
+        "pipelines_alias"
+      ],
+      "name": "Lakeflow pipelines · Serverless"
+    },
+    {
+      "id": "lakeflow_connect",
+      "productId": "lakeflow_connect",
+      "aliases": [],
+      "domainId": "ingestion",
+      "relatedDomainIds": [
+        "engineering"
+      ],
+      "summary": "Ingest enterprise data using managed connectors and incremental updates.",
+      "useCases": [
+        "Database CDC",
+        "SaaS and file connectors"
+      ],
+      "sourceIds": [
+        "connect"
+      ],
+      "billingContext": "Connector architecture and usage vary by source; review the ingestion and gateway components."
+    },
+    {
+      "id": "model_training",
+      "productId": "model_training",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [
+        "engineering"
+      ],
+      "summary": "Train ML models or fine-tune models for a specific workload.",
+      "useCases": [
+        "Custom model development",
+        "Fine-tuning"
+      ],
+      "sourceIds": [
+        "training"
+      ]
+    },
+    {
+      "id": "ai_forecast",
+      "productId": "ai_forecast",
+      "aliases": [
+        "ai_forecast"
+      ],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [
+        "analytics"
+      ],
+      "summary": "Forecast future time-series values from historical observations.",
+      "useCases": [
+        "Demand prediction",
+        "Revenue and usage projections"
+      ],
+      "sourceIds": [
+        "ai_functions",
+        "azure_pricing"
+      ],
+      "billingContext": "Model execution has its own usage rules; warehouse execution can also contribute."
+    },
+    {
+      "id": "serverless_gpu",
+      "productId": "serverless_gpu",
+      "aliases": [
+        "AI Runtime"
+      ],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [
+        "platform"
+      ],
+      "summary": "Use managed GPU environments for deep learning and fine-tuning.",
+      "useCases": [
+        "GPU model training"
+      ],
+      "sourceIds": [
+        "training"
+      ],
+      "name": "Serverless GPU / AI Runtime",
+      "billingContext": "AI Runtime is distinct from model-serving GPUs. This catalog row uses a serving-table assumption; review its limitation before estimating."
+    },
+    {
+      "id": "lakehouse_realtime",
+      "productId": "lakehouse_realtime",
+      "aliases": [
+        "Lakehouse//RT"
+      ],
+      "domainId": "analytics",
+      "relatedDomainIds": [
+        "apps"
+      ],
+      "summary": "Use specialized serverless SQL for low-latency analytical reads.",
+      "useCases": [
+        "Operational analytics",
+        "High-concurrency dashboards"
+      ],
+      "sourceIds": [
+        "sql",
+        "realtime"
+      ],
+      "billingContext": "Beta with feature limitations. It is distinct from Spark streaming real-time mode; the catalog does not provide a standalone complete estimate."
+    },
+    {
+      "id": "zerobus",
+      "productId": "zerobus",
+      "aliases": [
+        "Zerobus"
+      ],
+      "domainId": "ingestion",
+      "relatedDomainIds": [],
+      "summary": "Push application events directly into governed Delta tables.",
+      "useCases": [
+        "Application events",
+        "Device telemetry"
+      ],
+      "sourceIds": [
+        "zerobus"
+      ],
+      "name": "Zerobus Ingest",
+      "billingContext": "Usage is attributed to serverless ingestion billing; storage and transfer can also matter."
+    },
+    {
+      "id": "standard_tier",
+      "productId": "standard_tier",
+      "aliases": [],
+      "domainId": "platform",
+      "relatedDomainIds": [],
+      "summary": "Identify a legacy edition entry retained in the catalog.",
+      "useCases": [
+        "Understand historical usage labels"
+      ],
+      "sourceIds": [
+        "billing",
+        "pricing"
+      ],
+      "billingContext": "This inventory entry is not a currently offered forecast template; a zero placeholder is not a price quote."
+    },
+    {
+      "id": "sql_classic",
+      "productId": "sql_classic",
+      "aliases": [
+        "Databricks SQL Classic"
+      ],
+      "domainId": "analytics",
+      "relatedDomainIds": [],
+      "summary": "Run analytical SQL and BI workloads on a classic warehouse.",
+      "useCases": [
+        "SQL queries",
+        "BI data access"
+      ],
+      "sourceIds": [
+        "sql"
+      ],
+      "billingContext": "Include the warehouse's Databricks usage and infrastructure assumptions."
+    },
+    {
+      "id": "sql_pro",
+      "productId": "sql_pro",
+      "aliases": [
+        "Databricks SQL Pro"
+      ],
+      "domainId": "analytics",
+      "relatedDomainIds": [],
+      "summary": "Run analytical SQL and BI workloads on a pro warehouse.",
+      "useCases": [
+        "SQL queries",
+        "BI data access"
+      ],
+      "sourceIds": [
+        "sql"
+      ],
+      "billingContext": "Include the warehouse's Databricks usage and infrastructure assumptions."
+    },
+    {
+      "id": "sql_serverless",
+      "productId": "sql_serverless",
+      "aliases": [
+        "Databricks SQL Serverless"
+      ],
+      "domainId": "analytics",
+      "relatedDomainIds": [],
+      "summary": "Run analytical SQL and BI workloads on a serverless warehouse.",
+      "useCases": [
+        "SQL queries",
+        "BI data access"
+      ],
+      "sourceIds": [
+        "sql"
+      ],
+      "billingContext": "Estimate warehouse usage and its active time."
+    },
+    {
+      "id": "ai_bi_dashboards",
+      "productId": "ai_bi_dashboards",
+      "aliases": [
+        "Lakeview dashboards"
+      ],
+      "domainId": "analytics",
+      "relatedDomainIds": [],
+      "summary": "Publish visual reports over governed datasets.",
+      "useCases": [
+        "Business KPI dashboards",
+        "Recurring operational reports"
+      ],
+      "sourceIds": [
+        "ai_bi"
+      ],
+      "billingContext": "Plan the warehouse execution that powers datasets, refreshes, and viewer queries."
+    },
+    {
+      "id": "genie",
+      "productId": "genie",
+      "aliases": [
+        "AI/BI Genie",
+        "Genie spaces"
+      ],
+      "domainId": "analytics",
+      "relatedDomainIds": [],
+      "summary": "Ask business data questions through a conversational analytics agent.",
+      "useCases": [
+        "Natural-language analysis",
+        "Follow-up data questions"
+      ],
+      "sourceIds": [
+        "ai_bi",
+        "genie_releases",
+        "genie_cost"
+      ],
+      "name": "Genie Agents",
+      "billingContext": "This entry estimates SQL warehouse usage per question. It does not cover service-principal Genie charges or all AI usage after the promotion. Replace the question-to-DBU assumption with measured usage."
+    },
+    {
+      "id": "assistant_agent",
+      "productId": "assistant_agent",
+      "aliases": [
+        "Databricks Assistant",
+        "Assistant",
+        "Agent mode"
+      ],
+      "domainId": "platform",
+      "relatedDomainIds": [
+        "engineering",
+        "analytics"
+      ],
+      "summary": "Use in-product AI assistance to develop and debug data workflows.",
+      "useCases": [
+        "Notebook coding help",
+        "SQL authoring and analysis"
+      ],
+      "sourceIds": [
+        "notebooks",
+        "genie_cost"
+      ],
+      "name": "Genie Code",
+      "billingContext": "This entry uses an assumed per-user consumption profile and the Genie Code allowance. Measure actual GENIE usage for a reliable estimate; connected compute is additional."
+    },
+    {
+      "id": "databricks_one",
+      "productId": "databricks_one",
+      "aliases": [
+        "Databricks One"
+      ],
+      "domainId": "analytics",
+      "relatedDomainIds": [
+        "apps"
+      ],
+      "summary": "Give business users one place to use dashboards, data questions, and apps.",
+      "useCases": [
+        "Business-user discovery",
+        "Consume governed analytics"
+      ],
+      "sourceIds": [
+        "genie_one",
+        "genie_cost"
+      ],
+      "name": "Genie One",
+      "billingContext": "The legacy Databricks One placeholder does not price current Genie One usage. Current Genie metering, allowances, service-principal charges, and connected services must be planned separately."
+    },
+    {
+      "id": "model_serving_cpu",
+      "productId": "model_serving_cpu",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [
+        "apps"
+      ],
+      "summary": "Expose custom models through CPU serving endpoints.",
+      "useCases": [
+        "Online inference APIs"
+      ],
+      "sourceIds": [
+        "serving",
+        "billing"
+      ],
+      "billingContext": "Track provisioned serving resources and the endpoint's measured usage."
+    },
+    {
+      "id": "model_serving_gpu",
+      "productId": "model_serving_gpu",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [
+        "apps"
+      ],
+      "summary": "Expose custom models through GPU serving endpoints.",
+      "useCases": [
+        "Online inference APIs"
+      ],
+      "sourceIds": [
+        "serving",
+        "billing"
+      ],
+      "billingContext": "Track provisioned serving resources and the endpoint's measured usage."
+    },
+    {
+      "id": "foundation_provisioned",
+      "productId": "foundation_provisioned",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Allocate throughput for supported foundation-model inference workloads.",
+      "useCases": [
+        "High-throughput inference",
+        "Latency-sensitive model APIs"
+      ],
+      "sourceIds": [
+        "foundation"
+      ],
+      "billingContext": "Dedicated throughput is a different planning model from pay-per-token inference."
+    },
+    {
+      "id": "fm_llama4_maverick",
+      "productId": "fm_llama4_maverick",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Plan token usage for a foundation-model API in the pricing inventory.",
+      "useCases": [
+        "Language and reasoning requests"
+      ],
+      "sourceIds": [
+        "foundation"
+      ],
+      "billingContext": "Confirm model and region availability; catalog inclusion is not a live availability guarantee."
+    },
+    {
+      "id": "fm_llama_3_3_70b",
+      "productId": "fm_llama_3_3_70b",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Plan token usage for a foundation-model API in the pricing inventory.",
+      "useCases": [
+        "General language tasks"
+      ],
+      "sourceIds": [
+        "foundation"
+      ],
+      "billingContext": "Confirm model and region availability; catalog inclusion is not a live availability guarantee."
+    },
+    {
+      "id": "fm_llama_3_1_8b",
+      "productId": "fm_llama_3_1_8b",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Plan token usage for a foundation-model API in the pricing inventory.",
+      "useCases": [
+        "Smaller language-model tasks"
+      ],
+      "sourceIds": [
+        "foundation"
+      ],
+      "billingContext": "Confirm model and region availability; catalog inclusion is not a live availability guarantee."
+    },
+    {
+      "id": "fm_gpt_oss_20b",
+      "productId": "fm_gpt_oss_20b",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Plan token usage for a foundation-model API in the pricing inventory.",
+      "useCases": [
+        "Open-weight language tasks"
+      ],
+      "sourceIds": [
+        "foundation"
+      ],
+      "billingContext": "Confirm model and region availability; catalog inclusion is not a live availability guarantee."
+    },
+    {
+      "id": "fm_gpt_oss_120b",
+      "productId": "fm_gpt_oss_120b",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Plan token usage for a foundation-model API in the pricing inventory.",
+      "useCases": [
+        "Larger open-weight language tasks"
+      ],
+      "sourceIds": [
+        "foundation"
+      ],
+      "billingContext": "Confirm model and region availability; catalog inclusion is not a live availability guarantee."
+    },
+    {
+      "id": "fm_gemma_3_12b",
+      "productId": "fm_gemma_3_12b",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Plan token usage for a foundation-model API in the pricing inventory.",
+      "useCases": [
+        "Language-model inference"
+      ],
+      "sourceIds": [
+        "foundation"
+      ],
+      "billingContext": "Confirm model and region availability; catalog inclusion is not a live availability guarantee."
+    },
+    {
+      "id": "fm_gte_embeddings",
+      "productId": "fm_gte_embeddings",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Plan token usage for a foundation-model API in the pricing inventory.",
+      "useCases": [
+        "Text embeddings for retrieval"
+      ],
+      "sourceIds": [
+        "foundation"
+      ],
+      "billingContext": "Confirm model and region availability; catalog inclusion is not a live availability guarantee."
+    },
+    {
+      "id": "fm_bge_large",
+      "productId": "fm_bge_large",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Plan token usage for a foundation-model API in the pricing inventory.",
+      "useCases": [
+        "Embedding generation"
+      ],
+      "sourceIds": [
+        "foundation"
+      ],
+      "billingContext": "Confirm model and region availability; catalog inclusion is not a live availability guarantee."
+    },
+    {
+      "id": "fm_other",
+      "productId": "fm_other",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Plan token usage for a foundation-model API in the pricing inventory.",
+      "useCases": [
+        "A supported model outside the named inventory"
+      ],
+      "sourceIds": [
+        "foundation"
+      ],
+      "billingContext": "Confirm model and region availability; catalog inclusion is not a live availability guarantee."
+    },
+    {
+      "id": "ai_gateway_tables",
+      "productId": "ai_gateway_tables",
+      "aliases": [
+        "AI Gateway inference tables"
+      ],
+      "domainId": "governance",
+      "relatedDomainIds": [
+        "ai_ml"
+      ],
+      "summary": "Record model requests and responses for analysis and troubleshooting.",
+      "useCases": [
+        "Inference observability"
+      ],
+      "sourceIds": [
+        "gateway",
+        "glossary"
+      ],
+      "name": "Unity Gateway · Inference tables",
+      "billingContext": "This estimate covers the catalog's inference-table component, not every Unity Gateway service. Model calls, tools, and connected resources need their own usage estimates."
+    },
+    {
+      "id": "ai_gateway_tracking",
+      "productId": "ai_gateway_tracking",
+      "aliases": [
+        "AI Gateway usage tracking"
+      ],
+      "domainId": "governance",
+      "relatedDomainIds": [
+        "ai_ml"
+      ],
+      "summary": "Track AI requests and usage across governed services.",
+      "useCases": [
+        "AI usage attribution"
+      ],
+      "sourceIds": [
+        "gateway",
+        "glossary"
+      ],
+      "name": "Unity Gateway · Usage tracking",
+      "billingContext": "This estimate covers the catalog's usage-tracking component, not every Unity Gateway service. Model calls and other connected resources are separate."
+    },
+    {
+      "id": "external_models",
+      "productId": "external_models",
+      "aliases": [
+        "External models",
+        "AI Gateway",
+        "Unity Gateway"
+      ],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [
+        "governance"
+      ],
+      "summary": "Route requests to a model hosted by an external provider.",
+      "useCases": [
+        "Bring-your-own-provider inference"
+      ],
+      "sourceIds": [
+        "gateway",
+        "serving"
+      ],
+      "billingContext": "Provider token bills can be separate from Databricks usage; check both sides."
+    },
+    {
+      "id": "agent_framework",
+      "productId": "agent_framework",
+      "aliases": [
+        "Mosaic AI Agent Framework",
+        "Custom Agents"
+      ],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Build custom agents using the framework and serving integrations in the catalog.",
+      "useCases": [
+        "Custom retrieval agents",
+        "Tool-using AI applications"
+      ],
+      "sourceIds": [
+        "mlflow",
+        "serving",
+        "agent_runtime",
+        "agent_memory",
+        "agent_sandbox"
+      ],
+      "billingContext": "This entry models custom agents deployed through Model Serving. It does not represent Agent Runtime on Apps, Sandbox, or Lakebase-backed memory. Estimate the components used by your chosen deployment path."
+    },
+    {
+      "id": "agent_bricks",
+      "productId": "agent_bricks",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [
+        "apps"
+      ],
+      "summary": "Develop and deploy agents using Databricks agent platform services.",
+      "useCases": [
+        "Production agents",
+        "Agent memory and tools"
+      ],
+      "sourceIds": [
+        "agents",
+        "agent_runtime",
+        "agent_memory",
+        "agent_sandbox"
+      ],
+      "billingContext": "This entry adds the catalog's legacy serving, search, and training example composition only. It does not price current Agent Runtime on Apps, Sandbox, or Lakebase-backed memory. Plan those components separately and avoid duplicate retrieval usage."
+    },
+    {
+      "id": "agent_evaluation",
+      "productId": "agent_evaluation",
+      "aliases": [
+        "MLflow Evaluation"
+      ],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Measure agent response quality with evaluation runs and feedback.",
+      "useCases": [
+        "Regression evaluation",
+        "Judge-based quality checks"
+      ],
+      "sourceIds": [
+        "mlflow"
+      ],
+      "billingContext": "Judge model calls and the compute running evaluation can both incur usage."
+    },
+    {
+      "id": "vector_search_standard",
+      "productId": "vector_search_standard",
+      "aliases": [
+        "Vector Search",
+        "Vector Search Standard"
+      ],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Retrieve relevant records from a managed search index.",
+      "useCases": [
+        "Semantic search",
+        "Retrieval-augmented generation"
+      ],
+      "sourceIds": [
+        "search"
+      ],
+      "name": "AI Search · Standard",
+      "billingContext": "Index serving, retained data, and embedding generation are distinct planning considerations."
+    },
+    {
+      "id": "vector_search_storage",
+      "productId": "vector_search_storage",
+      "aliases": [
+        "Vector Search",
+        "Vector Search Storage-optimized"
+      ],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Retrieve relevant records from a managed search index.",
+      "useCases": [
+        "Semantic search",
+        "Retrieval-augmented generation"
+      ],
+      "sourceIds": [
+        "search"
+      ],
+      "name": "AI Search · Storage-optimized",
+      "billingContext": "Index serving, retained data, and embedding generation are distinct planning considerations."
+    },
+    {
+      "id": "ai_search_reranker",
+      "productId": "ai_search_reranker",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Reorder search results to improve retrieval relevance.",
+      "useCases": [
+        "Improve retrieval quality"
+      ],
+      "sourceIds": [
+        "search"
+      ],
+      "billingContext": "Count reranking requests alongside index and embedding usage."
+    },
+    {
+      "id": "feature_serving",
+      "productId": "feature_serving",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [
+        "apps"
+      ],
+      "summary": "Retrieve model features for low-latency inference.",
+      "useCases": [
+        "Online model features"
+      ],
+      "sourceIds": [
+        "serving",
+        "mlflow",
+        "billing"
+      ],
+      "billingContext": "This pricing entry reuses a serving SKU; do not add an overlapping serving estimate for the same usage."
+    },
+    {
+      "id": "online_tables",
+      "productId": "online_tables",
+      "aliases": [
+        "ONLINE_TABLES"
+      ],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [
+        "apps"
+      ],
+      "summary": "Recognize the legacy online-table usage entry for serving features.",
+      "useCases": [
+        "Interpret historical online-table usage"
+      ],
+      "sourceIds": [
+        "billing",
+        "lakebase"
+      ],
+      "billingContext": "This is the legacy catalog entry. Evaluate current Lakebase feature-serving paths separately."
+    },
+    {
+      "id": "ai_query",
+      "productId": "ai_query",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [
+        "engineering",
+        "analytics"
+      ],
+      "summary": "Call supported AI models from data transformations and SQL.",
+      "useCases": [
+        "Batch inference",
+        "Classify or summarize records"
+      ],
+      "sourceIds": [
+        "ai_functions"
+      ],
+      "billingContext": "Model usage can be additional to the compute executing the query."
+    },
+    {
+      "id": "ai_parse_document",
+      "productId": "ai_parse_document",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [
+        "ingestion"
+      ],
+      "summary": "Extract structured content and layout from documents.",
+      "useCases": [
+        "Document ingestion",
+        "Extract text and tables"
+      ],
+      "sourceIds": [
+        "ai_functions"
+      ],
+      "billingContext": "Document processing and subsequent query or storage usage are separate considerations."
+    },
+    {
+      "id": "shutterstock",
+      "productId": "shutterstock",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Recognize the Image AI processing usage listed by Azure Databricks.",
+      "useCases": [
+        "Image AI usage planning"
+      ],
+      "sourceIds": [
+        "azure_pricing"
+      ],
+      "billingContext": "A catalog billing row does not guarantee product or model availability in your workspace."
+    },
+    {
+      "id": "serving_launch_charge",
+      "productId": "serving_launch_charge",
+      "aliases": [],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [],
+      "summary": "Account for the catalog's serving endpoint launch event.",
+      "useCases": [
+        "Serving startup usage"
+      ],
+      "sourceIds": [
+        "billing",
+        "azure_pricing"
+      ],
+      "billingContext": "This is a billing component of serving, not a separate application service."
+    },
+    {
+      "id": "databricks_apps",
+      "productId": "databricks_apps",
+      "aliases": [],
+      "domainId": "apps",
+      "relatedDomainIds": [
+        "analytics",
+        "ai_ml"
+      ],
+      "summary": "Deploy secure applications that use governed Databricks services.",
+      "useCases": [
+        "Data entry tools",
+        "Interactive analytics and RAG apps"
+      ],
+      "sourceIds": [
+        "apps"
+      ],
+      "billingContext": "Running app capacity is billed; connected warehouses, databases, and models can add usage."
+    },
+    {
+      "id": "lakebase",
+      "productId": "lakebase",
+      "aliases": [
+        "Lakebase"
+      ],
+      "domainId": "apps",
+      "relatedDomainIds": [
+        "ai_ml"
+      ],
+      "summary": "Run managed Postgres for transactional applications alongside lakehouse data.",
+      "useCases": [
+        "Application database",
+        "Agent state and features"
+      ],
+      "sourceIds": [
+        "lakebase"
+      ],
+      "name": "Lakebase Postgres",
+      "billingContext": "Separate database compute from retained storage and connected service usage."
+    },
+    {
+      "id": "lakebase_pitr",
+      "productId": "lakebase_pitr",
+      "aliases": [
+        "Point-in-time recovery",
+        "PITR"
+      ],
+      "domainId": "apps",
+      "relatedDomainIds": [],
+      "summary": "Restore a database branch from retained point-in-time history.",
+      "useCases": [
+        "Recover from an unwanted change"
+      ],
+      "sourceIds": [
+        "lakebase"
+      ],
+      "billingContext": "Retained history is a storage consideration in addition to running database compute."
+    },
+    {
+      "id": "lakebase_snapshots",
+      "productId": "lakebase_snapshots",
+      "aliases": [],
+      "domainId": "apps",
+      "relatedDomainIds": [],
+      "summary": "Plan the retained database copy represented by this catalog entry.",
+      "useCases": [
+        "Database recovery planning"
+      ],
+      "sourceIds": [
+        "lakebase"
+      ],
+      "billingContext": "Check current backup semantics and retained storage; this row is a planning assumption."
+    },
+    {
+      "id": "lakebase_branches",
+      "productId": "lakebase_branches",
+      "aliases": [],
+      "domainId": "apps",
+      "relatedDomainIds": [],
+      "summary": "Create isolated database branches for development and testing.",
+      "useCases": [
+        "Preview environments",
+        "Safe database testing"
+      ],
+      "sourceIds": [
+        "lakebase"
+      ],
+      "billingContext": "A branch can add compute and changed-data storage; shared storage does not make every branch free."
+    },
+    {
+      "id": "predictive_optimization",
+      "productId": "predictive_optimization",
+      "aliases": [],
+      "domainId": "governance",
+      "relatedDomainIds": [
+        "engineering"
+      ],
+      "summary": "Automate maintenance of supported Unity Catalog managed tables.",
+      "useCases": [
+        "Optimize layout",
+        "Clean up data files and collect statistics"
+      ],
+      "sourceIds": [
+        "optimization"
+      ],
+      "billingContext": "Maintenance runs use billable serverless jobs compute."
+    },
+    {
+      "id": "data_quality",
+      "productId": "data_quality",
+      "aliases": [
+        "Lakehouse Monitoring"
+      ],
+      "domainId": "governance",
+      "relatedDomainIds": [],
+      "summary": "Monitor table health and investigate data quality changes.",
+      "useCases": [
+        "Freshness and quality monitoring"
+      ],
+      "sourceIds": [
+        "quality"
+      ],
+      "name": "Data quality monitoring"
+    },
+    {
+      "id": "data_classification",
+      "productId": "data_classification",
+      "aliases": [],
+      "domainId": "governance",
+      "relatedDomainIds": [],
+      "summary": "Discover and classify sensitive data for governance workflows.",
+      "useCases": [
+        "Identify sensitive columns"
+      ],
+      "sourceIds": [
+        "classification"
+      ]
+    },
+    {
+      "id": "managed_storage",
+      "productId": "managed_storage",
+      "aliases": [],
+      "domainId": "platform",
+      "relatedDomainIds": [
+        "governance"
+      ],
+      "summary": "Plan storage managed through the platform's table and volume lifecycle.",
+      "useCases": [
+        "Managed tables and volumes"
+      ],
+      "sourceIds": [
+        "unity",
+        "delta"
+      ],
+      "billingContext": "Governance and storage ownership are different concepts; use the storage entry matching your workspace setup."
+    },
+    {
+      "id": "object_storage",
+      "productId": "object_storage",
+      "aliases": [
+        "S3",
+        "ADLS",
+        "GCS"
+      ],
+      "domainId": "platform",
+      "relatedDomainIds": [],
+      "summary": "Retain lakehouse files in cloud object storage.",
+      "useCases": [
+        "External data locations",
+        "Data retention"
+      ],
+      "sourceIds": [
+        "delta",
+        "unity"
+      ],
+      "billingContext": "Cloud storage, requests, and transfer may be billed by the cloud provider."
+    },
+    {
+      "id": "internet_egress",
+      "productId": "internet_egress",
+      "aliases": [],
+      "domainId": "platform",
+      "relatedDomainIds": [],
+      "summary": "Plan data transferred from serverless resources across network boundaries.",
+      "useCases": [
+        "External API access",
+        "Cross-region data delivery"
+      ],
+      "sourceIds": [
+        "networking",
+        "network_cost"
+      ],
+      "billingContext": "Use the actual traffic path and payer; compute inclusion does not remove every transfer charge."
+    },
+    {
+      "id": "private_link",
+      "productId": "private_link",
+      "aliases": [],
+      "domainId": "platform",
+      "relatedDomainIds": [
+        "governance"
+      ],
+      "summary": "Connect supported serverless workloads privately to customer resources.",
+      "useCases": [
+        "Private access to data services"
+      ],
+      "sourceIds": [
+        "networking",
+        "network_cost"
+      ],
+      "billingContext": "Endpoint time and processed data can contribute; cloud, region, and preview requirements differ."
+    },
+    {
+      "id": "nat_gateway",
+      "productId": "nat_gateway",
+      "aliases": [],
+      "domainId": "platform",
+      "relatedDomainIds": [],
+      "summary": "Recognize NAT as a network architecture and potential cloud cost.",
+      "useCases": [
+        "Outbound connectivity planning"
+      ],
+      "sourceIds": [
+        "network_cost"
+      ],
+      "billingContext": "Customer-cloud NAT costs are not automatically a Databricks SKU. The catalog's missing rate is not evidence of no cost."
+    },
+    {
+      "id": "clean_rooms",
+      "productId": "clean_rooms",
+      "aliases": [],
+      "domainId": "sharing",
+      "relatedDomainIds": [
+        "governance"
+      ],
+      "summary": "Collaborate on sensitive data under controlled execution and sharing rules.",
+      "useCases": [
+        "Partner analytics",
+        "Privacy-preserving collaboration"
+      ],
+      "sourceIds": [
+        "clean_rooms",
+        "sharing"
+      ],
+      "billingContext": "Review collaborator and execution usage rather than assuming collaboration is free."
+    },
+    {
+      "id": "delta_sharing",
+      "productId": "delta_sharing",
+      "aliases": [
+        "Delta Sharing"
+      ],
+      "domainId": "sharing",
+      "relatedDomainIds": [
+        "governance"
+      ],
+      "summary": "Share data and AI assets with recipients across organizational boundaries.",
+      "useCases": [
+        "Partner data exchange",
+        "Cross-platform data access"
+      ],
+      "sourceIds": [
+        "opensharing",
+        "sharing_alias"
+      ],
+      "name": "OpenSharing",
+      "billingContext": "This unpriced inventory placeholder is not a complete OpenSharing estimate. Compute, storage, transfer, and source-system costs depend on the sharing path and who pays."
+    },
+    {
+      "id": "marketplace",
+      "productId": "marketplace",
+      "aliases": [],
+      "domainId": "sharing",
+      "relatedDomainIds": [
+        "apps"
+      ],
+      "summary": "Discover and distribute partner data, apps, and AI capabilities.",
+      "useCases": [
+        "Find external datasets",
+        "Distribute governed data products"
+      ],
+      "sourceIds": [
+        "marketplace"
+      ],
+      "billingContext": "Listing terms and services used to consume a product can introduce separate charges."
+    },
+    {
+      "id": "free_edition",
+      "productId": "free_edition",
+      "aliases": [
+        "Community Edition"
+      ],
+      "domainId": "platform",
+      "relatedDomainIds": [],
+      "summary": "Explore Databricks in a quota-limited environment for learning and experimentation.",
+      "useCases": [
+        "Hands-on learning",
+        "Personal prototypes"
+      ],
+      "sourceIds": [
+        "free"
+      ],
+      "billingContext": "Free Edition has feature and usage limits. It is not a zero-cost model for an unrestricted production deployment."
+    },
+    {
+      "id": "data_processed",
+      "productId": "data_processed",
+      "aliases": [],
+      "domainId": "platform",
+      "relatedDomainIds": [],
+      "summary": "Identify the network data-processing component represented in the catalog.",
+      "useCases": [
+        "Reconcile processed-data usage"
+      ],
+      "sourceIds": [
+        "network_cost",
+        "billing"
+      ],
+      "billingContext": "This is distinct from internet egress; match cloud and region coverage before estimating."
+    },
+    {
+      "id": "compliance_addon",
+      "productId": "compliance_addon",
+      "aliases": [],
+      "domainId": "governance",
+      "relatedDomainIds": [],
+      "summary": "Recognize enhanced security and compliance as an account or portfolio consideration.",
+      "useCases": [
+        "Compliance planning"
+      ],
+      "sourceIds": [
+        "billing",
+        "pricing"
+      ],
+      "billingContext": "Cayfore already applies portfolio add-ons. Avoid a second line for the same charge."
+    },
+    {
+      "id": "unity_catalog",
+      "name": "Unity Catalog",
+      "aliases": [
+        "UC"
+      ],
+      "domainId": "governance",
+      "relatedDomainIds": [
+        "sharing",
+        "ai_ml"
+      ],
+      "summary": "Govern data and AI assets with permissions, discovery, lineage, and auditing.",
+      "useCases": [
+        "Central access control",
+        "Discover and trace trusted assets"
+      ],
+      "billingContext": "This is a governance foundation, not a universal zero-cost promise. Storage, monitoring, maintenance, and the workloads it governs can incur charges.",
+      "sourceIds": [
+        "unity"
+      ]
+    },
+    {
+      "id": "delta_lake",
+      "name": "Delta Lake",
+      "aliases": [
+        "Delta tables"
+      ],
+      "domainId": "platform",
+      "relatedDomainIds": [
+        "engineering",
+        "ingestion"
+      ],
+      "summary": "Use an open transactional table format over data files.",
+      "useCases": [
+        "Reliable lakehouse tables",
+        "Batch and streaming data"
+      ],
+      "billingContext": "The table format is not a second compute meter. Budget for stored files and the compute reading or writing them.",
+      "sourceIds": [
+        "delta"
+      ]
+    },
+    {
+      "id": "mlflow",
+      "name": "MLflow",
+      "aliases": [
+        "MLflow 3"
+      ],
+      "domainId": "ai_ml",
+      "relatedDomainIds": [
+        "governance"
+      ],
+      "summary": "Track experiments and models, and trace or evaluate AI applications.",
+      "useCases": [
+        "Experiment tracking",
+        "Model registry and agent evaluation"
+      ],
+      "billingContext": "This lifecycle tool is distinct from deployed serving capacity. Training, inference, evaluation, and retained data may create usage.",
+      "sourceIds": [
+        "mlflow"
+      ]
+    },
+    {
+      "id": "lakeflow_jobs",
+      "name": "Lakeflow Jobs · Orchestration",
+      "aliases": [
+        "Workflows",
+        "Jobs orchestration"
+      ],
+      "domainId": "engineering",
+      "relatedDomainIds": [
+        "ai_ml",
+        "ingestion"
+      ],
+      "summary": "Coordinate tasks, dependencies, schedules, and repeatable workflows.",
+      "useCases": [
+        "Schedule notebooks and pipelines",
+        "Coordinate ML workflows"
+      ],
+      "billingContext": "Estimate the underlying task compute once. This learning node does not add another charge for the same jobs execution.",
+      "sourceIds": [
+        "jobs"
+      ]
+    },
+    {
+      "id": "notebooks",
+      "name": "Databricks notebooks",
+      "aliases": [],
+      "domainId": "platform",
+      "relatedDomainIds": [
+        "engineering",
+        "ai_ml",
+        "analytics"
+      ],
+      "summary": "Write, collaborate on, and visualize code and data in one workspace.",
+      "useCases": [
+        "Exploratory analysis",
+        "Collaborative model development"
+      ],
+      "billingContext": "The notebook is an authoring interface. Its connected classic or serverless compute and invoked services drive usage.",
+      "sourceIds": [
+        "notebooks",
+        "compute"
+      ]
+    },
+    {
+      "id": "photon",
+      "name": "Photon",
+      "aliases": [],
+      "domainId": "platform",
+      "relatedDomainIds": [
+        "engineering",
+        "analytics"
+      ],
+      "summary": "Accelerate supported SQL and DataFrame operations with a vectorized query engine.",
+      "useCases": [
+        "ETL query execution",
+        "SQL analytics"
+      ],
+      "billingContext": "Photon can change the compute's DBU consumption. Model it within that workload rather than as a second standalone service.",
+      "sourceIds": [
+        "photon"
+      ]
+    },
+    {
+      "id": "auto_loader",
+      "name": "Auto Loader",
+      "aliases": [
+        "cloudFiles"
+      ],
+      "domainId": "ingestion",
+      "relatedDomainIds": [
+        "engineering"
+      ],
+      "summary": "Discover and incrementally process arriving cloud-storage files.",
+      "useCases": [
+        "Incremental file ingestion",
+        "Schema-aware data loading"
+      ],
+      "billingContext": "Plan the pipeline or job compute plus storage and file-discovery activity; this node is not an additional duplicate pipeline.",
+      "sourceIds": [
+        "auto_loader"
+      ]
+    },
+    {
+      "id": "compute",
+      "name": "Compute models",
+      "aliases": [
+        "Classic compute",
+        "Serverless compute"
+      ],
+      "domainId": "platform",
+      "relatedDomainIds": [
+        "engineering",
+        "analytics",
+        "ai_ml"
+      ],
+      "summary": "Choose classic, serverless, or SQL warehouse resources for a workload.",
+      "useCases": [
+        "Select execution infrastructure",
+        "Compare cost ownership"
+      ],
+      "billingContext": "Classic resources can carry a separate cloud VM bill. Serverless shifts infrastructure management, while storage, networking, and connected services can remain separate.",
+      "sourceIds": [
+        "compute"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "from": "lakeflow_connect",
+      "to": "dlt_serverless",
+      "label": "Managed ingestion runs on serverless Lakeflow pipelines",
+      "sourceIds": [
+        "connect"
+      ]
+    },
+    {
+      "from": "zerobus",
+      "to": "delta_lake",
+      "label": "Pushes events into Delta tables",
+      "sourceIds": [
+        "zerobus"
+      ]
+    },
+    {
+      "from": "auto_loader",
+      "to": "dlt_serverless",
+      "label": "Can load arriving files into a pipeline",
+      "sourceIds": [
+        "auto_loader"
+      ]
+    },
+    {
+      "from": "dlt_serverless",
+      "to": "delta_lake",
+      "label": "Produces streaming tables and materialized results",
+      "sourceIds": [
+        "pipelines",
+        "delta"
+      ]
+    },
+    {
+      "from": "lakeflow_jobs",
+      "to": "jobs_classic",
+      "label": "Can execute tasks on classic jobs compute",
+      "sourceIds": [
+        "jobs",
+        "compute"
+      ]
+    },
+    {
+      "from": "lakeflow_jobs",
+      "to": "jobs_serverless",
+      "label": "Can execute tasks on serverless jobs compute",
+      "sourceIds": [
+        "jobs",
+        "compute"
+      ]
+    },
+    {
+      "from": "lakeflow_jobs",
+      "to": "dlt_serverless",
+      "label": "Can orchestrate a pipeline task",
+      "sourceIds": [
+        "jobs"
+      ]
+    },
+    {
+      "from": "lakeflow_jobs",
+      "to": "notebooks",
+      "label": "Can run notebook tasks",
+      "sourceIds": [
+        "jobs"
+      ]
+    },
+    {
+      "from": "delta_lake",
+      "to": "sql_serverless",
+      "label": "Tables can be queried by a SQL warehouse",
+      "sourceIds": [
+        "delta",
+        "sql"
+      ]
+    },
+    {
+      "from": "sql_serverless",
+      "to": "ai_bi_dashboards",
+      "label": "Provides query execution for dashboards",
+      "sourceIds": [
+        "ai_bi"
+      ]
+    },
+    {
+      "from": "sql_serverless",
+      "to": "genie",
+      "label": "Supports conversational data analysis",
+      "sourceIds": [
+        "ai_bi"
+      ]
+    },
+    {
+      "from": "ai_bi_dashboards",
+      "to": "databricks_one",
+      "label": "Can be consumed in Genie One",
+      "sourceIds": [
+        "genie_one"
+      ]
+    },
+    {
+      "from": "genie",
+      "to": "databricks_one",
+      "label": "Can be accessed in Genie One",
+      "sourceIds": [
+        "genie_one",
+        "ai_bi"
+      ]
+    },
+    {
+      "from": "databricks_apps",
+      "to": "databricks_one",
+      "label": "Apps can be accessed in Genie One",
+      "sourceIds": [
+        "genie_one"
+      ]
+    },
+    {
+      "from": "notebooks",
+      "to": "all_purpose_classic",
+      "label": "Can connect to classic interactive compute",
+      "sourceIds": [
+        "notebooks",
+        "compute"
+      ]
+    },
+    {
+      "from": "notebooks",
+      "to": "all_purpose_serverless",
+      "label": "Can use serverless notebook compute",
+      "sourceIds": [
+        "notebooks",
+        "compute"
+      ]
+    },
+    {
+      "from": "photon",
+      "to": "sql_serverless",
+      "label": "Accelerates supported SQL execution",
+      "sourceIds": [
+        "photon"
+      ]
+    },
+    {
+      "from": "model_training",
+      "to": "mlflow",
+      "label": "Experiments and models can be tracked with MLflow",
+      "sourceIds": [
+        "mlflow"
+      ]
+    },
+    {
+      "from": "mlflow",
+      "to": "model_serving_cpu",
+      "label": "Registered models can be deployed to serving",
+      "sourceIds": [
+        "mlflow",
+        "serving"
+      ]
+    },
+    {
+      "from": "delta_lake",
+      "to": "vector_search_standard",
+      "label": "Source tables can sync into an AI Search index",
+      "sourceIds": [
+        "search"
+      ]
+    },
+    {
+      "from": "vector_search_standard",
+      "to": "agent_framework",
+      "label": "Retrieves context for a custom agent",
+      "sourceIds": [
+        "search",
+        "serving"
+      ]
+    },
+    {
+      "from": "fm_gte_embeddings",
+      "to": "vector_search_standard",
+      "label": "Can provide embeddings for an index",
+      "sourceIds": [
+        "search",
+        "foundation"
+      ]
+    },
+    {
+      "from": "agent_framework",
+      "to": "model_serving_cpu",
+      "label": "Custom agents can deploy through Model Serving",
+      "sourceIds": [
+        "serving"
+      ]
+    },
+    {
+      "from": "agent_bricks",
+      "to": "databricks_apps",
+      "label": "Agent Runtime deploys agents on Databricks Apps",
+      "sourceIds": [
+        "agent_runtime"
+      ]
+    },
+    {
+      "from": "agent_bricks",
+      "to": "lakebase",
+      "label": "Can use Lakebase-backed agent memory",
+      "sourceIds": [
+        "agents"
+      ]
+    },
+    {
+      "from": "agent_bricks",
+      "to": "mlflow",
+      "label": "Uses tracing and evaluation for quality",
+      "sourceIds": [
+        "agents"
+      ]
+    },
+    {
+      "from": "agent_bricks",
+      "to": "external_models",
+      "label": "Can connect to models through Unity Gateway",
+      "sourceIds": [
+        "agents",
+        "gateway"
+      ]
+    },
+    {
+      "from": "model_serving_cpu",
+      "to": "databricks_apps",
+      "label": "Inference APIs can power an application",
+      "sourceIds": [
+        "apps",
+        "serving"
+      ]
+    },
+    {
+      "from": "lakebase",
+      "to": "databricks_apps",
+      "label": "Postgres can back an application",
+      "sourceIds": [
+        "lakebase"
+      ]
+    },
+    {
+      "from": "unity_catalog",
+      "to": "delta_lake",
+      "label": "Governs registered data assets",
+      "sourceIds": [
+        "unity"
+      ]
+    },
+    {
+      "from": "unity_catalog",
+      "to": "mlflow",
+      "label": "Governs registered models and lifecycle assets",
+      "sourceIds": [
+        "mlflow"
+      ]
+    },
+    {
+      "from": "unity_catalog",
+      "to": "data_classification",
+      "label": "Supports sensitive-data classification",
+      "sourceIds": [
+        "unity"
+      ]
+    },
+    {
+      "from": "unity_catalog",
+      "to": "data_quality",
+      "label": "Supports table quality monitoring",
+      "sourceIds": [
+        "unity"
+      ]
+    },
+    {
+      "from": "unity_catalog",
+      "to": "predictive_optimization",
+      "label": "Managed tables can use automated maintenance",
+      "sourceIds": [
+        "optimization"
+      ]
+    },
+    {
+      "from": "unity_catalog",
+      "to": "ai_gateway_tracking",
+      "label": "Extends governance into AI traffic",
+      "sourceIds": [
+        "gateway"
+      ]
+    },
+    {
+      "from": "unity_catalog",
+      "to": "delta_sharing",
+      "label": "Governs assets shared through the built-in service",
+      "sourceIds": [
+        "opensharing"
+      ]
+    },
+    {
+      "from": "delta_sharing",
+      "to": "marketplace",
+      "label": "Provides the data exchange foundation",
+      "sourceIds": [
+        "marketplace"
+      ]
+    },
+    {
+      "from": "delta_sharing",
+      "to": "clean_rooms",
+      "label": "Provides a foundation for controlled collaboration",
+      "sourceIds": [
+        "opensharing",
+        "clean_rooms"
+      ]
+    }
+  ],
+  "journeys": [
+    {
+      "id": "business_analytics",
+      "name": "Source to business dashboard",
+      "summary": "One possible analytics pattern: ingest operational data, transform it, query it, and publish insights. Connect already uses pipelines internally; model your actual execution without counting it twice.",
+      "steps": [
+        "lakeflow_connect",
+        "dlt_serverless",
+        "delta_lake",
+        "sql_serverless",
+        "ai_bi_dashboards",
+        "databricks_one"
+      ],
+      "sourceIds": [
+        "connect",
+        "pipelines",
+        "ai_bi",
+        "genie_one"
+      ]
+    },
+    {
+      "id": "retrieval_agent",
+      "name": "Documents to a retrieval app",
+      "summary": "An illustrative custom-agent architecture: prepare documents, retrieve relevant context, serve the agent, and expose an app. Choose model, embedding, and evaluation services for your own requirements.",
+      "steps": [
+        "ai_parse_document",
+        "delta_lake",
+        "vector_search_standard",
+        "agent_framework",
+        "model_serving_cpu",
+        "databricks_apps"
+      ],
+      "sourceIds": [
+        "ai_functions",
+        "search",
+        "serving",
+        "apps"
+      ]
+    },
+    {
+      "id": "governed_sharing",
+      "name": "Trusted data to a marketplace",
+      "summary": "A provider can govern assets with Unity Catalog, share them with OpenSharing, and distribute them through Marketplace. These are collaboration roles, not a sequence of mandatory additional charges.",
+      "steps": [
+        "unity_catalog",
+        "delta_sharing",
+        "marketplace"
+      ],
+      "sourceIds": [
+        "unity",
+        "opensharing",
+        "marketplace"
+      ]
+    },
+    {
+      "id": "operational_app",
+      "name": "Postgres to an operational app",
+      "summary": "Use Lakebase for transactional state and Databricks Apps for the user interface. Genie One can provide a business-user entry point; external apps and other entry points are also possible.",
+      "steps": [
+        "lakebase",
+        "databricks_apps",
+        "databricks_one"
+      ],
+      "sourceIds": [
+        "lakebase",
+        "apps",
+        "genie_one"
+      ]
+    }
+  ]
+}

@@ -70,6 +70,7 @@ export interface SimpleSession {
   toggleTheme: () => void;
   loadForecastFile: (file: File) => Promise<void>;
   editPortfolio: (portfolio: Portfolio) => void;
+  addProduct: (id: string) => boolean;
   selectWorkload: (id: string | null) => void;
   removeWorkload: (id: string) => void;
   undoRemove: () => void;

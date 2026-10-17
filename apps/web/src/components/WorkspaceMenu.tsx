@@ -3,6 +3,7 @@ import {
   ChartNoAxesCombined,
   ChevronDown,
   Menu,
+  Network,
   RotateCcw,
   SlidersHorizontal,
   Sparkles,
@@ -36,6 +37,13 @@ export const headerNavigation = [
     icon: Sparkles,
   },
   {
+    id: "products",
+    label: "Product map",
+    menuLabel: "Product map",
+    description: "Explore Databricks products, services, and the domains they connect.",
+    icon: Network,
+  },
+  {
     id: "how",
     label: "How it works",
     menuLabel: "How it works",
@@ -46,7 +54,15 @@ export const headerNavigation = [
 
 export type NavigationActions = Record<(typeof headerNavigation)[number]["id"], () => void>;
 
-export function WorkspaceMenu({ actions, onNew }: { actions: NavigationActions; onNew: () => void }) {
+export function WorkspaceMenu({
+  actions,
+  onNew,
+  productMapOpen = false,
+}: {
+  actions: NavigationActions;
+  onNew: () => void;
+  productMapOpen?: boolean;
+}) {
   const menuAction = useRef<(() => void) | null>(null);
   return (
     <DropdownMenu modal={false}>
@@ -86,6 +102,7 @@ export function WorkspaceMenu({ actions, onNew }: { actions: NavigationActions; 
             key={id}
             className="items-start gap-3 rounded-xl px-3 py-3"
             aria-haspopup={id === "advanced" ? "dialog" : undefined}
+            aria-current={id === "products" && productMapOpen ? "page" : undefined}
             onSelect={() => {
               menuAction.current = actions[id];
             }}

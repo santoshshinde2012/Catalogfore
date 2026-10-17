@@ -11,6 +11,7 @@
   "description": "Versioned Databricks product catalog for Cayfore. Schema, citations, and confidence. Not a price feed from Databricks.",
   "exports": {
     ".": "./src/index.ts",
+    "./map": "./src/map.ts",
     "./schema.json": "./product-catalog.schema.json"
   },
   "scripts": {

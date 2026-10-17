@@ -27,6 +27,10 @@ A usage CSV opens a review of its baseline month, prices, and gaps before replac
 
 Set an annual budget, save named scenarios, and plan dated launches or retirements. Charts show observed spend, future estimates, budget variance, scenario comparisons, and monthly cost components. Advanced opens the per-workload editor. Growth and pricing controls preserve those workloads.
 
+Open **Product map** to explore eight Databricks domains, all 70 catalog entries, and eight platform concepts. Search current names or older aliases, follow example architectures, and inspect roles, relationships, billing context, and official sources. Supported products can be added to the current forecast with Undo. [Product map research and maintenance](docs/PRODUCT-MAP.md) explains the taxonomy and pricing boundaries.
+
+![Databricks products and services mapped across eight learning domains](docs/screenshots/product-map-light.png)
+
 ![Imported spend and forecast against a budget, using the bundled historical demonstration CSV](docs/screenshots/usage-forecast.png)
 
 CSV, JSON, PDF, and shared plans use the same forecast result. Unpriced charges are identified as unresolved; the total is a known subtotal when costs are missing. The range represents planning assumptions, not a calibrated probability interval.
@@ -57,7 +61,7 @@ npm run test:mcp  # stdio MCP smoke test
 npm run test:e2e  # Playwright, desktop and mobile, including axe
 ```
 
-The core JavaScript is about 287 KB gzipped, including the separately cached price catalog. Charts, PDF, and Excel export load in separate chunks. CSS is about 10 KB gzipped, before the font files.
+The core JavaScript is about 290 KB gzipped, including the separately cached price catalog. Charts, the product map and its metadata, PDF, and Excel export load in separate chunks. CSS is about 11 KB gzipped, before the font files.
 
 ## Repository
 
@@ -73,6 +77,7 @@ The core JavaScript is about 287 KB gzipped, including the separately cached pri
 | `docs/DATA-PIPELINE.md`      | Where those prices come from, and how the weekly job runs               |
 | `docs/CATALOG.md`            | Product catalog schema, citations, and the watch                        |
 | `docs/PRODUCTS.md`           | Product inventory and which rows have a list rate                       |
+| `docs/PRODUCT-MAP.md`        | Learning domains, service relationships, aliases, and source evidence   |
 | `docs/COVERAGE.md`           | Which products and Azure cells have a cited rate                        |
 | `docs/RESEARCH.md`           | Source for every rate                                                   |
 | `docs/NAMING.md`             | Why the product is called Cayfore                                       |

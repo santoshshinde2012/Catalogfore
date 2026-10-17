@@ -33,8 +33,14 @@ export function useSimpleForecast(): SimpleSession {
   const projection = useMemo(() => projectPortfolio(portfolio), [portfolio]);
   const ideas = useMemo(() => recommendations(portfolio).slice(0, 3), [portfolio]);
   useEffect(() => {
-    const next = `#plan=${encodePortfolio(portfolio)}`;
-    if (window.location.hash !== next) history.replaceState(null, "", next);
+    function synchronizeShareUrl() {
+      const next = `#plan=${encodePortfolio(portfolio)}`;
+      if (window.location.hash !== next) history.replaceState(history.state, "", next);
+    }
+    synchronizeShareUrl();
+    // View history changes the query string; the active session remains the source of truth for the plan.
+    window.addEventListener("popstate", synchronizeShareUrl);
+    return () => window.removeEventListener("popstate", synchronizeShareUrl);
   }, [portfolio]);
   useEffect(() => {
     const root = document.documentElement;
