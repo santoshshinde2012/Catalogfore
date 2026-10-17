@@ -1,4 +1,12 @@
-import { AZURE_DATA_PROCESSED_USD_PER_GB } from "../rates/published.js";
+import {
+  AZURE_COMPONENT_SCOPE,
+  azureReferenceComponent,
+  componentMatchesPlacement,
+  FIXED_CONSUMPTION,
+  PARSE_DBU_PER_PAGE,
+  SERVING_DBU_PER_LAUNCH,
+} from "../rates/components.js";
+import { skuCatalog } from "../catalog.js";
 import { formulaFor } from "../products.js";
 import type { Workload } from "../types.js";
 import {
@@ -17,29 +25,15 @@ import {
 import { zerobusRows } from "./ingestion.js";
 import { genieConditions } from "./promotions.js";
 
-const fixedConversions: Record<string, { dbu: number; unit: string; basis?: number }> = {
-  ai_gateway_tables: { dbu: 7.143, unit: "GB" },
-  ai_gateway_tracking: { dbu: 1.429, unit: "GB" },
-  ai_search_reranker: { dbu: 28.571, unit: "request", basis: 1000 },
-  shutterstock: { dbu: 0.857, unit: "image" },
-};
-
 export function meteredRows(context: RowContext, workload: Extract<Workload, { kind: "metered" }>) {
   const formula = formulaFor(workload);
   if (formula === "zerobus_gb") return zerobusRows(context);
-  if (formula === "azure_data_processed") {
-    azureOnly(context, "networking", "Data Processed", "GB", AZURE_DATA_PROCESSED_USD_PER_GB);
+  const reference = azureReferenceComponent(context.product.id);
+  if (reference) {
+    azureOnly(context, reference);
     return;
   }
-  if (context.product.id === "jobs_light") {
-    azureOnly(context, "dbu", "Jobs Light usage", "DBU", 0.22);
-    return;
-  }
-  if (context.product.id === "clean_rooms") {
-    azureOnly(context, "collaborator", "Clean Rooms collaborator", "collaborator-day", 50);
-    return;
-  }
-  const fixed = fixedConversions[context.product.id];
+  const fixed = FIXED_CONSUMPTION[context.product.id];
   if (fixed) {
     converted(
       context,
@@ -57,7 +51,7 @@ export function meteredRows(context: RowContext, workload: Extract<Workload, { k
     return;
   }
   if (formula === "ai_parse") {
-    for (const [variant, dbu] of Object.entries({ simple: 12.5, caption: 22.5, medium: 62.5, high: 87.5 })) {
+    for (const [variant, dbu] of Object.entries(PARSE_DBU_PER_PAGE)) {
       converted(
         context,
         workload.sku,
@@ -89,9 +83,9 @@ export function meteredRows(context: RowContext, workload: Extract<Workload, { k
         confidence: "assumption",
         status: "approximate",
         sources: [source(context.product.source.title, context.product.source.url, "consumption")],
-        formula: "Launches × 1 DBU/launch × USD/DBU",
+        formula: `Launches × ${SERVING_DBU_PER_LAUNCH} DBU/launch × USD/DBU`,
       },
-      1,
+      SERVING_DBU_PER_LAUNCH,
     );
     return;
   }
@@ -141,32 +135,45 @@ export function meteredRows(context: RowContext, workload: Extract<Workload, { k
     });
 }
 
-function azureOnly(context: RowContext, componentId: string, componentName: string, unit: string, rate: number) {
-  for (const cloud of CLOUDS)
-    for (const tier of TIERS)
-      monetary(context, {
-        componentId,
-        componentName,
-        cloud,
-        tier,
-        unit,
-        region: cloud === "azure" ? "eastus" : null,
-        regionLabel: cloud === "azure" ? "East US" : null,
-        sourceRegion: cloud === "azure" ? "eastus" : null,
-        unitPriceUsd: cloud === "azure" ? rate : null,
-        dbuPerUnit: unit === "DBU" ? 1 : null,
-        status: cloud === "azure" ? "priced" : "unpriced",
-        confidence: cloud === "azure" ? "measured" : "unpublished",
-        formula: `${unit} quantity × USD/${unit}`,
-        notes: ["Only the Azure East US observation is stored; no rate is inferred for other clouds or regions."],
-        sources: [
-          source(
-            context.product.source.title,
-            context.product.source.url,
-            "price",
-            undefined,
-            cloud === "azure" ? context.product.source.fetchedOn : null,
-          ),
-        ],
-      });
+function azureOnly(context: RowContext, reference: NonNullable<ReturnType<typeof azureReferenceComponent>>) {
+  const { componentId, name: componentName, unit, usdPerUnit: rate } = reference;
+  for (const cloud of CLOUDS) {
+    const regions = cloud === "azure" ? skuCatalog.regions.filter((region) => region.cloud === cloud) : [null];
+    for (const region of regions)
+      for (const tier of TIERS) {
+        const exact = region !== null && componentMatchesPlacement(cloud, region.id);
+        monetary(context, {
+          componentId,
+          componentName,
+          cloud,
+          tier,
+          unit,
+          region: region?.id ?? null,
+          regionLabel: region?.label ?? null,
+          sourceRegion: cloud === "azure" ? AZURE_COMPONENT_SCOPE.region : null,
+          unitPriceUsd: exact ? rate : null,
+          dbuPerUnit: unit === "DBU" ? 1 : null,
+          status: exact ? "priced" : "unpriced",
+          confidence: exact ? "measured" : "unpublished",
+          formula: `${unit} quantity × USD/${unit}`,
+          notes: [
+            "Only the Azure East US observation is stored; no rate is inferred for other clouds or regions.",
+            ...(!exact
+              ? [
+                  `This ${region?.label ?? cloud.toUpperCase()} placement has no matching public unit quote; the East US reference is not applied.`,
+                ]
+              : []),
+          ],
+          sources: [
+            source(
+              "Azure Retail Prices API; exact East US component observation",
+              AZURE_COMPONENT_SCOPE.sourceUrl,
+              "price",
+              `East US; meterName ${reference.meterName}; USD/${unit}; commercial Consumption; Enterprise aliases Premium`,
+              cloud === "azure" ? AZURE_COMPONENT_SCOPE.observedOn : null,
+            ),
+          ],
+        });
+      }
+  }
 }

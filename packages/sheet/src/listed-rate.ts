@@ -1,13 +1,12 @@
 import { productCatalog } from "@cayfore/catalog";
 import {
-  referenceRegion,
-  firstPartyDbuRate,
-  firstPartyBaseDbuRate,
-  firstPartyDbuConflict,
+  bundledPricingCatalog,
+  resolveDbuRate,
+  azureReferenceComponent,
+  componentMatchesPlacement,
+  AZURE_COMPONENT_SCOPE,
   regionInfo,
-  regionalSkuRate,
   skuCatalog,
-  skuRate,
   type Cloud,
   type LineItem,
   type PortfolioProjection,
@@ -30,7 +29,6 @@ export interface ListedRateDetails {
 const scores = new Map(
   confidenceFile.cells.map((cell) => [`${cell.cloud}|${cell.region}|${cell.tier}|${cell.sku}`, cell]),
 );
-const SECONDARY_SOURCE = "https://www.flexera.com/blog/finops/databricks-pricing-guide/";
 
 /** Describe the DBU price actually used by this workload, before portfolio discounts. */
 export function listedRateDetails(result: PortfolioProjection, line: LineItem): ListedRateDetails {
@@ -53,13 +51,21 @@ export function listedRateDetails(result: PortfolioProjection, line: LineItem): 
   if (!workload) return unavailable("Workload context is missing; a public USD/DBU rate cannot be resolved.");
   const supplied =
     workload.kind === "metered" && (workload.rateByCloud || workload.rateByPlacement || workload.fixedUsdByCloud);
-  const conflict = !supplied && firstPartyDbuConflict(cloud, region.id, tier, line.sku as SkuId);
+  const resolved =
+    supplied || result.estimate.catalogVersion !== skuCatalog.version
+      ? null
+      : resolveDbuRate(
+          bundledPricingCatalog,
+          { cloud, region: region.id, tier, factor: region.factor },
+          line.sku as SkuId,
+        );
+  const conflict = resolved?.conflict;
   if (conflict)
     return {
       ...details,
-      source: conflict.sources.map((source) => source.url).join("; "),
+      source: resolved!.sources.map((source) => source.url).join("; "),
       band: "conflict",
-      basis: `Conflicting first-party prices (${conflict.values.map((value) => `$${value}/DBU`).join(" versus ")}); the qualified public rate is withheld. ${conflict.sources.map((source) => source.locator).join("; ")}`,
+      basis: resolved!.basis,
     };
   if (line.priceStatus === "unpriced" || workload.priceStatus === "unpriced")
     return unavailable("Unpriced usage; no resolved USD/DBU rate is asserted.");
@@ -82,19 +88,26 @@ export function listedRateDetails(result: PortfolioProjection, line: LineItem): 
         : "Rate applies to non-DBU units for this cloud and tier; not a USD/DBU rate.",
       "not_applicable",
     );
+  if (result.estimate.catalogVersion !== skuCatalog.version)
+    return unavailable(
+      "The forecast's price-book version differs from the installed catalog; no rate is reconstructed.",
+    );
   if (workload.kind === "metered" && workload.rateByCloud) {
     const rate = workload.rateByCloud[cloud];
     const product = productCatalog.products.find((item) => item.id === workload.productId);
     if (rate == null || !Number.isFinite(rate) || !product)
       return unavailable("No sourced catalog USD/DBU override is stored for this cloud.");
-    const exactScope = cloud === "azure" && region.id === "eastus" && product.automation === "azure-retail-prices";
+    const component = azureReferenceComponent(workload.productId);
+    const exactScope = Boolean(component && component.unit === "DBU" && componentMatchesPlacement(cloud, region.id));
     return {
       ...details,
-      price: rate,
-      source: product.source.url,
+      price: exactScope ? component!.usdPerUnit : rate,
+      source: exactScope ? AZURE_COMPONENT_SCOPE.sourceUrl : product.source.url,
       confidence: exactScope ? 92 : "",
       band: exactScope ? "measured" : "reference-rate",
-      basis: "Catalog product USD/DBU override; reference-cloud rate is not scaled or verified for other regions.",
+      basis: exactScope
+        ? `Exact Azure component USD/DBU rate for East US; observed ${AZURE_COMPONENT_SCOPE.observedOn}. Before portfolio discounts.`
+        : "Catalog product USD/DBU override; reference-cloud rate is not scaled or verified for other regions.",
     };
   }
   if (!(line.sku in skuCatalog.rates[cloud][tier]))
@@ -102,29 +115,17 @@ export function listedRateDetails(result: PortfolioProjection, line: LineItem): 
       "This component is not billed in DBUs; see its cost, quantity, and source notes.",
       "not_applicable",
     );
-  if (result.estimate.catalogVersion !== skuCatalog.version)
-    return unavailable(
-      "The forecast's price-book version differs from the installed catalog; no rate is reconstructed.",
-    );
+  if (!resolved || resolved.usdPerDbu === null) return unavailable(resolved?.basis ?? "No catalog quote is available.");
   const sku = line.sku as SkuId;
-  const regional = regionalSkuRate(cloud, region.id, tier, sku);
-  const observed = firstPartyDbuRate(cloud, region.id, tier, sku);
-  const reference = firstPartyBaseDbuRate(cloud, tier, sku);
-  const price = regional ?? skuRate(cloud, tier, sku) * region.factor;
-  if (!Number.isFinite(price)) return unavailable("A finite catalog USD/DBU rate could not be resolved.");
   const score = scores.get(`${cloud}|${region.id}|${tier}|${sku}`);
   const prefix = importedCatalogEstimate ? "Catalog estimate for imported DBU usage; export supplied no price. " : "";
   return {
     ...details,
-    price,
-    source: observed?.sourceUrl ?? reference?.sourceUrl ?? SECONDARY_SOURCE,
+    price: resolved.usdPerDbu,
+    source: resolved.sources.find((reference) => reference.role === "price")?.url ?? "",
     confidence: score?.score ?? "",
-    band: score?.band ?? "",
-    basis:
-      prefix +
-      (regional == null
-        ? `${reference ? "First-party reference" : "Bundled secondary reference"} USD/DBU base × region factor ${region.factor}; reference region ${referenceRegion[cloud]}. Regional pricing remains a planning proxy. Before portfolio discounts.`
-        : `Exact ${cloud === "azure" ? "Azure consumption meter" : "Databricks first-party USD/DBU observation"} for this workload's region; observed ${observed?.observedOn ?? "date not recorded"}. Before portfolio discounts.`),
+    band: resolved.confidence,
+    basis: prefix + resolved.basis,
   };
 }
 

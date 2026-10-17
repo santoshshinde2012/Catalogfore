@@ -1,14 +1,20 @@
 import type { Portfolio } from "@cayfore/engine";
-import { buildUnitCostCatalog, filterUnitCosts, type UnitCostFilters } from "@cayfore/engine/unit-costs";
+import {
+  buildUnitCostCatalog,
+  filterUnitCosts,
+  type UnitCostFilters,
+  type UnitCostRow,
+} from "@cayfore/engine/unit-costs";
 import { ArrowLeft, CircleDollarSign, Info } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { navigateToSection } from "../../lib/page-navigation";
 import type { RatePlacement } from "../../hooks/useAppView";
 import { Button } from "../ui/button";
+import { RateComparison } from "./RateComparison";
 import { RateDetails } from "./RateDetails";
 import { RateDirectory } from "./RateDirectory";
 import { RateDownloads } from "./RateDownloads";
-import { RateEvidenceOverview } from "./RateEvidence";
+import { RateEvidenceOverview } from "./RateEvidenceOverview";
 import { RateFilters } from "./RateFilters";
 
 const catalog = buildUnitCostCatalog();
@@ -61,6 +67,17 @@ export function UnitCostsPage({
   }
   function select(id: string) {
     setSelectedId(id);
+    requestAnimationFrame(() => navigateToSection("rate-details"));
+  }
+  function selectRegion(row: UnitCostRow) {
+    setSelectedId(row.id);
+    setFilters((previous) => {
+      const next = { ...previous, region: row.region ?? undefined };
+      return filterUnitCosts([row], next).length > 0
+        ? next
+        : { ...next, query: undefined, status: undefined, evidenceLevel: undefined };
+    });
+    setLimit(12);
     requestAnimationFrame(() => navigateToSection("rate-details"));
   }
   return (
@@ -119,6 +136,7 @@ export function UnitCostsPage({
         )}
         <RateFilters catalog={catalog} filters={filters} onChange={change} onClear={clear} />
         <RateEvidenceOverview rows={rows} />
+        {selected && <RateComparison rows={catalog.rows} selected={selected} onSelect={selectRegion} />}
         <RateDownloads catalog={catalog} rows={rows} />
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <RateDirectory

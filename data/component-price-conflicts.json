@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "reviewedOn": "2026-10-17",
+  "conflicts": [
+    {
+      "id": "gte-provisioned-source-conflict",
+      "appliesTo": {
+        "modelIds": [
+          "gte"
+        ],
+        "componentIds": [
+          "provisioned"
+        ]
+      },
+      "status": "source-conflict",
+      "message": "The bundled GTE provisioned value is 20 DBU/hour, matching Azure Learn. The current Databricks foundation page publishes 100 DBU/hour per 50 model units. Suppress an unqualified operational dollar quote until the offering, cloud, and unit basis are reconciled. Both the unit inventory and public forecast withhold this provisioned component; independently priced token usage remains available.",
+      "sourceIds": [
+        "azure-consumption",
+        "foundation-pricing"
+      ]
+    }
+  ]
+}

@@ -114,9 +114,17 @@ describe("canonical unit-cost inventory", () => {
 
   it("keeps source-limited and missing prices explicit", () => {
     for (const id of ["jobs_light", "clean_rooms", "data_processed"]) {
-      expect(row(id, { cloud: "azure" }).region).toBe("eastus");
+      expect(row(id, east).region).toBe("eastus");
       expect(row(id, { cloud: "aws" }).unitPriceUsd).toBeNull();
-      expect(catalog.rows.some((item) => item.productId === id && item.region === "westeurope")).toBe(false);
+      const unsupported = row(id, { cloud: "azure", region: "westeurope", tier: "premium" });
+      expect(unsupported.unitPriceUsd).toBeNull();
+      expect(unsupported.status).toBe("unpriced");
+      expect(unsupported.sourceRegion).toBe("eastus");
+      expect(unsupported.regionLabel).toBe("West Europe");
+      expect(unsupported.notes.join(" ")).toContain("reference is not applied");
+      expect(catalog.rows.filter((item) => item.productId === id && item.cloud === "azure")).toHaveLength(
+        skuCatalog.regions.filter((region) => region.cloud === "azure").length * 2,
+      );
     }
     expect(row("zerobus", { cloud: "aws", tier: "premium" }).unitPriceUsd).toBe(0.05);
     expect(row("zerobus", { cloud: "aws", tier: "enterprise" }).unitPriceUsd).toBe(0.064);

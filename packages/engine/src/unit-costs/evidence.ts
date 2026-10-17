@@ -1,4 +1,5 @@
 import evidence from "../../../../data/unit-cost-evidence.json";
+import { componentPriceConflicts } from "../rates/component-evidence.js";
 import type { UnitCostRow } from "./types.js";
 import { sourceReference, withEvidenceLevel } from "./provenance.js";
 
@@ -14,7 +15,7 @@ export function applyEvidence(rows: UnitCostRow[]): UnitCostRow[] {
     const notes = [...row.notes];
     const sources = [...row.sources];
     let conflict = false;
-    for (const caveat of evidence.caveats) {
+    for (const caveat of [...evidence.caveats, ...componentPriceConflicts]) {
       const scope: Applicability = caveat.appliesTo;
       if (!Object.keys(scope).length) continue; // Shared limitations belong in the catalog disclaimer.
       if (scope.productIds && !scope.productIds.includes(row.productId)) continue;

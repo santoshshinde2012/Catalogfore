@@ -90,7 +90,7 @@ The UI and exports receive `projectPortfolio` results. Charts prepare display ro
 
 ## Source resolution
 
-`catalog.ts` resolves exact Azure meters and validated first-party Databricks regional prices before reference fallbacks. Price-source metadata travels with the resolved observation. The forecast strategies, unit-cost projection, imported usage estimates, and Excel source sheets use these same lookup functions. Known conflicting first-party values produce unresolved components and a known subtotal.
+`catalog/resolve-dbu-rate.ts` owns one injectable quote policy used by costing, provenance, the unit-cost builder and Excel. `catalog.ts` supplies its source providers. The policy resolves exact Azure meters and validated first-party Databricks regional prices before reference fallbacks. Price-source metadata travels with the resolved observation. The forecast strategies, unit-cost projection, imported usage estimates, and Excel source sheets use these same lookup functions. Known conflicting first-party values produce unresolved components and a known subtotal.
 
 Network retrieval belongs to scripts. Fixed first-party endpoints produce retained compressed captures and normalized USD/DBU rows. Offline replay verifies the captures' SHA-256 fingerprints, dimensions, unit mappings, accepted values, and quarantines. The runtime engine reads those versioned inputs without network access. Publisher identity, numeric role, observation date, scope, and consumption assumptions contribute separately to evidence classification; a vendor hostname alone does not verify a price.
 
@@ -99,6 +99,10 @@ Network retrieval belongs to scripts. Fixed first-party endpoints produce retain
 The optional `@cayfore/engine/unit-costs` module projects the product catalog, pricing inputs, applicable dimensions, and source evidence into a read-only unit-cost inventory. The core catalog remains independent of the engine. The builder performs no IO and does not read the clock; UI, CLI, and artifact generation share its rows and serializers. A quoted quantity basis and normalized dollars per raw unit prevent token or request-batch prices from being mistaken for single-unit rates. Conditional factors and allowances remain distinct from dollar prices.
 
 The Unit costs UI and evidence data load only when that view opens. Query parameters own product/reference-placement navigation; the portfolio remains in its existing URL fragment. Unit-cost calculations do not replace forecast workloads. Browser downloads and the CLI emit ordinary CSV/JSON; `scripts/unit-costs.ts` also writes compressed canonical artifacts. CI decompresses and compares their full contents, while weekly refreshes regenerate them after their input files change. Source observation dates survive documentation reviews and rebuilds.
+
+The unit-cost analytics modules validate quote consistency, multiply billable quantities, summarize evidence counts and prepare dimensional regional comparisons. Presentational components receive the shared values and scales. Comparison identity includes the full product/component/placement/variant/quantity basis; alternative units and models cannot enter the same price chart. Factor diagrams display only arithmetic that reproduces the canonical quote.
+
+Reviewed native component prices and consumption conversions live in `rates/components.ts`; the inventory and workload formulas share those inputs. A lightweight component-conflict registry governs both quote visibility and forecast subtotals. Generated CSV/JSON files are projections of these canonical inputs and policies.
 
 ## Errors
 

@@ -1,6 +1,6 @@
 # Databricks cost model research
 
-Current source-of-truth update: **2026-10-17, catalog and price book `2026-10-17.2`**. The shared resolver now prefers captured first-party Databricks price cards/calculator data and exact Azure Retail Prices meters. All 530 mapped Azure DBU rows across 39 supported regions were fetched with per-meter observation dates and IDs. First-party source captures, fingerprints, accepted prices, and quarantined disagreements are recorded in `data/databricks-dbu-rates.json` and `data/sources/`.
+Current source-of-truth update: **2026-10-17, catalog and price book `2026-10-17.3`**. The shared resolver now prefers captured first-party Databricks price cards/calculator data and exact Azure Retail Prices meters. All 530 mapped Azure DBU rows across 39 supported regions were fetched with per-meter observation dates and IDs. First-party source captures, fingerprints, accepted prices, and quarantined disagreements are recorded in `data/databricks-dbu-rates.json` and `data/sources/`.
 
 [Unit-cost evidence and maintenance](UNIT-COSTS.md) defines current source precedence, numeric evidence levels, review versus observation dates, and coverage limits. `npm run check:sources` replays the retained first-party captures, and `npm run check:unit-costs` verifies CSV/JSON outputs. UI, forecast, CLI, and Excel share the same resolver. Negotiated or imported customer prices retain their own provenance.
 

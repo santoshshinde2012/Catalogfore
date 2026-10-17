@@ -1,4 +1,4 @@
-import type { UnitCostRow } from "@cayfore/engine/unit-costs";
+import { calculateUnitCost, type UnitCostRow } from "@cayfore/engine/unit-costs";
 import { Calculator } from "lucide-react";
 import { useState } from "react";
 import { evidenceLabels, unitMoney } from "./rate-presentation";
@@ -6,10 +6,10 @@ import { evidenceLabels, unitMoney } from "./rate-presentation";
 export function RateCalculator({ row }: { row: UnitCostRow }) {
   const [quantity, setQuantity] = useState("100");
   const amount = Number(quantity);
-  const usable =
-    row.rateKind === "money" && row.usdPerUnit !== null && Number.isFinite(row.usdPerUnit) && row.status !== "unpriced";
-  const valid = quantity.trim() !== "" && Number.isFinite(amount) && amount >= 0 && amount <= 1e15;
-  const total = usable && valid ? amount * row.usdPerUnit! : null;
+  const calculation = calculateUnitCost(row, quantity.trim() === "" ? Number.NaN : amount);
+  const usable = calculation.status !== "unavailable";
+  const valid = calculation.status !== "invalid_quantity" && calculation.status !== "overflow";
+  const total = calculation.totalUsd;
   return (
     <section aria-label="Unit cost calculator" className="mt-5 rounded-xl border bg-muted/30 p-4">
       <h3 className="flex items-center gap-2 text-sm font-semibold">
@@ -19,7 +19,7 @@ export function RateCalculator({ row }: { row: UnitCostRow }) {
       {usable ? (
         <>
           <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-            {unitMoney(row.usdPerUnit!)} / {row.unit} · {evidenceLabels[row.evidenceLevel]}
+            {unitMoney(calculation.unitRateUsd!)} / {row.unit} · {evidenceLabels[row.evidenceLevel]}
           </p>
           <label className="field mt-3" htmlFor="rate-quantity">
             Billable quantity ({row.unit})
@@ -42,8 +42,8 @@ export function RateCalculator({ row }: { row: UnitCostRow }) {
           </p>
           <p id="rate-calculation" className="mt-3 break-words text-sm tabular-nums" role="status">
             {total !== null && Number.isFinite(total)
-              ? `${amount.toLocaleString("en-US", { maximumFractionDigits: 10 })} × ${unitMoney(row.usdPerUnit!)} = ${unitMoney(total)}`
-              : "Enter a quantity from 0 to 1,000,000,000,000,000."}
+              ? `${amount.toLocaleString("en-US", { maximumFractionDigits: 10 })} × ${unitMoney(calculation.unitRateUsd!)} = ${unitMoney(total)}`
+              : calculation.reason}
           </p>
           <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
             This component only, before contract discounts, add-ons, taxes, and other service charges. Your forecast

@@ -1,4 +1,5 @@
 import type { PricingCatalog } from "../catalog/pricing-catalog.js";
+import { resolveDbuRate } from "../catalog/resolve-dbu-rate.js";
 import { clamp } from "../money.js";
 import type { Portfolio, SkuId, Workload } from "../types.js";
 import type { CostContext, Placement, RawLine } from "./types.js";
@@ -25,19 +26,8 @@ export function discountDbu(amount: number, portfolio: Portfolio): number {
 }
 
 export function skuCharge(context: CostContext, sku: SkuId): SkuCharge {
-  const { catalog, placement } = context;
-  const conflict = catalog.firstPartyDbuConflict?.(placement.cloud, placement.region, placement.tier, sku);
-  if (conflict)
-    return { perDbu: 0, text: "Unpriced: first-party sources disagree for this SKU and placement; cost is withheld" };
-  const regional = catalog.regionalSkuRate?.(placement.cloud, placement.region, placement.tier, sku) ?? null;
-  if (regional != null) {
-    return {
-      perDbu: regional,
-      text: `$${regional}/DBU from the ${placement.cloud === "azure" ? "Azure meter" : "Databricks public price card"} for this region`,
-    };
-  }
-  const rate = catalog.skuRate(placement.cloud, placement.tier, sku);
-  return { perDbu: rate * placement.factor, text: `$${rate}/DBU × ${factorText(placement.factor)}` };
+  const quote = resolveDbuRate(context.catalog, context.placement, sku);
+  return { perDbu: quote.usdPerDbu ?? 0, text: quote.summary };
 }
 
 export function priceDbu(dbu: number, context: CostContext, sku: SkuId): number {

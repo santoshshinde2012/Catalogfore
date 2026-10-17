@@ -1,12 +1,13 @@
 import { skuCatalog } from "../catalog.js";
 import type { Workload } from "../types.js";
 import { append, converted, monetary, source, type RowContext } from "./context.js";
+import { SERVING_DBU_PER_CONCURRENT_REQUEST_HOUR, PROVISIONED_MODEL_UNITS_PER_BLOCK } from "../rates/components.js";
 
 export function aiRows(context: RowContext, workload: Workload): boolean {
   if (workload.kind === "model_serving") {
     const profiles =
       workload.mode === "cpu"
-        ? [{ id: "cpu", label: "CPU concurrent request", dbuPerHour: 1 }]
+        ? [{ id: "cpu", label: "CPU concurrent request", dbuPerHour: SERVING_DBU_PER_CONCURRENT_REQUEST_HOUR }]
         : skuCatalog.servingGpuDbuPerHour;
     for (const profile of profiles)
       converted(
@@ -67,11 +68,11 @@ export function aiRows(context: RowContext, workload: Workload): boolean {
           componentId: "provisioned",
           componentName: "Provisioned model throughput",
           modelId: model.id,
-          unit: "50-model-unit-hour",
-          formula: "Provisioned hours × 50-model-unit blocks × DBU per block-hour × USD/DBU",
-          dimensions: { model: model.label, modelUnitsPerBlock: 50 },
+          unit: `${PROVISIONED_MODEL_UNITS_PER_BLOCK}-model-unit-hour`,
+          formula: "Provisioned block-hours × DBU per block-hour × USD/DBU",
+          dimensions: { model: model.label, modelUnitsPerBlock: PROVISIONED_MODEL_UNITS_PER_BLOCK },
           notes: [
-            "The engine's legacy provisionedHours field does not encode model-unit block count. This row names the published capacity basis explicitly.",
+            `One block-hour is ${PROVISIONED_MODEL_UNITS_PER_BLOCK} model units for one hour. Sum deployed blocks × hours before calculating; throughput depends on the model and request shape.`,
             "Token usage and provisioned capacity are separate pricing modes; do not add both unless both are billed.",
           ],
           sources: [

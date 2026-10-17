@@ -1,6 +1,7 @@
 import type { UnitCostRow } from "@cayfore/engine/unit-costs";
 import { ArrowLeft, ReceiptText } from "lucide-react";
 import { Button } from "../ui/button";
+import { RateBuildUp } from "./RateBuildUp";
 import { RateCalculator } from "./RateCalculator";
 import { EvidenceBadge, RatePrimarySource, RateSourceEvidence } from "./RateEvidence";
 import {
@@ -34,7 +35,7 @@ export function RateDetails({ row, onResults }: { row: UnitCostRow; onResults: (
       <p className="mt-2 text-sm text-muted-foreground">{row.componentName}</p>
       {variantLabel(row) && <p className="mt-2 text-xs font-medium">{variantLabel(row)}</p>}
       <p className="mt-2 text-xs text-muted-foreground">{placementLabel(row)}</p>
-      <div className="mt-5 rounded-xl border bg-muted/30 p-4">
+      <div role="group" aria-label="Unit price and evidence" className="mt-5 rounded-xl border bg-muted/30 p-4">
         <p className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
           {row.rateKind === "money"
             ? row.evidenceLevel === "official"
@@ -56,11 +57,9 @@ export function RateDetails({ row, onResults }: { row: UnitCostRow; onResults: (
       {row.status === "unpriced" && (
         <p className="mt-3 text-sm font-medium text-destructive">A missing price is unresolved, not a free service.</p>
       )}
+      <RateBuildUp row={row} />
       <div className="mt-5">
-        <h3 className="text-sm font-semibold">How this is calculated</h3>
-        <p className="mt-2 break-words rounded-lg border bg-background p-3 font-mono text-xs leading-relaxed">
-          {row.formula}
-        </p>
+        <h3 className="text-sm font-semibold">Billing dimensions</h3>
         <dl className="mt-3 grid gap-2 text-xs">
           {row.baseRateUsd !== null && (
             <Dimension

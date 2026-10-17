@@ -76,5 +76,12 @@ function writePath(workload: Workload, path: string, value: unknown): Workload {
   if (!tail) return { ...workload, [head]: value } as Workload;
   const current = record[head];
   const nested = typeof current === "object" && current !== null ? (current as Record<string, unknown>) : {};
-  return { ...workload, [head]: { ...nested, [tail]: value } } as Workload;
+  const next = { ...workload, [head]: { ...nested, [tail]: value } } as Workload;
+  if (workload.kind === "metered" && ["fixedUsdByCloud", "rateByCloud", "rateByPlacement"].includes(head))
+    return {
+      ...next,
+      priceStatus: undefined,
+      rateProvenance: { kind: "custom", label: "User supplied rate or cost", currency: "USD" },
+    };
+  return next;
 }

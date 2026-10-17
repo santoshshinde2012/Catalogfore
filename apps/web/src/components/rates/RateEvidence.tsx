@@ -1,5 +1,5 @@
 import type { UnitCostRow, UnitCostSource } from "@cayfore/engine/unit-costs";
-import { BookOpen, ExternalLink, ShieldCheck } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { evidenceLabels } from "./rate-presentation";
 
@@ -13,61 +13,6 @@ export function EvidenceBadge({ level }: { level: UnitCostRow["evidenceLevel"] }
     >
       {evidenceLabels[level]}
     </span>
-  );
-}
-
-export function RateEvidenceOverview({ rows }: { rows: UnitCostRow[] }) {
-  const counts = new Map<UnitCostRow["evidenceLevel"], number>();
-  for (const row of rows) counts.set(row.evidenceLevel, (counts.get(row.evidenceLevel) ?? 0) + 1);
-  return (
-    <section aria-label="Evidence coverage" className="rounded-2xl border bg-card p-4 sm:p-5">
-      <h2 className="flex items-center gap-2 text-sm font-semibold">
-        <ShieldCheck className="size-4 text-link" aria-hidden="true" />
-        Understand the evidence behind these rates
-      </h2>
-      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-        Counts describe the current filtered rows. A price does not confirm product availability in your region.
-      </p>
-      <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {Object.entries(evidenceLabels).map(([level, label]) => (
-          <div key={level} className="flex min-w-0 flex-col rounded-xl border bg-muted/20 p-3">
-            <dt className="order-2 mt-1 text-[11px] leading-relaxed text-muted-foreground">{label}</dt>
-            <dd className="order-1 text-xl font-semibold tabular-nums">
-              {(counts.get(level as UnitCostRow["evidenceLevel"]) ?? 0).toLocaleString("en-US")}
-            </dd>
-          </div>
-        ))}
-      </dl>
-      <details className="mt-4 border-t pt-3">
-        <summary className="cursor-pointer text-xs font-semibold">
-          <BookOpen className="mr-2 inline size-3.5 align-text-bottom" aria-hidden="true" />
-          How to read the sources
-        </summary>
-        <div className="mt-3 grid gap-3 text-xs leading-relaxed text-muted-foreground sm:grid-cols-2">
-          <p>
-            <strong className="font-medium text-foreground">Official list price</strong> means a first-party numeric
-            price matches the billing dimension. <strong className="font-medium text-foreground">Derived</strong>{" "}
-            applies published consumption rules or eligible conditions. A monetary value combines those rules with
-            first-party prices.
-          </p>
-          <p>
-            <strong className="font-medium text-foreground">Planning estimate</strong> includes assumptions, regional
-            proxies, seeded values, and third-party references. An official documentation link can explain a service
-            without establishing its numeric price.
-          </p>
-          <p>
-            <strong className="font-medium text-foreground">Unresolved</strong> means a price is missing or sources
-            conflict. <strong className="font-medium text-foreground">Platform context</strong> explains a service with
-            no standalone rate in this catalog; underlying workloads can still incur charges.
-          </p>
-          <p>
-            <strong className="font-medium text-foreground">Observation and review dates are separate.</strong> A
-            reviewed website does not refresh the stored price snapshot. Public list prices can differ from your
-            contract, invoice, taxes, and separately billed components.
-          </p>
-        </div>
-      </details>
-    </section>
   );
 }
 

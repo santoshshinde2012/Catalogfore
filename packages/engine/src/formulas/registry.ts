@@ -1,15 +1,9 @@
 import type { Product } from "@cayfore/catalog";
 import { roundMoney } from "../money.js";
 import { AZURE_DATA_PROCESSED_USD_PER_GB, TOKENS_PER_MILLION, ZEROBUS_USD_PER_GB } from "../rates/published.js";
+import { PARSE_DBU_PER_PAGE, SERVING_DBU_PER_LAUNCH } from "../rates/components.js";
 import type { Workload } from "../types.js";
 import { DEFAULT_FORMULA_DATE, GENIE_FREE_DBU_PER_USER, geniePromoFactor, genieUserUsageFree } from "./genie-window.js";
-
-const PARSE_DBU_PER_PAGE: Record<string, number> = {
-  simple: 12.5,
-  caption: 22.5,
-  medium: 62.5,
-  high: 87.5,
-};
 
 type Metered = Extract<Workload, { kind: "metered" }>;
 type FormulaId = NonNullable<Product["formula"]>;
@@ -66,28 +60,33 @@ export const formulaRegistry: Record<FormulaId, ProductFormula> = {
     const band = PARSE_DBU_PER_PAGE[String(workload.inputs?.complexity ?? "simple")] ?? PARSE_DBU_PER_PAGE.simple;
     return dbu(workload, "model_serving", numInput(workload.inputs, "pages") * band);
   },
-  custom_fm: (workload) =>
-    dbu(
+  custom_fm: (workload) => {
+    const result = dbu(
       workload,
       "model_serving",
       (numInput(workload.inputs, "inputTokens") / TOKENS_PER_MILLION) *
         numInput(workload.inputs, "inputDbuPerMillion") +
         (numInput(workload.inputs, "outputTokens") / TOKENS_PER_MILLION) *
           numInput(workload.inputs, "outputDbuPerMillion"),
-    ),
-  launch: (workload) => dbu(workload, "model_serving", numInput(workload.inputs, "launches")),
+    );
+    return { ...result, priceStatus: result.kind === "metered" && result.dbuPerMonth > 0 ? "priced" : "unpriced" };
+  },
+  launch: (workload) => dbu(workload, "model_serving", numInput(workload.inputs, "launches") * SERVING_DBU_PER_LAUNCH),
   azure_data_processed: (workload) => ({
     ...workload,
     sku: "managed_services",
     dbuPerMonth: 0,
-    fixedUsdByCloud: { azure: roundMoney(numInput(workload.inputs, "gb") * AZURE_DATA_PROCESSED_USD_PER_GB) },
+    units: numInput(workload.inputs, "gb"),
+    ...(workload.rateProvenance?.kind === "custom"
+      ? {}
+      : { fixedUsdByCloud: { azure: roundMoney(numInput(workload.inputs, "gb") * AZURE_DATA_PROCESSED_USD_PER_GB) } }),
   }),
   zerobus_gb: (workload) => ({
     ...workload,
     sku: "managed_services",
     dbuPerMonth: 0,
     units: numInput(workload.inputs, "gb"),
-    rateByPlacement: ZEROBUS_USD_PER_GB,
+    ...(workload.rateProvenance?.kind === "custom" ? {} : { rateByPlacement: ZEROBUS_USD_PER_GB }),
   }),
 };
 

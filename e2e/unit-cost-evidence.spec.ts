@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import type { UnitCostCatalog } from "@cayfore/engine/unit-costs";
 
 const details = (page: Page) => page.getByRole("region", { name: "Unit cost details", exact: true });
+const quote = (page: Page) => details(page).getByRole("group", { name: "Unit price and evidence", exact: true });
 async function download(page: Page, format: "CSV" | "JSON") {
   const pending = page.waitForEvent("download");
   await page
@@ -18,7 +19,7 @@ test("official numeric prices and planning estimates remain distinct from offici
 }) => {
   await page.goto("./?view=rates&product=jobs_serverless&rateCloud=azure&rateRegion=eastus&rateTier=premium");
   await page.getByRole("combobox", { name: "Evidence basis", exact: true }).selectOption("official");
-  await expect(details(page).getByText("Official list price", { exact: true })).toBeVisible();
+  await expect(quote(page).getByText("Official list price", { exact: true })).toBeVisible();
   await expect(details(page)).toContainText("Official publisher");
   await expect(details(page)).toContainText("Price evidence");
   await expect(details(page)).toContainText("Snapshot observed");
@@ -41,7 +42,7 @@ test("official numeric prices and planning estimates remain distinct from offici
   await page.getByRole("combobox", { name: "Evidence basis", exact: true }).selectOption("estimate");
   await page.getByRole("combobox", { name: "Product or service", exact: true }).selectOption("jobs_classic");
   await page.getByRole("combobox", { name: "Cost component", exact: true }).selectOption("compute");
-  await expect(details(page).getByText("Planning estimate", { exact: true })).toBeVisible();
+  await expect(quote(page).getByText("Planning estimate", { exact: true })).toBeVisible();
   await expect(details(page)).toContainText("Official publisher");
   await expect(details(page)).toContainText("Consumption rule");
   await expect(details(page).getByText("Official list price", { exact: true })).toHaveCount(0);

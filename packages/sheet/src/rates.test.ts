@@ -1,4 +1,15 @@
-import { blankPortfolio, createWorkload, projectPortfolio, skuCatalog, type Workload } from "@cayfore/engine";
+import {
+  blankPortfolio,
+  bundledPricingCatalog,
+  createWorkload,
+  projectPortfolio,
+  regionInfo,
+  resolveDbuRate,
+  skuCatalog,
+  type SkuId,
+  type Cloud,
+  type Workload,
+} from "@cayfore/engine";
 import { workloadsForProduct } from "@cayfore/engine/products";
 import ExcelJS from "exceljs";
 import { describe, expect, it } from "vitest";
@@ -124,8 +135,9 @@ describe("workbook rate provenance", () => {
     expect(result.estimate.lines[1].total).toBe(73);
   });
 
-  it("shows the embedded Jobs Light rate and distinguishes reference-only scope", () => {
+  it("shows the sourced Jobs Light rate only within the recorded placement", () => {
     const job = workloadsForProduct("jobs_light")[0];
+    if (job.kind !== "metered") throw new Error("Jobs Light must use a metered workload");
     const result = project([
       { ...job, id: "east", cloud: "azure", region: "eastus" },
       { ...job, id: "west", cloud: "azure", region: "westeurope" },
@@ -133,10 +145,66 @@ describe("workbook rate provenance", () => {
     expect(listedRate(result, result.estimate.lines[0])).toBe(0.22);
     expect(listedRateDetails(result, result.estimate.lines[0])).toMatchObject({ confidence: 92, band: "measured" });
     expect(listedRateDetails(result, result.estimate.lines[1])).toMatchObject({
-      price: 0.22,
+      price: "",
       confidence: "",
-      band: "reference-rate",
+      band: "unpublished",
     });
+    const staleEmbedded = project([{ ...job, cloud: "azure", region: "eastus", rateByCloud: { azure: 99 } }]);
+    expect(listedRate(staleEmbedded, staleEmbedded.estimate.lines[0])).toBe(0.22);
+    expect(staleEmbedded.estimate.lines[0].dbuCost).toBeCloseTo(staleEmbedded.estimate.lines[0].dbu * 0.22 * 0.75, 2);
+  });
+
+  it("uses the canonical DBU quote and source for exact, proxy and conflicted placements", () => {
+    const cases: { cloud: Cloud; region: string; sku: SkuId }[] = [
+      { cloud: "aws", region: "eu-west-1", sku: "jobs_serverless" },
+      { cloud: "azure", region: "eastus", sku: "jobs_serverless" },
+      { cloud: "aws", region: "eu-west-1", sku: "ai_search" },
+      { cloud: "gcp", region: "europe-west1", sku: "model_serving" },
+    ];
+    for (const item of cases) {
+      const region = regionInfo(item.cloud, item.region);
+      const quote = resolveDbuRate(
+        bundledPricingCatalog,
+        { ...item, tier: "premium", factor: region.factor },
+        item.sku,
+      );
+      const result = project([metered({ ...item, tier: "premium" })]);
+      const listed = listedRateDetails(result, result.estimate.lines[0]);
+      expect(listed.price).toBe(quote.usdPerDbu ?? "");
+      expect(listed.band).toBe(quote.confidence);
+      expect(listed.basis).toBe(quote.basis);
+      expect(listed.source).toBe(
+        quote.conflict
+          ? quote.sources.map((source) => source.url).join("; ")
+          : quote.sources.find((source) => source.role === "price")!.url,
+      );
+    }
+  });
+
+  it("does not attach a newer catalog's conflict to an older saved estimate", () => {
+    const current = project([metered({ cloud: "gcp", region: "europe-west1", sku: "model_serving" })]);
+    const previous = {
+      ...current,
+      estimate: {
+        ...current.estimate,
+        catalogVersion: "older-book",
+        lines: current.estimate.lines.map((line) => ({ ...line, priceStatus: "priced" as const })),
+      },
+    };
+    const rate = listedRateDetails(previous, previous.estimate.lines[0]);
+    expect(rate.price).toBe("");
+    expect(rate.band).toBe("unpublished");
+    expect(rate.basis).toContain("price-book version differs");
+  });
+
+  it("does not reconstruct today's native component rate for an older saved estimate", () => {
+    const job = workloadsForProduct("jobs_light")[0];
+    const current = project([{ ...job, cloud: "azure", region: "eastus" }]);
+    const previous = { ...current, estimate: { ...current.estimate, catalogVersion: "older-book" } };
+    const rate = listedRateDetails(previous, previous.estimate.lines[0]);
+    expect(rate.price).toBe("");
+    expect(rate.band).toBe("unpublished");
+    expect(rate.basis).toContain("price-book version differs");
   });
 
   it("keeps a catalog-priced imported DBU estimate distinct from an observed invoice", () => {

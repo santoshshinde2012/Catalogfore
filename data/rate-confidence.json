@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-17.2",
+  "version": "2026-10-17.3",
   "rubric": {
     "measured": "90–100. An exact regional Azure Retail Prices meter or a validated Databricks price-card/calculator USD/DBU row.",
     "conflict": "0. Unreconciled first-party values for the same price key; the qualified quote is withheld.",
@@ -8,8 +8,8 @@
     "proxy": "20–39. A real rate for a different SKU or region, scaled. Lakehouse Real-Time factors are this band.",
     "unpublished": "0–19. No dollar rate is stored. The zero is not a guess."
   },
-  "skuRatesVersion": "2026-10-17.2",
-  "productCatalogVersion": "2026-10-17.2",
+  "skuRatesVersion": "2026-10-17.3",
+  "productCatalogVersion": "2026-10-17.3",
   "products": {
     "jobs_classic": {
       "score": 92,

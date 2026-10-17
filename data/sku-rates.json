@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-17.2",
+  "version": "2026-10-17.3",
   "verifiedOn": "2026-10-17",
   "disclaimer": "Estimates only. Not a quote, invoice, or commitment. Exact Azure regional meters and validated AWS/GCP Databricks calculator USD/DBU rows take precedence. Unscoped official base rates, secondary references, regional proxies, and consumption assumptions remain explicitly identified. Capture dates describe observation, not tariff effective dates. Contract prices, promotions, taxes, infrastructure, and product availability require separate review.",
   "photonMultiplier": 2.9,

@@ -6,6 +6,8 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Added
 
+- Regional unit-cost comparison bars, a source-to-component calculation path, and an evidence-coverage visualization, all driven by shared engine analytics. Comparisons keep identical units, configurations and editions; unresolved amounts never become zero bars.
+
 - Captured first-party Databricks price-card and calculator data, hashed original responses, replayable source validation, and explicit source conflicts. Unit costs now shows evidence filters, scoped coverage counts, publisher links beside prices, and separate observation/review dates.
 
 - A separate Unit costs explorer and deterministic source CSV/JSON catalog for all 70 pricing products and eight platform concepts. Prices retain their cloud, region, edition, component, variant, units, conversion factors, source evidence, conditions, and unresolved coverage. Product map and forecast lines open reference costs; a quantity calculator shows component subtotals. Complete exports are versioned losslessly compressed and checked against the builder in CI.
@@ -45,6 +47,8 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 - `docs/PRIVACY.md`. The calculation stays in the browser.
 
 ### Changed
+
+- One injectable DBU quote policy now supplies forecasts, unit costs, source provenance and Excel. Reviewed native prices and consumption conversions share one registry. Public Azure reference components outside East US, Zerobus outside its US East reference scope, conflicted GTE capacity, and unpublished defaults remain unresolved; independently supplied costs retain custom provenance through editing and reopening.
 
 - Excel source-rate sheets resolve each workload's placement and regional meter, preserve separate same-SKU workloads, and explain custom or observed costs without assigning an unrelated public DBU rate. Unit-cost evidence distinguishes old observations, documentation reviews, assumptions, and current source conflicts; validated first-party prices now take precedence across the shared forecast, CLI, unit-cost catalog and Excel resolver, while consumption assumptions remain labeled.
 - Catalog refresh on 2026-10-17. Catalog `2026-10-17.1`, price book `2026-10-17.1`, instances `2026-10-17.1`, and the VM and Azure meter files `2026-10-17.2`. Azure Retail Prices and AWS EC2 offers were re-read. No list rate moved. GCP was skipped. Multi-statement transactions are generally available and are not a new SKU. The default medium AWS year stays $170,257.52.

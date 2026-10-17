@@ -31,11 +31,15 @@ Open **Product map** to explore eight Databricks domains, all 70 catalog entries
 
 ![Databricks products and services mapped across eight learning domains](docs/screenshots/product-map-light.png)
 
-Open **Unit costs** for the source prices and consumption rules behind each product. Official price links, publisher names, snapshot dates, and evidence labels appear beside prices. Direct official prices, derived rates, planning estimates, and unresolved conflicts can be filtered separately. Filter by product, cloud, region, edition, component, or evidence status; inspect machines, models, token directions, and other variants; then enter a quantity to calculate a component subtotal. Product map and forecast rows link to the relevant reference costs. [Unit-cost documentation](docs/UNIT-COSTS.md) explains sources, missing prices, assumptions, and pricing conflicts.
+Open **Unit costs** for the source prices and consumption rules behind each product. Official price links, publisher names, snapshot dates, and evidence labels appear beside prices. Direct official prices, derived rates, planning estimates, and unresolved conflicts can be filtered separately. Filter by product, cloud, region, edition, component, or evidence status; inspect machines, models, token directions, and other variants; then enter a quantity to calculate a component subtotal. Compare the same configured unit across regions, inspect the source-to-quote calculation path, and view evidence coverage without combining unlike prices. The calculator, visual scales, CSV/JSON and Excel share the engine quote policy. Product map and forecast rows link to the relevant reference costs. [Unit-cost documentation](docs/UNIT-COSTS.md) explains sources, missing prices, assumptions, and pricing conflicts.
 
 Download ordinary CSV or JSON in the browser, or run `npm run export:unit-costs` to create both locally. Complete, lossless copies are versioned as [CSV](data/unit-costs.csv.gz) and [JSON](data/unit-costs.json.gz) gzip files. They cover all 70 pricing products and eight platform concepts without treating an unknown rate as free.
 
 ![Source unit costs, billing dimensions, and a quantity calculation](docs/screenshots/unit-cost-details-light.png)
+
+![Regional quotes for the same configured unit](docs/screenshots/unit-cost-comparison-light.png)
+
+![Source price, consumption, regional factor and component quote](docs/screenshots/unit-cost-calculation-light.png)
 
 ![Imported spend and forecast against a budget, using the bundled historical demonstration CSV](docs/screenshots/usage-forecast.png)
 

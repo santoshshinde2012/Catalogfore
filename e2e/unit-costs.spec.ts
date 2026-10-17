@@ -94,7 +94,7 @@ test("a source rate calculates a component cost without changing the forecast", 
   await expect(page.locator("#rate-calculation")).toContainText(`= ${dollars}`);
   await quantity.fill("-1");
   await expect(quantity).toHaveAttribute("aria-invalid", "true");
-  await expect(page.locator("#rate-calculation")).toContainText("Enter a quantity");
+  await expect(page.locator("#rate-calculation")).toContainText("billable quantity");
   await expect(details(page).getByRole("link").first()).toHaveAttribute("href", /^https:\/\//);
   expect(new URL(page.url()).hash).toBe(before);
 });

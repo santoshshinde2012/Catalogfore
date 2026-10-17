@@ -1,4 +1,4 @@
-import { ZEROBUS_USD_PER_GB } from "../rates/published.js";
+import { ZEROBUS_USD_PER_GB, ZEROBUS_REFERENCE_REGIONS, ZEROBUS_PRICE_SOURCE } from "../rates/published.js";
 import { CLOUDS, TIERS, monetary, source, type RowContext } from "./context.js";
 
 /** GB prices are separate from DBUs and retain their exact reference-region evidence. */
@@ -11,9 +11,9 @@ export function zerobusRows(context: RowContext) {
         componentName: "Zerobus ingestion",
         cloud,
         tier,
-        region: cloud === "aws" ? "us-east-1" : cloud === "azure" ? "eastus" : null,
+        region: ZEROBUS_REFERENCE_REGIONS[cloud] ?? null,
         regionLabel: cloud === "aws" ? "US East" : cloud === "azure" ? "East US" : null,
-        sourceRegion: cloud === "aws" ? "us-east-1" : cloud === "azure" ? "eastus" : null,
+        sourceRegion: ZEROBUS_REFERENCE_REGIONS[cloud] ?? null,
         unit: "GB",
         unitPriceUsd: rate,
         status: rate === null ? "unpriced" : "priced",
@@ -22,15 +22,15 @@ export function zerobusRows(context: RowContext) {
         includesCompute: true,
         sources: [
           source(
-            context.product.source.title,
-            context.product.source.url,
+            ZEROBUS_PRICE_SOURCE.title,
+            ZEROBUS_PRICE_SOURCE.url,
             "price",
             cloud === "aws"
               ? `JSON pointer /${tier}/AWS/zerobus/US East (N. Virginia); USD/GB`
               : cloud === "azure"
                 ? "JSON pointer /premium/Azure/zerobus/US East; USD/GB; Enterprise aliases Premium"
                 : undefined,
-            context.product.source.fetchedOn,
+            ZEROBUS_PRICE_SOURCE.observedOn,
           ),
         ],
         notes: ["Reference-region snapshot; no price is inferred for another region or unsupported cloud."],

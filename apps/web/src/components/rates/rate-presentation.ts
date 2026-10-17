@@ -1,4 +1,4 @@
-import type { UnitCostRow } from "@cayfore/engine/unit-costs";
+import { buildUnitCostBreakdown, type UnitCostRow } from "@cayfore/engine/unit-costs";
 
 export const statusLabels: Record<UnitCostRow["status"], string> = {
   priced: "Catalog rate",
@@ -31,7 +31,7 @@ export function unitMoney(value: number): string {
 export function rowPrice(row: UnitCostRow): string {
   if (row.rateKind === "money" && row.unitPriceUsd !== null) return unitMoney(row.unitPriceUsd);
   if (row.rateKind === "consumption" && row.dbuPerUnit !== null)
-    return `${(row.dbuPerUnit * row.unitQuantity).toLocaleString("en-US")} DBU`;
+    return `${buildUnitCostBreakdown(row).dbuPerQuote?.toLocaleString("en-US") ?? "Unresolved"} DBU`;
   if (row.rateKind === "multiplier" && row.value !== null) return `${row.value.toLocaleString("en-US")}×`;
   if (row.rateKind === "allowance" && row.value !== null) return row.value.toLocaleString("en-US");
   return row.status === "not_applicable" ? "Workload dependent" : "Rate unavailable";

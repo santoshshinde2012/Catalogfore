@@ -204,23 +204,6 @@
   ],
   "caveats": [
     {
-      "id": "gte-provisioned-source-conflict",
-      "appliesTo": {
-        "modelIds": [
-          "gte"
-        ],
-        "componentIds": [
-          "provisioned"
-        ]
-      },
-      "status": "source-conflict",
-      "message": "The bundled GTE provisioned value is 20 DBU/hour, matching Azure Learn. The current Databricks foundation page publishes 100 DBU/hour per 50 model units. Suppress an unqualified operational dollar quote until the offering, cloud, and unit basis are reconciled; the existing forecast table is unchanged.",
-      "sourceIds": [
-        "azure-consumption",
-        "foundation-pricing"
-      ]
-    },
-    {
       "id": "provisioned-model-units",
       "appliesTo": {
         "componentIds": [
@@ -228,7 +211,7 @@
         ]
       },
       "status": "scope",
-      "message": "Current Foundation Model Serving provisioned figures are quoted per 50 model units per hour. Throughput per model unit varies with model and request shape. Cayfore's legacy forecast accepts provisioned hours without an explicit model-unit count; do not present that input as a universal endpoint-hour tariff or a throughput guarantee.",
+      "message": "Foundation Model Serving provisioned figures are quoted per 50 model units per hour. Enter total block-hours (blocks multiplied by active hours), not a universal endpoint-hour quantity. Throughput per model unit varies with model and request shape. Older saved plans used an implicit block count; review their capacity assumptions before comparing costs.",
       "sourceIds": [
         "foundation-pricing",
         "azure-consumption"
@@ -406,5 +389,6 @@
         "pricing-system-table"
       ]
     }
-  ]
+  ],
+  "componentConflictsFile": "data/component-price-conflicts.json"
 }
