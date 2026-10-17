@@ -43,6 +43,8 @@ Bugs and rate questions have issue forms in `.github/ISSUE_TEMPLATE/`. A rate ch
 
 `CHANGELOG.md` is the unreleased note. Publishing a GitHub Release is a maintainer step. `NOTICE` records the price sources. `docs/ROADMAP.md` is the list of gaps that are not in the page yet.
 
+Routine npm and GitHub Actions updates share one weekly Dependabot PR. Keep dependency migrations coordinated with their peer requirements and supported Node versions. [Dependency maintenance](docs/MAINTENANCE.md) records the grouping policy and the consolidated upgrade decisions.
+
 ## MCP server
 
 ```bash
