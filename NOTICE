@@ -12,7 +12,8 @@ The price files are published list rates and a cited manual table. They are inpu
 | Azure Databricks pricing page | Non-Photon DBU counts for five curated VM sizes, the Jobs FAQ example, and the Lakeflow Photon sentence | Public Microsoft pricing page. Fetched as text on 2026-10-16. Dollar cells on that page did not render. |
 | GCP machine rates | Seeded hourly rates for six curated types | Not refreshed unless `GCP_BILLING_API_KEY` is set. A live refresh would use the Cloud Billing Catalog, which is Google's. |
 | AWS and GCP DBU per hour, and Azure `Standard_F4s_v2` | A manual table in `data/instances.json` | No allowed public feed publishes these counts. The Databricks website terms forbid scraping the instance picker, so these rows are not copied from that page. |
-| US East $/DBU card | `data/sku-rates.json` | Cited in `docs/RESEARCH.md`. Secondary where the vendor page did not return a number to a static fetch. |
+| Databricks public price-card/calculator JSON | Normalized USD/DBU observations and compressed original responses under `data/sources/`, with fingerprints and locators | Public JSON used by official Databricks pricing pages. Numeric facts retain their source attribution; this project does not claim ownership or an official partnership. |
+| Legacy US East $/DBU card | `data/sku-rates.json` | Cited in `docs/RESEARCH.md`. Secondary where the vendor page did not return a number to a static fetch. |
 
 Databricks Labs LakeMeter-OSS is not a source. Its license allows the materials only in connection with the Databricks Services. This public calculator does not fetch or redistribute that pricing bundle.
 

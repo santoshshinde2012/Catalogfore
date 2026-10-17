@@ -4,13 +4,20 @@ import {
   skuCatalog,
   regionalSkuRate,
   skuRate,
+  firstPartyDbuRate,
+  firstPartyBaseDbuRate,
+  firstPartyDbuConflict,
   vmHourly,
+  referenceRegion,
   type InstanceInfo,
   type RegionInfo,
   type SkuCatalog,
+  type DbuRateObservation,
+  type DbuRateConflict,
 } from "../catalog.js";
 import type { Cloud, ClusterSku, SkuId, Tier } from "../types.js";
 import { publishedPhotonMultiplier } from "../rates/photon.js";
+import { secondaryReferenceDbuRate } from "./reference-dbu.js";
 
 export interface VmQuote {
   hourly: number;
@@ -29,6 +36,7 @@ export interface PricingCatalog {
   readonly sqlVmDollarsPerDbuHour: number;
   readonly sqlVmNote: string;
   readonly defaultSpotDiscount: number;
+  readonly referenceRegion?: Readonly<Record<Cloud, string>>;
   readonly addonRates: SkuCatalog["addonRates"];
   readonly sqlDbuPerHour: SkuCatalog["sqlDbuPerHour"];
   readonly appsDbuPerHour: SkuCatalog["appsDbuPerHour"];
@@ -41,6 +49,10 @@ export interface PricingCatalog {
   readonly defaultEgressPerGb: SkuCatalog["defaultEgressPerGb"];
   skuRate(cloud: Cloud, tier: Tier, sku: SkuId): number;
   regionalSkuRate?(cloud: Cloud, region: string, tier: Tier, sku: SkuId): number | null;
+  firstPartyDbuRate?(cloud: Cloud, region: string | null, tier: Tier, sku: SkuId): DbuRateObservation | null;
+  firstPartyBaseDbuRate?(cloud: Cloud, tier: Tier, sku: SkuId): DbuRateObservation | null;
+  referenceDbuRate?(cloud: Cloud, tier: Tier, sku: SkuId): DbuRateObservation | null;
+  firstPartyDbuConflict?(cloud: Cloud, region: string | null, tier: Tier, sku: SkuId): DbuRateConflict | null;
   region(cloud: Cloud, regionId: string): RegionInfo;
   instance(cloud: Cloud, id: string): InstanceInfo | undefined;
   vmHourly(cloud: Cloud, region: string, instanceId: string): VmQuote;
@@ -55,6 +67,7 @@ export const bundledPricingCatalog: PricingCatalog = {
   sqlVmDollarsPerDbuHour: skuCatalog.sqlVmDollarsPerDbuHour,
   sqlVmNote: skuCatalog.sqlVmNote,
   defaultSpotDiscount: skuCatalog.defaultSpotDiscount,
+  referenceRegion,
   addonRates: skuCatalog.addonRates,
   sqlDbuPerHour: skuCatalog.sqlDbuPerHour,
   appsDbuPerHour: skuCatalog.appsDbuPerHour,
@@ -67,6 +80,10 @@ export const bundledPricingCatalog: PricingCatalog = {
   defaultEgressPerGb: skuCatalog.defaultEgressPerGb,
   skuRate,
   regionalSkuRate,
+  firstPartyDbuRate,
+  firstPartyBaseDbuRate,
+  referenceDbuRate: secondaryReferenceDbuRate,
+  firstPartyDbuConflict,
   region: regionInfo,
   instance: findInstance,
   vmHourly,

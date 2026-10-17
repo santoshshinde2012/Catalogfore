@@ -64,6 +64,13 @@ if (command === "sql") {
   } catch (error) {
     fail(error instanceof Error ? error.message : "Usage import failed.");
   }
+} else if (command === "rates") {
+  try {
+    const { printUnitCosts } = await import("./unit-costs-cli.ts");
+    printUnitCosts(tail);
+  } catch (error) {
+    fail(error instanceof Error ? error.message : "Could not export unit costs.");
+  }
 } else if (command === "products") {
   for (const product of listProducts()) {
     const price = product.published
@@ -125,7 +132,7 @@ if (command === "sql") {
   );
 } else {
   fail(
-    "commands: estimate [--xlsx out.xlsx] [plan.json], forecast <plan.json> [--xlsx out.xlsx], usage <file.csv> [--cloud aws|azure|gcp --tier premium|enterprise --region id --as-of YYYY-MM-DD --month YYYY-MM --cost-basis effective|billed], sql, products, product <id>",
+    "commands: estimate [--xlsx out.xlsx] [plan.json], forecast <plan.json> [--xlsx out.xlsx], usage <file.csv> [--cloud aws|azure|gcp --tier premium|enterprise --region id --as-of YYYY-MM-DD --month YYYY-MM --cost-basis effective|billed], sql, products, product <id>, rates [--format json|csv --product id --cloud aws|azure|gcp --region id --tier premium|enterprise --evidence official|derived|estimate|unresolved|not_applicable]",
   );
 }
 

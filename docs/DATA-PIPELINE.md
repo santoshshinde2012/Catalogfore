@@ -1,75 +1,84 @@
 # Price refresh
 
-`scripts/refresh-prices.mjs` rebuilds the machine-owned price files. It does not edit `data/sku-rates.json`. That file stays a cited table.
+Runtime pricing is a deterministic snapshot. Network retrieval lives in scripts; the browser, CLI, MCP server, Excel exporter and unit-cost inventory use the shared engine resolver. A source review date is separate from a numeric observation and a tariff effective date.
 
-## What it writes
+## Source files and precedence
 
-| File                         | Contents                                                                                             |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `data/cloud-vm-prices.json`  | On-demand hourly VM rates for every region in the catalog. Spot hourly when a public source has one. |
-| `data/azure-dbu-meters.json` | Premium Azure Databricks $/DBU by region and catalog SKU.                                            |
-| `data/pricing-probe.json`    | Whether a public Databricks rate JSON was found. The probe does not scrape the pricing bundle.       |
+| Input                                 | Role                                                                                                                       |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `data/azure-dbu-meters.json`          | Exact Premium Azure DBU meters by region; the engine's Azure Enterprise alias uses the same meters.                        |
+| `data/databricks-dbu-rates.json`      | Validated first-party Databricks USD/DBU observations, exact locators, source metadata, exclusions and quarantined issues. |
+| `data/sources/*.json.gz`              | Exact original Databricks price-card/calculator responses, with SHA-256 fingerprints recorded in the normalized snapshot.  |
+| `data/sku-rates.json`                 | Legacy reference bases, regional planning factors and explicit consumption/storage assumptions.                            |
+| `data/cloud-vm-prices.json`           | Separate cloud infrastructure observations and seeded or advisor-derived estimates.                                        |
+| `data/instances.json`                 | Curated instance consumption ratings; dollar-price refreshes do not overwrite them.                                        |
+| `data/component-price-conflicts.json` | Shared component exclusions applied by forecasting and the unit inventory.                                                 |
+| `data/unit-cost-evidence.json`        | Reviewed source scopes, conditions and known gaps.                                                                         |
+| `data/unit-costs.{csv,json}.gz`       | Complete derived inventory; expanded ordinary files are generated locally and downloaded by the UI.                        |
 
-`data/instances.json` is read for the instance list and for validation. The script does not rewrite it.
+The injectable `resolveDbuRate` policy, supplied by `catalog.ts`, prefers a matching exact first-party regional observation. An unscoped or reference-region base can support a labeled planning fallback. Missing evidence never becomes an official price merely because an explanatory vendor URL is attached. Known same-offering first-party disagreements withhold the qualified quote and produce an unresolved forecast component. Imported observed costs and supplied contract rates retain their separate provenance.
 
-Each price file has `version` (`YYYY-MM-DD.N`) and `updatedOn`. The page prints “Prices updated” from the latest of the VM file, the Azure meter file, and `verifiedOn` on the curated rate card.
+## Authentic Databricks sources
 
-## Sources
+`npm run refresh:databricks` fetches fixed HTTPS endpoints used by the official pricing pages:
 
-**Azure Retail Prices.** `https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview`. No key. For each Azure region in `data/sku-rates.json` the script asks for the six curated VM SKUs and for `serviceName eq 'Azure Databricks'`. Items often omit `priceType`; a missing type is treated as Consumption. Linux on-demand excludes Windows, Spot, and Low Priority. Spot is the Consumption meter whose name contains Spot. DBU meters are matched by the Premium meter name in `scripts/parse-prices.mjs`. Photon, trial, and POC meters are skipped. The script follows `NextPageLink`. A 429 is retried five times, waiting 400ms, 800ms, 1.6s, 3.2s, and 6.4s. Regions run three at a time.
+- [Product price cards](https://www.databricks.com/en-pricing-assets/data/pricing/cards.json).
+- [AWS calculator data](https://www.databricks.com/en-pricing-assets/data/pricing/AWS.json).
+- [Google Cloud calculator data](https://www.databricks.com/en-pricing-assets/data/pricing/GCP.json).
 
-If a region returns no meters, the previous rows for that region are kept. A new VM price more than five times the previous price, or less than a fifth of it, is rejected and the old row stays.
+The script rejects alternate endpoints, credentials and redirects. It normalizes only explicitly mapped USD/DBU dimensions. It retains exact response bytes, hashes, source observation dates and row or JSON-pointer locators. Calculator hour examples are checked against their DBU basis. Incompatible units, unsupported offerings, conflicting duplicate values and first-party disagreements remain excluded or quarantined. A substantial loss of accepted coverage fails the refresh before replacing the stored data.
 
-**AWS Price List bulk files.** `https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/<region>/index.csv`. No key. One region file is about 300 MB. The script streams it, keeps Linux shared on-demand rows whose capacity status is Used and whose preinstalled software is NA, and aborts the download once every curated instance in that region has a price. Two regions run at a time. `SKIP_AWS=1` skips this step so an Azure retry does not re-download the offer files.
+`npm run check:sources` runs offline. It validates dimensions and monetary units, replays the parsers against retained responses, and compares the complete normalized snapshot. Changing a price independently of its captured source fails this check. A successful replay proves snapshot consistency, not that the vendor has kept the same price since capture. Product availability, negotiated discounts and tariff effective dates are not inferred from a capture date.
 
-**Spot.** `https://spot-bid-advisor.s3.amazonaws.com/spot-advisor-data.json`. The `s` field is the percent saved versus on-demand, not an hourly price. The script stores `spotHourly = onDemand × (1 − s/100)` when the saving is between 0 and 95 percent. The engine uses that hourly rate only while the workload’s spot discount is still the catalog default (60%). Moving the discount uses the slider instead. A fallback VM price copied from another region does not carry `spotHourly`.
+The 2026-10-17 capture contains 1,059 accepted USD/DBU observations. Twenty-one same-key disagreements between official sources are quarantined, including eleven within the currently supported AWS/GCP catalog regions. Some serving discrepancies can involve displayed precision; they still require reconciliation before an unqualified exact quote.
 
-**GCP Cloud Billing Catalog.** `https://cloudbilling.googleapis.com/v1/services/6F81-5844-456A/skus`. Compute Engine. A machine hour is cores times the “{Family} Instance Core” SKU plus memory times the “{Family} Instance Ram” SKU, usage type OnDemand, region in `serviceRegions`. The script runs only when `GCP_BILLING_API_KEY` is set. Otherwise it logs `gcp: skipped` and leaves the seeded rows.
+## Azure Retail Prices
 
-**Instance DBU ratings.** `data/instances.json` is a cited table. The refresh does not download or overwrite it.
+The unauthenticated [Azure Retail Prices API](https://learn.microsoft.com/en-us/rest/api/cost-management/retail-prices/azure-retail-prices) supplies commercial-cloud USD list prices. `scripts/refresh-prices.mjs` queries each supported region for curated Linux VM SKUs and Databricks Consumption meters. DBU names are explicitly mapped in `scripts/parse-prices.mjs`; Photon, trial, POC, incompatible currencies and nonzero minimum-quantity bands are excluded.
 
-Azure counts that the [Microsoft pricing page](https://azure.microsoft.com/en-us/pricing/details/databricks/) publishes for All-Purpose Compute, Jobs Compute, and Jobs Light Compute (Premium, non-Photon, fetched 2026-10-16) are `Standard_DS3_v2` 0.75, `Standard_DS4_v2` 1.50, `Standard_DS13_v2` 2.00, `Standard_D4s_v5` 1.00, and `Standard_E8s_v3` 2.00. The Jobs Compute FAQ on that page uses 2.0 DBU per DS13 v2 node. `Standard_F4s_v2` does not appear in those tables, so its 0.75 stays a manual figure.
+Each fetched DBU row records its own `asOf`, meter ID, effective start date, raw API unit, primary-region flag and filtered lookup URL. An API raw unit of `1 Hour` on a DBU meter describes its source representation; it is not a VM-hour. The engine normalizes the matched Databricks meter to USD/DBU. Non-primary-region flags are preserved; the parser does not reinterpret them as a different billing unit.
 
-AWS and GCP counts are a manual table. No allowed public feed publishes them. The [Databricks website terms of use](https://www.databricks.com/legal/terms-of-use) forbid scrapers and interfaces Databricks does not provide, so the refresh does not read the instance picker.
+Pagination follows `NextPageLink`. Reaching the safety limit with pages remaining fails instead of accepting a partial snapshot. A 429 is retried with bounded backoff. Regions run three at a time. A partial or failed refresh keeps unmatched previous meters with their original per-meter dates; a new file-wide timestamp never refreshes those observations. Legacy rows without a per-meter date retain an unknown observation date.
 
-Databricks Labs LakeMeter-OSS is not a source. Its GitHub license is the Databricks License (Copyright 2026 Databricks, Inc.). That license allows the materials only in connection with use of the Databricks Services under the [Master Cloud Services Agreement](https://www.databricks.com/legal/mcsa). A public calculator is outside that grant, so this repo does not fetch or redistribute the pricing bundle.
+All 530 mapped DBU meters across the 39 supported Azure regions were fetched on 2026-10-17 with their meter IDs and price metadata. VM observations retain their own dates.
 
-**Databricks.com.** The script fetches two URLs the pricing app references: `/en-pricing-assets/page-data/app-data.json` and `/page-data/product/pricing/page-data.json`. It looks for rate fields. It does not download or parse the client bundle. The [website terms of use](https://www.databricks.com/legal/terms-of-use) forbid scrapers and other interfaces Databricks does not provide. No rate JSON means the curated $/DBU table stays.
+## Cloud infrastructure and consumption
 
-## Validation
+**AWS Price List:** the refresh streams public regional EC2 offer CSVs and retains Linux shared on-demand rows for the curated machines. Windows, reserved terms and incompatible tenancy are excluded. Two regions run at a time. `SKIP_AWS=1` skips the large VM downloads. A VM move outside 0.2–5 times the previous price is rejected pending review.
 
-`scripts/validate-catalog.mjs` checks version shape, dates, region factors between 0.4 and 3, SKU rates between 0 and 5, instance DBU/hour between 0.05 and 40, unique keys, VM hourly rates between 0 and 50, and a spot rate that is positive and below on-demand. The refresh exits before writing if that check fails. `npm test` runs the same check on the files in the repo.
+**AWS Spot Advisor:** savings percentages produce planning hourly estimates, not live availability-zone quotes. The stored estimate applies only while the workload uses the catalog default spot setting. Cross-region VM fallbacks do not inherit a Spot price.
 
-## GitHub Action
+**Google Cloud Billing Catalog:** when `GCP_BILLING_API_KEY` is provided, machine prices resolve core and memory SKUs by family, region and OnDemand usage type. Without it, GCP machine rows remain labeled seeds. This key is unrelated to the public Databricks GCP DBU price capture and must not be committed.
 
-`.github/workflows/weekly-catalog.yml` is the only scheduled catalog job. It runs Mondays at 06:00 UTC, and on demand. It replaces the earlier Monday price refresh (`0 6 * * 1`) and catalog watch (`0 7 * * 1`).
+**Instance consumption:** `data/instances.json` remains curated. The dollar-price pipeline does not import every instance rating from the official calculator captures. Azure published non-Photon counts retain their source; manual values and Photon factors remain planning inputs unless separately verified. Databricks Labs LakeMeter-OSS is not used.
 
-The job uses the default `GITHUB_TOKEN`. Repository permission stays `contents: read`. The job itself may write contents, open one pull request, and open or comment on one research issue. It does not merge.
+## Weekly review workflow
 
-`npx vite-node scripts/weekly-catalog.ts --apply` does the work:
+`.github/workflows/weekly-catalog.yml` runs Mondays at 06:00 UTC and on demand. Default repository permissions remain read-only; the job can update its review branch and PR. It never merges.
 
-1. Validate `data/product-catalog.json` with the catalog schema, and validate the price files. A schema or sanity error exits 1. Nothing is committed.
-2. Refresh Azure Retail Prices and AWS EC2 offers. `GCP_BILLING_API_KEY` comes from the repository secret and is empty when the secret is unset, which skips GCP.
-3. Run the catalog watch: Azure Databricks meter names, the coverage report, and `https://www.databricks.com/feed`.
-4. Read `robots.txt` and, when that file allows it, sitemap metadata on `www.databricks.com` and `docs.databricks.com`. A new product signal is a `www.databricks.com/product/<name>` URL that was not seen before. Release-note archives and pricing URLs are ignored. The RSS feed covers release notes. `sitemapLocs` in `data/catalog-watch-state.json` starts from the product URLs listed on 2026-10-17, so an existing marketing page is not filed as new. The job does not scrape a pricing page.
-5. Diff the price files. A rate move over 20% is listed. It is not applied as a new curated `$/DBU`. The curated card stays a cited table.
-6. When something changed, bump the product-catalog version, note it under Unreleased in `CHANGELOG.md`, and write `data/weekly-summary.md`.
-7. Open or update one pull request on the branch `weekly-catalog`. The summary lists new services, price changes, and removed items.
-8. When a new sitemap product, release-note title, Azure meter, or stale citation needs research, open one GitHub issue titled `Catalog research: new public signals`, or comment on the open issue. The checklist does not change a rate.
+1. Validate the installed catalog and price inputs.
+2. Capture and normalize the official Databricks data; fail unsafe or substantial coverage changes.
+3. Refresh Azure meters and AWS VM offers, plus GCP VMs when configured.
+4. Check allowed RSS, robots, sitemap and Azure meter-name signals for catalog changes.
+5. Diff primary observations, VM rates, Azure meters and fallback tables. Report moves over 20%, additions, removals and quarantined issues.
+6. Bump the product catalog version when inputs change and write the weekly summary.
+7. Verify source captures, rebuild confidence/coverage reports, and regenerate both unit-cost artifacts.
+8. Open or update the single `weekly-catalog` review PR with normalized data, raw captures and generated outputs.
+9. Open or update the existing research issue for new metadata signals requiring citations.
 
-`--offline` skips the network and is for tests. A dry run without `--apply` prints the summary and does not write files.
+`--offline` performs no network requests and is intended for tests. A dry run without `--apply` writes nothing.
 
-## Last real run, 2026-10-17
+## Commands
 
-Azure Retail Prices (39 regions) and AWS EC2 offers (16 regions) were refreshed. GCP was skipped because `GCP_BILLING_API_KEY` is unset. Databricks price JSON was not found. VM rows stayed 383 and Azure meter rows stayed 530. No on-demand hourly, spot hourly, or `$/DBU` value changed. `data/sku-rates.json` and `data/instances.json` were stamped `2026-10-17.1` as the re-check date. Their dollar rates and DBU counts were not rewritten by the download. The product catalog is `2026-10-17.1`. Multi-statement transactions (GA, 2026-10-16) are recorded in [CATALOG.md](CATALOG.md) and are not a new row.
-
-## Run it locally
-
-```bash
-npx vite-node scripts/weekly-catalog.ts
+```sh
 npx vite-node scripts/weekly-catalog.ts --offline
+npm run refresh:databricks
+npm run check:sources
 npm run refresh-prices
-SKIP_AWS=1 npm run refresh-prices
+node scripts/rate-confidence.mjs
+node scripts/coverage-report.mjs
+npm run export:unit-costs
+npm run check:unit-costs
 ```
 
-Do not commit a GCP key. Put it in the Actions secret if you want the weekly job to refresh GCE rates. `NOTICE` records which price files come from which public source.
+[Unit-cost documentation](UNIT-COSTS.md) explains evidence labels, component calculations and remaining coverage gaps. [NOTICE](../NOTICE) records source attribution.

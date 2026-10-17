@@ -25,6 +25,8 @@ export async function runWeeklyCatalog({ apply, offline, ports }) {
 
   const notes = await metadataNotes({ apply, offline, ports, stateBefore });
   if (apply) {
+    const official = ports.spawn("scripts/refresh-databricks-rates.mjs");
+    if (official !== 0) stop("First-party Databricks source refresh failed", official);
     const refresh = ports.spawn("scripts/refresh-prices.mjs");
     if (refresh !== 0) stop("", refresh);
     const watch = ports.spawn("scripts/catalog-watch.mjs");
@@ -48,9 +50,18 @@ export async function runWeeklyCatalog({ apply, offline, ports }) {
     (row) => row.usdPerDbu,
   );
   const sku = skuRateFlags(before.sku, after.sku);
-  const flags = [...vm.flags, ...meters.flags, ...sku.flags];
-  const added = [...vm.added, ...meters.added, ...sku.added];
-  const removed = [...vm.removed, ...meters.removed, ...sku.removed];
+  const published = rateChangeFlags(
+    before.published.rates,
+    after.published.rates,
+    (row) => `official:${row.cloud}:${row.region ?? "reference"}:${row.tier}:${row.sku}`,
+    (row) => row.usdPerUnit,
+  );
+  const flags = [...vm.flags, ...meters.flags, ...sku.flags, ...published.flags];
+  const added = [...vm.added, ...meters.added, ...sku.added, ...published.added];
+  const removed = [...vm.removed, ...meters.removed, ...sku.removed, ...published.removed];
+  notes.push(
+    `Databricks calculator snapshot: ${after.published.rates.length} accepted USD/DBU rates; ${after.published.issues.length} quarantined source issues. Observation ${after.published.observedOn}; effective date not published.`,
+  );
   const stateAfter = readJson(ports, statePath);
   const checklist = researchItems({ notes, beforeState: stateBefore, afterState: stateAfter });
   const changed = (apply && ports.gitDirty()) || added.length + removed.length > 0 || checklist.length > 0;
@@ -112,6 +123,7 @@ function snapshot(ports) {
     prices: readJson(ports, new URL("data/cloud-vm-prices.json", root)),
     meters: readJson(ports, new URL("data/azure-dbu-meters.json", root)),
     sku: readJson(ports, new URL("data/sku-rates.json", root)),
+    published: readJson(ports, new URL("data/databricks-dbu-rates.json", root)),
   };
 }
 

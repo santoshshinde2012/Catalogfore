@@ -137,7 +137,7 @@ export async function exportPdf(
   const last = points[points.length - 1];
   if (last)
     write(
-      `Horizon ${points.length} months. Last month ${usd(last.total)}. Catalog ${estimate.catalogVersion}, verified ${estimate.verifiedOn}.`,
+      `Horizon ${points.length} months. Last month ${usd(last.total)}. Catalog ${estimate.catalogVersion}, dated ${estimate.verifiedOn}.`,
     );
   doc.save(`${slug(portfolio.name)}.pdf`);
 }
@@ -163,7 +163,7 @@ export const forecastExporters: readonly ForecastDownload[] = [
   {
     id: "json",
     menuLabel: "JSON",
-    detail: "Complete forecast data and assumptions",
+    detail: "Complete forecast data and assumptions. Save your forecast; reopen with Menu → Open forecast.",
     icon: FileJson2,
     write: exportJson,
   },

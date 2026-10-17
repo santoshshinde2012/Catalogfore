@@ -6,6 +6,7 @@ import { previewUsageImport } from "./usage/preview.js";
 import type { UsageImportOptions, UsageImportPreview } from "./usage/types.js";
 import { workloadsFromUsagePreview, type UsageProductForecast } from "./usage/workloads.js";
 import { createWorkload, type MenuKind } from "./workload-seeds.js";
+import { withComponentDefaults } from "./rates/components.js";
 
 export { geniePromoFactor, genieUserUsageFree };
 export { formulaFor, recomputeProduct } from "./formulas/product.js";
@@ -42,20 +43,26 @@ export function workloadsForProduct(productId: string): Workload[] {
   if (!product) throw new Error(`Unknown product "${productId}".`);
   if (product.parts && product.parts.length > 0) {
     return product.parts.map((part) =>
-      recomputeProduct({
-        ...applyPatch(createWorkload(part.template as MenuKind), part.patch),
-        productId: product.id,
-        partId: part.id,
-        name: part.name,
-      }),
+      recomputeProduct(
+        withComponentDefaults({
+          ...applyPatch(createWorkload(part.template as MenuKind), part.patch),
+          productId: product.id,
+          partId: part.id,
+          name: part.name,
+          ...(product.listPrice === "unpublished" ? { priceStatus: "unpriced" as const } : {}),
+        }),
+      ),
     );
   }
   return [
-    recomputeProduct({
-      ...applyPatch(createWorkload(product.template as MenuKind), product.patch),
-      productId: product.id,
-      name: product.menuLabel,
-    }),
+    recomputeProduct(
+      withComponentDefaults({
+        ...applyPatch(createWorkload(product.template as MenuKind), product.patch),
+        productId: product.id,
+        name: product.menuLabel,
+        ...(product.listPrice === "unpublished" ? { priceStatus: "unpriced" as const } : {}),
+      }),
+    ),
   ];
 }
 

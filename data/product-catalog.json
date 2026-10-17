@@ -1,8 +1,8 @@
 {
   "$schema": "../packages/catalog/product-catalog.schema.json",
-  "version": "2026-10-17.1",
+  "version": "2026-10-17.3",
   "verifiedOn": "2026-10-17",
-  "disclaimer": "Estimates only. Not a quote, invoice, or commitment. Unpublished rows are $0 on purpose. Azure meters were checked on 2026-10-17. AWS and GCP $/DBU remain the curated table.",
+  "disclaimer": "Estimates only. Not a quote, invoice, or commitment. Source rates resolve from captured first-party Azure and Databricks calculator data where supported; missing and conflicted prices remain unresolved. Planning assumptions and reference fallbacks are labeled separately. A catalog product does not guarantee availability in every cloud or region.",
   "categories": [
     {
       "id": "data_engineering",
@@ -83,7 +83,7 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-17"
       },
-      "note": "Jobs Compute DBU. Photon uses the 2.9× calculator rule. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "note": "Jobs Compute DBU. Photon changes DBU consumption: Azure Jobs uses 2.5×; AWS/GCP retain a 2.9× planning factor. Exact instance ratings can differ. Exact Azure Retail Prices meters and captured Databricks AWS/GCP price-card or calculator observations take precedence. The Unit costs view identifies each component’s actual source, observation date, scope, and any fallback or conflict.",
       "confidenceScore": 92
     },
     {
@@ -109,7 +109,7 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-17"
       },
-      "note": "Premium Jobs Light Compute is $0.22/DBU in East US (Retail Prices, 2026-10-17). That figure is not scaled to other Azure regions. Standard Jobs Light is $0.07 and is not used. AWS and GCP have no Jobs Light rate in the curated table, so those clouds are $0.",
+      "note": "Premium Jobs Light Compute is $0.22/DBU in Azure East US (Retail Prices, 2026-10-17). The shared component registry seeds this public reference rate and the forecast withholds it outside that scope. Standard Jobs Light is a different offering. Missing prices for another cloud or region remain unresolved; supply a labelled independent rate to price them.",
       "fields": [
         {
           "path": "dbuPerMonth",
@@ -121,10 +121,7 @@
       ],
       "patch": {
         "sku": "managed_services",
-        "dbuPerMonth": 100,
-        "rateByCloud": {
-          "azure": 0.22
-        }
+        "dbuPerMonth": 100
       },
       "azureMeterNames": [
         "Premium Jobs Light Compute DBU"
@@ -160,7 +157,7 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-17"
       },
-      "note": "Automated Serverless Compute. Compute is included. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "note": "Automated Serverless Compute. Compute is included. Exact Azure Retail Prices meters and captured Databricks AWS/GCP price-card or calculator observations take precedence. The Unit costs view identifies each component’s actual source, observation date, scope, and any fallback or conflict.",
       "confidenceScore": 92
     },
     {
@@ -185,7 +182,7 @@
       ],
       "defaults": "Same default as Serverless jobs.",
       "source": {
-        "title": "Databricks pricing pages (no public price JSON)",
+        "title": "Databricks pricing pages",
         "url": "https://www.databricks.com/product/pricing",
         "fetchedOn": "2026-10-16"
       },
@@ -222,7 +219,7 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-17"
       },
-      "note": "All-purpose Compute DBU plus the VM. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "note": "All-purpose Compute DBU plus the VM. Exact Azure Retail Prices meters and captured Databricks AWS/GCP price-card or calculator observations take precedence. The Unit costs view identifies each component’s actual source, observation date, scope, and any fallback or conflict.",
       "confidenceScore": 92
     },
     {
@@ -254,7 +251,7 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-17"
       },
-      "note": "Interactive Serverless Compute. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "note": "Interactive Serverless Compute. Exact Azure Retail Prices meters and captured Databricks AWS/GCP price-card or calculator observations take precedence. The Unit costs view identifies each component’s actual source, observation date, scope, and any fallback or conflict.",
       "confidenceScore": 92
     },
     {
@@ -289,7 +286,7 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-17"
       },
-      "note": "Classic Delta Live Tables Core meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "note": "Classic Delta Live Tables Core meter. Exact Azure Retail Prices meters and captured Databricks AWS/GCP price-card or calculator observations take precedence. The Unit costs view identifies each component’s actual source, observation date, scope, and any fallback or conflict.",
       "confidenceScore": 92
     },
     {
@@ -322,7 +319,7 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-17"
       },
-      "note": "Classic Delta Live Tables Pro meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "note": "Classic Delta Live Tables Pro meter. Exact Azure Retail Prices meters and captured Databricks AWS/GCP price-card or calculator observations take precedence. The Unit costs view identifies each component’s actual source, observation date, scope, and any fallback or conflict.",
       "confidenceScore": 92
     },
     {
@@ -357,7 +354,7 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-17"
       },
-      "note": "Classic Delta Live Tables Advanced meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "note": "Classic Delta Live Tables Advanced meter. Exact Azure Retail Prices meters and captured Databricks AWS/GCP price-card or calculator observations take precedence. The Unit costs view identifies each component’s actual source, observation date, scope, and any fallback or conflict.",
       "confidenceScore": 92
     },
     {
@@ -389,7 +386,7 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-17"
       },
-      "note": "Serverless pipelines use the Automated Serverless meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
+      "note": "Serverless pipelines use the Automated Serverless meter. Exact Azure Retail Prices meters and captured Databricks AWS/GCP price-card or calculator observations take precedence. The Unit costs view identifies each component’s actual source, observation date, scope, and any fallback or conflict.",
       "confidenceScore": 92
     },
     {
@@ -417,11 +414,11 @@
       ],
       "defaults": "200 DBU / month on the Lakeflow Connect SKU.",
       "source": {
-        "title": "Databricks pricing pages (no public price JSON)",
+        "title": "Databricks pricing pages",
         "url": "https://www.databricks.com/product/pricing",
         "fetchedOn": "2026-10-16"
       },
-      "note": "The curated table has a Lakeflow Connect $/DBU (AWS Premium $0.35, Azure and Enterprise $0.45) and marks compute as included. That SKU is not in the Azure meter map, so the dollar rate is manual.",
+      "note": "Lakeflow Connect uses the shared cloud, region, and edition DBU resolver. Validated first-party observations take precedence over legacy references. The pricing page advertises the first 100 DBUs per workspace per day free; a monthly aggregate cannot reproduce that allowance. Enter already billable DBUs and do not subtract an allowance from imported billed usage again.",
       "confidenceScore": 55
     },
     {
@@ -555,7 +552,7 @@
       "drivers": [
         "No published usage unit in this catalog"
       ],
-      "defaults": "The line is $0. It is not a guessed rate.",
+      "defaults": "No standalone price is resolved in this catalog; inspect connected billable services and the source conditions.",
       "source": {
         "title": "Databricks Lakehouse Real-Time regional $/DBU",
         "url": "https://docs.databricks.com/aws/en/compute/sql-warehouse/real-time-pricing",
@@ -567,7 +564,7 @@
       "summary": "Regional rates are factors only",
       "category": "data_engineering",
       "billingUnit": "Unpublished as its own line",
-      "note": "The Lakehouse Real-Time page publishes regional $/DBU for LAKEHOUSE_SERVERLESS_COMPUTE. Cayfore uses those ratios as region factors on other SKUs. It does not add a second DBU price for the same usage. This line stays at $0.",
+      "note": "The Lakehouse Real-Time page publishes regional $/DBU for LAKEHOUSE_SERVERLESS_COMPUTE. Cayfore uses those ratios as region factors on other SKUs. It does not add a second DBU price for the same usage. This line has no resolved standalone quote.",
       "confidenceScore": 8
     },
     {
@@ -580,8 +577,8 @@
       "sku": null,
       "listPrice": "distinct",
       "published": true,
-      "confidence": "secondary",
-      "confidenceScore": 55,
+      "confidence": "measured",
+      "confidenceScore": 92,
       "automation": "manual",
       "template": "metered",
       "editor": "schema",
@@ -590,11 +587,11 @@
       ],
       "defaults": "Example of 100 GB. AWS Premium $0.050/GB. AWS Enterprise and Azure $0.064/GB. GCP is not priced.",
       "source": {
-        "title": "Flexera Databricks pricing guide (2026), cross-checked SunnyData",
-        "url": "https://www.flexera.com/blog/finops/databricks-pricing-guide/",
-        "fetchedOn": "2026-10-16"
+        "title": "Databricks official Zerobus price card; USD per GB",
+        "url": "https://www.databricks.com/en-pricing-assets/data/pricing/cards.json",
+        "fetchedOn": "2026-10-17"
       },
-      "note": "Secondary list rates, not a first-party number printed on a static page. Flexera (2026) lists Zerobus Ingest at $0.050/GB on AWS Premium and $0.064/GB on AWS Enterprise. The Azure table lists $0.064/GB, which matches Enterprise rather than a second Premium rate. SunnyData re-verified $0.064/GB for AWS Enterprise us-east on 2026-08-04 and says the rate includes compute. Official docs bill the usage against Jobs Serverless (AWS) or Automated Serverless (Azure) and point at the Lakeflow Connect price page, which does not render a dollar rate to a static fetch. The GA post calls the price volume-based and mentions a 6-month promotion with no end date, so the promotion is not applied. GCP is listed as coming soon. The example is 100 GB. The rate is not scaled by region. Same-region client egress is still not a second charge.",
+      "note": "The retained official price-card capture verifies US East reference prices of $0.050/GB on AWS Premium and $0.064/GB on AWS Enterprise and Azure Premium. The Lakeflow Connect pricing page identifies the Zerobus ingestion billing unit separately from connector DBUs and OpenTelemetry ingestion. These GB prices are not normalized into the generic USD/DBU table. No regional scaling is applied. GCP prices in the current price card do not by themselves establish supported product availability, so this template keeps GCP unresolved. Undated promotions are not applied. The example is 100 GB.",
       "fields": [
         {
           "path": "inputs.gb",
@@ -631,13 +628,13 @@
       "drivers": [
         "Not offered"
       ],
-      "defaults": "The line is $0.",
+      "defaults": "No standalone price is resolved in this catalog; inspect connected billable services and the source conditions.",
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-17"
       },
-      "note": "Azure still lists Standard jobs, all-purpose, SQL, and Jobs Light meters. Standard is retired and is not a Cayfore template, so this line stays at $0. East US examples on 2026-10-17: Jobs $0.15, All-purpose $0.40, SQL $0.22, Jobs Light $0.07.",
+      "note": "Azure still lists Standard jobs, all-purpose, SQL, and Jobs Light meters. Standard is retired and is not a Cayfore template, so no standalone quote is asserted. East US examples on 2026-10-17: Jobs $0.15, All-purpose $0.40, SQL $0.22, Jobs Light $0.07.",
       "fields": [],
       "patch": {
         "sku": "managed_services",
@@ -993,7 +990,7 @@
       "drivers": [
         "Spend sits on the products opened inside it"
       ],
-      "defaults": "The line is $0. Nothing extra is billable.",
+      "defaults": "No standalone price is resolved in this catalog; inspect connected billable services and the source conditions.",
       "source": {
         "title": "Databricks system tables, billable usage",
         "url": "https://docs.databricks.com/aws/en/admin/system-tables/billing",
@@ -1093,22 +1090,22 @@
       "id": "foundation_provisioned",
       "name": "Foundation Model provisioned throughput",
       "menuLabel": "Provisioned throughput",
-      "summary": "Provisioned DBU per hour",
+      "summary": "Provisioned DBU per 50 model-unit-hour",
       "category": "ai_ml",
-      "billingUnit": "DBU-hour",
+      "billingUnit": "DBU per 50-model-unit-hour",
       "sku": "model_serving",
       "template": "foundation",
       "drivers": [
         "Model",
-        "Provisioned hours"
+        "Provisioned block-hours (50 model units)"
       ],
-      "defaults": "Llama 3.1 8B, 100 provisioned hours, no tokens. 53.571 DBU/hour on that model.",
+      "defaults": "Llama 3.1 8B, 100 provisioned block-hours, no tokens. The published capacity basis is 50 model units per block.",
       "source": {
         "title": "Databricks Foundation Model APIs pricing",
         "url": "https://www.databricks.com/product/pricing/foundation-model-serving",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Provisioned throughput is DBU/hour on the model row, priced at the model-serving $/DBU. Reservations and cache-read columns on the live page are not in the curated table.",
+      "note": "Current published provisioned consumption is DBU per hour per 50 model units, not a universal endpoint-hour price or throughput guarantee. The legacy provisioned-hours input represents block-hours without a separate block-count field. GTE’s differing official consumption figures are quarantined consistently in the forecast and unit inventory. Token usage and capacity are separate pricing modes; cache, priority, batch and reservation dimensions are not comprehensively modeled.",
       "confidenceScore": 78
     },
     {
@@ -1432,7 +1429,7 @@
       "summary": "Rate not stored until you type it",
       "category": "ai_ml",
       "billingUnit": "DBU per million tokens you copy from the price page",
-      "note": "Kimi, GLM, DeepSeek, Qwen, and other rows on the Foundation Model page are not in the curated DBU-per-million table. Their rates are not invented here. Copy DBU per million input and output from that page and the line prices them at the model-serving $/DBU. Until you do, the line stays at $0.",
+      "note": "Additional models, token directions, cache bands, and offerings on the official Foundation Model Serving page are outside the curated model table. Enter verified DBU per million input/output tokens for the matching offering; until then the component remains unresolved. A user-supplied conversion is separate from the captured USD/DBU list price.",
       "formula": "custom_fm",
       "confidenceScore": 8
     },
@@ -1583,10 +1580,10 @@
       "id": "external_models",
       "name": "External models and AI Gateway fee",
       "menuLabel": "External models",
-      "summary": "No platform fee; enter token DBU if you have them",
+      "summary": "External provider and token charges need a supplied rate",
       "category": "ai_ml",
-      "billingUnit": "No platform fee is published",
-      "note": "No Databricks platform fee for an external model was published. Usage tracking (1.429 DBU/GB) is its own product. If your list_prices row meters these tokens on model serving, type the DBU per million from that row. The defaults are 0, so the line stays at $0 until you do. Those typed rates are yours, not a Cayfore list price.",
+      "billingUnit": "Supplied provider or token billing basis",
+      "note": "External model-provider costs and optional Databricks services are distinct. No universal platform token conversion is stored. Enter a verified conversion for the matching offering and billing unit; until then the component is unresolved. Usage tracking is a separate product. User-supplied consumption assumptions do not become official Databricks list prices.",
       "formula": "custom_fm",
       "confidenceScore": 8
     },
@@ -2154,7 +2151,7 @@
         "url": "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing",
         "fetchedOn": "2026-10-15"
       },
-      "note": "Azure compute is 0.213 × the East US Premium Database Serverless meter ($0.26), which is $0.05538 per CU-hour. Storage is 15× the $0.026 DSU rate. AWS uses $0.111 per CU-hour. The $0.0092 preview is not the default. GCP has no published Lakebase rate, so compute and the Lakebase storage price on GCP are $0. The line says so when the portfolio cloud is GCP.",
+      "note": "Azure compute is 0.213 × the East US Premium Database Serverless meter ($0.26), which is $0.05538 per CU-hour. Storage is 15× the $0.026 DSU rate. AWS uses $0.111 per CU-hour. The $0.0092 preview is not the default. No supported GCP Lakebase compute or storage quote is stored, so those charges remain unresolved and the forecast is a known subtotal.",
       "confidenceScore": 78
     },
     {
@@ -2479,7 +2476,7 @@
       ],
       "defaults": "500 GB-month at the pinned object rate.",
       "source": {
-        "title": "Databricks pricing pages (no public price JSON)",
+        "title": "Databricks pricing pages",
         "url": "https://www.databricks.com/product/pricing",
         "fetchedOn": "2026-10-16"
       },
@@ -2509,7 +2506,7 @@
       ],
       "defaults": "200 GB at the cloud default ($0.09 AWS, $0.087 Azure, $0.12 GCP).",
       "source": {
-        "title": "Databricks pricing pages (no public price JSON)",
+        "title": "Databricks pricing pages",
         "url": "https://www.databricks.com/product/pricing",
         "fetchedOn": "2026-10-16"
       },
@@ -2531,9 +2528,12 @@
       "sku": null,
       "template": "metered",
       "drivers": [
-        "Hourly endpoint is not billed yet"
+        "Transfer route",
+        "Endpoint hours",
+        "Cloud and region",
+        "Effective interval"
       ],
-      "defaults": "The line is $0.",
+      "defaults": "No standalone price is resolved in this catalog; inspect connected billable services and the source conditions.",
       "source": {
         "title": "Databricks serverless network security, cost management",
         "url": "https://docs.databricks.com/aws/en/security/network/serverless-network-security/cost-management",
@@ -2542,10 +2542,10 @@
       "id": "private_link",
       "name": "Serverless Private Link",
       "menuLabel": "Private Link",
-      "summary": "Hourly is not billed yet; per-GB rate is unpublished",
+      "summary": "Route and endpoint tariffs need a matching quote",
       "category": "governance_sharing",
-      "billingUnit": "No dollar rate is published",
-      "note": "Private endpoint $/hour is described as expected in the future and is not billed yet, so an hourly charge would be wrong. Private connectivity $/GB is billed, and the serverless network cost page (updated 2026-09-11) does not publish the dollar rate. This line stays at $0. It is not the internet-egress assumption. On 2026-10-16 the data-transfer pricing page lists Private Connectivity per GB and per hour as billed. AWS and GCP serverless private connectivity is a per-hour endpoint plus per GB. Azure per-GB data-processed charges are waived indefinitely; Azure still lists a per-hour endpoint. The AWS cost-management doc still says the hourly charge is expected in the future. Neither page prints a dollar rate. A 2025 SAP capacity-unit table is not a Databricks dollar rate and is not used. This line stays at $0.",
+      "billingUnit": "Route-dependent GB and endpoint-hours; not modeled",
+      "note": "Private connectivity can include per-GB and endpoint-hour charges. The current pricing page links an official data-transfer tariff effective 2024-08-01; current documentation differs on endpoint-hour applicability. Cayfore does not yet map every route, cloud, endpoint and effective interval. This component remains unresolved rather than implying the network is free. Azure’s Data Processed observation is a separate scoped component, and customer-cloud networking can add charges.",
       "confidenceScore": 8
     },
     {
@@ -2565,7 +2565,7 @@
       "drivers": [
         "Cloud NAT is on the cloud bill"
       ],
-      "defaults": "The line is $0.",
+      "defaults": "No standalone price is resolved in this catalog; inspect connected billable services and the source conditions.",
       "source": {
         "title": "Databricks serverless network security, cost management",
         "url": "https://docs.databricks.com/aws/en/security/network/serverless-network-security/cost-management",
@@ -2577,7 +2577,7 @@
       "summary": "No Databricks NAT rate",
       "category": "governance_sharing",
       "billingUnit": "No Databricks NAT rate is published",
-      "note": "No Databricks NAT hourly or per-GB rate was published. NAT on your cloud account is that cloud’s bill, not a Databricks SKU. This line stays at $0.",
+      "note": "No Databricks NAT hourly or per-GB rate was published. NAT on your cloud account is that cloud’s bill, not a Databricks SKU. This line has no resolved standalone quote.",
       "confidenceScore": 8
     },
     {
@@ -2597,10 +2597,7 @@
       ],
       "patch": {
         "sku": "managed_services",
-        "dbuPerMonth": 0,
-        "fixedUsdByCloud": {
-          "azure": 50
-        }
+        "dbuPerMonth": 0
       },
       "azureMeterNames": [
         "Premium Clean Rooms Collaborator Collaborator"
@@ -2619,10 +2616,10 @@
       "id": "clean_rooms",
       "name": "Clean Rooms",
       "menuLabel": "Clean Rooms",
-      "summary": "No list rate stored",
+      "summary": "Azure East US collaborator-day rate",
       "category": "governance_sharing",
       "billingUnit": "$/collaborator-day",
-      "note": "East US Premium Clean Rooms Collaborator is $50 per day on the Retail Prices API (2026-10-17). The default is one day. AWS and GCP have no rate here, so those clouds are $0.",
+      "note": "Azure East US Premium Clean Rooms Collaborator is $50 per collaborator-day on the Retail Prices API (2026-10-17). The default is one collaborator-day. Other placements remain unresolved. A supplied monthly dollar amount is a customer assumption, separate from this public unit rate.",
       "confidenceScore": 92
     },
     {
@@ -2642,7 +2639,7 @@
       "drivers": [
         "Same-region egress is not billed"
       ],
-      "defaults": "The line is $0. Cross-region dollars are not published.",
+      "defaults": "No universal sharing-transfer quote is resolved; same-region and cross-region conditions differ.",
       "source": {
         "title": "Databricks serverless network security, cost management",
         "url": "https://docs.databricks.com/aws/en/security/network/serverless-network-security/cost-management",
@@ -2653,8 +2650,8 @@
       "menuLabel": "Delta Sharing",
       "summary": "Same-region sharing is not charged",
       "category": "governance_sharing",
-      "billingUnit": "No dollar rate is published",
-      "note": "Delta Sharing (DATA_SHARING / OpenSharing) does not charge same-region egress. Cross-region and public egress are billed under NETWORKING, and no Delta Sharing dollar rate is published. This line stays at $0. It does not reuse the internet-egress assumption. A first-party data-transfer PDF effective 2024-08-01 lists AWS US East cross-region at $0.02/GB and internet at $0.09/GB. The 2026 network docs still do not print a Delta Sharing cross-region rate, so that older PDF is not applied.",
+      "billingUnit": "Route-dependent transfer charges; not modeled",
+      "note": "Same-region Delta Sharing can have no transfer charge; cross-region and public transfers depend on networking tariffs and routing. The official data-transfer table effective 2024-08-01 contains public charges that this component does not yet model. Missing coverage remains unresolved rather than a free cross-region sharing service.",
       "confidenceScore": 8
     },
     {
@@ -2674,9 +2671,9 @@
       "drivers": [
         "No published usage unit in this catalog"
       ],
-      "defaults": "The line is $0. It is not a guessed rate.",
+      "defaults": "No standalone price is resolved in this catalog; inspect connected billable services and the source conditions.",
       "source": {
-        "title": "Databricks pricing pages (no public price JSON)",
+        "title": "Databricks pricing; no standalone catalog quote",
         "url": "https://www.databricks.com/product/pricing",
         "fetchedOn": "2026-10-16"
       },
@@ -2686,7 +2683,7 @@
       "summary": "No list rate stored",
       "category": "governance_sharing",
       "billingUnit": "Unpublished",
-      "note": "Marketplace has no platform SKU in the curated table or the Azure meter map. This line stays at $0.",
+      "note": "Marketplace has no platform SKU in the curated table or the Azure meter map. This line has no resolved standalone quote.",
       "confidenceScore": 8
     },
     {
@@ -2706,9 +2703,9 @@
       "drivers": [
         "No published usage unit in this catalog"
       ],
-      "defaults": "The line is $0. It is not a guessed rate.",
+      "defaults": "No standalone price is resolved in this catalog; inspect connected billable services and the source conditions.",
       "source": {
-        "title": "Databricks pricing pages (no public price JSON)",
+        "title": "Databricks pricing; no standalone catalog quote",
         "url": "https://www.databricks.com/product/pricing",
         "fetchedOn": "2026-10-16"
       },
@@ -2739,13 +2736,13 @@
         "GB",
         "$0.02 on Azure"
       ],
-      "defaults": "100 GB × $0.02 on Azure. AWS and GCP stay $0.",
+      "defaults": "100 GB × the Azure East US component rate. Other placements remain unresolved.",
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-17"
       },
-      "note": "East US Data Processed is $0.02 per GB on the Retail Prices API (2026-10-17). The rate is not scaled to other Azure regions. AWS and GCP have no published row, so those clouds are $0. This is not the internet-egress assumption.",
+      "note": "Azure East US Data Processed is $0.02 per GB on the Retail Prices API (2026-10-17). The shared component registry supplies both the forecast and unit inventory. No rate is inferred for another cloud or Azure region. This component is not a general internet-egress or Private Link quote.",
       "fields": [
         {
           "path": "inputs.gb",
@@ -2785,13 +2782,13 @@
       "drivers": [
         "Portfolio add-on percent"
       ],
-      "defaults": "The line is $0. The portfolio add-on is 10% or 30% of DBU cost.",
+      "defaults": "No standalone price is resolved in this catalog; inspect connected billable services and the source conditions.",
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-17"
       },
-      "note": "East US lists compliance at $0.10 per DBU and mission critical at $0.15 per DBU (2026-10-17). The forecast already has a 10% and 30% add-on. This line stays at $0 so the charge is not counted twice.",
+      "note": "East US lists compliance at $0.10 per DBU and mission critical at $0.15 per DBU (2026-10-17). The forecast already has a 10% and 30% add-on. This line has no second charge; the separately labelled portfolio add-on assumption handles the modeled spend.",
       "fields": [],
       "patch": {
         "sku": "managed_services",

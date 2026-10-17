@@ -62,7 +62,7 @@ describe("golden prices", () => {
 
   it("falls back when a region has no meter for that SKU", () => {
     expect(regionalSkuRate("azure", "eastus", "premium", "managed_services")).toBeNull();
-    expect(regionalSkuRate("aws", "us-east-1", "premium", "jobs_classic")).toBeNull();
+    expect(regionalSkuRate("aws", "us-east-1", "premium", "ai_search")).toBeNull();
     expect(vmHourly("aws", "us-east-1", "missing.instance").source).toBe("missing");
   });
 });

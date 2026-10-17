@@ -39,6 +39,7 @@ export function MeteredPricingFields({ workload, portfolio, onChange }: KindProp
               onChange({
                 ...workload,
                 fixedUsdByCloud: { ...workload.fixedUsdByCloud, [cloud]: value },
+                priceStatus: undefined,
                 rateProvenance: { kind: "custom", label: "User supplied monthly cost", currency: "USD" },
               });
           }}
@@ -67,6 +68,7 @@ export function MeteredPricingFields({ workload, portfolio, onChange }: KindProp
                 ...workload,
                 rateByCloud: { [cloud]: value },
                 rateByPlacement: undefined,
+                priceStatus: undefined,
                 rateProvenance: {
                   kind: "custom",
                   label:

@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { navigateWorkspace, openWorkspaceMenu, selectWorkspaceAction, workspaceMenuTrigger } from "./header-helpers";
 
 test("every desktop header action explains itself on hover and keyboard focus", async ({ page, isMobile }) => {
   test.skip(isMobile, "Hover help is tested with a mouse; touch help is visible inside the menu.");
@@ -9,22 +10,19 @@ test("every desktop header action explains itself on hover and keyboard focus", 
   const actions = [
     header.getByRole("button", { name: /^Cayfore\b/ }),
     header.getByRole("button", { name: "Plan", exact: true }),
-    header.getByRole("button", { name: "Forecast", exact: true }),
-    header.getByRole("button", { name: "Advanced", exact: true }),
     header.getByRole("button", { name: "Product map", exact: true }),
-    header.getByRole("button", { name: "How it works", exact: true }),
-    header.getByRole("link", { name: "Star on GitHub", exact: true }),
-    header.getByRole("button", { name: "Switch to dark theme", exact: true }),
-    header.getByRole("button", { name: "Open forecast", exact: true }),
+    header.getByRole("button", { name: "Unit costs", exact: true }),
     header.getByRole("button", { name: "Menu", exact: true }),
   ];
+  await expect(header.getByRole("button")).toHaveCount(5);
+  await expect(header.getByRole("link")).toHaveCount(0);
   const initialHash = new URL(page.url()).hash;
 
   for (const action of actions) {
     await action.hover();
     await expect(page.getByRole("tooltip")).toBeVisible();
     await expect(action).toHaveAccessibleDescription(/.{20}/);
-    await page.mouse.move(page.viewportSize()!.width - 4, 4, { steps: 5 });
+    await page.mouse.move(page.viewportSize()!.width - 4, page.viewportSize()!.height - 4, { steps: 5 });
     await expect(page.getByRole("tooltip")).toHaveCount(0);
 
     await action.focus();
@@ -35,10 +33,7 @@ test("every desktop header action explains itself on hover and keyboard focus", 
     await expect(action).toBeFocused();
   }
 
-  await expect(header.getByRole("button", { name: "Advanced", exact: true })).toHaveAttribute(
-    "aria-haspopup",
-    "dialog",
-  );
+  await expect(workspaceMenuTrigger(page)).toHaveAttribute("aria-haspopup", "menu");
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(page.getByRole("menu")).toHaveCount(0);
   await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
@@ -49,12 +44,14 @@ test("keyboard menu navigation moves to the forecast and Escape restores its tri
   await page.goto("./");
   await page.getByRole("radio", { name: "10%", exact: true }).click();
   const hash = new URL(page.url()).hash;
-  const menuTrigger = page.getByRole("banner").getByRole("button", { name: "Menu", exact: true });
+  const menuTrigger = workspaceMenuTrigger(page);
   await menuTrigger.focus();
   await menuTrigger.press("Enter");
   await expect(menuTrigger).toHaveAttribute("data-state", "open");
-  await expect(page.getByRole("menuitem", { name: /^Edit inputs\b/ })).toBeFocused();
+  await expect(page.getByRole("menuitem", { name: /^Forecast\b/ })).toBeFocused();
   await page.keyboard.press("ArrowDown");
+  await expect(page.getByRole("menuitem", { name: /^Advanced\b/ })).toBeFocused();
+  await page.keyboard.press("ArrowUp");
   await expect(page.getByRole("menuitem", { name: /^Forecast\b/ })).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("menu")).toHaveCount(0);
@@ -73,16 +70,21 @@ test("keyboard menu navigation moves to the forecast and Escape restores its tri
 test("touch menu explains its actions and fits a narrow screen @mobile", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 568 });
   await page.goto("./");
-  await page.getByRole("banner").getByRole("button", { name: "Menu", exact: true }).tap();
-  const menu = page.getByRole("menu");
+  const menu = await openWorkspaceMenu(page);
   await expect(menu).toBeVisible();
-  await expect(menu.getByRole("menuitem", { name: /^Edit inputs\b/ })).toContainText(
-    "Choose your cloud, baseline spend, and growth assumptions.",
-  );
+  await expect(menu.getByRole("menuitem")).toHaveCount(7);
   await expect(menu.getByRole("menuitem", { name: /^Forecast\b/ })).toContainText(
     "Explore monthly spend, cost drivers, and your 12-month outlook.",
   );
-  for (const name of ["Edit inputs", "Forecast", "Advanced", "Product map", "How it works", "New forecast"]) {
+  for (const name of [
+    "Forecast",
+    "Advanced",
+    "How it works",
+    "Open forecast",
+    "New forecast",
+    "Switch to dark theme",
+    "Star on GitHub",
+  ]) {
     const action = menu.getByRole("menuitem", { name: new RegExp(`^${name}\\b`) });
     await expect(action).toBeVisible();
     await action.scrollIntoViewIfNeeded();
@@ -96,14 +98,42 @@ test("touch menu explains its actions and fits a narrow screen @mobile", async (
     expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(320);
     expect(bounds!.height).toBeGreaterThanOrEqual(44);
   }
-  await menu.getByRole("menuitem", { name: /^Edit inputs\b/ }).focus();
+  await expect(menu.getByRole("menuitem", { name: /^(Plan|Product map|Unit costs)\b/ })).toHaveCount(0);
+  await expect(menu.getByRole("menuitem", { name: /^Advanced\b/ })).toHaveAttribute("aria-haspopup", "dialog");
+  const source = menu.getByRole("menuitem", { name: /^Star on GitHub\b/ });
+  await expect(source).toHaveAttribute("href", "https://github.com/santoshshinde2012/cayfore");
+  await expect(source).toHaveAttribute("target", "_blank");
+  await expect(source).toHaveAttribute("rel", /noreferrer/);
+  await menu.getByRole("menuitem", { name: /^Forecast\b/ }).focus();
   await page.keyboard.press("End");
-  await expect(menu.getByRole("menuitem", { name: /^New forecast\b/ })).toBeFocused();
-  await expect(menu.getByRole("menuitem", { name: /^New forecast\b/ })).toBeInViewport();
+  await expect(source).toBeFocused();
+  await expect(source).toBeInViewport();
+  await page.keyboard.press("Home");
+  await expect(menu.getByRole("menuitem", { name: /^Forecast\b/ })).toBeFocused();
   expect(await menu.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
   const scan = await new AxeBuilder({ page }).analyze();
   expect(scan.violations).toEqual([]);
+});
+
+test("workspace help returns from reference pages without changing the forecast", async ({ page }) => {
+  await page.goto("./");
+  await page.getByRole("radio", { name: "10%", exact: true }).click();
+  const hash = new URL(page.url()).hash;
+  const annual = await page.getByTestId("year-sentence").innerText();
+  await navigateWorkspace(page, "Product map");
+  await expect(page.locator("#product-map")).toBeFocused();
+  await selectWorkspaceAction(page, "How it works");
+  await expect(page.locator("#how-it-works")).toBeFocused();
+  await expect(page.getByRole("button", { name: "How we got this", exact: true })).toHaveAttribute(
+    "aria-expanded",
+    "true",
+  );
+  await expect(page.getByTestId("year-sentence")).toHaveText(annual);
+  await expect(
+    page.getByRole("navigation", { name: "Workspace", exact: true }).getByRole("button", { name: "Plan", exact: true }),
+  ).toHaveAttribute("aria-current", "page");
+  expect(new URL(page.url()).hash).toBe(hash);
 });
 
 test("chart and export help preserve keyboard tab navigation and accessible menus", async ({ page }) => {
@@ -160,15 +190,9 @@ test("chart and export help preserve keyboard tab navigation and accessible menu
   await expect(exportTrigger).toBeFocused();
 });
 
-test("Escape closes the product chooser, then Advanced without reopening help", async ({ page, isMobile }) => {
+test("Escape closes the product chooser, then Advanced without reopening help", async ({ page }) => {
   await page.goto("./");
-  const header = page.getByRole("banner");
-  if (isMobile) {
-    await header.getByRole("button", { name: "Menu", exact: true }).tap();
-    await page.getByRole("menuitem", { name: /^Advanced\b/ }).tap();
-  } else {
-    await header.getByRole("button", { name: "Advanced", exact: true }).click();
-  }
+  await selectWorkspaceAction(page, "Advanced");
   const advanced = page.getByRole("dialog", { name: "Advanced", exact: true });
   await expect(advanced).toBeVisible();
   const addProduct = advanced.getByRole("button", { name: "Add product", exact: true });

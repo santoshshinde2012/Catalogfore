@@ -6,7 +6,7 @@ import { writeProductsDoc } from "./products-doc.mjs";
 
 const root = new URL("../", import.meta.url);
 
-export function buildCoverage(catalog, sku, meters) {
+export function buildCoverage(catalog, sku, meters, published = { rates: [] }) {
   const products = catalog.products ?? [];
   const priced = products.filter((product) => product.listPrice !== "unpublished");
   const unpublished = products.filter((product) => product.listPrice === "unpublished");
@@ -36,7 +36,19 @@ export function buildCoverage(catalog, sku, meters) {
   }
   const azureRegionSkuPercent = cells ? Math.round((filled / cells) * 1000) / 10 : 0;
   const factored = (list) => list.filter((region) => typeof region.factor === "number").length;
-  const assumption = `Catalog coverage: ${priced.length} of ${products.length} products (${productCoveragePercent}%) have a stored rate or a priced underlying SKU. Azure meters fill ${azureRegionSkuPercent}% of region-and-SKU cells across ${azureRegions.length} regions. AWS (${awsRegions.length} regions) and GCP (${gcpRegions.length} regions) use the US East card times a Lakehouse Real-Time region factor, not a per-region meter.`;
+  const officialKeys = new Set(published.rates.map((row) => `${row.cloud}:${row.region}:${row.tier}:${row.sku}`));
+  const officialRegionalCells = ["aws", "gcp"].map((cloud) => {
+    let filled = 0;
+    let cells = 0;
+    for (const region of regions.filter((row) => row.cloud === cloud))
+      for (const [tier, rates] of Object.entries(sku.rates[cloud]))
+        for (const id of Object.keys(rates)) {
+          cells += 1;
+          if (officialKeys.has(`${cloud}:${region.id}:${tier}:${id}`)) filled += 1;
+        }
+    return { cloud, filled, cells };
+  });
+  const assumption = `Catalog coverage: ${priced.length} of ${products.length} products (${productCoveragePercent}%) have a stored rate or a priced underlying SKU. Azure meters fill ${azureRegionSkuPercent}% of mapped region-and-SKU cells across ${azureRegions.length} regions. AWS and GCP use validated first-party regional prices where captured; remaining reference bases, consumption assumptions, and regional proxies stay labeled. Stored-price coverage does not establish service availability.`;
   return {
     assumption,
     products: products.length,
@@ -53,6 +65,7 @@ export function buildCoverage(catalog, sku, meters) {
     awsFactoredRegions: factored(awsRegions),
     gcpRegions: gcpRegions.length,
     gcpFactoredRegions: factored(gcpRegions),
+    officialRegionalCells,
     byCategory: categoryCoverage(products),
     azureByRegion: byRegion,
   };
@@ -82,7 +95,7 @@ export function renderCoverageMarkdown(report) {
     .join("\n");
   return `# Catalog coverage
 
-Generated from \`data/product-catalog.json\`, \`data/sku-rates.json\`, and \`data/azure-dbu-meters.json\`. Estimates only. Cayfore is not affiliated with Databricks.
+Generated from \`data/product-catalog.json\`, \`data/sku-rates.json\`, \`data/azure-dbu-meters.json\`, and \`data/databricks-dbu-rates.json\`. Estimates only. Cayfore is not affiliated with Databricks.
 
 ${report.assumption}
 
@@ -102,11 +115,9 @@ Unpublished product ids: ${report.unpublishedIds.join(", ") || "none"}.
 Azure Retail Prices meters fill ${report.azureFilledCells} of ${report.azureCells} cells (${report.azureRegionSkuPercent}%). A cell is one of ${report.azureMeterSkus} mapped SKUs in one of ${report.azureRegions} Azure regions on the rate card. A missing cell still uses the curated US East rate times the Lakehouse Real-Time region factor.
 
 ${thin ? `Regions that are not a full meter set:\n\n| Region | Mapped SKUs present |\n| --- | ---: |\n${thin}\n` : "Every Azure region on the rate card has every mapped SKU.\n"}
-AWS: ${report.awsFactoredRegions} of ${report.awsRegions} regions have a Lakehouse Real-Time factor (Premium $/DBU ÷ $0.55). None of those regions has a public per-SKU meter. The US East $/DBU table is the curated secondary card in [RESEARCH.md](RESEARCH.md), cross-checked across Flexera 2026, LakeSentry, and OWOX. Databricks does not publish a price JSON, and the website terms disallow scraping the pricing client. Marketplace private listings are not a public rate card.
+${report.officialRegionalCells.map((row) => `${row.cloud.toUpperCase()}: ${row.filled} of ${row.cells} cloud/region/edition/SKU cells have a validated exact regional first-party DBU price.`).join("\n\n")}
 
-GCP: ${report.gcpFactoredRegions} of ${report.gcpRegions} regions have a factor. Factors outside the reference region are labeled proxies. No first-party GCP regional DBU table was found. GCP virtual-machine prices stay seeds unless \`GCP_BILLING_API_KEY\` is set for the price refresh.
-
-The default AWS US East forecast is unchanged by this report. Region factors are not a new rate.
+The resolver uses exact Azure meters or validated Databricks price-card and calculator data before reference fallbacks. A no-region source price is a reference base, and reuse outside its scope remains an estimate. Conflicting first-party prices are withheld pending review. GCP virtual-machine prices remain separate and stay seeds unless \`GCP_BILLING_API_KEY\` is set. See [source evidence and maintenance](UNIT-COSTS.md).
 `;
 }
 
@@ -119,6 +130,7 @@ export async function writeCoverageReport() {
     await readJson("data/product-catalog.json"),
     await readJson("data/sku-rates.json"),
     await readJson("data/azure-dbu-meters.json"),
+    await readJson("data/databricks-dbu-rates.json"),
   );
   const summary = {
     assumption: report.assumption,
@@ -130,6 +142,7 @@ export async function writeCoverageReport() {
     azureRegions: report.azureRegions,
     awsRegions: report.awsRegions,
     gcpRegions: report.gcpRegions,
+    officialRegionalCells: report.officialRegionalCells,
   };
   await writeFile(new URL("data/coverage-summary.json", root), JSON.stringify(summary, null, 2) + "\n");
   await writeFile(new URL("docs/COVERAGE.md", root), renderCoverageMarkdown(report));

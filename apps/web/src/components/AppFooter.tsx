@@ -15,7 +15,7 @@ const sources = [
     href: `${REPO}/blob/main/LICENSE`,
   },
   {
-    label: "Rates",
+    label: "Research",
     title: "Pricing research",
     description: "Review the published rate sources and research notes.",
     href: `${REPO}/blob/main/docs/RESEARCH.md`,
@@ -31,10 +31,12 @@ const sources = [
 export function AppFooter({
   onForecast,
   onProducts,
+  onRates,
   onHow,
 }: {
   onForecast: () => void;
   onProducts: () => void;
+  onRates: () => void;
   onHow: () => void;
 }) {
   const navigation = [
@@ -51,6 +53,12 @@ export function AppFooter({
       action: onProducts,
     },
     {
+      label: "Unit costs",
+      description: "Inspect per-unit pricing, source evidence, and downloadable rate dimensions.",
+      href: "?view=rates",
+      action: onRates,
+    },
+    {
       label: "How it works",
       description: "Understand the assumptions and pricing behind this estimate.",
       href: "#how-it-works",
@@ -59,7 +67,7 @@ export function AppFooter({
   ];
   return (
     <footer className="border-t">
-      <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 pt-8 pb-[calc(7rem+env(safe-area-inset-bottom))] sm:px-6 lg:pb-12">
+      <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 pt-8 pb-[calc(7rem+env(safe-area-inset-bottom))] sm:px-6 lg:pb-12">
         <div className="flex flex-wrap items-start justify-between gap-6">
           <div className="max-w-md">
             <p className="flex items-center gap-2 text-sm font-semibold text-foreground">

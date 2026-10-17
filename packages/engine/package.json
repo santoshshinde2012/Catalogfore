@@ -11,7 +11,8 @@
   "description": "Shared estimate and forecast engine for Cayfore",
   "exports": {
     ".": "./src/index.ts",
-    "./products": "./src/products.ts"
+    "./products": "./src/products.ts",
+    "./unit-costs": "./src/unit-costs/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

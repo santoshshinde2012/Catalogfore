@@ -38,7 +38,8 @@
 
 :root {
   --radius: 0.75rem;
-  --background: #f6f6f7;
+  --workspace-header-height: 7rem;
+  --background: #f6f7f9;
   --foreground: #0b2026;
   --card: #ffffff;
   --card-foreground: #0b2026;
@@ -53,8 +54,8 @@
   --accent: #f3f1f0;
   --accent-foreground: #0b2026;
   --destructive: #9e1e0c;
-  --border: #e4e4e7;
-  --input: #e4e4e7;
+  --border: #dfe3e8;
+  --input: #dfe3e8;
   --ring: #c42812;
   --lava: #ff3621;
   --link: #9e1e0c;
@@ -102,27 +103,33 @@ html.theme-swap * {
   }
   html {
     @apply font-sans antialiased;
-    scroll-padding-top: 6rem;
+    scroll-padding-top: calc(var(--workspace-header-height) + 1rem);
     scroll-padding-bottom: 7rem;
   }
   body {
     @apply bg-background text-foreground;
-    background-image:
-      radial-gradient(ellipse 90% 40% at 50% -10%, color-mix(in srgb, var(--lava) 14%, transparent), transparent 60%),
-      linear-gradient(to right, color-mix(in srgb, var(--foreground) 3.5%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in srgb, var(--foreground) 3.5%, transparent) 1px, transparent 1px);
-    background-size:
-      auto,
-      48px 48px,
-      48px 48px;
+    background-image: radial-gradient(
+      ellipse 90% 24rem at 50% 0,
+      color-mix(in srgb, var(--lava) 4%, transparent),
+      transparent 70%
+    );
   }
   :focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
   }
+  h1[tabindex="-1"]:focus {
+    outline: none;
+  }
   .strip-item:focus-visible {
     outline-offset: -3px;
     z-index: 1;
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --workspace-header-height: 4.5rem;
   }
 }
 

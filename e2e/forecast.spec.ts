@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { selectTheme } from "./header-helpers";
 
 async function sentence(page: Page) {
   return page.getByTestId("year-sentence").innerText();
@@ -9,7 +10,7 @@ test("four inputs move the year", async ({ page }) => {
   await page.goto("./");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("What does the next year cost?");
   await expect(page.getByTestId("year-sentence")).toContainText(/About \$170,258 per year, ±20%/);
-  await expect(page.getByText(/Prices updated on 2026-10-17, catalog v2026-10-17\.1/)).toBeVisible();
+  await expect(page.getByText(/Price book dated \d{4}-\d{2}-\d{2}, catalog v\d{4}-\d{2}-\d{2}\.\d+/)).toBeVisible();
   await expect(page.getByTestId("bill-split")).toBeVisible();
   await page.getByRole("tab", { name: "Months" }).click();
   await expect(page.getByRole("row")).toHaveCount(13);
@@ -112,11 +113,12 @@ test("advanced builder, how we got this, and theme", async ({ page }) => {
     "https://github.com/santoshshinde2012/cayfore",
   );
   await expect(footer.getByRole("link", { name: "License" })).toHaveAttribute("href", /LICENSE/);
-  await expect(footer.getByRole("link", { name: "Rates" })).toHaveAttribute("href", /RESEARCH\.md/);
+  await expect(footer.getByRole("link", { name: "Research", exact: true })).toHaveAttribute("href", /RESEARCH\.md/);
+  await expect(footer.getByRole("link", { name: "Unit costs", exact: true })).toHaveAttribute("href", "?view=rates");
   await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
-  await page.getByRole("button", { name: "Switch to dark theme" }).click();
+  await selectTheme(page, "dark");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await page.getByRole("button", { name: "Switch to light theme" }).click();
+  await selectTheme(page, "light");
   await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
 });
 
@@ -138,10 +140,10 @@ test("has no serious accessibility violations", async ({ page }) => {
   await page.keyboard.press("Escape");
   const open = await new AxeBuilder({ page }).analyze();
   expect(open.violations).toEqual([]);
-  await page.getByRole("button", { name: "Switch to dark theme" }).click();
+  await selectTheme(page, "dark");
   const dark = await new AxeBuilder({ page }).analyze();
   expect(dark.violations).toEqual([]);
-  await page.getByRole("button", { name: "Switch to light theme" }).click();
+  await selectTheme(page, "light");
   const light = await new AxeBuilder({ page }).analyze();
   expect(light.violations).toEqual([]);
 });
@@ -178,7 +180,7 @@ test("an existing theme choice survives the key change", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect.poll(() => page.evaluate(() => localStorage.getItem("cayfore-theme"))).toBe("dark");
   await expect.poll(() => page.evaluate(() => localStorage.getItem("dcf-theme"))).toBeNull();
-  await page.getByRole("button", { name: "Switch to light theme" }).click();
+  await selectTheme(page, "light");
   await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
 });
 

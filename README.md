@@ -12,7 +12,7 @@ Cayfore is the interface. This repository is the forecast. It is an estimate, no
 
 ## What it answers
 
-Cloud and tier, a starting monthly amount or a team size, a mix of pipelines, dashboards, and models, and monthly growth. The page returns a low-to-high year, a sentence, a chart, and a month table.
+Cloud and tier, a starting monthly amount or a team size, a mix of pipelines, dashboards, and models, and monthly growth. The page returns an annual total, planning range, charts and monthly values.
 
 | Input          | Default                                          |
 | -------------- | ------------------------------------------------ |
@@ -21,19 +21,31 @@ Cloud and tier, a starting monthly amount or a team size, a mix of pipelines, da
 | Mix            | 45% pipelines, 40% dashboards, 15% models        |
 | Growth         | 3% a month, with an optional commitment discount |
 
-On that default the page reads **about $170,258 per year, ±20%**. First month **$11,997**. **29%** of the bill is cloud machines. The sources for the presets and the rates are in [docs/RESEARCH.md](docs/RESEARCH.md).
+That default estimates **about $170,258 per year, with a ±20% planning range**. First month **$11,997**. **29%** of the bill is cloud machines. The sources for the presets and the rates are in [docs/RESEARCH.md](docs/RESEARCH.md).
 
-A usage CSV opens a review of its baseline month, prices, and gaps before replacing the estimate. Databricks billing and recognized FOCUS files are supported. Imported monetary costs stay observed costs; the app does not invent a separate VM bill. See [usage import](docs/USAGE-IMPORT.md).
+Usage import and Advanced are available at the top of Plan inputs. The forecast remains visible while editing on desktop, and a persistent shortcut shows the annual total on mobile. A usage CSV opens a review of its baseline month, prices, and gaps before replacing the estimate. Databricks billing and recognized FOCUS files are supported. Imported monetary costs stay observed costs; the app does not invent a separate VM bill. See [usage import](docs/USAGE-IMPORT.md).
+
+The header keeps **Plan**, **Product map** and **Unit costs** directly accessible. One **Menu** groups forecast navigation, Advanced, explanatory help, file actions, appearance and GitHub. To continue a saved JSON forecast, choose **Menu → Open forecast**.
 
 Set an annual budget, save named scenarios, and plan dated launches or retirements. Charts show observed spend, future estimates, budget variance, scenario comparisons, and monthly cost components. Advanced opens the per-workload editor. Growth and pricing controls preserve those workloads.
 
-Open **Product map** to explore eight Databricks domains, all 70 catalog entries, and eight platform concepts. Search current names or older aliases, follow example architectures, and inspect roles, relationships, billing context, and official sources. Supported products can be added to the current forecast with Undo. [Product map research and maintenance](docs/PRODUCT-MAP.md) explains the taxonomy and pricing boundaries.
+Open **Product map** to explore eight Databricks domains, all 70 catalog entries, and eight platform concepts. Search current names or older aliases, filter by domain, expand example architectures, and inspect roles, relationships, billing context, and official sources. Supported products can be added to the current forecast with Undo. [Product map research and maintenance](docs/PRODUCT-MAP.md) explains the taxonomy and pricing boundaries.
 
 ![Databricks products and services mapped across eight learning domains](docs/screenshots/product-map-light.png)
 
+Open **Unit costs** for the source prices and consumption rules behind each product. **Rates & calculator** opens the working quote immediately; **Compare regions**, **Evidence** and **Downloads** provide focused supporting views. **More filters** reveals the additional evidence and coverage controls. Official price links, publisher names, snapshot dates, and evidence labels appear beside prices. Direct official prices, derived rates, planning estimates, and unresolved conflicts can be filtered separately. Filter by product, cloud, region, edition, component, or evidence status; inspect machines, models, token directions, and other variants; then enter a quantity to calculate a component subtotal. Compare the same configured unit across regions, inspect the source-to-quote calculation path, and view evidence coverage without combining unlike prices. The calculator, visual scales, CSV/JSON and Excel share the engine quote policy. Product map and forecast rows link to the relevant reference costs. [Unit-cost documentation](docs/UNIT-COSTS.md) explains sources, missing prices, assumptions, and pricing conflicts.
+
+Download ordinary CSV or JSON in the browser, or run `npm run export:unit-costs` to create both locally. Complete, lossless copies are versioned as [CSV](data/unit-costs.csv.gz) and [JSON](data/unit-costs.json.gz) gzip files. They cover all 70 pricing products and eight platform concepts without treating an unknown rate as free.
+
+![Source unit costs, billing dimensions, and a quantity calculation](docs/screenshots/unit-cost-details-light.png)
+
+![Regional quotes for the same configured unit](docs/screenshots/unit-cost-comparison-light.png)
+
+![Source price, consumption, regional factor and component quote](docs/screenshots/unit-cost-calculation-light.png)
+
 ![Imported spend and forecast against a budget, using the bundled historical demonstration CSV](docs/screenshots/usage-forecast.png)
 
-CSV, JSON, PDF, and shared plans use the same forecast result. Unpriced charges are identified as unresolved; the total is a known subtotal when costs are missing. The range represents planning assumptions, not a calibrated probability interval.
+Forecast CSV, JSON, PDF, and shared plans use the same forecast result. Unpriced charges are identified as unresolved; the total is a known subtotal when costs are missing. The range represents planning assumptions, not a calibrated probability interval.
 
 ![The same forecast in dark mode](docs/screenshots/forecast-dark.png)
 
@@ -56,6 +68,8 @@ Use Node 22.13+ within Node 22, or Node 24+. Run `nvm use` to select Node 22 fro
 npm test          # engine unit tests and the price-file parser
 npm run lint
 npm run typecheck
+npm run check:sources # replay official price captures and validate accepted rates
+npm run check:unit-costs # committed CSV/JSON still match their source inputs
 npm run build
 npm run test:mcp  # stdio MCP smoke test
 npm run test:e2e  # Playwright, desktop and mobile, including axe
@@ -78,6 +92,7 @@ The core JavaScript is about 290 KB gzipped, including the separately cached pri
 | `docs/CATALOG.md`            | Product catalog schema, citations, and the watch                        |
 | `docs/PRODUCTS.md`           | Product inventory and which rows have a list rate                       |
 | `docs/PRODUCT-MAP.md`        | Learning domains, service relationships, aliases, and source evidence   |
+| `docs/UNIT-COSTS.md`         | Source unit prices, dimensions, formulas, CSV/JSON, and evidence limits |
 | `docs/COVERAGE.md`           | Which products and Azure cells have a cited rate                        |
 | `docs/RESEARCH.md`           | Source for every rate                                                   |
 | `docs/NAMING.md`             | Why the product is called Cayfore                                       |
@@ -100,7 +115,7 @@ Pushes to `main` publish the site from `.github/workflows/pages.yml`. The addres
 
 Vite’s base path is `/cayfore/`. Unknown addresses serve `404.html`. The repository social-preview image is `.github/social-preview.png` (1280×640). Upload that file in the repository settings if GitHub has not picked it up. Topics and the description belong on the repository, not in the page.
 
-One weekly workflow, Mondays at 06:00 UTC, refreshes AWS and Azure list prices and checks allowed Databricks metadata for new or renamed products. It opens a single review pull request and does not merge. GCP virtual-machine rates stay seeded unless `GCP_BILLING_API_KEY` is set. Do not commit that key. The curated $/DBU table is not rewritten. The forecast page prints `Prices updated on <date>, catalog vX`. Details are in [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md).
+One weekly workflow, Mondays at 06:00 UTC, refreshes AWS and Azure list prices and checks allowed Databricks metadata for new or renamed products. It opens a single review pull request and does not merge. GCP virtual-machine rates stay seeded unless `GCP_BILLING_API_KEY` is set. Do not commit that key. The job captures and validates official Databricks price-card and calculator JSON before updating the shared resolver. Saved source responses make the accepted rates reproducible. The forecast page prints the catalog date; individual source observation dates are separate. Details are in [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md).
 
 ## MCP
 

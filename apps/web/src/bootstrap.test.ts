@@ -22,6 +22,8 @@ describe("prerender bootstrap", () => {
   it("mounts browser plans, themes and scenarios without hydrating mismatched server HTML", () => {
     history.replaceState(null, "", "?view=products");
     expect(canHydratePrerender(root())).toBe(false);
+    history.replaceState(null, "", "?view=rates&product=ai_search");
+    expect(canHydratePrerender(root())).toBe(false);
     history.replaceState(null, "", "?view=unknown");
     expect(canHydratePrerender(root())).toBe(true);
     history.replaceState(null, "", "/");

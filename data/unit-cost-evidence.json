@@ -1,0 +1,394 @@
+{
+  "schemaVersion": 1,
+  "reviewedOn": "2026-10-17",
+  "scope": "Evidence for Cayfore's curated unit-cost snapshot. Exact Azure meters and validated first-party Databricks price-card/calculator observations take precedence. Review dates, price observations, tariff effective dates, and product availability are separate facts; missing or conflicted prices remain unresolved.",
+  "sources": [
+    {
+      "id": "azure-retail",
+      "title": "Azure Retail Prices API",
+      "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
+      "role": "meter",
+      "scope": "Azure commercial-cloud consumption meters. Exact region and meter matches apply; Azure Enterprise uses the same Premium meters in Cayfore. Excludes Standard, free-trial, POC, reservation, and negotiated rates.",
+      "verifiedOn": "2026-10-17",
+      "verification": "All 530 mapped DBU meters across 39 catalog Azure regions fetched on 2026-10-17. Stored rows preserve meter ID, filtered source URL, effective start date, raw API unit, primary-region flag and their own asOf. The raw DBU meter unit may read 1 Hour; normalize to DBU, not VM-hour. Other VM or embedded-product rows retain separate provenance."
+    },
+    {
+      "id": "azure-consumption",
+      "title": "Azure Databricks serverless consumption by SKU",
+      "url": "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing",
+      "role": "consumption",
+      "scope": "Azure DBU/DSU consumption rules, SQL sizes, Apps sizes, serving shapes, tokens, storage, and estimated AI Parse complexity bands. A multiplier is not an independent dollar price.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Documentation reviewed. Its GTE provisioned figure differs from the current Databricks foundation-model price page; see the source-conflict caveat."
+    },
+    {
+      "id": "databricks-pricing",
+      "title": "Databricks pricing definitions",
+      "url": "https://www.databricks.com/product/pricing",
+      "role": "documentation",
+      "scope": "List-price definitions, cloud and regional variation, Databricks versus cloud infrastructure, and networking billing units. This overview is not evidence for an arbitrary numeric rate.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Definitions and billing caveats reviewed; no comprehensive price-card download."
+    },
+    {
+      "id": "foundation-pricing",
+      "title": "Databricks Foundation Model Serving pricing",
+      "url": "https://www.databricks.com/product/pricing/foundation-model-serving",
+      "role": "consumption",
+      "scope": "Model-specific DBU per million input/output/cache tokens and provisioned or batch dimensions. Current provisioned heading is DBU/hour per 50 model units; availability depends on model, cloud, region, and offering.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Rendered table reviewed. GTE provisioned is 100 DBU/hour per 50 model units here versus 20 in the Azure consumption guide and bundled table. Additional models and price dimensions are outside the curated inventory."
+    },
+    {
+      "id": "model-serving-pricing",
+      "title": "Databricks Model Serving pricing",
+      "url": "https://www.databricks.com/product/pricing/model-serving",
+      "role": "documentation",
+      "scope": "Model-serving price-card entry point. Shape consumption and dollars per DBU are separate dimensions; a modeled serverless GPU proxy is not an AI Runtime tariff.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Page reviewed; dynamic price card is not a newly captured complete regional tariff."
+    },
+    {
+      "id": "ai-search-pricing",
+      "title": "Databricks AI Search pricing",
+      "url": "https://www.databricks.com/product/pricing/ai-search",
+      "role": "consumption",
+      "scope": "Standard and storage-optimized endpoint-unit consumption. The page illustrates effective US East dollars and explains that a displayed price does not establish regional product availability.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Confirmed 4 and 18.29 DBU per unit-hour and displayed US East examples of $0.28 and $1.28 per unit-hour. The page does not verify all stored storage prices."
+    },
+    {
+      "id": "realtime-regions",
+      "title": "Lakehouse Real-Time Beta pricing",
+      "url": "https://docs.databricks.com/aws/en/compute/sql-warehouse/real-time-pricing",
+      "role": "tariff",
+      "scope": "Published rates apply to LAKEHOUSE_SERVERLESS_COMPUTE during Beta. Reusing their regional ratios for other SKUs is a Cayfore planning proxy, including regions whose stored source is lakehouse-rt.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Region table and the introductory DBU-emission promotion reviewed; not an authoritative regional tariff for Jobs, serving, SQL, or Lakebase."
+    },
+    {
+      "id": "azure-databricks",
+      "title": "Azure Databricks pricing details",
+      "url": "https://azure.microsoft.com/en-us/pricing/details/databricks/",
+      "role": "documentation",
+      "scope": "Source recorded by the bundled instance/Photon research. Exact DBU emission can depend on workload and instance; dollar cells can require browser rendering.",
+      "verifiedOn": "2026-10-16",
+      "verification": "Retains the prior recorded instance-table verification date. Today's separate East US API check does not reverify every Photon or instance-table entry."
+    },
+    {
+      "id": "aws-offer",
+      "title": "AWS Price List catalog",
+      "url": "https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/price-changes.html",
+      "role": "documentation",
+      "scope": "AWS EC2 Linux shared-tenancy on-demand offer-file rates used by the existing refresh pipeline. Price List excludes Spot and is distinct from Databricks DBU prices.",
+      "verifiedOn": "2026-10-17",
+      "verification": "API documentation reviewed; VM numbers retain each bundled row's asOf date. The source-region EC2 offer URL is generated by scripts/refresh-aws.mjs."
+    },
+    {
+      "id": "aws-spot-advisor",
+      "title": "AWS Spot price history and scope",
+      "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances-history.html",
+      "role": "documentation",
+      "scope": "Spot varies by instance, operating system, availability zone, and time. Cayfore's advisor-derived spotHourly is a planning estimate, not a live fulfillment quote.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Documentation reviewed. Existing pipeline derives rates from savings bands at https://spot-bid-advisor.s3.amazonaws.com/spot-advisor-data.json."
+    },
+    {
+      "id": "gcp-catalog",
+      "title": "Google Cloud Billing Catalog API",
+      "url": "https://docs.cloud.google.com/billing/v1/how-tos/catalog-api",
+      "role": "documentation",
+      "scope": "Public cloud VM list-pricing API; not a Databricks DBU API. Current bundled GCP VM rows are seeds unless refreshed using GCP_BILLING_API_KEY.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Documentation located and reviewed; no authenticated GCP price refresh was performed for this feature."
+    },
+    {
+      "id": "secondary-reference",
+      "title": "Bundled secondary Databricks pricing compilation",
+      "url": "https://www.flexera.com/blog/finops/databricks-pricing-guide/",
+      "role": "secondary",
+      "scope": "Legacy fallback references and selected non-DBU planning inputs only where no validated matching first-party capture exists. This is not a freshly verified first-party tariff.",
+      "verifiedOn": "2026-10-15",
+      "verification": "Retains the bundled research provenance date. No secondary-rate refresh was performed for the unit-cost inventory."
+    },
+    {
+      "id": "genie-cost",
+      "title": "Monitor and understand Genie cost",
+      "url": "https://docs.databricks.com/aws/en/genie/monitor-cost",
+      "role": "documentation",
+      "scope": "Genie surfaces, free user allowances, service-principal exclusions, eligible promotional windows, and DBU-metering adjustments. SQL and connected product charges remain separate.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Promotion conditions and system-table pricing method reviewed. A universal cost per user or question is not published."
+    },
+    {
+      "id": "networking-cost",
+      "title": "Understand Databricks networking costs",
+      "url": "https://docs.databricks.com/aws/en/security/network/serverless-network-security/cost-management",
+      "role": "documentation",
+      "scope": "Databricks versus customer-cloud networking, applicable connections, same-region exemptions, and transfer units. The documented endpoint-hour timeline differs from the product price page.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Current page reviewed. Billing 1 GB means 2^30 bytes; this is not evidence that Cayfore's generic internet-egress assumption prices every network route."
+    },
+    {
+      "id": "networking-pricing",
+      "title": "Databricks Data Transfer and Connectivity pricing",
+      "url": "https://www.databricks.com/product/pricing/data-transfer-connectivity",
+      "role": "documentation",
+      "scope": "Current price-page entry point links the dated official tariff PDF. It describes private endpoint-hour charges and Azure per-GB private-link waivers; applicability and billing timelines need verification.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Reviewed the price-page statements and followed its official PDF link. Does not establish a new tariff effective date."
+    },
+    {
+      "id": "networking-tariff",
+      "title": "Databricks Data Transfer Pricing, effective August 1, 2024",
+      "url": "https://www.databricks.com/sites/default/files/2024-08/databricks-data-transfer-pricing.pdf",
+      "role": "tariff",
+      "scope": "Historical official AWS/GCP data-transfer, public-connectivity, private-connectivity, and endpoint-hour price tables. Current linking does not remove the 2024 effective date or settle billing applicability.",
+      "verifiedOn": "2026-10-17",
+      "verification": "PDF inspected. Rates omitted from Cayfore should be described as not covered in the bundled calculator, rather than claiming that no public tariff exists."
+    },
+    {
+      "id": "pricing-system-table",
+      "title": "Databricks pricing system table reference",
+      "url": "https://docs.databricks.com/aws/en/admin/system-tables/pricing",
+      "role": "documentation",
+      "scope": "system.billing.list_prices contains cloud, currency, usage unit, effective intervals, default list, promotional, and effective list prices. Negotiated contract terms are separate from public list prices.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Schema and example pricing queries reviewed. No customer account data was accessed."
+    },
+    {
+      "id": "databricks-calculator-aws",
+      "title": "Databricks AWS calculator price data",
+      "url": "https://www.databricks.com/en-pricing-assets/data/pricing/AWS.json",
+      "role": "tariff",
+      "scope": "Explicitly mapped AWS USD/DBU base and regional calculator rows, by Premium/Enterprise edition. Per-instance DBU consumption is not imported. SAP, Lakebase capacity units, and model-specific units are excluded.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Exact first-party response retained compressed with SHA-256. Offline checks replay normalization, verify unit corroboration, and quarantine ambiguous or conflicting numeric rows."
+    },
+    {
+      "id": "databricks-calculator-gcp",
+      "title": "Databricks Google Cloud calculator price data",
+      "url": "https://www.databricks.com/en-pricing-assets/data/pricing/GCP.json",
+      "role": "tariff",
+      "scope": "Explicitly mapped Google Cloud USD/DBU base and regional calculator rows. GCP cloud infrastructure prices remain a separate source. A rate does not establish product availability.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Exact first-party response retained compressed with SHA-256. Same-key disagreements against price cards are excluded from accepted rates pending review."
+    },
+    {
+      "id": "databricks-price-cards",
+      "title": "Databricks product price-card data",
+      "url": "https://www.databricks.com/en-pricing-assets/data/pricing/cards.json",
+      "role": "tariff",
+      "scope": "First-party USD/DBU price-card observations with explicit cloud, region and edition. Only mapped DBU price paths are accepted; compound endpoint/storage prices, SAP, and other billing units are not coerced into DBUs.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Observed through the official pricing-page data requests. Exact response captured, hashed and replayed in offline validation; same-key calculator disagreements remain explicit conflicts."
+    },
+    {
+      "id": "monitoring-pricing",
+      "title": "Databricks Data Quality Monitoring pricing",
+      "url": "https://www.databricks.com/product/pricing/managed-services",
+      "role": "documentation",
+      "scope": "List-price and time-limited monitoring promotion; a displayed discount is separate from billed DBU consumption and eligibility.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Official page states 50% off the displayed price until January 31, 2027. The unit catalog preserves the underlying list-price basis and records the promotion separately."
+    },
+    {
+      "id": "connect-pricing",
+      "title": "Databricks Lakeflow Connect pricing",
+      "url": "https://www.databricks.com/product/pricing/lakeflow-connect",
+      "role": "documentation",
+      "scope": "Lakeflow Connect list pricing and workspace/day allowance; not a universal free connector or cloud-infrastructure exemption.",
+      "verifiedOn": "2026-10-17",
+      "verification": "Official page states the first 100 DBUs per workspace per day are free. Unit-cost quantities are billable usage after applicable allowances; imported billed usage must not receive the adjustment again."
+    }
+  ],
+  "caveats": [
+    {
+      "id": "provisioned-model-units",
+      "appliesTo": {
+        "componentIds": [
+          "provisioned"
+        ]
+      },
+      "status": "scope",
+      "message": "Foundation Model Serving provisioned figures are quoted per 50 model units per hour. Enter total block-hours (blocks multiplied by active hours), not a universal endpoint-hour quantity. Throughput per model unit varies with model and request shape. Older saved plans used an implicit block count; review their capacity assumptions before comparing costs.",
+      "sourceIds": [
+        "foundation-pricing",
+        "azure-consumption"
+      ]
+    },
+    {
+      "id": "ai-search-storage-assumption",
+      "appliesTo": {
+        "productIds": [
+          "vector_search_standard",
+          "vector_search_storage"
+        ],
+        "componentIds": [
+          "storage"
+        ]
+      },
+      "status": "assumption",
+      "message": "The bundled flat AI Search storage prices of $0.23/GB-month standard and $0.046/GB-month optimized are curated assumptions across clouds. Azure Learn describes AI Search storage as 10 DSU, which would be $0.26 at the stored East US DSU price. The standard 30 GB allowance is a bundled assumption. Neither storage number is freshly verified as a universal tariff.",
+      "sourceIds": [
+        "azure-consumption",
+        "azure-retail",
+        "ai-search-pricing"
+      ]
+    },
+    {
+      "id": "historical-network-tariff",
+      "appliesTo": {
+        "productIds": [
+          "private_link",
+          "nat_gateway",
+          "delta_sharing",
+          "internet_egress",
+          "data_processed"
+        ]
+      },
+      "status": "coverage",
+      "message": "Cayfore does not model every route, endpoint, public-connectivity, or private-connectivity tariff. A current Databricks page links an official table effective 2024-08-01, while current documents differ on endpoint-hour billing timing. Missing bundled charges mean unknown or excluded, not free or that no public price exists. Azure's specific Data Processed meter must not be applied to every private-link or egress route.",
+      "sourceIds": [
+        "networking-cost",
+        "networking-pricing",
+        "networking-tariff"
+      ]
+    },
+    {
+      "id": "photon-planning-factors",
+      "appliesTo": {
+        "productIds": [
+          "jobs_classic",
+          "all_purpose_classic",
+          "dlt_core",
+          "dlt_pro",
+          "dlt_advanced"
+        ]
+      },
+      "status": "assumption",
+      "message": "Forecast rules use Azure Jobs 2.5x, All-Purpose 2x, and classic pipelines 2.9x DBU emission; AWS/GCP Jobs retain a 2.9x planning factor. Exact instance ratings can differ. These multiply consumption, not dollars per DBU, and are separate from a runtime speedup. The generic product note saying Jobs always uses 2.9x is not the engine's complete rule.",
+      "sourceIds": [
+        "azure-databricks"
+      ]
+    },
+    {
+      "id": "addons-not-meter",
+      "appliesTo": {
+        "productIds": [
+          "compliance_addon"
+        ]
+      },
+      "status": "assumption",
+      "message": "The forecast's 10% compliance and 30% Mission Critical settings are planning assumptions on workspace spend. They are not the same unit as East US API meters of $0.10/DBU and $0.15/DBU. Do not convert the percentages into a single official per-unit tariff or add another product charge for the same usage.",
+      "sourceIds": [
+        "azure-retail",
+        "databricks-pricing"
+      ]
+    },
+    {
+      "id": "genie-eligibility",
+      "appliesTo": {
+        "productIds": [
+          "genie",
+          "assistant_agent",
+          "databricks_one"
+        ]
+      },
+      "status": "promotion",
+      "message": "The 150 DBU monthly allowance applies to users, excluding service principals. Genie One and Agents user usage is free through 2027-01-31; Code usage above the allowance remains billable. The 25% billed-usage promotion is reflected in DBU metering, so imported billed DBUs must not receive it again. Connected SQL and other services cost extra. Unit rates show the underlying list basis, not a universal free user or per-question price.",
+      "sourceIds": [
+        "genie-cost",
+        "pricing-system-table"
+      ]
+    },
+    {
+      "id": "partial-foundation-coverage",
+      "appliesTo": {
+        "productIds": [
+          "foundation_provisioned",
+          "fm_llama4_maverick",
+          "fm_llama_3_3_70b",
+          "fm_llama_3_1_8b",
+          "fm_gpt_oss_20b",
+          "fm_gpt_oss_120b",
+          "fm_gemma_3_12b",
+          "fm_gte_embeddings",
+          "fm_bge_large",
+          "fm_other",
+          "external_models",
+          "agent_evaluation",
+          "ai_query"
+        ]
+      },
+      "status": "coverage",
+      "message": "The curated eight-model table omits many current models, cache reads/writes, priority or batch offerings, reservations, context bands, and residency uplifts. A zero or absent output-token conversion for embeddings means the output dimension is not offered in this model, not a free generation service. Evaluation and agent examples do not establish the complete current service tariff.",
+      "sourceIds": [
+        "foundation-pricing",
+        "azure-consumption"
+      ]
+    },
+    {
+      "id": "unavailable-is-not-free",
+      "appliesTo": {},
+      "status": "coverage",
+      "message": "A missing rate, zero placeholder, unsupported cloud, or learning-only foundation has no independent trustworthy quote. Use null for unavailable prices and explain underlying billable products. A stored price does not guarantee product availability in the selected region. Zero is reserved for a documented free, included, or eligible promotional component.",
+      "sourceIds": [
+        "databricks-pricing",
+        "ai-search-pricing"
+      ]
+    },
+    {
+      "id": "regional-pricing-proxy",
+      "appliesTo": {},
+      "status": "scope",
+      "message": "Use an exact Azure regional meter or validated Databricks price-card/calculator USD/DBU observation when available. Otherwise a captured reference base or legacy secondary value may be scaled by a regional planning factor. A source without regional scope does not establish an exact local price. True first-party disagreements withhold a qualified quote. No price or factor establishes service availability.",
+      "sourceIds": [
+        "azure-retail",
+        "databricks-price-cards",
+        "databricks-calculator-aws",
+        "databricks-calculator-gcp",
+        "realtime-regions"
+      ]
+    },
+    {
+      "id": "list-price-not-invoice",
+      "appliesTo": {},
+      "status": "scope",
+      "message": "Unit-cost rows describe bundled USD list-price bases before negotiated discounts, commitments, tax, and separately billed components. Reviewed source pages and stored-rate dates are separate provenance facts. Customer system-table prices must be joined on SKU, cloud, currency, unit, and effective interval; contract overrides remain separate.",
+      "sourceIds": [
+        "pricing-system-table",
+        "databricks-pricing"
+      ]
+    },
+    {
+      "id": "monitoring-temporary-promotion",
+      "appliesTo": {
+        "productIds": [
+          "data_quality"
+        ]
+      },
+      "status": "promotion",
+      "message": "The official monitoring page advertises 50% off displayed pricing through 2027-01-31. Rows expose list-price bases; eligibility, metering and contract treatment must be checked before applying a promotion. Do not discount imported billed DBUs or costs twice.",
+      "sourceIds": [
+        "monitoring-pricing",
+        "pricing-system-table"
+      ]
+    },
+    {
+      "id": "connect-workspace-day-allowance",
+      "appliesTo": {
+        "productIds": [
+          "lakeflow_connect"
+        ]
+      },
+      "status": "promotion",
+      "message": "The official Lakeflow Connect page advertises the first 100 DBUs free per workspace per day. A monthly aggregate alone cannot reproduce this daily allowance. Quantity calculations use already billable usage after applicable allowances; source list prices do not mean every consumed DBU is charged.",
+      "sourceIds": [
+        "connect-pricing",
+        "pricing-system-table"
+      ]
+    }
+  ],
+  "componentConflictsFile": "data/component-price-conflicts.json"
+}

@@ -2,6 +2,8 @@ export * from "./types.js";
 export * from "./catalog.js";
 export * from "./money.js";
 export * from "./catalog/pricing-catalog.js";
+export * from "./catalog/resolve-dbu-rate.js";
+export { azureReferenceComponent, componentMatchesPlacement, AZURE_COMPONENT_SCOPE } from "./rates/components.js";
 export * from "./costing/types.js";
 export * from "./estimate.js";
 export * from "./forecast.js";
@@ -30,3 +32,4 @@ export {
   parseUntrustedJson,
 } from "./untrusted.js";
 export { neutralizeSpreadsheetFormula, pdfPlain } from "./spreadsheet.js";
+export { PROVISIONED_MODEL_UNITS_PER_BLOCK } from "./rates/components.js";

@@ -6,6 +6,7 @@ import { validateCatalog } from "./validate-catalog.mjs";
 import { today } from "./refresh-http.mjs";
 import { streamAws } from "./refresh-aws.mjs";
 import { azureRegion, gcpPrices, probeDatabricks, spotSavings } from "./refresh-sources.mjs";
+import { mergeAzureMeters } from "./azure-meter-provenance.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 async function readJson(name) {
@@ -58,7 +59,7 @@ async function main() {
   for (const region of azure) {
     summary.push(...region.summary);
     const prior = (previousMeters.meters ?? []).filter((row) => row.region === region.region);
-    const nextMeters = region.meters.length > 0 ? region.meters : prior;
+    const nextMeters = mergeAzureMeters(prior, region.meters, region.region);
     if (!region.meters.length && prior.length) {
       summary.push(`azure ${region.region} meters: kept ${prior.length} previous rows`);
     }

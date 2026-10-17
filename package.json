@@ -21,7 +21,7 @@
   "scripts": {
     "dev": "npm run dev -w @cayfore/web",
     "build": "npm run typecheck -w @cayfore/catalog && npm run typecheck -w @cayfore/engine && npm run typecheck -w @cayfore/sheet && npm run build -w @cayfore/web && npm run build -w @cayfore/mcp",
-    "test": "vitest run --coverage && node --test scripts/parse-prices.test.mjs scripts/validate-catalog.test.mjs scripts/catalog-watch.test.mjs scripts/coverage-report.test.mjs scripts/products-doc.test.mjs scripts/rate-confidence.test.mjs scripts/https-allowlist.test.mjs scripts/workspace-host.test.mjs scripts/usage-export.test.mjs scripts/lockfile-integrity.test.mjs scripts/weekly-diff.test.mjs scripts/cli-args.test.mjs scripts/signal-registry.test.mjs scripts/weekly-run.test.mjs scripts/cayfore-cli.test.mjs",
+    "test": "vitest run --coverage && node --test scripts/parse-prices.test.mjs scripts/validate-catalog.test.mjs scripts/catalog-watch.test.mjs scripts/coverage-report.test.mjs scripts/products-doc.test.mjs scripts/rate-confidence.test.mjs scripts/https-allowlist.test.mjs scripts/workspace-host.test.mjs scripts/usage-export.test.mjs scripts/lockfile-integrity.test.mjs scripts/weekly-diff.test.mjs scripts/cli-args.test.mjs scripts/signal-registry.test.mjs scripts/weekly-run.test.mjs scripts/cayfore-cli.test.mjs scripts/unit-costs-cli.test.mjs scripts/azure-meter-provenance.test.mjs scripts/parse-databricks-rates.test.mjs",
     "boundaries": "depcruise --config .dependency-cruiser.cjs packages apps mcp scripts",
     "cayfore": "vite-node scripts/cayfore.ts",
     "test:e2e": "playwright test",
@@ -30,7 +30,11 @@
     "format": "prettier --write .",
     "typecheck": "npm run typecheck -w @cayfore/catalog && npm run typecheck -w @cayfore/engine && npm run typecheck -w @cayfore/sheet && npm run typecheck -w @cayfore/web && npm run typecheck -w @cayfore/mcp",
     "preview": "npm run preview -w @cayfore/web",
-    "refresh-prices": "node scripts/refresh-prices.mjs"
+    "refresh-prices": "node scripts/refresh-prices.mjs",
+    "export:unit-costs": "vite-node scripts/unit-costs.ts",
+    "check:unit-costs": "vite-node scripts/unit-costs.ts --check",
+    "refresh:databricks": "node scripts/refresh-databricks-rates.mjs",
+    "check:sources": "node scripts/refresh-databricks-rates.mjs --check"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",

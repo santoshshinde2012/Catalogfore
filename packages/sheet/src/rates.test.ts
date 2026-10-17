@@ -1,0 +1,280 @@
+import {
+  blankPortfolio,
+  bundledPricingCatalog,
+  createWorkload,
+  projectPortfolio,
+  regionInfo,
+  resolveDbuRate,
+  skuCatalog,
+  type SkuId,
+  type Cloud,
+  type Workload,
+} from "@cayfore/engine";
+import { workloadsForProduct } from "@cayfore/engine/products";
+import ExcelJS from "exceljs";
+import { describe, expect, it } from "vitest";
+import { listedRate, listedRateDetails } from "./listed-rate";
+import { buildForecastWorkbook } from "./workbook";
+
+function project(workloads: Workload[]) {
+  return projectPortfolio({
+    ...blankPortfolio("aws"),
+    region: "us-east-1",
+    commitment: { dbuDiscount: 0.25, cloudDiscount: 0 },
+    workloads,
+  });
+}
+
+function metered(overrides: Partial<Extract<Workload, { kind: "metered" }>>): Workload {
+  return {
+    id: "metered",
+    name: "Metered usage",
+    kind: "metered",
+    sku: "jobs_serverless",
+    dbuPerMonth: 100,
+    ...overrides,
+  };
+}
+
+describe("workbook rate provenance", () => {
+  it("uses each workload's placement, exact Azure meter, tier, and undiscounted rate", () => {
+    const result = project([
+      { ...createWorkload("serverless_jobs"), id: "azure", cloud: "azure", region: "westeurope", tier: "premium" },
+      { ...createWorkload("serverless_jobs"), id: "aws", cloud: "aws", region: "eu-west-1", tier: "enterprise" },
+    ]);
+    const [azure, aws] = result.estimate.lines.map((line) => listedRateDetails(result, line));
+    expect(azure).toMatchObject({
+      price: 0.5,
+      cloud: "azure",
+      region: "westeurope",
+      tier: "premium",
+      confidence: 92,
+      band: "measured",
+    });
+    expect(new URL(azure.source).hostname).toBe("prices.azure.com");
+    expect(azure.basis).toMatch(/Exact Azure/);
+    expect(result.estimate.lines[0].dbuCost / result.estimate.lines[0].dbu).toBeCloseTo(0.5 * 0.75, 4);
+    expect(aws.price).toBe(0.5);
+    expect(aws).toMatchObject({
+      cloud: "aws",
+      region: "eu-west-1",
+      tier: "enterprise",
+      confidence: 92,
+      band: "measured",
+    });
+    expect(new URL(aws.source).hostname).toBe("www.databricks.com");
+    expect(aws.basis).toMatch(/Exact Databricks first-party/);
+    expect(result.estimate.lines[1].dbuCost / result.estimate.lines[1].dbu).toBeCloseTo(0.5 * 0.75, 4);
+  });
+
+  it("keeps an unsupported regional quote distinct from exact primary observations", () => {
+    const result = project([metered({ cloud: "aws", region: "eu-west-1", tier: "premium", sku: "ai_search" })]);
+    const rate = listedRateDetails(result, result.estimate.lines[0]);
+    expect(rate.price).toBeCloseTo(0.07 * 1.109091, 8);
+    expect(rate.band).toBe("proxy");
+    expect(new URL(rate.source).hostname).toBe("www.flexera.com");
+    expect(rate.basis).toMatch(/Bundled secondary reference.*planning proxy/);
+  });
+
+  it("withholds conflicted first-party rates and preserves their exact evidence in Excel", async () => {
+    const result = project([metered({ cloud: "gcp", region: "europe-west1", tier: "enterprise" })]);
+    const rate = listedRateDetails(result, result.estimate.lines[0]);
+    expect(rate.price).toBe("");
+    expect(rate.band).toBe("conflict");
+    expect(rate.basis).toMatch(/Conflicting first-party prices.*withheld/);
+    expect(rate.source).toContain("/cards.json");
+    expect(rate.source).toContain("/GCP.json");
+    expect(result.estimate.coverage!.complete).toBe(false);
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(Buffer.from(await buildForecastWorkbook(result)) as never);
+    expect(workbook.getWorksheet("Rates")!.getCell("B2").value).toBe("");
+    expect(workbook.getWorksheet("Rates")!.getCell("E2").value).toBe("conflict");
+  });
+
+  it("does not replace supplied, observed, non-DBU, or unpriced amounts with a public rate", () => {
+    const result = project([
+      metered({
+        id: "custom",
+        rateByCloud: { aws: 0.123 },
+        rateProvenance: { kind: "custom", label: "Contract quote", currency: "USD", source: "contract-42" },
+      }),
+      metered({
+        id: "observed",
+        dbuPerMonth: 0,
+        fixedUsdByCloud: { aws: 73 },
+        inputs: { usageUnit: "GB_MONTH", usageQuantity: 100 },
+        rateProvenance: {
+          kind: "imported",
+          label: "Observed billed amount",
+          currency: "USD",
+          basis: "billed",
+          source: "invoice-17",
+        },
+      }),
+      metered({
+        id: "unpriced",
+        productId: "jobs_serverless",
+        priceStatus: "unpriced",
+        rateProvenance: { kind: "imported", label: "Unmapped quantity", currency: "USD", source: "usage.csv" },
+      }),
+      ...workloadsForProduct("clean_rooms").map((workload) => ({
+        ...workload,
+        id: "collaborator",
+        cloud: "azure" as const,
+        region: "eastus",
+      })),
+    ]);
+    const rates = result.estimate.lines.map((line) => listedRateDetails(result, line));
+    expect(rates.every((rate) => rate.price === "" && rate.confidence === "")).toBe(true);
+    expect(rates[0]).toMatchObject({ band: "custom", source: "contract-42" });
+    expect(rates[0].basis).toMatch(/not a bundled public/);
+    expect(rates[1]).toMatchObject({ band: "imported", source: "invoice-17" });
+    expect(rates[1].basis).toMatch(/billed/);
+    expect(rates[2]).toMatchObject({ band: "unpublished", source: "usage.csv" });
+    expect(rates[3].basis).toMatch(/Fixed USD.*not a USD\/DBU/);
+    expect(result.estimate.lines[1].total).toBe(73);
+  });
+
+  it("shows the sourced Jobs Light rate only within the recorded placement", () => {
+    const job = workloadsForProduct("jobs_light")[0];
+    if (job.kind !== "metered") throw new Error("Jobs Light must use a metered workload");
+    const result = project([
+      { ...job, id: "east", cloud: "azure", region: "eastus" },
+      { ...job, id: "west", cloud: "azure", region: "westeurope" },
+    ]);
+    expect(listedRate(result, result.estimate.lines[0])).toBe(0.22);
+    expect(listedRateDetails(result, result.estimate.lines[0])).toMatchObject({ confidence: 92, band: "measured" });
+    expect(listedRateDetails(result, result.estimate.lines[1])).toMatchObject({
+      price: "",
+      confidence: "",
+      band: "unpublished",
+    });
+    const staleEmbedded = project([{ ...job, cloud: "azure", region: "eastus", rateByCloud: { azure: 99 } }]);
+    expect(listedRate(staleEmbedded, staleEmbedded.estimate.lines[0])).toBe(0.22);
+    expect(staleEmbedded.estimate.lines[0].dbuCost).toBeCloseTo(staleEmbedded.estimate.lines[0].dbu * 0.22 * 0.75, 2);
+  });
+
+  it("uses the canonical DBU quote and source for exact, proxy and conflicted placements", () => {
+    const cases: { cloud: Cloud; region: string; sku: SkuId }[] = [
+      { cloud: "aws", region: "eu-west-1", sku: "jobs_serverless" },
+      { cloud: "azure", region: "eastus", sku: "jobs_serverless" },
+      { cloud: "aws", region: "eu-west-1", sku: "ai_search" },
+      { cloud: "gcp", region: "europe-west1", sku: "model_serving" },
+    ];
+    for (const item of cases) {
+      const region = regionInfo(item.cloud, item.region);
+      const quote = resolveDbuRate(
+        bundledPricingCatalog,
+        { ...item, tier: "premium", factor: region.factor },
+        item.sku,
+      );
+      const result = project([metered({ ...item, tier: "premium" })]);
+      const listed = listedRateDetails(result, result.estimate.lines[0]);
+      expect(listed.price).toBe(quote.usdPerDbu ?? "");
+      expect(listed.band).toBe(quote.confidence);
+      expect(listed.basis).toBe(quote.basis);
+      expect(listed.source).toBe(
+        quote.conflict
+          ? quote.sources.map((source) => source.url).join("; ")
+          : quote.sources.find((source) => source.role === "price")!.url,
+      );
+    }
+  });
+
+  it("does not attach a newer catalog's conflict to an older saved estimate", () => {
+    const current = project([metered({ cloud: "gcp", region: "europe-west1", sku: "model_serving" })]);
+    const previous = {
+      ...current,
+      estimate: {
+        ...current.estimate,
+        catalogVersion: "older-book",
+        lines: current.estimate.lines.map((line) => ({ ...line, priceStatus: "priced" as const })),
+      },
+    };
+    const rate = listedRateDetails(previous, previous.estimate.lines[0]);
+    expect(rate.price).toBe("");
+    expect(rate.band).toBe("unpublished");
+    expect(rate.basis).toContain("price-book version differs");
+  });
+
+  it("does not reconstruct today's native component rate for an older saved estimate", () => {
+    const job = workloadsForProduct("jobs_light")[0];
+    const current = project([{ ...job, cloud: "azure", region: "eastus" }]);
+    const previous = { ...current, estimate: { ...current.estimate, catalogVersion: "older-book" } };
+    const rate = listedRateDetails(previous, previous.estimate.lines[0]);
+    expect(rate.price).toBe("");
+    expect(rate.band).toBe("unpublished");
+    expect(rate.basis).toContain("price-book version differs");
+  });
+
+  it("keeps a catalog-priced imported DBU estimate distinct from an observed invoice", () => {
+    const result = project([
+      metered({
+        cloud: "azure",
+        region: "eastus",
+        priceStatus: "approximate",
+        rateProvenance: {
+          kind: "imported",
+          label: "Bundled catalog estimate; export has no price",
+          currency: "USD",
+          source: "system-billing",
+          catalogVersion: skuCatalog.version,
+        },
+      }),
+    ]);
+    const rate = listedRateDetails(result, result.estimate.lines[0]);
+    expect(rate.price).toBe(0.45);
+    expect(rate.basis).toMatch(/Catalog estimate for imported DBU usage; export supplied no price/);
+    expect(new URL(rate.source).hostname).toBe("prices.azure.com");
+  });
+
+  it("retains repeated SKUs as separate traceable rows and leaves non-public rates blank in Excel", async () => {
+    const result = project([
+      { ...createWorkload("serverless_jobs"), id: "azure", name: "Europe jobs", cloud: "azure", region: "westeurope" },
+      { ...createWorkload("serverless_jobs"), id: "aws", name: "US jobs", tier: "enterprise" },
+      metered({
+        id: "actual",
+        name: "Imported bill",
+        fixedUsdByCloud: { aws: 17 },
+        rateProvenance: {
+          kind: "imported",
+          currency: "USD",
+          label: "Actual cost",
+          source: "source-file.csv",
+          basis: "billed",
+        },
+      }),
+    ]);
+    const bytes = await buildForecastWorkbook(result);
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(Buffer.from(bytes) as never);
+    const rates = workbook.getWorksheet("Rates")!;
+    expect(rates.rowCount).toBe(4);
+    expect(Array.from({ length: 6 }, (_, index) => rates.getRow(1).getCell(index + 1).value)).toEqual([
+      "SKU",
+      "$/DBU",
+      "Source",
+      "Confidence",
+      "Band",
+      "Citation",
+    ]);
+    expect(rates.getCell("A2").value).toBe(rates.getCell("A3").value);
+    expect(rates.getCell("B2").value).toBe(0.5);
+    expect(rates.getCell("B3").value).toBe(0.45);
+    expect(rates.getCell("E2").value).toBe("measured");
+    expect(rates.getCell("E3").value).toBe("measured");
+    expect(rates.getCell("G2").value).toBe("Europe jobs");
+    expect(rates.getCell("H2").value).toBe("azure");
+    expect(rates.getCell("I2").value).toBe("westeurope");
+    expect(rates.getCell("J3").value).toBe("enterprise");
+    expect(rates.getCell("L3").value).toBe("aws");
+    expect(rates.getCell("B4").value).toBe("");
+    expect(rates.getCell("D4").value).toBe("");
+    expect(rates.getCell("C4").value).toBe("source-file.csv");
+    expect(rates.getCell("K4").value).toMatch(/Imported billed/);
+    const breakdown = workbook.getWorksheet("Breakdown")!;
+    expect(breakdown.getCell("D2").value).toBe(0.5);
+    expect(breakdown.getCell("D3").value).toBe(0.45);
+    expect(breakdown.getCell("D4").value).toBe("");
+  });
+});

@@ -53,6 +53,25 @@ export function validateCatalog({ sku, instances, prices, azureMeters }) {
     if (meterKeys.has(key)) errors.push(`duplicate meter ${key}`);
     meterKeys.add(key);
     if (!(row.usdPerDbu > 0 && row.usdPerDbu < 5)) errors.push(`meter out of range ${key}`);
+    if (row.asOf != null && (!/^\d{4}-\d{2}-\d{2}$/.test(row.asOf) || !row.meterId || !row.sourceUrl))
+      errors.push(`meter observation metadata ${key}`);
+    if (row.effectiveStartDate != null && !Number.isFinite(Date.parse(row.effectiveStartDate)))
+      errors.push(`meter effective date ${key}`);
+    if (row.sourceUrl) {
+      try {
+        const url = new URL(row.sourceUrl);
+        if (
+          url.protocol !== "https:" ||
+          url.hostname !== "prices.azure.com" ||
+          url.username ||
+          url.password ||
+          url.pathname !== "/api/retail/prices"
+        )
+          errors.push(`meter source URL ${key}`);
+      } catch {
+        errors.push(`meter source URL ${key}`);
+      }
+    }
   }
   if (azureMeters && !/^\d{4}-\d{2}-\d{2}$/.test(azureMeters.updatedOn ?? "")) {
     errors.push("azure meter updatedOn");

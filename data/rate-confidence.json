@@ -1,14 +1,15 @@
 {
-  "version": "2026-10-17.1",
+  "version": "2026-10-17.3",
   "rubric": {
-    "measured": "90–100. An Azure Retail Prices meter, or a first-party meter copied into the row.",
+    "measured": "90–100. An exact regional Azure Retail Prices meter or a validated Databricks price-card/calculator USD/DBU row.",
+    "conflict": "0. Unreconciled first-party values for the same price key; the qualified quote is withheld.",
     "cited": "70–89. A first-party number in the docs.",
-    "secondary": "40–69. Two or more public compilations, or one compilation cross-checked against another.",
+    "secondary": "40–69. A bundled secondary compilation without a matching captured first-party rate.",
     "proxy": "20–39. A real rate for a different SKU or region, scaled. Lakehouse Real-Time factors are this band.",
     "unpublished": "0–19. No dollar rate is stored. The zero is not a guess."
   },
-  "skuRatesVersion": "2026-10-17.1",
-  "productCatalogVersion": "2026-10-17.1",
+  "skuRatesVersion": "2026-10-17.3",
+  "productCatalogVersion": "2026-10-17.3",
   "products": {
     "jobs_classic": {
       "score": 92,
@@ -86,9 +87,9 @@
       "expected": 8
     },
     "zerobus": {
-      "score": 55,
-      "band": "secondary",
-      "expected": 55
+      "score": 92,
+      "band": "measured",
+      "expected": 92
     },
     "standard_tier": {
       "score": 8,
@@ -362,9 +363,11 @@
     }
   },
   "distribution": {
-    "measured": 1060,
-    "secondary": 74,
-    "proxy": 940,
+    "measured": 1753,
+    "cited": 0,
+    "secondary": 10,
+    "proxy": 300,
+    "conflict": 11,
     "total": 2074
   },
   "cells": [
@@ -373,128 +376,128 @@
       "region": "us-east-1",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "premium",
       "sku": "model_training",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "premium",
       "sku": "apps",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -509,128 +512,128 @@
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-1",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -645,128 +648,128 @@
       "region": "us-east-2",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -781,128 +784,128 @@
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-east-2",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -917,128 +920,128 @@
       "region": "us-west-2",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -1053,128 +1056,128 @@
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-2",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -1189,128 +1192,128 @@
       "region": "us-west-1",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -1325,128 +1328,128 @@
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "us-west-1",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -1461,128 +1464,128 @@
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -1597,128 +1600,128 @@
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ca-central-1",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -1733,128 +1736,128 @@
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -1869,128 +1872,128 @@
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-1",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -2005,128 +2008,128 @@
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -2141,128 +2144,128 @@
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-2",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -2277,128 +2280,128 @@
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -2413,128 +2416,128 @@
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-west-3",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -2549,128 +2552,128 @@
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -2685,128 +2688,128 @@
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "eu-central-1",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -2821,128 +2824,128 @@
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -2957,128 +2960,128 @@
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-south-1",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -3093,128 +3096,128 @@
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -3229,128 +3232,128 @@
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-1",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -3365,128 +3368,128 @@
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -3501,128 +3504,128 @@
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-northeast-2",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -3637,128 +3640,128 @@
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -3773,128 +3776,128 @@
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-1",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -3909,128 +3912,128 @@
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -4045,128 +4048,128 @@
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-2",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -4181,128 +4184,128 @@
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -4317,128 +4320,128 @@
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "ap-southeast-3",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -4453,128 +4456,128 @@
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -4589,128 +4592,128 @@
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
       "region": "sa-east-1",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "aws",
@@ -15333,128 +15336,128 @@
       "region": "us-central1",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "premium",
       "sku": "model_training",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "premium",
       "sku": "apps",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
@@ -15469,128 +15472,128 @@
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-central1",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 60,
-      "band": "secondary"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
@@ -15605,128 +15608,128 @@
       "region": "us-east1",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
@@ -15741,128 +15744,128 @@
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "us-east1",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
@@ -15877,128 +15880,128 @@
       "region": "europe-west1",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 0,
+      "band": "conflict"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
@@ -16013,128 +16016,128 @@
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 0,
+      "band": "conflict"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 0,
+      "band": "conflict"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west1",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
@@ -16149,128 +16152,128 @@
       "region": "europe-west2",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 0,
+      "band": "conflict"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
@@ -16285,128 +16288,128 @@
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 0,
+      "band": "conflict"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "europe-west2",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
@@ -16421,128 +16424,128 @@
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 0,
+      "band": "conflict"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
@@ -16557,128 +16560,128 @@
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 0,
+      "band": "conflict"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 0,
+      "band": "conflict"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "asia-southeast1",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
@@ -16693,128 +16696,128 @@
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 0,
+      "band": "conflict"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "premium",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
@@ -16829,128 +16832,128 @@
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "jobs_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "jobs_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 0,
+      "band": "conflict"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "all_purpose_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "all_purpose_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "dlt_core",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "dlt_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "dlt_advanced",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "dlt_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "sql_classic",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "sql_pro",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "sql_serverless",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "model_serving",
-      "score": 35,
-      "band": "proxy"
+      "score": 0,
+      "band": "conflict"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "model_training",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "apps",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "managed_services",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",
       "region": "australia-southeast1",
       "tier": "enterprise",
       "sku": "lakeflow_connect",
-      "score": 35,
-      "band": "proxy"
+      "score": 92,
+      "band": "measured"
     },
     {
       "cloud": "gcp",

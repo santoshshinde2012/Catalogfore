@@ -1,11 +1,9 @@
 import { fetchAllowed, redactUrl } from "./https-allowlist.mjs";
+import { DATABRICKS_SOURCES } from "./databricks-rate-mapping.mjs";
 
 export const today = new Date().toISOString().slice(0, 10);
 export const SPOT_ADVISOR = "https://spot-bid-advisor.s3.amazonaws.com/spot-advisor-data.json";
-export const DATABRICKS_PROBES = [
-  "https://www.databricks.com/en-pricing-assets/page-data/app-data.json",
-  "https://www.databricks.com/page-data/product/pricing/page-data.json",
-];
+export const DATABRICKS_PROBES = DATABRICKS_SOURCES.map((source) => source.url);
 
 export async function fetchText(url, attempt = 0) {
   const response = await fetchAllowed(url, "cayfore-price-refresh");

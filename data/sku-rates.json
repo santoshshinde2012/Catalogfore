@@ -1,7 +1,7 @@
 {
-  "version": "2026-10-17.1",
+  "version": "2026-10-17.3",
   "verifiedOn": "2026-10-17",
-  "disclaimer": "Estimates only. Not a quote, invoice, or commitment. US East list rates were re-checked on 2026-10-17. Azure Premium DBU meters for jobs, SQL, serverless, pipelines, serving, and training match the Azure Retail Prices API in East US. AWS and GCP classic $/DBU figures remain secondary where the public price pages render in the browser. AWS and Azure region factors are Lakehouse Real-Time ratios applied as a proxy to other SKUs. GCP region factors outside the reference region are proxies. Your contract and promotions will differ.",
+  "disclaimer": "Estimates only. Not a quote, invoice, or commitment. Exact Azure regional meters and validated AWS/GCP Databricks calculator USD/DBU rows take precedence. Unscoped official base rates, secondary references, regional proxies, and consumption assumptions remain explicitly identified. Capture dates describe observation, not tariff effective dates. Contract prices, promotions, taxes, infrastructure, and product availability require separate review.",
   "photonMultiplier": 2.9,
   "photonMultiplierNote": "Default 2.9× DBU emission for classic Photon, the factor printed on the Azure Lakeflow pipeline price table. Not applied to serverless or SQL. See docs/RESEARCH.md.",
   "sqlVmDollarsPerDbuHour": 0.22,

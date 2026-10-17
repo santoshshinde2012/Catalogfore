@@ -1,5 +1,5 @@
 import type { Estimate, ForecastPoint, Portfolio } from "@cayfore/engine";
-import { ChevronDown, Download } from "lucide-react";
+import { ChevronDown, Download, LoaderCircle } from "lucide-react";
 import { useState } from "react";
 import { forecastExporters, type ForecastDownload } from "../../export";
 import type { ForecastExportResult } from "../../export-data";
@@ -20,8 +20,10 @@ export function ExportBar({
 }) {
   const [busy, setBusy] = useState("");
   const [downloadError, setDownloadError] = useState("");
+  const busyLabel = forecastExporters.find((exporter) => exporter.id === busy)?.busyLabel;
 
   async function run(exporter: ForecastDownload) {
+    if (busy) return;
     if (!exporter.failure) {
       await exporter.write(portfolio, estimate, points, forecastResult);
       return;
@@ -42,21 +44,26 @@ export function ExportBar({
       <DropdownMenu modal={false}>
         <InfoTooltip
           label="Download your forecast"
-          description="Export an Excel workbook, CSV spreadsheet, JSON data, or a PDF report."
+          description="Export an Excel workbook, CSV spreadsheet, JSON data, or a PDF report. Choose JSON to save a forecast you can reopen."
           align="end"
         >
           <DropdownMenuTrigger asChild>
-            <Button type="button" variant="outline">
-              <Download aria-hidden="true" />
-              Export
+            <Button type="button" variant="outline" disabled={Boolean(busy)} aria-busy={Boolean(busy)}>
+              {busy ? <LoaderCircle className="animate-spin" aria-hidden="true" /> : <Download aria-hidden="true" />}
+              {busyLabel ?? "Export"}
               <ChevronDown aria-hidden="true" />
             </Button>
           </DropdownMenuTrigger>
         </InfoTooltip>
-        <DropdownMenuContent align="end" regionLabel="Forecast export" className="w-72 rounded-2xl p-1.5">
+        <DropdownMenuContent
+          align="end"
+          regionLabel="Forecast export"
+          collisionPadding={12}
+          className="max-h-[var(--radix-dropdown-menu-content-available-height)] w-[min(18rem,calc(100vw-1.5rem))] overflow-y-auto overscroll-contain rounded-2xl p-1.5"
+        >
           <div className="mb-1 border-b px-2.5 pt-2 pb-3" aria-hidden="true">
             <p className="text-sm font-semibold">Download forecast</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">Choose a format for your forecast.</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">Save a copy or share a report.</p>
           </div>
           {forecastExporters.map((exporter) => {
             const Icon = exporter.icon;

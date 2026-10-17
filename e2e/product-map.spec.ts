@@ -1,14 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { navigateWorkspace as navigate, selectTheme } from "./header-helpers";
 import { savedDownload } from "./forecast-helpers";
-
-async function navigate(page: Page, name: "Plan" | "Product map", isMobile: boolean) {
-  const header = page.getByRole("banner");
-  if (isMobile) {
-    await header.getByRole("button", { name: "Menu", exact: true }).click();
-    await page.getByRole("menuitem", { name: name === "Plan" ? /^Edit inputs\b/ : /^Product map\b/ }).click();
-  } else await header.getByRole("button", { name, exact: true }).click();
-}
 
 const directory = (page: Page) => page.getByRole("region", { name: "Product directory", exact: true });
 const details = (page: Page) => page.getByRole("region", { name: "Product details", exact: true });
@@ -29,7 +22,7 @@ test("product-map navigation, history and reload preserve the current forecast",
   await page.getByRole("radio", { name: "10%", exact: true }).click();
   const annual = await page.getByTestId("year-sentence").innerText();
   const hash = new URL(page.url()).hash;
-  await navigate(page, "Product map", isMobile);
+  await navigate(page, "Product map");
   await expect(page.locator("#product-map")).toBeFocused();
   const skip = page.getByRole("link", { name: "Skip to content", exact: true });
   await expect(skip).toHaveAttribute("href", "#product-map");
@@ -56,7 +49,7 @@ test("product-map navigation, history and reload preserve the current forecast",
   await expect(page.locator("#product-map")).toBeVisible();
   await page.reload();
   await expect(page.locator("#product-map")).toBeVisible();
-  await navigate(page, "Plan", isMobile);
+  await navigate(page, "Plan");
   await expect(page.locator("#plan-inputs")).toBeFocused();
   await expect(page.getByTestId("year-sentence")).toHaveText(annual);
   expect(new URL(page.url()).search).toBe("?campaign=team");
@@ -127,17 +120,17 @@ test("domain and entry filters remain accessible on a narrow screen", async ({ p
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
   const scan = await new AxeBuilder({ page }).analyze();
   expect(scan.violations).toEqual([]);
-  await page.getByRole("button", { name: "Switch to dark theme", exact: true }).click();
+  await selectTheme(page, "dark");
   const darkScan = await new AxeBuilder({ page }).analyze();
   expect(darkScan.violations).toEqual([]);
 });
 
-test("adding a catalog product preserves cloud, budget and workloads and supports Undo", async ({ page, isMobile }) => {
+test("adding a catalog product preserves cloud, budget and workloads and supports Undo", async ({ page }) => {
   await page.goto("./");
   await page.getByRole("radio", { name: "Azure", exact: true }).click();
   await page.getByRole("spinbutton", { name: "Annual budget", exact: true }).fill("250000");
   const before = await savedDownload(page);
-  await navigate(page, "Product map", isMobile);
+  await navigate(page, "Product map");
   await page.getByLabel("Search Databricks products", { exact: true }).fill("Lakeflow Jobs (classic)");
   await directory(page)
     .getByRole("button", { name: /^Jobs cluster\b/ })
@@ -154,21 +147,18 @@ test("adding a catalog product preserves cloud, budget and workloads and support
   await page.goBack();
   await expect(page.locator("#product-map")).toBeVisible();
   expect(new URL(page.url()).hash).toBe(currentHash);
-  await navigate(page, "Plan", isMobile);
+  await navigate(page, "Plan");
   await page.getByRole("button", { name: "Undo last change", exact: true }).click();
   const restored = await savedDownload(page);
   expect(restored.portfolio).toEqual(before.portfolio);
   expect(restored.annual).toBe(before.annual);
 });
 
-test("browser Back closes Advanced while preserving the product added to the current plan", async ({
-  page,
-  isMobile,
-}) => {
+test("browser Back closes Advanced while preserving the product added to the current plan", async ({ page }) => {
   const warnings = chartWarnings(page);
   await page.goto("./");
   const before = await savedDownload(page);
-  await navigate(page, "Product map", isMobile);
+  await navigate(page, "Product map");
   await page.getByLabel("Search Databricks products", { exact: true }).fill("Lakeflow Jobs (classic)");
   await directory(page)
     .getByRole("button", { name: /^Jobs cluster\b/ })
@@ -180,7 +170,7 @@ test("browser Back closes Advanced while preserving the product added to the cur
   await expect(page.locator("#product-map")).toBeFocused();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   expect(new URL(page.url()).hash).toBe(currentHash);
-  await navigate(page, "Plan", isMobile);
+  await navigate(page, "Plan");
   await expect(page.getByRole("dialog")).toHaveCount(0);
   const after = await savedDownload(page);
   expect(after.portfolio.workloads.length).toBeGreaterThan(before.portfolio.workloads.length);

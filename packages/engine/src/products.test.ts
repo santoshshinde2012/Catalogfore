@@ -32,9 +32,9 @@ function pricedAll(productId: string, cloud: Cloud = "aws") {
 }
 
 describe("product catalog", () => {
-  it("prices Zerobus per GB from the secondary card and leaves GCP unpriced", () => {
-    expect(productById("zerobus")?.confidence).toBe("secondary");
-    expect(productById("zerobus")?.confidenceScore).toBe(55);
+  it("prices Zerobus per GB from the captured official card and leaves GCP unpriced", () => {
+    expect(productById("zerobus")?.confidence).toBe("measured");
+    expect(productById("zerobus")?.confidenceScore).toBe(92);
     expect(priced(workloadForProduct("zerobus")).total).toBe(5);
     const enterprise = estimate({
       ...blankPortfolio("aws"),
@@ -46,7 +46,8 @@ describe("product catalog", () => {
     expect(priced(workloadForProduct("zerobus"), "azure").total).toBe(6.4);
     const gcp = priced(workloadForProduct("zerobus"), "gcp");
     expect(gcp.total).toBe(0);
-    expect(gcp.lines[0]?.notes.join(" ")).toMatch(/No list rate is stored/);
+    expect(gcp.lines[0]?.priceStatus).toBe("unpriced");
+    expect(gcp.lines[0]?.notes.join(" ")).toContain("no rate is inferred");
   });
 
   it("prices classic jobs with the cluster strategy", () => {
@@ -59,10 +60,12 @@ describe("product catalog", () => {
     expect(result.cloudCost).toBeGreaterThan(0);
   });
 
-  it("leaves a line at $0 only when nothing billable is published", () => {
+  it("exposes an incomplete known subtotal for products with no modeled public quote", () => {
     for (const id of ["databricks_one", "private_link", "nat_gateway", "delta_sharing"]) {
       expect(productById(id)?.listPrice).toBe("unpublished");
-      expect(pricedAll(id).total).toBe(0);
+      const result = pricedAll(id);
+      expect(result.total).toBe(0);
+      expect(result.coverage?.complete).toBe(false);
     }
   });
 

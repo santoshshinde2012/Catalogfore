@@ -1,4 +1,5 @@
-import { skuCatalog } from "@cayfore/engine";
+import { skuCatalog, PROVISIONED_MODEL_UNITS_PER_BLOCK } from "@cayfore/engine";
+import { useId } from "react";
 import { type KindProps, numberOr, ScheduleFields } from "./fields";
 
 export function ServingFields({ workload, onChange }: KindProps) {
@@ -56,6 +57,7 @@ export function ServingFields({ workload, onChange }: KindProps) {
 }
 
 export function FoundationFields({ workload, onChange }: KindProps) {
+  const capacityHintId = useId();
   if (workload.kind !== "foundation_model") return null;
   return (
     <div className="mt-3 grid gap-3">
@@ -92,15 +94,20 @@ export function FoundationFields({ workload, onChange }: KindProps) {
         </label>
       </div>
       <label className="field">
-        Provisioned hours / month
+        Provisioned {PROVISIONED_MODEL_UNITS_PER_BLOCK}-model-unit block-hours / month
         <input
           type="number"
           min={0}
           step={1}
+          aria-describedby={capacityHintId}
           value={workload.provisionedHoursPerMonth}
           onChange={(event) => onChange({ ...workload, provisionedHoursPerMonth: numberOr(event.target.value, 0) })}
         />
       </label>
+      <p id={capacityHintId} className="text-xs leading-relaxed text-muted-foreground">
+        One block-hour is {PROVISIONED_MODEL_UNITS_PER_BLOCK} model units for one hour. Enter blocks × hours; throughput
+        varies by model. Conflicting capacity prices remain unresolved.
+      </p>
     </div>
   );
 }

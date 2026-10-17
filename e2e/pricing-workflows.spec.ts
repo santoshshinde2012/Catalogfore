@@ -49,3 +49,43 @@ test("sample usage remains labeled as demonstration data after sharing and reope
   await page.reload();
   expect((await savedDownload(page)).portfolio.usage?.sourceLabel).toBe("Bundled demonstration sample");
 });
+
+test("a schema-entered cost remains an explicit custom price through source refresh and reopening", async ({
+  page,
+}) => {
+  await page.goto("./");
+  const { portfolio } = await savedDownload(page);
+  delete portfolio.simple;
+  portfolio.cloud = "azure";
+  portfolio.region = "westeurope";
+  portfolio.forecast.annualGrowth = 0;
+  portfolio.workloads = [
+    {
+      id: "rooms",
+      name: "Supplied room cost",
+      kind: "metered",
+      productId: "clean_rooms",
+      sku: "managed_services",
+      dbuPerMonth: 0,
+      fixedUsdByCloud: { azure: 50 },
+      priceStatus: "unpriced",
+    },
+  ];
+  await page.getByLabel("Open a saved forecast").setInputFiles({
+    name: "room.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify({ format: "cayfore.forecast", version: 1, portfolio })),
+  });
+  await page.getByRole("button", { name: "Advanced", exact: true }).last().click();
+  await page.getByRole("spinbutton", { name: "Azure dollars / month", exact: true }).fill("73");
+  await page.keyboard.press("Escape");
+  const saved = await savedDownload(page);
+  expect(saved.annual).toBe(876);
+  expect(saved.portfolio.workloads[0].rateProvenance?.kind).toBe("custom");
+  expect(saved.portfolio.workloads[0].priceStatus).not.toBe("unpriced");
+  await page.reload();
+  const reopened = await savedDownload(page);
+  expect(reopened.annual).toBe(876);
+  expect(reopened.portfolio.workloads[0].fixedUsdByCloud?.azure).toBe(73);
+  expect(reopened.portfolio.workloads[0].rateProvenance?.kind).toBe("custom");
+});

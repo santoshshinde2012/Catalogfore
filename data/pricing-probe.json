@@ -1,16 +1,22 @@
 {
   "checkedOn": "2026-10-17",
-  "foundPublicJson": false,
+  "foundPublicJson": true,
   "checks": [
     {
-      "url": "https://www.databricks.com/en-pricing-assets/page-data/app-data.json",
-      "status": "no-prices",
-      "bytes": 50
+      "url": "https://www.databricks.com/en-pricing-assets/data/pricing/AWS.json",
+      "status": "prices",
+      "bytes": 5395189
     },
     {
-      "url": "https://www.databricks.com/page-data/product/pricing/page-data.json",
-      "status": "404 https://www.databricks.com/page-data/product/pricing/page-data.json"
+      "url": "https://www.databricks.com/en-pricing-assets/data/pricing/GCP.json",
+      "status": "prices",
+      "bytes": 1539232
+    },
+    {
+      "url": "https://www.databricks.com/en-pricing-assets/data/pricing/cards.json",
+      "status": "prices",
+      "bytes": 410174
     }
   ],
-  "note": "Databricks pricing pages are a client bundle. These probes look for a JSON document of rates. They do not scrape the bundle. No public rate JSON means the curated table stays."
+  "note": "Diagnostic presence checks for the official price-card and calculator JSON endpoints. Validated numeric prices and retained source captures are maintained separately by refresh-databricks-rates.mjs; a successful probe alone does not verify a price."
 }

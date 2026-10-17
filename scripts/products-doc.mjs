@@ -31,7 +31,7 @@ export function renderProductsMarkdown(catalog, notes) {
 
 Checked ${catalog.verifiedOn}. Catalog version \`${catalog.version}\`. Figures are list estimates, not a quote. Cayfore is not affiliated with Databricks.
 
-A row marked **No** has no list rate in this catalog, and the forecast line is $0. **No distinct rate** means the line reuses another SKU and says so. **Yes** means a list rate is applied. Azure meter rows are re-checked by the price refresh. Manual rows are cited and go stale after 120 days.
+A row marked **No** has no resolved list rate in this catalog; its missing cost remains a gap in the known subtotal. **No distinct rate** means the line reuses another SKU and says so. **Yes** means a stored rate is applied, with its actual component evidence shown in Unit costs. Captured first-party prices take precedence over references. Product-level confidence is catalog metadata; it does not verify every region or consumption assumption. Manual citations go stale after 120 days.
 
 The four-input page does not list these products. It maps Pipelines and jobs to classic jobs, Dashboards to serverless SQL, and Models to the Llama 3.1 8B foundation-model line inside \`projectSimple\`. Advanced adds any row below. Sizes (SQL 2XS–4XL, Photon, spot) stay inputs on the existing editors.
 
