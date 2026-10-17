@@ -47,7 +47,7 @@ export async function buildRateConfidence() {
     ]),
   );
   return {
-    version: "2026-10-16.1",
+    version: sku.version,
     rubric: {
       measured: "90–100. An Azure Retail Prices meter, or a first-party meter copied into the row.",
       cited: "70–89. A first-party number in the docs.",

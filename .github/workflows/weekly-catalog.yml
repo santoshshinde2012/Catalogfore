@@ -1,0 +1,72 @@
+name: Weekly catalog
+
+on:
+  schedule:
+    # Monday 06:00 UTC. Replaces the separate price refresh and catalog watch.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  weekly:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    timeout-minutes: 120
+    steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: node --test scripts/weekly-diff.test.mjs scripts/validate-catalog.test.mjs
+      - name: Refresh prices and check public catalog metadata
+        run: npx vite-node scripts/weekly-catalog.ts --apply
+        env:
+          GCP_BILLING_API_KEY: ${{ secrets.GCP_BILLING_API_KEY }}
+      - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          commit-message: "Refresh the weekly catalog and price check"
+          title: "Weekly catalog and price check"
+          body: |
+            Automated weekly check of list prices and public catalog signals.
+
+            The job refreshes Azure Retail Prices and AWS EC2 offer files. GCP virtual-machine rates run only when `GCP_BILLING_API_KEY` is set. It validates the product catalog with the schema, checks price files, and flags any rate move over 20%. It reads the Databricks RSS feed plus robots.txt and sitemap metadata on www.databricks.com and docs.databricks.com. It does not fetch Databricks pricing pages.
+
+            `data/weekly-summary.md` in this branch lists new services, price changes, and removed items. A schema error fails the job. This pull request is for review. The workflow does not merge it.
+          branch: weekly-catalog
+          add-paths: |
+            data/cloud-vm-prices.json
+            data/azure-dbu-meters.json
+            data/pricing-probe.json
+            data/catalog-watch-report.md
+            data/catalog-watch-state.json
+            data/coverage-summary.json
+            data/product-catalog.json
+            data/weekly-summary.md
+            docs/COVERAGE.md
+            CHANGELOG.md
+      - name: Open a research issue when new services need a citation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          file="${RUNNER_TEMP}/cayfore-research-issue.md"
+          if [ ! -s "$file" ]; then
+            echo "No research checklist."
+            exit 0
+          fi
+          existing="$(gh issue list --repo "$GITHUB_REPOSITORY" --search "Catalog research in:title" --state open --json number --jq '.[0].number // empty')"
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body-file "$file"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "Catalog research: new public signals" --body-file "$file"
+          fi

@@ -15,7 +15,10 @@ test("reference cells are secondary and other regions are the proxy", () => {
 test("stored confidence matches the catalog and the bands sum", async () => {
   const report = await buildRateConfidence();
   const catalog = JSON.parse(await readFile(new URL("../data/product-catalog.json", import.meta.url), "utf8"));
-  assert.equal(report.skuRatesVersion, "2026-10-16.1");
+  const sku = JSON.parse(await readFile(new URL("../data/sku-rates.json", import.meta.url), "utf8"));
+  assert.equal(report.skuRatesVersion, sku.version);
+  assert.equal(report.version, sku.version);
+  assert.equal(report.productCatalogVersion, catalog.version);
   assert.equal(
     report.distribution.measured + report.distribution.secondary + report.distribution.proxy,
     report.distribution.total,
@@ -26,5 +29,8 @@ test("stored confidence matches the catalog and the bands sum", async () => {
     assert.equal(report.products[product.id].expected, product.confidenceScore);
   }
   const stored = JSON.parse(await readFile(new URL("../data/rate-confidence.json", import.meta.url), "utf8"));
+  assert.equal(stored.version, report.version);
+  assert.equal(stored.skuRatesVersion, report.skuRatesVersion);
+  assert.equal(stored.productCatalogVersion, report.productCatalogVersion);
   assert.deepEqual(stored.distribution, report.distribution);
 });

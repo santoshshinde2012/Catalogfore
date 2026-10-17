@@ -1,3 +1,4 @@
+import { Buffer } from "node:buffer";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
@@ -14,6 +15,7 @@ const expected = [
   "compare_scenarios",
   "estimate_product",
   "estimate_workload",
+  "export_xlsx",
   "forecast",
   "forecast_usage",
   "list_products",
@@ -118,5 +120,12 @@ if (monetaryBody.sourceCoverage.pricedRows !== 1 || !monetaryBody.costBasis || !
 }
 const invalid = await client.callTool({ name: "forecast", arguments: { portfolio: {} } });
 if (!invalid.isError) throw new Error("Empty unrelated portfolio should fail validation");
+const workbook = await client.callTool({ name: "export_xlsx", arguments: { portfolio: body.portfolio } });
+const workbookBody = JSON.parse(workbook.content[0].text);
+const bytes = Buffer.from(workbookBody.workbookBase64, "base64");
+if (!String(workbookBody.filename).endsWith(".xlsx") || bytes.subarray(0, 2).toString() !== "PK") {
+  console.error("Workbook export failed", workbookBody.filename, bytes.length);
+  process.exit(1);
+}
 await client.close();
 console.log("MCP smoke ok", names.join(", "));

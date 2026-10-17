@@ -14,7 +14,7 @@ export const ZEROBUS_USD_PER_GB: Partial<Record<Cloud, Partial<Record<Tier, numb
 
 /**
  * Azure Databricks "Data Processed" meter, East US, dollars per GB.
- * Azure Retail Prices API, fetched 2026-10-16. Not scaled to other regions. AWS and GCP are unpublished.
+ * Azure Retail Prices API, re-checked 2026-10-17. Still $0.02/GB. Not scaled to other regions. AWS and GCP are unpublished.
  */
 export const AZURE_DATA_PROCESSED_USD_PER_GB = 0.02;
 

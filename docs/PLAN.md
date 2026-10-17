@@ -48,7 +48,7 @@ The app offers dated imported-history and forecast lines, a planning range, a bu
 
 Mobile navigation moves directly between inputs and results. Section links preserve the saved plan and focus their destinations. Numeric drafts validate before changing the forecast; the advanced editor manages focus when selecting, adding, closing, and removing workloads. Import actions remain visible while details scroll. See [USABILITY.md](USABILITY.md) for the checked workflows.
 
-CSV, JSON, and PDF exports use the same canonical forecast as the screen. JSON includes source context, calculated quote, bands, assumptions, and saved inputs. Saved files are validated against the supported version and workload schemas before replacing the active plan.
+CSV, Excel, JSON, and PDF exports use the same canonical forecast as the screen. The workbook adds live totals, rates, and sources. JSON includes source context, calculated quote, bands, assumptions, and saved inputs. Saved files are validated against the supported version and workload schemas before replacing the active plan.
 
 Share links use a namespaced fragment and internal navigation preserves that state. Links exclude ownership attribution labels; JSON downloads and local saved scenarios can retain them. See [PRIVACY.md](PRIVACY.md).
 

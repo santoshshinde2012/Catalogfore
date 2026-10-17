@@ -16,4 +16,6 @@ The price files are published list rates and a cited manual table. They are inpu
 
 Databricks Labs LakeMeter-OSS is not a source. Its license allows the materials only in connection with the Databricks Services. This public calculator does not fetch or redistribute that pricing bundle.
 
+Excel workbooks are built with [ExcelJS](https://github.com/exceljs/exceljs) 4.4.0, which is MIT licensed. The workbook is generated on export. This repository does not vendor the ExcelJS source.
+
 Do not copy a contract rate, a personal access token, or a customer invoice into this repository.

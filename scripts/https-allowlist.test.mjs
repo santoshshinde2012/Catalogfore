@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { assertAllowedUrl, redactUrl } from "./https-allowlist.mjs";
+import { allowedRedirect, assertAllowedUrl, redactUrl } from "./https-allowlist.mjs";
 
 test("price hosts must be https and on the allow list", () => {
   assert.equal(assertAllowedUrl("https://prices.azure.com/api/retail/prices").hostname, "prices.azure.com");
@@ -8,6 +8,17 @@ test("price hosts must be https and on the allow list", () => {
   assert.throws(() => assertAllowedUrl("https://user:pass@prices.azure.com/api"), /Credentials/);
   assert.throws(() => assertAllowedUrl("https://169.254.169.254/latest"), /not allowed/);
   assert.throws(() => assertAllowedUrl("https://evil.com"), /not allowed/);
+});
+
+test("redirects stay on an allow-listed host", () => {
+  assert.equal(
+    allowedRedirect("https://docs.databricks.com/sitemap.xml", "/aws/en/sitemap.xml"),
+    "https://docs.databricks.com/aws/en/sitemap.xml",
+  );
+  assert.throws(
+    () => allowedRedirect("https://www.databricks.com/sitemap.xml", "https://evil.com/sitemap.xml"),
+    /not allowed/,
+  );
 });
 
 test("a billing key in a URL is redacted before it can be logged", () => {

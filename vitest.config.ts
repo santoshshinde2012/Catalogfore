@@ -10,6 +10,7 @@ export default defineConfig({
     include: [
       "packages/engine/src/**/*.test.ts",
       "packages/catalog/src/**/*.test.ts",
+      "packages/sheet/src/**/*.test.ts",
       "apps/web/src/**/*.test.ts",
       "apps/web/src/**/*.test.tsx",
     ],

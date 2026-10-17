@@ -1,6 +1,6 @@
 # Usability
 
-Updated against the running app on **2026-10-17**. The quick page uses rate card **2026-10-16.1** and the product catalog is **2026-10-16.5**. These are reproducible walkthroughs and browser checks, not participant usability research. Figures are estimates, not a quote. Cayfore is not affiliated with Databricks.
+Updated against the running app on **2026-10-17**. The quick page uses rate card **2026-10-17.1** and the product catalog is **2026-10-17.1**. These are reproducible walkthroughs and browser checks, not participant usability research. Figures are estimates, not a quote. Cayfore is not affiliated with Databricks.
 
 The page is one forecast. Cloud and tier, a starting monthly amount or a team size, a mix of pipelines / dashboards / models, and monthly growth. The year updates as those change. A shaded 12-month band, the year total, one sentence, and a month table are the result. Region, a commitment discount, a usage file, and the per-workload builder sit behind that.
 
@@ -59,7 +59,7 @@ Medium on AWS is about **$11,997** in month one. Switch the cloud to Azure and k
 
 ## What moved off the front door
 
-The quick inputs remain on the first screen. Budget and named-scenario controls follow the main forecast. Savings stay under “Ways to pay less,” each with an annual amount and an explicit overlapping-alternatives explanation. Copy link is the primary action. CSV, JSON, and PDF sit in the Export menu.
+The quick inputs remain on the first screen. Budget and named-scenario controls follow the main forecast. Savings stay under “Ways to pay less,” each with an annual amount and an explicit overlapping-alternatives explanation. Copy link is the primary action. Excel, CSV, JSON, and PDF sit in the Export menu.
 
 ## Advanced, checked by hand
 

@@ -1,11 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/santoshshinde2012/cayfore/data/product-catalog.schema.json",
+  "$id": "https://github.com/santoshshinde2012/cayfore/packages/catalog/product-catalog.schema.json",
   "title": "Cayfore product catalog",
   "type": "object",
   "additionalProperties": false,
   "required": ["version", "verifiedOn", "disclaimer", "categories", "knownAzureMeters", "products"],
   "properties": {
+    "$schema": { "type": "string", "minLength": 1 },
     "version": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}\\.\\d+$" },
     "verifiedOn": { "type": "string", "format": "date" },
     "disclaimer": { "type": "string", "minLength": 1 },

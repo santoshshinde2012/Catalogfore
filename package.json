@@ -20,15 +20,15 @@
   ],
   "scripts": {
     "dev": "npm run dev -w @cayfore/web",
-    "build": "npm run typecheck -w @cayfore/catalog && npm run typecheck -w @cayfore/engine && npm run build -w @cayfore/web && npm run build -w @cayfore/mcp",
-    "test": "vitest run --coverage && node --test scripts/parse-prices.test.mjs scripts/validate-catalog.test.mjs scripts/catalog-watch.test.mjs scripts/coverage-report.test.mjs scripts/rate-confidence.test.mjs scripts/https-allowlist.test.mjs scripts/workspace-host.test.mjs scripts/usage-export.test.mjs scripts/lockfile-integrity.test.mjs scripts/cayfore-cli.test.mjs",
+    "build": "npm run typecheck -w @cayfore/catalog && npm run typecheck -w @cayfore/engine && npm run typecheck -w @cayfore/sheet && npm run build -w @cayfore/web && npm run build -w @cayfore/mcp",
+    "test": "vitest run --coverage && node --test scripts/parse-prices.test.mjs scripts/validate-catalog.test.mjs scripts/catalog-watch.test.mjs scripts/coverage-report.test.mjs scripts/products-doc.test.mjs scripts/rate-confidence.test.mjs scripts/https-allowlist.test.mjs scripts/workspace-host.test.mjs scripts/usage-export.test.mjs scripts/lockfile-integrity.test.mjs scripts/weekly-diff.test.mjs scripts/cayfore-cli.test.mjs",
     "boundaries": "depcruise --config .dependency-cruiser.cjs packages apps mcp scripts",
     "cayfore": "vite-node scripts/cayfore.ts",
     "test:e2e": "playwright test",
     "test:mcp": "node scripts/mcp-smoke.mjs",
     "lint": "eslint . && prettier --check . && npm run boundaries",
     "format": "prettier --write .",
-    "typecheck": "npm run typecheck -w @cayfore/catalog && npm run typecheck -w @cayfore/engine && npm run typecheck -w @cayfore/web && npm run typecheck -w @cayfore/mcp",
+    "typecheck": "npm run typecheck -w @cayfore/catalog && npm run typecheck -w @cayfore/engine && npm run typecheck -w @cayfore/sheet && npm run typecheck -w @cayfore/web && npm run typecheck -w @cayfore/mcp",
     "preview": "npm run preview -w @cayfore/web",
     "refresh-prices": "node scripts/refresh-prices.mjs"
   },
@@ -52,5 +52,8 @@
   },
   "engines": {
     "node": "^22.13.0 || >=24.0.0"
+  },
+  "overrides": {
+    "uuid": "11.1.1"
   }
 }

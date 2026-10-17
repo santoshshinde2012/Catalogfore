@@ -14,10 +14,15 @@ import {
   type Tier,
   projectSimple,
   referenceRegion,
+  type PortfolioProjection,
 } from "../packages/engine/src/index.ts";
 import { forecastProducts, listProducts, productById, workloadsForProduct } from "../packages/engine/src/products.ts";
 
-const [command, file, ...flags] = process.argv.slice(2);
+const argv = process.argv.slice(2);
+const [command, ...tail] = argv;
+const xlsxPath = option(tail, "--xlsx");
+const withoutXlsx = tail.filter((token, index) => token !== "--xlsx" && tail[index - 1] !== "--xlsx");
+const [file, ...flags] = withoutXlsx;
 
 if (command === "sql") {
   console.log(readFileSync(new URL("../docs/usage-export.sql", import.meta.url), "utf8"));
@@ -97,12 +102,14 @@ if (command === "sql") {
     const saved = parseSavedForecast(parseUntrustedJson(readFileSync(file, "utf8")));
     if (!saved.ok) fail(saved.error);
     const projected = projectPortfolio(saved.value);
+    await writeXlsx(projected, xlsxPath);
     console.log(JSON.stringify({ ...projected, forecast: projected.points }, null, 2));
   } catch (error) {
     fail(error instanceof Error ? error.message : "Could not read forecast.");
   }
 } else if (command === "estimate" || !command) {
   const projected = projectSimple(defaultPlan());
+  await writeXlsx(projected, xlsxPath);
   console.log(
     JSON.stringify(
       {
@@ -117,8 +124,22 @@ if (command === "sql") {
   );
 } else {
   fail(
-    "commands: estimate [plan.json], forecast <plan.json>, usage <file.csv> [--cloud aws|azure|gcp --tier premium|enterprise --region id --as-of YYYY-MM-DD --month YYYY-MM --cost-basis effective|billed], sql, products, product <id>",
+    "commands: estimate [--xlsx out.xlsx] [plan.json], forecast <plan.json> [--xlsx out.xlsx], usage <file.csv> [--cloud aws|azure|gcp --tier premium|enterprise --region id --as-of YYYY-MM-DD --month YYYY-MM --cost-basis effective|billed], sql, products, product <id>",
   );
+}
+
+function option(args: string[], name: string): string | undefined {
+  const index = args.indexOf(name);
+  if (index < 0) return undefined;
+  const value = args[index + 1];
+  if (!value || value.startsWith("--")) fail(`${name} needs a value`);
+  return value;
+}
+
+async function writeXlsx(projected: PortfolioProjection, path: string | undefined) {
+  if (!path) return;
+  const { writeForecastWorkbook } = await import("../packages/sheet/src/write.ts");
+  await writeForecastWorkbook(projected, path);
 }
 
 function fail(message: string): never {

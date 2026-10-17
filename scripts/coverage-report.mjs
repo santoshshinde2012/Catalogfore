@@ -2,6 +2,7 @@ import { execFile } from "node:child_process";
 import { readFile, writeFile } from "node:fs/promises";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
+import { writeProductsDoc } from "./products-doc.mjs";
 
 const root = new URL("../", import.meta.url);
 
@@ -132,8 +133,11 @@ export async function writeCoverageReport() {
   };
   await writeFile(new URL("data/coverage-summary.json", root), JSON.stringify(summary, null, 2) + "\n");
   await writeFile(new URL("docs/COVERAGE.md", root), renderCoverageMarkdown(report));
+  await writeProductsDoc();
   const prettier = fileURLToPath(new URL("../node_modules/.bin/prettier", import.meta.url));
-  await promisify(execFile)(prettier, ["--write", "docs/COVERAGE.md"], { cwd: fileURLToPath(root) });
+  await promisify(execFile)(prettier, ["--write", "docs/COVERAGE.md", "docs/PRODUCTS.md"], {
+    cwd: fileURLToPath(root),
+  });
   return summary;
 }
 

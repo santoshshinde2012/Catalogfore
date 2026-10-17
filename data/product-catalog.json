@@ -1,7 +1,8 @@
 {
-  "version": "2026-10-16.5",
-  "verifiedOn": "2026-10-16",
-  "disclaimer": "Estimates only. Not a quote, invoice, or commitment. Unpublished rows are $0 on purpose. Azure meters were checked on 2026-10-16. AWS and GCP $/DBU remain the curated table.",
+  "$schema": "../packages/catalog/product-catalog.schema.json",
+  "version": "2026-10-17.1",
+  "verifiedOn": "2026-10-17",
+  "disclaimer": "Estimates only. Not a quote, invoice, or commitment. Unpublished rows are $0 on purpose. Azure meters were checked on 2026-10-17. AWS and GCP $/DBU remain the curated table.",
   "categories": [
     {
       "id": "data_engineering",
@@ -80,7 +81,7 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
       "note": "Jobs Compute DBU. Photon uses the 2.9× calculator rule. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
       "confidenceScore": 92
@@ -106,9 +107,9 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
-      "note": "Premium Jobs Light Compute is $0.22/DBU in East US (Retail Prices, 2026-10-16). That figure is not scaled to other Azure regions. Standard Jobs Light is $0.07 and is not used. AWS and GCP have no Jobs Light rate in the curated table, so those clouds are $0.",
+      "note": "Premium Jobs Light Compute is $0.22/DBU in East US (Retail Prices, 2026-10-17). That figure is not scaled to other Azure regions. Standard Jobs Light is $0.07 and is not used. AWS and GCP have no Jobs Light rate in the curated table, so those clouds are $0.",
       "fields": [
         {
           "path": "dbuPerMonth",
@@ -157,7 +158,7 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
       "note": "Automated Serverless Compute. Compute is included. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
       "confidenceScore": 92
@@ -188,7 +189,7 @@
         "url": "https://www.databricks.com/product/pricing",
         "fetchedOn": "2026-10-16"
       },
-      "note": "No separate performance-versus-standard meter was in the Azure map on 2026-10-16. This line uses the Jobs serverless SKU. Do not apply a guessed mode multiplier.",
+      "note": "No separate performance-versus-standard meter was in the East US meter list on 2026-10-17. This line uses the Jobs serverless SKU. Do not apply a guessed mode multiplier.",
       "confidenceScore": 8
     },
     {
@@ -219,7 +220,7 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
       "note": "All-purpose Compute DBU plus the VM. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
       "confidenceScore": 92
@@ -251,7 +252,7 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
       "note": "Interactive Serverless Compute. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
       "confidenceScore": 92
@@ -286,7 +287,7 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
       "note": "Classic Delta Live Tables Core meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
       "confidenceScore": 92
@@ -319,7 +320,7 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
       "note": "Classic Delta Live Tables Pro meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
       "confidenceScore": 92
@@ -354,7 +355,7 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
       "note": "Classic Delta Live Tables Advanced meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
       "confidenceScore": 92
@@ -386,7 +387,7 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
       "note": "Serverless pipelines use the Automated Serverless meter. Azure East US uses the Retail Prices meter. AWS and GCP $/DBU stay on the curated table because Databricks does not publish a price JSON.",
       "confidenceScore": 92
@@ -452,7 +453,7 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
       "note": "Premium Model Training DBU. Learn’s US East example is $0.65/DBU. Forecasting has a separate 4× line.",
       "confidenceScore": 92
@@ -634,9 +635,9 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
-      "note": "Azure still lists Standard jobs, all-purpose, SQL, and Jobs Light meters. Standard is retired and is not a Cayfore template, so this line stays at $0. East US examples on 2026-10-16: Jobs $0.15, All-purpose $0.40, SQL $0.22, Jobs Light $0.07.",
+      "note": "Azure still lists Standard jobs, all-purpose, SQL, and Jobs Light meters. Standard is retired and is not a Cayfore template, so this line stays at $0. East US examples on 2026-10-17: Jobs $0.15, All-purpose $0.40, SQL $0.22, Jobs Light $0.07.",
       "fields": [],
       "patch": {
         "sku": "managed_services",
@@ -681,7 +682,7 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
       "note": "SQL Analytics DBU. Classic and Pro add the $0.22 VM-per-DBU-hour assumption, which is not a VM meter. Sizes run from 2XS (4 DBU/h) to 4XL (528 DBU/h).",
       "confidenceScore": 92
@@ -717,7 +718,7 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
       "note": "SQL Compute Pro DBU, plus the same $0.22 VM assumption.",
       "confidenceScore": 92
@@ -750,9 +751,9 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
-      "note": "Serverless SQL DBU. Compute is included. The four-input page’s Dashboards bucket uses this SKU.",
+      "note": "Serverless SQL DBU. Compute is included. The four-input page’s Dashboards bucket uses this SKU. Multi-statement transactions, generally available on 2026-10-16, are billed as this SQL warehouse DBU. They are not a separate SKU.",
       "confidenceScore": 92
     },
     {
@@ -2068,7 +2069,7 @@
         "url": "https://community.databricks.com/t5/technical-blog/attributing-costs-in-databricks-model-serving/ba-p/64818",
         "fetchedOn": "2026-10-16"
       },
-      "note": "East US lists Launch Charge Serverless Realtime Inferencing DBU at $0.07 per unit (Retail Prices, 2026-10-16). A Databricks community post attributes one scale-to-zero launch to one DBU on *_SERVERLESS_REAL_TIME_INFERENCE_LAUNCH, at most twice an hour. This line prices each launch as one model-serving DBU and does not enforce that cap.",
+      "note": "East US lists Launch Charge Serverless Realtime Inferencing DBU at $0.07 per unit (Retail Prices, 2026-10-17). A Databricks community post attributes one scale-to-zero launch to one DBU on *_SERVERLESS_REAL_TIME_INFERENCE_LAUNCH, at most twice an hour. This line prices each launch as one model-serving DBU and does not enforce that cap.",
       "fields": [
         {
           "path": "inputs.launches",
@@ -2449,9 +2450,9 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
-      "note": "Managed storage is about 1 DSU per GB-month. East US Premium Databricks Storage is $0.026 per DSU on the Retail Prices API (2026-10-16), which matches the Azure rate already used. AWS and GCP stay on the curated DSU rates. Default storage in a new workspace uses this line.",
+      "note": "Managed storage is about 1 DSU per GB-month. East US Premium Databricks Storage is $0.026 per DSU on the Retail Prices API (2026-10-17), which matches the Azure rate already used. AWS and GCP stay on the curated DSU rates. Default storage in a new workspace uses this line.",
       "confidenceScore": 92
     },
     {
@@ -2613,7 +2614,7 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
       "id": "clean_rooms",
       "name": "Clean Rooms",
@@ -2621,7 +2622,7 @@
       "summary": "No list rate stored",
       "category": "governance_sharing",
       "billingUnit": "$/collaborator-day",
-      "note": "East US Premium Clean Rooms Collaborator is $50 per day on the Retail Prices API (2026-10-16). The default is one day. AWS and GCP have no rate here, so those clouds are $0.",
+      "note": "East US Premium Clean Rooms Collaborator is $50 per day on the Retail Prices API (2026-10-17). The default is one day. AWS and GCP have no rate here, so those clouds are $0.",
       "confidenceScore": 92
     },
     {
@@ -2742,9 +2743,9 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
-      "note": "East US Data Processed is $0.02 per GB on the Retail Prices API (2026-10-16). The rate is not scaled to other Azure regions. AWS and GCP have no published row, so those clouds are $0. This is not the internet-egress assumption.",
+      "note": "East US Data Processed is $0.02 per GB on the Retail Prices API (2026-10-17). The rate is not scaled to other Azure regions. AWS and GCP have no published row, so those clouds are $0. This is not the internet-egress assumption.",
       "fields": [
         {
           "path": "inputs.gb",
@@ -2788,9 +2789,9 @@
       "source": {
         "title": "Azure Retail Prices API, Azure Databricks consumption meters",
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-        "fetchedOn": "2026-10-16"
+        "fetchedOn": "2026-10-17"
       },
-      "note": "East US lists compliance at $0.10 per DBU and mission critical at $0.15 per DBU (2026-10-16). The forecast already has a 10% and 30% add-on. This line stays at $0 so the charge is not counted twice.",
+      "note": "East US lists compliance at $0.10 per DBU and mission critical at $0.15 per DBU (2026-10-17). The forecast already has a 10% and 30% add-on. This line stays at $0 so the charge is not counted twice.",
       "fields": [],
       "patch": {
         "sku": "managed_services",

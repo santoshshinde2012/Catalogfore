@@ -1,4 +1,5 @@
-import type { PortfolioProjection } from "@cayfore/engine";
+import { productCatalog } from "@cayfore/catalog";
+import { pricesUpdatedOn, type PortfolioProjection } from "@cayfore/engine";
 import { money } from "../../format";
 import { Rise } from "../../lib/rise";
 import { useAnimatedNumber } from "../../lib/use-animated-number";
@@ -127,8 +128,9 @@ export function ResultsPanel({
         </ul>
       </div>
       <p className="text-xs text-muted-foreground">
-        Estimates only. Catalog {estimate.catalogVersion}, verified {estimate.verifiedOn}. The calculation stays in this
-        browser. Not a Databricks quote, and not affiliated with Databricks.
+        Prices updated on {pricesUpdatedOn}, catalog v{productCatalog.version}. Estimates only. Catalog{" "}
+        {estimate.catalogVersion}, verified {estimate.verifiedOn}. The calculation stays in this browser. Not a
+        Databricks quote, and not affiliated with Databricks.
       </p>
     </div>
   );

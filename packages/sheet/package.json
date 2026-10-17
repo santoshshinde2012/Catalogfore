@@ -1,0 +1,23 @@
+{
+  "name": "@cayfore/sheet",
+  "version": "0.1.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/santoshshinde2012/cayfore.git",
+    "directory": "packages/sheet"
+  },
+  "type": "module",
+  "description": "Excel workbook export for a Cayfore forecast. Not a quote.",
+  "exports": {
+    ".": "./src/workbook.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cayfore/catalog": "*",
+    "@cayfore/engine": "*",
+    "exceljs": "4.4.0"
+  }
+}
