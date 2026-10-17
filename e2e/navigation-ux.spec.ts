@@ -41,6 +41,7 @@ test("starting a new forecast is explicit and can be undone", async ({ page }) =
 test("narrow mobile navigation reveals the forecast and returns to inputs @mobile", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 700 });
   await page.goto("./");
+  await expect.poll(() => new URL(page.url()).hash).toMatch(/^#plan=/);
   const hash = new URL(page.url()).hash;
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
   const presetBounds = await page.getByRole("radio", { name: /^(Small|Medium|Large)/ }).evaluateAll((options) =>

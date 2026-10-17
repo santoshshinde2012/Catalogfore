@@ -1,7 +1,7 @@
 import type { Estimate, ForecastPoint, Portfolio } from "@cayfore/engine";
-import { ChevronDown, Download, FileJson2, FileSpreadsheet, FileText } from "lucide-react";
+import { ChevronDown, Download } from "lucide-react";
 import { useState } from "react";
-import { exportCsv, exportJson, exportPdf, exportXlsx } from "../../export";
+import { forecastExporters, type ForecastDownload } from "../../export";
 import type { ForecastExportResult } from "../../export-data";
 import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
@@ -21,18 +21,17 @@ export function ExportBar({
   const [busy, setBusy] = useState("");
   const [downloadError, setDownloadError] = useState("");
 
-  async function downloadFile(kind: "pdf" | "xlsx") {
-    setBusy(kind);
+  async function run(exporter: ForecastDownload) {
+    if (!exporter.failure) {
+      await exporter.write(portfolio, estimate, points, forecastResult);
+      return;
+    }
+    setBusy(exporter.id);
     setDownloadError("");
     try {
-      if (kind === "xlsx") await exportXlsx(portfolio, estimate, points, forecastResult);
-      else await exportPdf(portfolio, estimate, points, forecastResult);
+      await exporter.write(portfolio, estimate, points, forecastResult);
     } catch {
-      setDownloadError(
-        kind === "xlsx"
-          ? "The Excel file did not download. Try again, or use CSV."
-          : "The PDF did not download. Try again, or use CSV.",
-      );
+      setDownloadError(exporter.failure);
     } finally {
       setBusy("");
     }
@@ -59,54 +58,25 @@ export function ExportBar({
             <p className="text-sm font-semibold">Download forecast</p>
             <p className="mt-0.5 text-xs text-muted-foreground">Choose a format for your forecast.</p>
           </div>
-          <DropdownMenuItem
-            className="gap-3 rounded-xl px-2.5 py-2.5"
-            onSelect={() => void downloadFile("xlsx")}
-            disabled={busy === "xlsx"}
-          >
-            <FileSpreadsheet aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
-            <span className="min-w-0">
-              <span className="block font-medium">{busy === "xlsx" ? "Preparing Excel…" : "XLSX"}</span>
-              <span className="mt-0.5 block text-xs text-muted-foreground">
-                Excel workbook with formulas, rates, and sources
-              </span>
-            </span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="gap-3 rounded-xl px-2.5 py-2.5"
-            onSelect={() => exportCsv(portfolio, estimate, points, forecastResult)}
-          >
-            <FileSpreadsheet aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
-            <span className="min-w-0">
-              <span className="block font-medium">CSV</span>
-              <span className="mt-0.5 block text-xs text-muted-foreground">
-                Costs and monthly forecasts for spreadsheets
-              </span>
-            </span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="gap-3 rounded-xl px-2.5 py-2.5"
-            onSelect={() => exportJson(portfolio, estimate, points, forecastResult)}
-          >
-            <FileJson2 aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
-            <span className="min-w-0">
-              <span className="block font-medium">JSON</span>
-              <span className="mt-0.5 block text-xs text-muted-foreground">Complete forecast data and assumptions</span>
-            </span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="gap-3 rounded-xl px-2.5 py-2.5"
-            onSelect={() => void downloadFile("pdf")}
-            disabled={busy === "pdf"}
-          >
-            <FileText aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
-            <span className="min-w-0">
-              <span className="block font-medium">{busy === "pdf" ? "Preparing PDF…" : "PDF"}</span>
-              <span className="mt-0.5 block text-xs text-muted-foreground">
-                Shareable report with costs and assumptions
-              </span>
-            </span>
-          </DropdownMenuItem>
+          {forecastExporters.map((exporter) => {
+            const Icon = exporter.icon;
+            return (
+              <DropdownMenuItem
+                key={exporter.id}
+                className="gap-3 rounded-xl px-2.5 py-2.5"
+                onSelect={() => void run(exporter)}
+                disabled={Boolean(exporter.busyLabel) && busy === exporter.id}
+              >
+                <Icon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
+                <span className="min-w-0">
+                  <span className="block font-medium">
+                    {busy === exporter.id && exporter.busyLabel ? exporter.busyLabel : exporter.menuLabel}
+                  </span>
+                  <span className="mt-0.5 block text-xs text-muted-foreground">{exporter.detail}</span>
+                </span>
+              </DropdownMenuItem>
+            );
+          })}
         </DropdownMenuContent>
       </DropdownMenu>
       {downloadError && (

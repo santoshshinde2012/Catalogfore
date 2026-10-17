@@ -1,6 +1,23 @@
 import { pdfPlain, recommendations, type Estimate, type ForecastPoint, type Portfolio } from "@cayfore/engine";
+import type { LucideIcon } from "lucide-react";
+import { FileJson2, FileSpreadsheet, FileText } from "lucide-react";
 
 import { exportResult, forecastCsv, forecastJson, type ForecastExportResult } from "./export-data";
+
+export type ForecastDownload = {
+  id: string;
+  menuLabel: string;
+  detail: string;
+  icon: LucideIcon;
+  busyLabel?: string;
+  failure?: string;
+  write: (
+    portfolio: Portfolio,
+    estimate: Estimate,
+    points: ForecastPoint[],
+    result?: ForecastExportResult,
+  ) => Promise<void> | void;
+};
 
 function download(filename: string, blob: Blob) {
   const url = URL.createObjectURL(blob);
@@ -125,13 +142,41 @@ export async function exportPdf(
   doc.save(`${slug(portfolio.name)}.pdf`);
 }
 
-/** Exporters the page can offer. A new format is a new entry. */
-export const forecastExporters = [
-  { id: "xlsx", write: exportXlsx },
-  { id: "json", write: exportJson },
-  { id: "csv", write: exportCsv },
-  { id: "pdf", write: exportPdf },
-] as const;
+/** Exporters the page can offer. A new format is a new entry. The menu does not name them. */
+export const forecastExporters: readonly ForecastDownload[] = [
+  {
+    id: "xlsx",
+    menuLabel: "XLSX",
+    detail: "Excel workbook with formulas, rates, and sources",
+    icon: FileSpreadsheet,
+    busyLabel: "Preparing Excel…",
+    failure: "The Excel file did not download. Try again, or use CSV.",
+    write: exportXlsx,
+  },
+  {
+    id: "csv",
+    menuLabel: "CSV",
+    detail: "Costs and monthly forecasts for spreadsheets",
+    icon: FileSpreadsheet,
+    write: exportCsv,
+  },
+  {
+    id: "json",
+    menuLabel: "JSON",
+    detail: "Complete forecast data and assumptions",
+    icon: FileJson2,
+    write: exportJson,
+  },
+  {
+    id: "pdf",
+    menuLabel: "PDF",
+    detail: "Shareable report with costs and assumptions",
+    icon: FileText,
+    busyLabel: "Preparing PDF…",
+    failure: "The PDF did not download. Try again, or use CSV.",
+    write: exportPdf,
+  },
+];
 
 function usd(value: number): string {
   return `$${value.toFixed(2)}`;

@@ -1,14 +1,15 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { redactSecrets } from "./redact.js";
-import { registerForecastTools } from "./register-forecast.js";
-import { registerProductTools } from "./register-products.js";
+import "./register-forecast.js";
+import "./register-products.js";
+import "./register-xlsx.js";
+import { installTools } from "./tool-modules.js";
 
 /** stdio MCP server. Tools call the engine. This file does not price a SKU itself. */
 export function createServer(): McpServer {
   const server = new McpServer({ name: "cayfore", version: "0.1.0" });
-  registerForecastTools(server);
-  registerProductTools(server);
+  installTools(server);
   return server;
 }
 

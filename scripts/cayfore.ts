@@ -17,12 +17,13 @@ import {
   type PortfolioProjection,
 } from "../packages/engine/src/index.ts";
 import { forecastProducts, listProducts, productById, workloadsForProduct } from "../packages/engine/src/products.ts";
+import { takeOption } from "./cli-args.mjs";
 
 const argv = process.argv.slice(2);
 const [command, ...tail] = argv;
-const xlsxPath = option(tail, "--xlsx");
-const withoutXlsx = tail.filter((token, index) => token !== "--xlsx" && tail[index - 1] !== "--xlsx");
-const [file, ...flags] = withoutXlsx;
+const xlsx = readXlsxFlag(tail);
+const xlsxPath = xlsx.value;
+const [file, ...flags] = xlsx.rest;
 
 if (command === "sql") {
   console.log(readFileSync(new URL("../docs/usage-export.sql", import.meta.url), "utf8"));
@@ -128,12 +129,12 @@ if (command === "sql") {
   );
 }
 
-function option(args: string[], name: string): string | undefined {
-  const index = args.indexOf(name);
-  if (index < 0) return undefined;
-  const value = args[index + 1];
-  if (!value || value.startsWith("--")) fail(`${name} needs a value`);
-  return value;
+function readXlsxFlag(args: string[]) {
+  try {
+    return takeOption(args, "--xlsx");
+  } catch (error) {
+    return fail(error instanceof Error ? error.message : "--xlsx needs a value");
+  }
 }
 
 async function writeXlsx(projected: PortfolioProjection, path: string | undefined) {

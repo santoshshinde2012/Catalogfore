@@ -1,4 +1,4 @@
-import { catalog, normalizePortfolio, parseSavedForecast } from "../../packages/engine/src/index.ts";
+import { catalog, normalizePortfolio, parseSavedForecast, projectPortfolio } from "../../packages/engine/src/index.ts";
 import { z } from "zod";
 
 export const DISCLAIMER = catalog.disclaimer;
@@ -14,6 +14,18 @@ export function portfolioSchema() {
     .describe(
       "A versioned saved portfolio, or shorthand with an explicit workloads array. Shorthand defaults are AWS Premium and a 12-month forecast.",
     );
+}
+
+export function portfolioReply(input: Record<string, unknown>) {
+  const parsed = readToolPortfolio(input);
+  if (!parsed.ok) return { ok: false as const, reply: text({ disclaimer: DISCLAIMER, error: parsed.error }) };
+  return { ok: true as const, portfolio: parsed.value };
+}
+
+export function forecastOf(input: Record<string, unknown>) {
+  const accepted = portfolioReply(input);
+  if (!accepted.ok) return accepted;
+  return { ok: true as const, portfolio: accepted.portfolio, result: projectPortfolio(accepted.portfolio) };
 }
 
 export function readToolPortfolio(input: Record<string, unknown>) {

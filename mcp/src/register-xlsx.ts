@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { projectPortfolio } from "../../packages/engine/src/index.ts";
-import { DISCLAIMER, portfolioSchema, readToolPortfolio, text } from "./reply.js";
+import { DISCLAIMER, forecastOf, portfolioSchema, text } from "./reply.js";
+import { registerToolModule } from "./tool-modules.js";
 
 export function registerXlsxTool(server: McpServer) {
   server.registerTool(
@@ -12,16 +12,17 @@ export function registerXlsxTool(server: McpServer) {
       inputSchema: { portfolio: portfolioSchema() },
     },
     async ({ portfolio }) => {
-      const parsed = readToolPortfolio(portfolio);
-      if (!parsed.ok) return text({ disclaimer: DISCLAIMER, error: parsed.error });
-      const result = projectPortfolio(parsed.value);
+      const forecasted = forecastOf(portfolio);
+      if (!forecasted.ok) return forecasted.reply;
       const { buildForecastWorkbook, forecastWorkbookName } = await import("@cayfore/sheet");
-      const bytes = await buildForecastWorkbook(result);
+      const bytes = await buildForecastWorkbook(forecasted.result);
       return text({
         disclaimer: DISCLAIMER,
-        filename: forecastWorkbookName(parsed.value.cloud),
+        filename: forecastWorkbookName(forecasted.portfolio.cloud),
         workbookBase64: Buffer.from(bytes).toString("base64"),
       });
     },
   );
 }
+
+registerToolModule(registerXlsxTool);
