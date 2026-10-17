@@ -1,6 +1,6 @@
-const FORMULA_PREFIX = /^[=+\-@\t\r]/;
+const FORMULA_PREFIX = /^[=+\-@\t\r\n＝＋－＠]/;
 
-/** Stops Excel and Sheets from treating an exported cell as a formula. */
+/** Prefixes known formula triggers for the initial spreadsheet import; re-saving can remove escaping. */
 export function neutralizeSpreadsheetFormula(value: string): string {
   return FORMULA_PREFIX.test(value) ? `'${value}` : value;
 }

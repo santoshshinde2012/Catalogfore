@@ -89,12 +89,9 @@ export async function fetchRss(fetchImpl = fetchAllowed) {
 }
 
 function decodeXml(value) {
-  return value
-    .replaceAll("&amp;", "&")
-    .replaceAll("&lt;", "<")
-    .replaceAll("&gt;", ">")
-    .replaceAll("&quot;", '"')
-    .replaceAll("&#39;", "'");
+  const entities = { amp: "&", lt: "<", gt: ">", quot: '"', "#39": "'" };
+  // Decode only entities present in the source; replacements must not be decoded again.
+  return value.replace(/&(amp|lt|gt|quot|#39);/g, (_entity, name) => entities[name]);
 }
 
 export async function runCatalogWatch({ offline = false, ports = defaultWatchPorts() } = {}) {

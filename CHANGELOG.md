@@ -48,6 +48,8 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Changed
 
+- Fixed literal release-note selection, single-pass RSS entity decoding, bounded share decompression, and additional CSV formula prefixes. Added deterministic property-based fuzz tests, refreshed security-policy accuracy, and enabled trusted scheduled Scorecard publication. Recorded and applied the repository's PR/CI branch-protection baseline; independent review, project-age and badge criteria remain explicit maintainer follow-ups.
+
 - Simplified the header to three primary workspaces and one grouped Menu. A custom forecast mark, centered navigation, clear active states, 44px controls and aligned mobile/desktop offsets replace the crowded toolbar. File opening, theme selection, keyboard focus and touch explanations remain available from the menu.
 
 - Redesigned the three workspaces around their main tasks: visible mobile navigation, early usage/import entry points, sticky desktop forecasts, immediate product search and domain filters, and unit-cost tabs with persistent calculator/export choices. Refined spacing, typography, source actions and narrow-screen layouts. Help remains hoverable and closes reliably after pointer exit on slower devices.
