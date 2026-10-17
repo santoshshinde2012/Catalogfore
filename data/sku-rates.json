@@ -1,7 +1,7 @@
 {
-  "version": "2026-10-16.1",
-  "verifiedOn": "2026-10-16",
-  "disclaimer": "Estimates only. Not a quote, invoice, or commitment. US East list rates were re-checked on 2026-10-16. Azure Premium DBU meters for jobs, SQL, serverless, pipelines, serving, and training match the Azure Retail Prices API in East US. AWS and GCP classic $/DBU figures remain secondary where the public price pages render in the browser. AWS and Azure region factors are Lakehouse Real-Time ratios applied as a proxy to other SKUs. GCP region factors outside the reference region are proxies. Your contract and promotions will differ.",
+  "version": "2026-10-17.1",
+  "verifiedOn": "2026-10-17",
+  "disclaimer": "Estimates only. Not a quote, invoice, or commitment. US East list rates were re-checked on 2026-10-17. Azure Premium DBU meters for jobs, SQL, serverless, pipelines, serving, and training match the Azure Retail Prices API in East US. AWS and GCP classic $/DBU figures remain secondary where the public price pages render in the browser. AWS and Azure region factors are Lakehouse Real-Time ratios applied as a proxy to other SKUs. GCP region factors outside the reference region are proxies. Your contract and promotions will differ.",
   "photonMultiplier": 2.9,
   "photonMultiplierNote": "Default 2.9× DBU emission for classic Photon, the factor printed on the Azure Lakeflow pipeline price table. Not applied to serverless or SQL. See docs/RESEARCH.md.",
   "sqlVmDollarsPerDbuHour": 0.22,
@@ -50,7 +50,7 @@
       "azure": 0.39,
       "gcp": 0
     },
-    "note": "Azure is 0.213 times the East US Premium Database Serverless meter ($0.26 per DBU-hour on the Retail Prices API, 2026-10-16), which is $0.05538 per CU-hour. Storage stays 15 times the $0.026 DSU rate. AWS stays at the Flexera Enterprise figure of $0.111 per CU-hour. The AWS Premium $0.0092 preview figure is not the default. GCP has no Lakebase rate in that compilation."
+    "note": "Azure is 0.213 times the East US Premium Database Serverless meter ($0.26 per DBU-hour on the Retail Prices API, 2026-10-17), which is $0.05538 per CU-hour. Storage stays 15 times the $0.026 DSU rate. AWS stays at the Flexera Enterprise figure of $0.111 per CU-hour. The AWS Premium $0.0092 preview figure is not the default. GCP has no Lakebase rate in that compilation."
   },
   "sqlDbuPerHour": {
     "2xs": 4,

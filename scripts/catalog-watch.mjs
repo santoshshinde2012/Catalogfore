@@ -64,7 +64,9 @@ export function renderWatchReport({ version, stale, unknown, posts, liveNote }) 
     ``,
     `Catalog \`${version}\`. This report is estimates and public list signals, not a quote.`,
     ``,
-    liveNote ? `Live check: ${liveNote}` : `Live check: Azure Retail Prices (East US) and the Databricks RSS feed.`,
+    liveNote
+      ? `Live check: ${liveNote}`
+      : `Live check: Azure Retail Prices for every rate-card region, and the Databricks RSS feed.`,
     ``,
     `## Stale manual sources`,
     ``,
@@ -76,7 +78,7 @@ export function renderWatchReport({ version, stale, unknown, posts, liveNote }) 
   lines.push(
     unknown.length
       ? unknown.map((name) => `- ${name}`).join("\n")
-      : "None in East US beyond the known meter list. Photon, free-trial, and POC meters are ignored.",
+      : "None beyond the known meter list. Photon, free-trial, and POC meters are ignored.",
   );
   lines.push("", "## Release-note and blog titles that may be billable", "");
   lines.push(

@@ -8,7 +8,8 @@ async function sentence(page: Page) {
 test("four inputs move the year", async ({ page }) => {
   await page.goto("./");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("What does the next year cost?");
-  await expect(page.getByTestId("year-sentence")).toContainText(/About \$[\d,]+ per year, ±\d+%/);
+  await expect(page.getByTestId("year-sentence")).toContainText(/About \$170,258 per year, ±20%/);
+  await expect(page.getByText(/Prices updated on 2026-10-17, catalog v2026-10-17\.1/)).toBeVisible();
   await expect(page.getByTestId("bill-split")).toBeVisible();
   await page.getByRole("tab", { name: "Months" }).click();
   await expect(page.getByRole("row")).toHaveCount(13);

@@ -59,6 +59,10 @@ The job uses the default `GITHUB_TOKEN`. Repository permission stays `contents: 
 
 `--offline` skips the network and is for tests. A dry run without `--apply` prints the summary and does not write files.
 
+## Last real run, 2026-10-17
+
+Azure Retail Prices (39 regions) and AWS EC2 offers (16 regions) were refreshed. GCP was skipped because `GCP_BILLING_API_KEY` is unset. Databricks price JSON was not found. VM rows stayed 383 and Azure meter rows stayed 530. No on-demand hourly, spot hourly, or `$/DBU` value changed. `data/sku-rates.json` and `data/instances.json` were stamped `2026-10-17.1` as the re-check date. Their dollar rates and DBU counts were not rewritten by the download. The product catalog is `2026-10-17.1`. Multi-statement transactions (GA, 2026-10-16) are recorded in [CATALOG.md](CATALOG.md) and are not a new row.
+
 ## Run it locally
 
 ```bash

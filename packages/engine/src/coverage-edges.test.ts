@@ -233,7 +233,7 @@ describe("products, usage, tips, and explanations", () => {
     );
     expect(priced.workloads.some((workload) => workload.kind === "metered" && workload.dbuPerMonth === 10)).toBe(true);
     expect(priced.warnings.some((warning) => warning.includes("GB"))).toBe(true);
-    expect(productCatalogMeta().version).toMatch(/^2026-10-16/);
+    expect(productCatalogMeta().version).toMatch(/^2026-10-17/);
     expect(productCategories().length).toBeGreaterThan(0);
     expect(() => workloadForProduct("not-a-product")).toThrow(/Unknown product/);
     expect(usageImporters.map((importer) => importer.id)).toEqual(["dbu-mix", "products"]);

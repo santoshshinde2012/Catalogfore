@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-16.1",
+  "version": "2026-10-17.1",
   "rubric": {
     "measured": "90–100. An Azure Retail Prices meter, or a first-party meter copied into the row.",
     "cited": "70–89. A first-party number in the docs.",
@@ -7,8 +7,8 @@
     "proxy": "20–39. A real rate for a different SKU or region, scaled. Lakehouse Real-Time factors are this band.",
     "unpublished": "0–19. No dollar rate is stored. The zero is not a guess."
   },
-  "skuRatesVersion": "2026-10-16.1",
-  "productCatalogVersion": "2026-10-16.5",
+  "skuRatesVersion": "2026-10-17.1",
+  "productCatalogVersion": "2026-10-17.1",
   "products": {
     "jobs_classic": {
       "score": 92,

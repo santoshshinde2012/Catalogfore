@@ -1,6 +1,6 @@
 # Databricks cost model research
 
-Pricing sources last verified: **2026-10-16**, with Photon factors rechecked **2026-10-17**. Implementation corrections are recorded in section 19. Earlier dated walkthroughs describe the behavior at that time and are superseded by section 19 where they differ.
+Pricing sources last verified: **2026-10-17**. Dollar rates did not move on that refresh. Photon factors were rechecked the same day. Implementation corrections are recorded in section 19. The price refresh is section 20. Earlier dated walkthroughs describe the behavior at that time and are superseded by sections 19 and 20 where they differ.
 
 This note is the source of truth for the calculator’s pricing assumptions. Dollar rates below are **list prices for estimation**, not a quote. Databricks and the clouds change rates, promotions, and region availability without notice. Where an official page renders prices only in the browser (the public Databricks price lists and the Azure Databricks price tables returned `$-` to a static fetch on this date), the dollar figure is taken from a secondary compilation and marked as such. The app must show an “estimates only” disclaimer on every total.
 
@@ -75,7 +75,7 @@ Managed storage (per DSU): about **$0.023** on AWS and GCP, **$0.026** on Azure 
 
 Jobs Light is **$0.22/DBU** on the Azure Retail Prices API for East US Premium (meter “Premium Jobs Light Compute DBU”, fetched 2026-10-16). It is still absent from the AWS and GCP secondary tables, so the calculator does not offer it as a template.
 
-**Promotions called out on the Azure page (2026-10-15), not baked into the default rates:** serverless real-time inference promotional pricing through 2027-01-31; Genie 150 free DBUs/month and a 25% promo through 2027-01-31; Mission Critical add-on 50% promo until 2027-06-30. AI Parse Document on Microsoft Learn notes a 50% promo through 2026-06-30. The engine should keep a `promotions[]` list separate from list rates so a refresh can expire them.
+**Promotions called out on the Azure page (2026-10-15), not baked into the default rates:** serverless real-time inference promotional pricing through 2027-01-31; Genie 150 free DBUs/month and a 25% promo through 2027-01-31; Mission Critical add-on 50% promo until 2027-06-30. AI Parse Document on Microsoft Learn notes a 50% promo through 2026-06-30. That date has passed. The catalog midpoint does not apply the discount. The engine should keep a `promotions[]` list separate from list rates so a refresh can expire them. Re-checked 2026-10-17: the Genie window is still open, and the Zerobus launch promotion is still undated and still not applied.
 
 ## 4. Instance DBU ratings
 
@@ -595,3 +595,28 @@ Products receive explicit forecast dates. Genie promotional math is reevaluated 
 The UI exposes an annual budget, named scenarios, a dated usage timeline, cumulative budget comparison, and separate historical and forecast chart series. JSON, CSV, PDF, saved links, and the month table reconcile to the same canonical result. Internal navigation preserves the plan fragment. Invalid saved JSON leaves the active plan unchanged.
 
 Calendar gaps and zero periods retain their meaning when fitting history. Holdout tuning uses training observations only. The model-only interval and source/infrastructure planning range are separate; no customer forecast-accuracy claim follows from synthetic examples. Customer bill reconciliation, representative backtests, and participant research still require appropriate inputs and people.
+
+## 20. Price refresh on 2026-10-17
+
+`node scripts/refresh-prices.mjs` re-read Azure Retail Prices for all 39 regions on the rate card and the AWS EC2 offer files for all 16 regions. `GCP_BILLING_API_KEY` is not set, so GCP virtual-machine prices stayed seeds. The two Databricks price-JSON probes still returned no rates (`data/pricing-probe.json`, `foundPublicJson: false`).
+
+| File                         | Before             | After              | Dollar rates                                              |
+| ---------------------------- | ------------------ | ------------------ | --------------------------------------------------------- |
+| `data/product-catalog.json`  | `2026-10-16.5`     | `2026-10-17.1`     | No product added or removed. 70 rows.                     |
+| `data/sku-rates.json`        | `2026-10-16.1`     | `2026-10-17.1`     | $/DBU table unchanged. The version is the re-check date.  |
+| `data/instances.json`        | `2026-10-15.1`     | `2026-10-17.1`     | DBU counts unchanged. The refresh does not download them. |
+| `data/cloud-vm-prices.json`  | `2026-10-16.2`     | `2026-10-17.2`     | 383 rows. On-demand and spot hourly changes: 0.           |
+| `data/azure-dbu-meters.json` | `2026-10-16.2`     | `2026-10-17.2`     | 530 rows. `$/DBU` changes: 0.                             |
+| `data/pricing-probe.json`    | checked 2026-10-16 | checked 2026-10-17 | Still no public rate JSON.                                |
+
+East US meters that the catalog cites outside the mapped SKU table were read again from the Retail Prices API and did not move: Jobs Light Premium $0.22 and Standard $0.07, Standard jobs $0.15, Standard all-purpose $0.40, Standard SQL $0.22, Data Processed $0.02/GB, launch charge $0.07, managed storage $0.026 per DSU, Clean Rooms $50 per collaborator-day, compliance $0.10 and mission critical $0.15 per DBU, and Premium Database Serverless $0.26 per DBU-hour. No East US meter name contained “performance”.
+
+The prices line is now `Prices updated 2026-10-17.` The default medium AWS Premium US East year is still **$170,257.52**. First month $11,996.70, month 12 $16,606.23, cloud share 29%, band ±20%.
+
+### Transactions are Generally Available
+
+The Databricks feed item from 2026-10-16, [Transactions are Generally Available, advancing warehousing on the Lakehouse](https://www.databricks.com/blog/transactions-are-generally-available-advancing-warehousing-lakehouse), announces multi-statement transactions on Delta Lake and Apache Iceberg, with stored procedures, temporary tables, and SQL scripting. The article body does not name a DBU, a SKU, or a price. The only “DBU” and “pricing” text on the page is site navigation. This is existing SQL warehouse billing, not a new product. The same day’s [Closing the Binary Blind Spot](https://www.databricks.com/blog/closing-binary-blind-spot-domain-knowledge-injection-llm-malware-triage-npm-packages) post is research about malware triage, not a SKU. Older feed items (Stripe to Lakebase, Predictive AI Functions, Document Intelligence, geospatial queries) are from 2026-10-14 and 2026-10-15 and do not add a list rate.
+
+### Promotions
+
+Genie One and Genie Agents user LLM usage remains free through 2027-01-31 (`GENIE_FREE_USAGE`). Genie Code remains at the 0.75 factor through 2027-01-31. Zerobus’s launch promotion is still undated in the GA post and is still not applied. AI Parse Document’s 50% promotion ended 2026-06-30 and was already absent from the default midpoint rate. Serverless real-time inference promotional pricing through 2027-01-31 and the Mission Critical 50% add-on through 2027-06-30 stay off the default rates.

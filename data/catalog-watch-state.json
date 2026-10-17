@@ -1,7 +1,9 @@
 {
   "version": 1,
   "unknownMeters": [],
-  "rssGuids": [],
+  "rssGuids": [
+    "https://www.databricks.com/blog/transactions-are-generally-available-advancing-warehousing-lakehouse"
+  ],
   "staleProductIds": [],
   "sitemapLocs": [
     "https://www.databricks.com/product/artificial-intelligence",

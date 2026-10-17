@@ -1,6 +1,6 @@
 {
-  "version": "2026-10-16.2",
-  "updatedOn": "2026-10-16",
+  "version": "2026-10-17.2",
+  "updatedOn": "2026-10-17",
   "source": "azure-retail-prices",
   "note": "Premium Azure Databricks consumption meters. Enterprise uses the same meters. A SKU missing from a region still uses the curated US East rate times the region factor.",
   "meters": [
