@@ -4,6 +4,7 @@ import { expect, test } from "@playwright/test";
 test("every desktop header action explains itself on hover and keyboard focus", async ({ page, isMobile }) => {
   test.skip(isMobile, "Hover help is tested with a mouse; touch help is visible inside the menu.");
   await page.goto("./");
+  await expect.poll(() => new URL(page.url()).hash).toMatch(/^#plan=/);
   const header = page.getByRole("banner");
   const actions = [
     header.getByRole("button", { name: /^Cayfore\b/ }),

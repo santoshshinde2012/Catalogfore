@@ -6,7 +6,6 @@ import {
   estimate,
   listInstances,
   listRegions,
-  projectPortfolio,
   referenceRegion,
   skuRate,
   vmHourly,
@@ -14,9 +13,9 @@ import {
   type ScenarioPresetId,
   type Tier,
 } from "../../packages/engine/src/index.ts";
-import { DISCLAIMER, portfolioSchema, readToolPortfolio, text } from "./reply.js";
+import { DISCLAIMER, forecastOf, portfolioReply, portfolioSchema, text } from "./reply.js";
 import { registerUsageTool } from "./register-usage.js";
-import { registerXlsxTool } from "./register-xlsx.js";
+import { registerToolModule } from "./tool-modules.js";
 
 export function registerForecastTools(server: McpServer) {
   server.registerTool(
@@ -78,10 +77,9 @@ export function registerForecastTools(server: McpServer) {
       inputSchema: { portfolio: portfolioSchema() },
     },
     async ({ portfolio }) => {
-      const parsed = readToolPortfolio(portfolio);
-      if (!parsed.ok) return text({ disclaimer: DISCLAIMER, error: parsed.error });
-      const normalized = parsed.value;
-      return text({ disclaimer: DISCLAIMER, portfolio: normalized, estimate: estimate(normalized) });
+      const accepted = portfolioReply(portfolio);
+      if (!accepted.ok) return accepted.reply;
+      return text({ disclaimer: DISCLAIMER, portfolio: accepted.portfolio, estimate: estimate(accepted.portfolio) });
     },
   );
 
@@ -93,11 +91,9 @@ export function registerForecastTools(server: McpServer) {
       inputSchema: { portfolio: portfolioSchema() },
     },
     async ({ portfolio }) => {
-      const parsed = readToolPortfolio(portfolio);
-      if (!parsed.ok) return text({ disclaimer: DISCLAIMER, error: parsed.error });
-      const normalized = parsed.value;
-      const result = projectPortfolio(normalized);
-      return text({ disclaimer: DISCLAIMER, ...result, forecast: result.points });
+      const forecasted = forecastOf(portfolio);
+      if (!forecasted.ok) return forecasted.reply;
+      return text({ disclaimer: DISCLAIMER, ...forecasted.result, forecast: forecasted.result.points });
     },
   );
 
@@ -125,11 +121,10 @@ export function registerForecastTools(server: McpServer) {
       },
     },
     async ({ portfolio, presets }) => {
-      const parsed = readToolPortfolio(portfolio);
-      if (!parsed.ok) return text({ disclaimer: DISCLAIMER, error: parsed.error });
-      const normalized = parsed.value;
+      const accepted = portfolioReply(portfolio);
+      if (!accepted.ok) return accepted.reply;
       const chosen = (presets?.length ? presets : ["as_modeled", "jobs_serverless", "commit_37"]) as ScenarioPresetId[];
-      const results = compareScenarios(normalized, chosen).map((result) => ({
+      const results = compareScenarios(accepted.portfolio, chosen).map((result) => ({
         id: result.id,
         name: result.name,
         description: result.description,
@@ -143,5 +138,6 @@ export function registerForecastTools(server: McpServer) {
   );
 
   registerUsageTool(server);
-  registerXlsxTool(server);
 }
+
+registerToolModule(registerForecastTools);

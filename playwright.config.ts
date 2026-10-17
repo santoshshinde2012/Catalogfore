@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const devUrl = "http://127.0.0.1:5173/cayfore/";
+const previewUrl = process.env.PLAYWRIGHT_BASE_URL;
+
 export default defineConfig({
   testDir: "e2e",
   fullyParallel: true,
@@ -7,15 +10,17 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: "list",
   use: {
-    baseURL: "http://127.0.0.1:5173/cayfore/",
+    baseURL: previewUrl || devUrl,
     trace: "retain-on-failure",
   },
-  webServer: {
-    command: "npm run dev",
-    url: "http://127.0.0.1:5173/cayfore/",
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer: previewUrl
+    ? undefined
+    : {
+        command: "npm run dev",
+        url: devUrl,
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+      },
   projects: [
     { name: "desktop", grepInvert: /@mobile/, use: { ...devices["Desktop Chrome"] } },
     { name: "mobile", use: { ...devices["Pixel 5"] } },

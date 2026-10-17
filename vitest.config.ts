@@ -13,6 +13,7 @@ export default defineConfig({
       "packages/sheet/src/**/*.test.ts",
       "apps/web/src/**/*.test.ts",
       "apps/web/src/**/*.test.tsx",
+      "mcp/src/**/*.test.ts",
     ],
     coverage: {
       provider: "v8",

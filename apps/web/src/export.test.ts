@@ -2,7 +2,7 @@
 import { Blob as NodeBlob } from "node:buffer";
 import { defaultPlan, parseCsv, projectPortfolio, projectSimple } from "@cayfore/engine";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { exportCsv, exportJson } from "./export";
+import { exportCsv, exportJson, forecastExporters } from "./export";
 import { forecastCsv, forecastJson } from "./export-data";
 
 function fittedResult() {
@@ -79,5 +79,19 @@ describe("canonical forecast exports", () => {
     result.estimate.lines[0].name = "+SUM(A1)";
     expect(forecastCsv(result)).toContain("'=IMPORTDATA(1)");
     expect(forecastCsv(result)).toContain("'+SUM(A1)");
+  });
+});
+
+describe("forecast exporter registry", () => {
+  it("gives every download the same contract", () => {
+    expect(forecastExporters.map((exporter) => exporter.id)).toEqual(["xlsx", "csv", "json", "pdf"]);
+    const ids = new Set(forecastExporters.map((exporter) => exporter.id));
+    expect(ids.size).toBe(forecastExporters.length);
+    for (const exporter of forecastExporters) {
+      expect(exporter.menuLabel.length).toBeGreaterThan(0);
+      expect(exporter.detail.length).toBeGreaterThan(0);
+      expect(typeof exporter.write).toBe("function");
+      expect(exporter.icon).toBeTypeOf("object");
+    }
   });
 });

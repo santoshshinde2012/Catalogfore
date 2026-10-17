@@ -16,6 +16,7 @@ import {
   workloadsForProduct,
 } from "../../packages/engine/src/products.ts";
 import { DISCLAIMER, text } from "./reply.js";
+import { registerToolModule } from "./tool-modules.js";
 
 export function registerProductTools(server: McpServer) {
   server.registerTool(
@@ -98,3 +99,5 @@ export function registerProductTools(server: McpServer) {
     },
   );
 }
+
+registerToolModule(registerProductTools);
