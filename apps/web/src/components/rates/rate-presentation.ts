@@ -19,12 +19,11 @@ export const evidenceLabels: Record<UnitCostRow["evidenceLevel"], string> = {
 /** Preserve small token/storage rates instead of displaying a misleading $0.00. */
 export function unitMoney(value: number): string {
   if (value !== 0 && Math.abs(value) < 1e-9) return `$${value.toExponential(6)}`;
-  const digits = value === 0 ? 2 : Math.min(12, Math.max(2, Math.ceil(-Math.log10(Math.abs(value))) + 3));
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2,
-    maximumFractionDigits: digits,
+    maximumFractionDigits: 12,
   }).format(value);
 }
 

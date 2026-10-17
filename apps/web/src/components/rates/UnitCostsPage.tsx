@@ -5,12 +5,12 @@ import {
   type UnitCostFilters,
   type UnitCostRow,
 } from "@cayfore/engine/unit-costs";
-import { ArrowDown, ChartNoAxesColumnIncreasing, Download, ListFilter, ShieldCheck } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { navigateToSection } from "../../lib/page-navigation";
 import type { RatePlacement } from "../../hooks/useAppView";
 import { Button } from "../ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Tabs, TabsContent } from "../ui/tabs";
 import { RateComparison } from "./RateComparison";
 import { RateDetails } from "./RateDetails";
 import { RateDirectory } from "./RateDirectory";
@@ -18,6 +18,7 @@ import { RateDownloads } from "./RateDownloads";
 import { RateEvidenceOverview } from "./RateEvidenceOverview";
 import { RateFilters } from "./RateFilters";
 import { RateCatalogNotes, RateWorkspaceHeader } from "./RateWorkspaceHeader";
+import { RateWorkspaceTabs } from "./RateWorkspaceTabs";
 
 const catalog = buildUnitCostCatalog();
 
@@ -85,10 +86,19 @@ export function UnitCostsPage({
     setLimit(12);
     requestAnimationFrame(() => navigateToSection("rate-details"));
   }
+  function inspect(row: UnitCostRow) {
+    change({
+      productId: row.productId,
+      cloud: row.cloud ?? undefined,
+      region: row.region ?? undefined,
+      tier: row.tier ?? undefined,
+    });
+    select(row.id);
+  }
   return (
     <article className="mx-auto w-full max-w-7xl px-4 pt-4 pb-12 sm:px-6 sm:pt-6 lg:pb-16">
       <RateWorkspaceHeader catalog={catalog} onBack={onBack} />
-      {selected && (
+      {selected && panel === "rates" && (
         <div className="mb-4 flex flex-wrap items-center gap-3 sm:hidden">
           <Button type="button" variant="outline" size="sm" onClick={() => select(selected.id)}>
             View selected rate <ArrowDown aria-hidden="true" />
@@ -96,39 +106,15 @@ export function UnitCostsPage({
           <span className="text-xs text-muted-foreground">{rows.length.toLocaleString("en-US")} matching rows</span>
         </div>
       )}
-      <div className="grid gap-4 sm:gap-5">
+      <div className="grid min-w-0 gap-4 sm:gap-5">
         {!productKnown && (
           <p role="status" className="rounded-xl border border-dashed p-4 text-sm">
             This product link is not in the installed catalog. Reset the filters to explore available services.
           </p>
         )}
         <RateFilters catalog={catalog} filters={filters} onChange={change} onClear={clear} />
-        <Tabs value={panel} onValueChange={setPanel}>
-          <TabsList
-            aria-label="Unit cost workspace"
-            className="grid w-full grid-cols-2 gap-1 rounded-xl bg-muted/60 p-1 sm:flex sm:w-fit"
-          >
-            <TabsTrigger value="rates" className="gap-2 rounded-lg border-0 px-3 text-xs">
-              <span className="inline-flex items-center gap-2">
-                <ListFilter className="size-3.5" aria-hidden="true" /> Rates & calculator
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="compare" className="gap-2 rounded-lg border-0 px-3 text-xs">
-              <span className="inline-flex items-center gap-2">
-                <ChartNoAxesColumnIncreasing className="size-3.5" aria-hidden="true" /> Compare regions
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="evidence" className="gap-2 rounded-lg border-0 px-3 text-xs">
-              <span className="inline-flex items-center gap-2">
-                <ShieldCheck className="size-3.5" aria-hidden="true" /> Evidence
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="downloads" className="gap-2 rounded-lg border-0 px-3 text-xs">
-              <span className="inline-flex items-center gap-2">
-                <Download className="size-3.5" aria-hidden="true" /> Downloads
-              </span>
-            </TabsTrigger>
-          </TabsList>
+        <Tabs value={panel} onValueChange={setPanel} className="min-w-0">
+          <RateWorkspaceTabs />
           <TabsContent value="rates" forceMount className="mt-4 data-[state=inactive]:hidden">
             {selected && (
               <div className="mb-3 flex flex-wrap items-center justify-between gap-2 lg:hidden">
@@ -166,7 +152,7 @@ export function UnitCostsPage({
             <RateEvidenceOverview rows={rows} />
           </TabsContent>
           <TabsContent value="downloads" forceMount className="mt-4 data-[state=inactive]:hidden">
-            <RateDownloads catalog={catalog} rows={rows} />
+            <RateDownloads catalog={catalog} rows={rows} onInspect={inspect} />
           </TabsContent>
         </Tabs>
         <RateCatalogNotes catalog={catalog} />

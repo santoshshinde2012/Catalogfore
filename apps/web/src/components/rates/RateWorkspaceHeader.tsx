@@ -4,13 +4,13 @@ import { Button } from "../ui/button";
 
 export function RateWorkspaceHeader({ catalog, onBack }: { catalog: UnitCostCatalog; onBack: () => void }) {
   return (
-    <header className="mb-5">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+    <header className="mb-4">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <Button type="button" variant="ghost" size="sm" className="-ml-2 text-muted-foreground" onClick={onBack}>
           <ArrowLeft aria-hidden="true" />
           Back to planner
         </Button>
-        <span className="inline-flex items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 text-xs font-medium text-muted-foreground">
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
           <ShieldCheck className="size-3.5" aria-hidden="true" />
           Source registry reviewed {catalog.reviewedOn}
         </span>
@@ -25,7 +25,7 @@ export function RateWorkspaceHeader({ catalog, onBack }: { catalog: UnitCostCata
             Unit costs
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            Inspect prices and calculate component costs with traceable sources.
+            Explore the price catalog, trace each source, and calculate component costs.
           </p>
         </div>
         <p className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
@@ -38,14 +38,19 @@ export function RateWorkspaceHeader({ catalog, onBack }: { catalog: UnitCostCata
           </span>
         </p>
       </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Bundled USD snapshot · Reference filters and calculations keep your forecast unchanged.
+      </p>
     </header>
   );
 }
 
 export function RateCatalogNotes({ catalog }: { catalog: UnitCostCatalog }) {
   return (
-    <details className="rounded-xl border bg-card px-4 py-3 text-xs leading-relaxed text-muted-foreground">
-      <summary className="cursor-pointer font-medium text-foreground">About this price catalog and its limits</summary>
+    <details className="border-t py-3 text-xs leading-relaxed text-muted-foreground">
+      <summary className="min-h-8 cursor-pointer py-1 font-medium text-foreground">
+        About this price catalog and its limits
+      </summary>
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <p>
           A unit price is one part of the bill. DBU consumption, machines, storage, and network can be separate charges.
