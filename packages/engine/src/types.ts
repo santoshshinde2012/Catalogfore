@@ -2,6 +2,15 @@ export type Cloud = "aws" | "azure" | "gcp";
 export type Tier = "premium" | "enterprise";
 export type Addon = "none" | "compliance" | "mission_critical";
 export type SeasonalityPreset = "flat" | "retail" | "custom";
+import type { PriceStatus, RateProvenance } from "./pricing-types.js";
+export type {
+  PriceStatus,
+  PriceCoverage,
+  RateProvenance,
+  PlanningEvent,
+  ImportedUsageSummary,
+  PriceBookReference,
+} from "./pricing-types.js";
 
 export type SkuId =
   | "jobs_classic"
@@ -26,6 +35,16 @@ export type SqlSize = "2xs" | "xs" | "s" | "m" | "l" | "xl" | "2xl" | "3xl" | "4
 export type ClusterSku = "jobs_classic" | "all_purpose_classic" | "dlt_core" | "dlt_pro" | "dlt_advanced";
 export type ServerlessSku = "jobs_serverless" | "all_purpose_serverless" | "dlt_serverless";
 export const METERED_SKUS = [
+  "jobs_classic",
+  "all_purpose_classic",
+  "all_purpose_serverless",
+  "dlt_core",
+  "dlt_pro",
+  "dlt_advanced",
+  "dlt_serverless",
+  "sql_classic",
+  "sql_pro",
+  "ai_search",
   "managed_services",
   "lakeflow_connect",
   "model_training",
@@ -59,6 +78,8 @@ interface WorkloadBase {
   cloud?: Cloud;
   region?: string;
   tier?: Tier;
+  rateProvenance?: RateProvenance;
+  priceStatus?: PriceStatus;
 }
 
 export type Workload =

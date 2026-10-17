@@ -121,14 +121,18 @@ describe("product catalog", () => {
     ].join("\n");
     const loaded = workloadsFromUsage(csv);
     expect(loaded.unmapped).toEqual(["SOMETHING_NEW"]);
-    expect(loaded.workloads.map((workload) => workload.productId)).toEqual(["sql_serverless", "jobs_classic"]);
+    expect(loaded.workloads.map((workload) => workload.productId)).toEqual([
+      "sql_serverless",
+      "jobs_classic",
+      undefined,
+    ]);
     const result = estimate({
       ...blankPortfolio("aws"),
       region: "us-east-1",
       tier: "premium",
       workloads: loaded.workloads,
     });
-    expect(result.total).toBe(4.3);
+    expect(result.total).toBe(7.3);
   });
 
   it("prices data quality as automated serverless DBU", () => {

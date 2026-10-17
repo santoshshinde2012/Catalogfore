@@ -58,6 +58,9 @@
   --ring: #c42812;
   --lava: #ff3621;
   --link: #9e1e0c;
+  --chart-actual: #146c63;
+  --chart-budget: #946000;
+  --chart-comparison: #6554a4;
   color-scheme: light;
 }
 
@@ -82,6 +85,9 @@
   --ring: #ff3621;
   --lava: #ff3621;
   --link: #ff8a72;
+  --chart-actual: #6cd4c3;
+  --chart-budget: #edc46a;
+  --chart-comparison: #b4a5f5;
   color-scheme: dark;
 }
 
@@ -96,6 +102,8 @@ html.theme-swap * {
   }
   html {
     @apply font-sans antialiased;
+    scroll-padding-top: 6rem;
+    scroll-padding-bottom: 7rem;
   }
   body {
     @apply bg-background text-foreground;
@@ -161,13 +169,14 @@ html.theme-swap * {
 .field input:not([type="checkbox"]):not([type="range"]),
 .field select,
 .field textarea {
-  height: 2.25rem;
+  height: 2.75rem;
+  min-width: 0;
   width: 100%;
   border-radius: var(--radius);
   border: 1px solid var(--input);
   background: var(--background);
   padding: 0 0.75rem;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 400;
   color: var(--foreground);
 }
@@ -176,6 +185,18 @@ html.theme-swap * {
   min-height: 6rem;
   padding: 0.5rem 0.75rem;
   font-family: var(--font-mono);
+}
+
+@media (min-width: 640px) {
+  .field input:not([type="checkbox"]):not([type="range"]),
+  .field select,
+  .field textarea {
+    font-size: 0.875rem;
+  }
+  .field input:not([type="checkbox"]):not([type="range"]),
+  .field select {
+    height: 2.25rem;
+  }
 }
 
 @media (max-width: 640px) {

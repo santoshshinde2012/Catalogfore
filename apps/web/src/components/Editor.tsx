@@ -1,6 +1,8 @@
 import { productById, recomputeProduct } from "@cayfore/engine/products";
 import { listRegions, type Cloud, type Portfolio, type Tier, type Workload } from "@cayfore/engine";
+import { useEffect, useRef } from "react";
 import { SchemaFields } from "./editor/SchemaFields";
+import { MeteredPricingFields } from "./editor/MeteredPricingFields";
 import { workloadEditors } from "./editor/registry";
 import { Button } from "./ui/button";
 
@@ -14,28 +16,43 @@ interface EditorProps {
 }
 
 export function Editor({ workload, portfolio, onChange, onDuplicate, onRemove, onClose }: EditorProps) {
+  const editorRef = useRef<HTMLDivElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      nameRef.current?.focus({ preventScroll: true });
+      editorRef.current?.scrollIntoView({ block: "start", behavior: "auto" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [workload.id]);
   const cloud = workload.cloud ?? portfolio.cloud;
   const product = workload.productId ? productById(workload.productId) : undefined;
   const part = product?.parts?.find((item) => item.id === workload.partId);
   const editor = part?.editor ?? product?.editor;
   const fields = part?.fields ?? product?.fields ?? [];
-  const schema = editor === "schema";
+  const imported = workload.rateProvenance?.kind === "imported";
+  const schema = editor === "schema" && !imported;
   const Fields = workloadEditors[workload.kind];
   function change(next: Workload) {
-    onChange(recomputeProduct(next));
+    onChange(imported ? next : recomputeProduct(next));
   }
   return (
-    <div className="mt-2 rounded-lg border p-4">
-      <div className="mb-3 flex items-center justify-between gap-2">
+    <div
+      ref={editorRef}
+      className="mt-2 min-w-0 scroll-mt-4 rounded-lg border p-4"
+      role="group"
+      aria-label={`Edit ${workload.name}`}
+    >
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <strong className="text-sm">Edit workload</strong>
-        <span className="flex gap-1">
-          <Button type="button" variant="ghost" size="sm" onClick={onDuplicate}>
+        <span className="flex flex-wrap gap-1">
+          <Button type="button" variant="ghost" size="sm" className="min-h-11 sm:min-h-8" onClick={onDuplicate}>
             Duplicate
           </Button>
-          <Button type="button" variant="ghost" size="sm" onClick={onClose}>
+          <Button type="button" variant="ghost" size="sm" className="min-h-11 sm:min-h-8" onClick={onClose}>
             Close
           </Button>
-          <Button type="button" variant="destructive" size="sm" onClick={onRemove}>
+          <Button type="button" variant="destructive" size="sm" className="min-h-11 sm:min-h-8" onClick={onRemove}>
             Remove
           </Button>
         </span>
@@ -44,6 +61,7 @@ export function Editor({ workload, portfolio, onChange, onDuplicate, onRemove, o
         <label className="field">
           Name
           <input
+            ref={nameRef}
             value={workload.name}
             maxLength={80}
             onChange={(event) => change({ ...workload, name: event.target.value })}
@@ -51,10 +69,15 @@ export function Editor({ workload, portfolio, onChange, onDuplicate, onRemove, o
         </label>
         <SkuSelect workload={workload} onChange={change} />
       </div>
-      {schema && product ? (
+      {imported ? (
+        <MeteredPricingFields workload={workload} portfolio={portfolio} onChange={change} />
+      ) : schema && product ? (
         <SchemaFields workload={workload} fields={fields} onChange={change} />
       ) : (
         <Fields workload={workload} portfolio={portfolio} onChange={change} />
+      )}
+      {!schema && !imported && workload.kind === "metered" && (
+        <MeteredPricingFields workload={workload} portfolio={portfolio} onChange={change} />
       )}
       {product && <p className="hint mt-3">{product.note}</p>}
       <details className="mt-3">

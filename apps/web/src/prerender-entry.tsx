@@ -1,11 +1,13 @@
 import { StrictMode } from "react";
-import { renderToString } from "react-dom/server";
+import { renderToReadableStream } from "react-dom/server";
 import { App } from "./App";
 
-export function render(): string {
-  return renderToString(
+export async function render(): Promise<string> {
+  const stream = await renderToReadableStream(
     <StrictMode>
       <App />
     </StrictMode>,
   );
+  await stream.allReady;
+  return new Response(stream).text();
 }

@@ -1,6 +1,5 @@
 import { bundledPricingCatalog, type PricingCatalog } from "./catalog/pricing-catalog.js";
-import { estimate } from "./estimate.js";
-import { annualTotal, forecast } from "./forecast.js";
+import { projectPortfolio } from "./projection.js";
 import { hoursPerMonth, scaledCount, clamp } from "./money.js";
 import { findScenarioPolicy, scenarioPolicies } from "./policies/scenario-policies.js";
 import { UnknownScenarioError, type ScenarioPolicy } from "./policies/types.js";
@@ -30,15 +29,16 @@ export function compareScenarios(portfolio: Portfolio, presets: ScenarioPresetId
   return unique.map((id) => {
     const meta = SCENARIO_PRESETS.find((row) => row.id === id) ?? SCENARIO_PRESETS[0];
     const patched = applyScenario(portfolio, id);
-    const result = estimate(patched);
-    const points = forecast(result, patched.forecast);
+    const projected = projectPortfolio(patched);
+    const result = projected.estimate;
+    const points = projected.points;
     return {
       id,
       name: meta.name,
       description: meta.description,
       estimate: result,
       forecast: points,
-      annual: annualTotal(points),
+      annual: projected.annual,
     };
   });
 }

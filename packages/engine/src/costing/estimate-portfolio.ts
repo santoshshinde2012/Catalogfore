@@ -4,6 +4,8 @@ import type { Estimate, LineItem, Portfolio, Workload } from "../types.js";
 import { defaultCostStrategies } from "./strategies/index.js";
 import { resolvePlacement } from "./support.js";
 import { MissingCostStrategyError, type CostStrategy, type RawLine } from "./types.js";
+import { coverageWarnings, lineProvenance, priceCoverage } from "./provenance.js";
+import { addonEligibleCost } from "../pricing-basis.js";
 
 export interface EstimateDependencies {
   catalog: PricingCatalog;
@@ -51,13 +53,22 @@ export function estimate(
   dependencies: EstimateDependencies = defaultEstimateDependencies,
 ): Estimate {
   const scale = portfolio.usageScale > 0 ? portfolio.usageScale : 1;
-  const lines = portfolio.workloads.map((workload) => finalize(quote(workload, portfolio, dependencies), scale));
+  const lines = portfolio.workloads.map((workload) => {
+    const raw = quote(workload, portfolio, dependencies);
+    return { ...finalize(raw, scale), ...lineProvenance(raw, workload, portfolio, dependencies) };
+  });
   const dbu = Math.round(lines.reduce((sum, line) => sum + line.dbu, 0) * 1000) / 1000;
   const dbuCost = roundMoney(lines.reduce((sum, line) => sum + line.dbuCost, 0));
   const cloudCost = roundMoney(lines.reduce((sum, line) => sum + line.cloudCost, 0));
   const addonRate = dependencies.catalog.addonRates[portfolio.addon];
-  const addonCost = roundMoney(dbuCost * addonRate);
-  const warnings: string[] = [];
+  const addonCost = roundMoney(addonEligibleCost(lines) * addonRate);
+  const coverage = priceCoverage(lines);
+  const warnings = coverageWarnings(coverage);
+  if (portfolio.priceBook && portfolio.priceBook.version !== dependencies.catalog.version) {
+    warnings.push(
+      `This saved plan references price book ${portfolio.priceBook.version} (${portfolio.priceBook.verifiedOn}). The calculated subtotal uses installed book ${dependencies.catalog.version}; the older book is unavailable for replay. Review the original exported quote and explicitly reprice to accept the installed book.`,
+    );
+  }
   if (scale !== 1) {
     warnings.push(
       `Usage scale ${scale.toFixed(3)} is applied to every line. Cloud dollars scale with DBUs because the usage export has no VM bill.`,
@@ -81,5 +92,6 @@ export function estimate(
     total: roundMoney(dbuCost + cloudCost + addonCost),
     warnings,
     usageScale: scale,
+    coverage,
   };
 }

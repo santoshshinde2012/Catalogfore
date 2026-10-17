@@ -1,14 +1,14 @@
 # Cayfore
 
-A 12-month forecast of Databricks spend. Four inputs, one range.
+A browser-local Databricks budget and scenario planner, with a 12-month cost forecast.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-111111)](LICENSE)
-[![Node 20+](https://img.shields.io/badge/node-20%2B-111111)](package.json)
+[![Node 22.13+](https://img.shields.io/badge/node-22.13%2B-111111)](package.json)
 [![Live site](https://img.shields.io/badge/live-GitHub%20Pages-111111)](https://santoshshinde2012.github.io/cayfore/)
 
 Cayfore is the interface. This repository is the forecast. It is an estimate, not a quote, and it is not affiliated with Databricks. The calculation stays in the browser. See [docs/PRIVACY.md](docs/PRIVACY.md).
 
-![Cayfore on a wide screen: four inputs and a year total with a confidence band](docs/screenshots/forecast-light.png)
+![Cayfore on a wide screen: quick inputs and a year total with a planning range](docs/screenshots/forecast-light.png)
 
 ## What it answers
 
@@ -23,7 +23,13 @@ Cloud and tier, a starting monthly amount or a team size, a mix of pipelines, da
 
 On that default the page reads **about $170,258 per year, ±20%**. First month **$11,997**. **29%** of the bill is cloud machines. The sources for the presets and the rates are in [docs/RESEARCH.md](docs/RESEARCH.md).
 
-A usage CSV replaces the monthly amount and the mix. Advanced opens the per-workload editor. Savings stay under the result, each with an annual amount.
+A usage CSV opens a review of its baseline month, prices, and gaps before replacing the estimate. Databricks billing and recognized FOCUS files are supported. Imported monetary costs stay observed costs; the app does not invent a separate VM bill. See [usage import](docs/USAGE-IMPORT.md).
+
+Set an annual budget, save named scenarios, and plan dated launches or retirements. Charts show observed spend, future estimates, budget variance, scenario comparisons, and monthly cost components. Advanced opens the per-workload editor. Growth and pricing controls preserve those workloads.
+
+![Imported spend and forecast against a budget, using the bundled historical demonstration CSV](docs/screenshots/usage-forecast.png)
+
+CSV, JSON, PDF, and shared plans use the same forecast result. Unpriced charges are identified as unresolved; the total is a known subtotal when costs are missing. The range represents planning assumptions, not a calibrated probability interval.
 
 ![The same forecast in dark mode](docs/screenshots/forecast-dark.png)
 
@@ -40,7 +46,7 @@ npm run dev
 
 Open http://localhost:5173/cayfore/
 
-Node 20 or newer.
+Use Node 22.13+ within Node 22, or Node 24+. Run `nvm use` to select Node 22 from `.nvmrc`.
 
 ```bash
 npm test          # engine unit tests and the price-file parser
@@ -51,29 +57,30 @@ npm run test:mcp  # stdio MCP smoke test
 npm run test:e2e  # Playwright, desktop and mobile, including axe
 ```
 
-The page JavaScript is about 346 KB gzipped, including the chart and the price catalog. CSS is about 8 KB gzipped, before the font files. PDF export loads on demand.
+The core JavaScript is about 282 KB gzipped, including the separately cached price catalog. Charts and PDF export load in separate chunks. CSS is about 9 KB gzipped, before the font files.
 
 ## Repository
 
-| Path                         | Role                                                            |
-| ---------------------------- | --------------------------------------------------------------- |
-| `packages/engine`            | Pricing, the four-input forecast, scenarios, and usage import   |
-| `data/`                      | Versioned rates, instance ratings, and virtual-machine prices   |
-| `apps/web`                   | The forecast page                                               |
-| `mcp/`                       | The stdio server over the same engine                           |
-| `scripts/refresh-prices.mjs` | VM and Azure DBU meter refresh. Instance DBU counts stay cited. |
-| `docs/DATA-PIPELINE.md`      | Where those prices come from, and how the weekly job runs       |
-| `docs/RESEARCH.md`           | Source for every rate                                           |
-| `docs/NAMING.md`             | Why the product is called Cayfore                               |
-| `docs/ARCHITECTURE.md`       | How the pricing code is split                                   |
-| `docs/USABILITY.md`          | Walkthroughs for evaluating, budgeting, and a usage file        |
-| `docs/PLAN.md`               | What the page covers, and what the engine still prices          |
-| `docs/ROADMAP.md`            | Gaps versus other calculators, and what is not in this pass     |
-| `docs/PRIVACY.md`            | What stays in the browser                                       |
-| `docs/FAQ.md`                | Short answers for the public FAQ page                           |
-| `docs/MCP.md`                | Tool arguments and a client config                              |
-| `CHANGELOG.md`               | What is unreleased. GitHub Releases are cut by the owner        |
-| `NOTICE`                     | License notice for the code and the price sources               |
+| Path                         | Role                                                                    |
+| ---------------------------- | ----------------------------------------------------------------------- |
+| `packages/engine`            | Pricing, the four-input forecast, scenarios, and usage import           |
+| `data/`                      | Versioned rates, instance ratings, and virtual-machine prices           |
+| `apps/web`                   | The forecast page                                                       |
+| `mcp/`                       | The stdio server over the same engine                                   |
+| `scripts/refresh-prices.mjs` | VM and Azure DBU meter refresh. Instance DBU counts stay cited.         |
+| `docs/DATA-PIPELINE.md`      | Where those prices come from, and how the weekly job runs               |
+| `docs/RESEARCH.md`           | Source for every rate                                                   |
+| `docs/NAMING.md`             | Why the product is called Cayfore                                       |
+| `docs/ARCHITECTURE.md`       | How the pricing code is split                                           |
+| `docs/USABILITY.md`          | Walkthroughs for evaluating, budgeting, and a usage file                |
+| `docs/USAGE-IMPORT.md`       | Typed import, period selection, currencies, corrections, and cost basis |
+| `docs/PLAN.md`               | What the page covers, and what the engine still prices                  |
+| `docs/ROADMAP.md`            | Gaps versus other calculators, and what is not in this pass             |
+| `docs/PRIVACY.md`            | What stays in the browser                                               |
+| `docs/FAQ.md`                | Short answers for the public FAQ page                                   |
+| `docs/MCP.md`                | Tool arguments and a client config                                      |
+| `CHANGELOG.md`               | What is unreleased. GitHub Releases are cut by the owner                |
+| `NOTICE`                     | License notice for the code and the price sources                       |
 
 ## Publish
 
@@ -85,7 +92,7 @@ A weekly workflow opens a pull request when AWS or Azure list prices change: EC2
 
 ## MCP
 
-`mcp/` speaks stdio and does not log into a workspace. A browser page cannot call the Databricks SQL API. Tools: `list_skus`, `estimate_workload`, `forecast`, `compare_scenarios`, `forecast_usage`. `npm run cayfore` runs the same forecast from the shell.
+`mcp/` speaks stdio and does not log into a workspace. A browser page cannot call the Databricks SQL API. Tools: `list_skus`, `list_products`, `estimate_workload`, `estimate_product`, `forecast`, `compare_scenarios`, and `forecast_usage`. `npm run cayfore` runs the same forecast from the shell.
 
 ```bash
 npm run build

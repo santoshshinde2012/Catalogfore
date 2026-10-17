@@ -10,7 +10,7 @@ export function SelectTrigger({ className, children, ...props }: ComponentProps<
   return (
     <SelectPrimitive.Trigger
       className={cn(
-        "flex h-10 w-full items-center justify-between gap-2 rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring",
+        "flex h-11 min-w-0 w-full items-center justify-between gap-2 rounded-lg border border-input bg-background px-3 text-base outline-none focus-visible:border-ring sm:h-10 sm:text-sm",
         className,
       )}
       {...props}
@@ -44,7 +44,7 @@ export function SelectItem({ className, children, ...props }: ComponentProps<typ
   return (
     <SelectPrimitive.Item
       className={cn(
-        "relative flex cursor-default items-center rounded-md py-1.5 pr-8 pl-2 text-sm outline-none focus:bg-accent data-[disabled]:opacity-50",
+        "relative flex min-h-11 cursor-default items-center rounded-md py-1.5 pr-8 pl-2 text-sm outline-none focus:bg-accent data-[disabled]:opacity-50 sm:min-h-8",
         className,
       )}
       {...props}

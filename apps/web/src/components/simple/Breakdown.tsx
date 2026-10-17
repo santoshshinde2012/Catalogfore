@@ -9,22 +9,31 @@ const FILLS: Record<string, string> = {
   "mix-ml": "#b45309",
 };
 
-export function Breakdown({ estimate }: { estimate: Estimate }) {
+export function Breakdown({
+  estimate,
+  serviceLabel = "Databricks usage",
+}: {
+  estimate: Estimate;
+  serviceLabel?: string;
+}) {
   const workloads = estimate.lines
-    .filter((line) => line.total > 0)
+    .filter((line) => line.total !== 0)
     .map((line) => ({
+      id: line.workloadId,
       name: line.name,
       value: line.total,
       fill: FILLS[line.workloadId] ?? "var(--foreground)",
     }));
   const parts = [
-    { label: "Databricks usage", value: estimate.dbuCost, className: "bg-foreground" },
+    { label: serviceLabel, value: estimate.dbuCost, className: "bg-foreground" },
     { label: "Cloud machines", value: estimate.cloudCost, className: "bg-lava" },
     ...(estimate.addonCost > 0
       ? [{ label: "Add-ons", value: estimate.addonCost, className: "bg-muted-foreground" }]
       : []),
-  ].filter((part) => part.value > 0);
-  const partSum = parts.reduce((sum, part) => sum + part.value, 0);
+  ].filter((part) => part.value !== 0);
+  const positiveParts = parts.filter((part) => part.value > 0);
+  const positiveWorkloads = workloads.filter((row) => row.value > 0);
+  const partSum = positiveParts.reduce((sum, part) => sum + part.value, 0);
   const summary = workloads.map((row) => `${row.name} ${money(row.value, 0)}`).join(", ");
   const [PieView, setPieView] = useState<typeof MixPieComponent | null>(null);
   useEffect(() => {
@@ -40,12 +49,12 @@ export function Breakdown({ estimate }: { estimate: Estimate }) {
   return (
     <div className="grid gap-4 sm:grid-cols-[9rem_minmax(0,1fr)] sm:items-center">
       <div className="h-36" role="img" aria-label={summary || "No workload split yet"}>
-        {PieView && workloads.length > 0 ? <PieView workloads={workloads} /> : null}
+        {PieView && positiveWorkloads.length > 0 ? <PieView workloads={positiveWorkloads} /> : null}
       </div>
       <div className="grid gap-3">
         <ul className="grid gap-1.5 text-sm">
           {workloads.map((row) => (
-            <li key={row.name} className="flex items-center justify-between gap-3">
+            <li key={row.id} className="flex items-center justify-between gap-3">
               <span className="flex items-center gap-2">
                 <span className="size-2 rounded-full" style={{ background: row.fill }} />
                 {row.name}
@@ -54,10 +63,15 @@ export function Breakdown({ estimate }: { estimate: Estimate }) {
             </li>
           ))}
         </ul>
+        {workloads.some((row) => row.value < 0) && (
+          <p className="text-xs text-muted-foreground">
+            The donut shows positive charges. Credits are listed separately and reduce the total.
+          </p>
+        )}
         {partSum > 0 && (
           <div>
             <div className="flex h-2 overflow-hidden rounded-full bg-muted" aria-hidden="true">
-              {parts.map((part) => (
+              {positiveParts.map((part) => (
                 <span
                   key={part.label}
                   className={part.className}

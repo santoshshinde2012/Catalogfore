@@ -54,7 +54,8 @@ export function dot(left: number[], right: number[]): number {
 
 export function seasonIndex(period: string, season: number): number {
   if (season === 7) {
-    const date = new Date(`${period.slice(0, 10)}T00:00:00Z`);
+    const [year, month, day] = period.split("-").map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
     return Number.isNaN(date.getTime()) ? 0 : date.getUTCDay();
   }
   if (season === 12) {

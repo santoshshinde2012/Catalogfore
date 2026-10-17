@@ -13,7 +13,9 @@ export const clusterStrategy = defineStrategy("cluster", (workload, context): Ra
     notes.push(`Unknown instance ${workload.instanceId} for ${placement.cloud}.`);
     return emptyCluster(workload, hours, notes);
   }
-  const photon = workload.photon ? catalog.photonMultiplier : 1;
+  const photon = workload.photon
+    ? (catalog.photonMultiplierFor?.(placement.cloud, workload.sku) ?? catalog.photonMultiplier)
+    : 1;
   const charge = skuCharge(context, workload.sku);
   const nodeWord = workers <= 0 ? "node" : "nodes";
   const workerPhrase =
@@ -25,7 +27,7 @@ export const clusterStrategy = defineStrategy("cluster", (workload, context): Ra
   );
   if (workload.photon) {
     notes.push(
-      `Photon multiplies DBU emission by ${catalog.photonMultiplier}. Runtime is unchanged unless you shorten the schedule.`,
+      `Photon uses a ${photon}× DBU emission factor for ${placement.cloud}/${workload.sku}. Runtime is unchanged unless you shorten the schedule. Per-instance ratings can differ.`,
     );
   }
   const dbu = (1 + workers) * instance.dbuPerHour * photon * hours;
@@ -34,6 +36,7 @@ export const clusterStrategy = defineStrategy("cluster", (workload, context): Ra
     `VM $${vm.hourly}/h × ${hoursText(hours)} × ${countText(1 + workers)} ${nodeWord}, before spot and a VM commit.`,
   );
   if (vm.approximate) notes.push(`VM rate uses the reference region (${vm.source}).`);
+  if (vm.source === "missing") notes.push("Missing VM price; this line's total is a known DBU subtotal.");
   const spotShare = clamp(workload.spotShare, 0, 1);
   const spotDiscount = clamp(workload.spotDiscount, 0, 0.95);
   const usesAdvisor = vm.spotHourly != null && Math.abs(spotDiscount - catalog.defaultSpotDiscount) < 1e-9;

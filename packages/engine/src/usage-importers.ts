@@ -1,7 +1,8 @@
 import { importUsageCsv, importUsageProducts, type ProductUsageImport } from "./usage.js";
 import type { UsageImport } from "./types.js";
+export { usageSources, type UsageSource } from "./usage/parse.js";
 
-/** A text import. A new file shape is a new entry, not a new branch in the page. */
+/** Compatibility views; source detection and record parsing live in usageSources. */
 export interface TextImporter<T> {
   readonly id: string;
   parse(text: string): T;

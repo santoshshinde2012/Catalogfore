@@ -18,7 +18,8 @@ The SQL file is a fixed `SELECT`. Run it with a principal that can read `system.
 
 ```bash
 npm run cayfore
-npm run cayfore -- usage apps/web/public/sample-usage-history.csv
+npm run cayfore -- usage apps/web/public/sample-usage-history.csv --cloud aws --as-of 2026-10-17
+npm run cayfore -- forecast saved-plan.json
 npm run cayfore -- sql
 ```
 
@@ -51,7 +52,7 @@ Azure `enterprise` uses the same list rates as Azure Premium. The payload says s
 
 ### `estimate_workload`
 
-`portfolio` is an object. Missing fields are filled by the same normalizer as the website (AWS, `us-east-1`, Premium, flat 24-month forecast, 8% growth, unless you set them).
+`portfolio` is a versioned saved portfolio or a shorthand object with an explicit `workloads` array. Unrelated objects such as `{}` are rejected. Versioned saves use the same strict validation as the website. Shorthand fills omitted settings with AWS, its reference region, Premium, and a flat 12-month forecast with 8% annual growth. Unsupported workload kinds fail validation.
 
 A minimal classic job:
 
@@ -84,7 +85,7 @@ That portfolio is the engine fixture: about $53.82 DBU and $99.84 cloud per mont
 
 ### `forecast`
 
-Same `portfolio`. Returns the monthly estimate plus one point per forecast month. Growth compounds monthly. Seasonality is `flat`, `retail`, or `custom` (12 weights). A flat year sums to twelve times the run-rate.
+Same `portfolio`. Returns the canonical monthly estimate, `forecast` points, `months` with planning ranges, annual total, coverage, and assumptions used by the website and its exports. Growth compounds monthly. Seasonality is `flat`, `retail`, or `custom` (12 weights). `forecast.startMonth` fixes the calendar start; dated `events` change usage from their effective month. Prices and product formulas are recomputed for each forecast month. A flat year with zero growth and no dated changes sums to twelve times the run rate.
 
 ### `compare_scenarios`
 
@@ -104,8 +105,14 @@ The default comparison is `as_modeled`, `jobs_serverless`, and `commit_37`.
 
 ### `forecast_usage`
 
-`csv` is the text of a `system.billing.usage` export. Include `list_price` when the query joined `system.billing.list_prices` (`docs/usage-export.sql`). One month scales the default plan. Six or more months fit a trend and return `method`, `mape`, and twelve month bands. The response includes `pricesUpdatedOn`.
+`csv` contains a Databricks system-billing or supported FOCUS CSV. Include `list_price` when the query joined `system.billing.list_prices` (`docs/usage-export.sql`). Optional arguments are `cloud` (fallback for rows without cloud), `tier`, `region`, `asOf` (`YYYY-MM-DD` reporting cutoff), `month` (`YYYY-MM` explicit baseline), and `costBasis` (`effective` or `billed`, for FOCUS).
+
+The default baseline is the latest complete month. A partial month requires an explicit `month`; the response warns that it remains a partial run rate. The importer preserves exported USD costs, signed corrections, per-row cloud placement, unpriced quantities, and observed monthly history. Non-USD input fails with a conversion message. No separate cloud VM bill is inferred. Unknown prices remain visible through source and estimate coverage plus warnings.
+
+Enough contiguous history can fit a trend; shorter histories use a run rate. Responses include `method`, `mape`, `selectedMonth`, `asOf`, `costBasis`, `sourceCoverage`, `estimateCoverage`, `warnings`, `assumptions`, `pricesUpdatedOn`, and the same canonical `forecast`, `months`, `annual`, and `band` as the website. Planning ranges are not calibrated probabilities. A fitted diagnostic on synthetic data is not evidence of customer forecast accuracy.
+
+The CLI accepts the corresponding options as `--cloud`, `--tier`, `--region`, `--as-of`, `--month`, and `--cost-basis`. `forecast saved-plan.json` and `estimate saved-plan.json` reopen versioned JSON exports using strict validation.
 
 ## What this server will not do
 
-It will not apply the Lakehouse Real-Time 30% emission promo (through 2027-01-31). That promo is not a discount on jobs, SQL, or serving. It will not invent a Photon speedup unless you pick `photon_speedup_2`. It will not treat an Azure Enterprise label as AWS Enterprise prices.
+Time-limited product promotions apply only to eligible products and forecast dates in the bundled catalog. It will not invent a Photon speedup unless you pick `photon_speedup_2`. It will not treat an Azure Enterprise label as AWS Enterprise prices.

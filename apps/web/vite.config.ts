@@ -54,8 +54,16 @@ export default defineConfig(() => {
     base: BASE_PATH,
     plugins: [react(), tailwindcss(), productionPolicy()],
     build: {
-      // The landing chunk is the calculator. The product catalog stays on the Advanced chunk.
       chunkSizeWarningLimit: 1000,
+      rollupOptions: {
+        output: {
+          // Catalog updates can be cached independently of application and chart code.
+          manualChunks(id) {
+            const catalogDirectory = `${path.resolve(__dirname, "../../data").replaceAll("\\", "/")}/`;
+            if (id.replaceAll("\\", "/").startsWith(catalogDirectory) && id.endsWith(".json")) return "pricing-catalog";
+          },
+        },
+      },
     },
     resolve: {
       alias: {

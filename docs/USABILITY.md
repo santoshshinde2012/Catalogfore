@@ -1,10 +1,20 @@
 # Usability
 
-Checked in the running app on 2026-10-16. The four-input page uses rate card **2026-10-16.1**. The Advanced scenarios use catalog **2026-10-16.5**. Figures are estimates, not a quote. Cayfore is not affiliated with Databricks.
+Updated against the running app on **2026-10-17**. The quick page uses rate card **2026-10-16.1** and the product catalog is **2026-10-16.5**. These are reproducible walkthroughs and browser checks, not participant usability research. Figures are estimates, not a quote. Cayfore is not affiliated with Databricks.
 
 The page is one forecast. Cloud and tier, a starting monthly amount or a team size, a mix of pipelines / dashboards / models, and monthly growth. The year updates as those change. A shaded 12-month band, the year total, one sentence, and a month table are the result. Region, a commitment discount, a usage file, and the per-workload builder sit behind that.
 
 Light is the default. Dark mode is optional. Databricks’ own forecast (Usage Dashboard 2.0, budgets, `ai_forecast`) needs an account admin and billing history. Public cloud calculators price one SKU and assume you already know DBU rates. This page is the public 12-month number for a team that is evaluating, new, or writing a budget.
+
+## Navigating and editing
+
+On a phone, **View forecast** jumps from the inputs to the result; **Edit inputs** returns to the form. The fixed summary respects the device's safe area. Chart tabs form a balanced two-column layout on narrow screens. Month tables and billing details scroll within named, keyboard-focusable regions.
+
+The Cayfore brand returns to the inputs while keeping the current plan. **Menu → New forecast** explicitly starts again; **Undo last change** restores the previous plan. Section navigation preserves the shared URL and moves keyboard focus to its destination. The Open button works with a keyboard or touch.
+
+Starting spend retains the amount entered. A separate modeled baseline explains sizing differences. Enter applies spend or custom growth; invalid drafts show an error and preserve the last valid forecast. Adding or selecting an advanced workload reveals and focuses its editor; closing or removing it restores focus to the workload list.
+
+The import review keeps its primary action visible while the billing details scroll. Budget, scenario, timeline, and commitment panels explain their empty states and display action feedback. Layout and accessibility checks cover 320px, 390px, and 1440px in light and dark themes.
 
 ## Evaluating — what does a medium team cost on AWS?
 
@@ -29,11 +39,13 @@ A commitment discount, if you set one, lowers the Databricks portion and leaves 
 
 ## Already spending — replace the guess with a usage file
 
-“Use my real usage” takes a `system.billing.usage` CSV. The sample file (jobs, notebooks, serverless SQL) replaces the monthly amount and the mix:
+“Use my real usage” accepts Databricks billing or recognized FOCUS CSVs. Choose a file, inspect its month and price coverage, then choose **Use this baseline**. No input changes before that confirmation. A partial month requires explicit selection. See [USAGE-IMPORT.md](USAGE-IMPORT.md).
 
-- **From your usage file: about $1,573 this month. 65% pipelines, 35% dashboards, 0% models.**
-- Year: **About $18,878 per year, ±6%.** The range tightens because the file supplied the quantity. Machine cost is still inferred, because the file does not list virtual machines. Cloud machines are **34%** of that bill.
-- Cloud, tier, region, growth, and the discount stay where you left them. “Use the sliders instead” returns to a typed amount.
+The small bundled sample has no exported prices. At cutoff 2026-10-17 it selects September, preserves 3,000.5 DBUs, and uses catalog estimates with an unresolved storage line. It does not add an inferred VM bill. The known baseline is **$989.35**, with a roughly **$14,041** year when retaining the web page's initial 3% monthly-growth assumption. These are demonstrations, not observed invoice dollars.
+
+**Load history sample** uses the priced 18-month demonstration. It selects June 2026, with **$2,734.35** exported cost, starts the forecast in July 2026, and produces a roughly **$36,582** year. Historical USD observations and future estimates are distinct chart series. The sample designation remains visible after save/reload. Neither synthetic sample establishes customer accuracy.
+
+Global growth and commitment controls preserve imported workloads. Growth changes explicitly replace the fitted path with the chosen manual rate. A saved scenario retains monthly observations and can be compared with the current plan.
 
 ## Same work on another cloud
 
@@ -47,7 +59,7 @@ Medium on AWS is about **$11,997** in month one. Switch the cloud to Azure and k
 
 ## What moved off the front door
 
-The four opening questions, the portfolio name, and the side-by-side scenario board are gone from the first screen. Savings stay under “Ways to pay less,” each with an annual dollar amount. Copy link is the primary action. CSV, JSON, and PDF sit in the Export menu.
+The quick inputs remain on the first screen. Budget and named-scenario controls follow the main forecast. Savings stay under “Ways to pay less,” each with an annual amount and an explicit overlapping-alternatives explanation. Copy link is the primary action. CSV, JSON, and PDF sit in the Export menu.
 
 ## Advanced, checked by hand
 
@@ -97,4 +109,4 @@ Add Lakebase, Databricks App, and Lakebase branches.
 - App, medium: 0.5 DBU/hour × 10h × 5d × 52/12 × $0.75 = **$81.25**.
 - Branch compute: 1 CU × 8h × 5d × 52/12 × $0.111 = **$19.24**. Branch storage: 10 GB × $0.023 × 15 = **$3.45**.
 - Month: **$228.93**.
-- The same Lakebase line on GCP is **$0**, and the row says Lakebase is not priced on that cloud.
+- The same Lakebase line on GCP is unresolved. It contributes $0 to the known subtotal and the estimate visibly says that the total is incomplete.

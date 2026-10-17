@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import { App } from "./App";
+import { canHydratePrerender } from "./bootstrap";
 import "./index.css";
 
 const root = document.getElementById("root");
@@ -10,5 +11,5 @@ const app = (
     <App />
   </StrictMode>
 );
-if (root.hasAttribute("data-prerender")) hydrateRoot(root, app);
+if (canHydratePrerender(root)) hydrateRoot(root, app);
 else createRoot(root).render(app);

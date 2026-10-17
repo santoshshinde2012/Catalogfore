@@ -1,6 +1,8 @@
 import { defaultInstanceId, skuCatalog } from "./catalog.js";
 import { METERED_SKUS, type Cloud, type Workload } from "./types.js";
-import { base, cloudOf, cloudRates, isRecord, num, placementRates, scale, schedule, str } from "./portfolio-fields.js";
+import { base, cloudOf, isRecord, num, scale, schedule, str } from "./portfolio-fields.js";
+import { normalizedMeteredRates } from "./rate-fields.js";
+import { rateProvenanceOf } from "./pricing-fields.js";
 
 export function normalizeWorkload(input: unknown, cloud: Cloud): Workload | null {
   if (!isRecord(input) || typeof input.kind !== "string") return null;
@@ -121,18 +123,14 @@ export function normalizeWorkload(input: unknown, cloud: Cloud): Workload | null
     const sku = (METERED_SKUS as readonly string[]).includes(String(input.sku))
       ? (input.sku as Extract<Workload, { kind: "metered" }>["sku"])
       : "managed_services";
-    const rateByCloud = cloudRates(input.rateByCloud);
-    const fixedUsdByCloud = cloudRates(input.fixedUsdByCloud);
-    const rateByPlacement = placementRates(input.rateByPlacement);
+    const signed = rateProvenanceOf(input.rateProvenance)?.kind === "imported";
     return {
       ...base(input, "Metered DBUs"),
       kind,
       sku,
-      dbuPerMonth: num(input.dbuPerMonth, 100, 0, 1e12),
-      ...(input.units == null ? {} : { units: num(input.units, 0, 0, 1e12) }),
-      ...(rateByCloud ? { rateByCloud } : {}),
-      ...(fixedUsdByCloud ? { fixedUsdByCloud } : {}),
-      ...(rateByPlacement ? { rateByPlacement } : {}),
+      dbuPerMonth: num(input.dbuPerMonth, 100, signed ? -1e12 : 0, 1e12),
+      ...(input.units == null ? {} : { units: num(input.units, 0, signed ? -1e12 : 0, 1e12) }),
+      ...normalizedMeteredRates(input),
     };
   }
   return null;

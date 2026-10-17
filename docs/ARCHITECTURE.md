@@ -7,9 +7,11 @@ flowchart TB
   subgraph presentation
     Web[React UI]
     MCP[stdio MCP]
+    CLI[CLI]
   end
   subgraph application
     Simple[simple forecast]
+    Projection[canonical projection]
     Products[product formulas]
     Usage[usage import]
     Recs[savings ranker]
@@ -28,15 +30,18 @@ flowchart TB
   Web --> Simple
   Web --> Products
   Web --> Recs
-  MCP --> Estimate
+  Web --> Projection
+  MCP --> Projection
+  CLI --> Projection
   MCP --> Products
-  Simple --> Estimate
-  Simple --> Forecast
+  Simple --> Projection
+  Projection --> Estimate
+  Projection --> Forecast
   Products --> Estimate
   Usage --> Products
   Estimate --> Registry
   Registry --> JSON
-  Policies --> Estimate
+  Recs --> Projection
   Recs --> Policies
   Scripts --> JSON
 ```
@@ -52,9 +57,13 @@ flowchart TB
 | `costing/estimate-portfolio.ts` | Walks the portfolio, finds a strategy, scales lines, adds the add-on. It does not know how a SKU is priced.                                    | `CostStrategy[]`, `PricingCatalog`                     |
 | `forecast/model.ts`             | Turns one month’s estimate into 12–36 points. Growth and seasonality only.                                                                     | An `Estimate`                                          |
 | `forecast/series.ts`            | Fits an imported usage history to twelve months, with an approximate interval.                                                                 | Usage points                                           |
+| `projection.ts`                 | Returns the canonical dated estimate, forecast points, monthly planning ranges, annual total, and assumptions for every caller.                | Pricing and forecast services                          |
+| `forecast/portfolio.ts`         | Evaluates product formulas and usage events for each explicit forecast month.                                                                  | Cost strategies, formula registry                      |
+| `usage/`                        | Parses uploads through source adapters, preserves typed billing records, selects periods, aggregates costs, and builds a preview/portfolio.    | CSV parser, catalog, injected reporting cutoff         |
+| `commitments.ts`                | Prices a hypothetical prepaid USD list-value allowance, unused balance, and PAYG overflow.                                                     | Pure money helpers                                     |
 | `policies/scenario-policies.ts` | Named mutations: serverless, Photon, spot, commits. Each policy is data plus `apply`.                                                          | `PricingCatalog` when a policy needs a rate            |
-| `recommend.ts`                  | Ranks policies and the autostop / right-size adjustments by annual dollars.                                                                    | `estimate`, `forecast`, `applyScenario`                |
-| `simple/`                       | Turns four inputs into a portfolio. Mix, presets, monthly growth, and a usage file set workload sizes. It does not price a SKU itself.         | `estimate`, `forecast`, `uncertaintyFactors`           |
+| `recommend.ts`                  | Ranks policies and the autostop / right-size adjustments by annual dollars.                                                                    | `projectPortfolio`, `applyScenario`                    |
+| `simple/`                       | Turns four inputs into a portfolio. Mix, presets, monthly growth, and a usage file set workload sizes. It does not price a SKU itself.         | `projectPortfolio`, sizing helpers                     |
 | `apps/web/src/hooks`            | Session and derived view state: URL, theme, bands, recommendations.                                                                            | Engine functions                                       |
 | `apps/web/src/components`       | Presentational pieces. They receive data and callbacks. The Advanced ledger reads the product catalog for the picker and the per-product year. | Props, product catalog                                 |
 
@@ -66,13 +75,15 @@ flowchart TB
 
 **Liskov.** Every `CostStrategy` accepts a workload and a `CostContext` and returns a `RawLine`. Callers do not special-case the kind after the quote. Every `ScenarioPolicy` returns a new portfolio and leaves the input alone.
 
-**Interface segregation.** Strategies see `PricingCatalog`, not the JSON documents and not the React tree. The forecast sees an `Estimate`, not a portfolio. Presentational components see the fields they render.
+**Interface segregation.** Strategies see `PricingCatalog`, not the JSON documents and not the React tree. The growth-only forecast accepts an `Estimate`; dated orchestration receives a portfolio so it can apply product formulas and usage events. Presentational components see the fields they render.
 
 **Dependency inversion.** `estimate(portfolio, dependencies)` takes a catalog and a strategy list. The default is the bundled book. Tests pass a fake catalog and, in one case, a strategy that did not exist when the estimator was written. Scenario policies receive the catalog instead of importing a global rate table for the spot discount and the Photon multiplier.
 
 ## What stays pure
 
-Pricing, forecasting, policies, recommendations, and portfolio normalization are functions of their arguments. They do not read the clock, the network, or `localStorage`. The UI hook is the place that touches the URL and the theme.
+Pricing, forecasting, policies, recommendations, and portfolio normalization are functions of their arguments. They do not read the clock, the network, or `localStorage`. Product formulas receive an explicit date; deterministic defaults come from the versioned catalog. Upload reporting cutoffs are supplied by the web, CLI, or MCP boundary. Web session modules own URL state, local scenarios, theme, uploads, and clipboard actions.
+
+The UI and exports receive `projectPortfolio` results. Charts prepare display rows without introducing rate formulas. A custom or imported rate has explicit provenance; ordinary product rows rehydrate catalog-owned prices. Missing rates contribute a known subtotal and visible unresolved lines. Source quality and model-only intervals are distinct concepts.
 
 ## Errors
 

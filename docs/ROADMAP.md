@@ -1,5 +1,7 @@
 # Roadmap
 
+Implementation update **2026-10-17**: local budget variance, named scenarios, dated changes, typed usage review, FOCUS cost import, ownership summaries, source status, canonical exports, and dated charts now ship in the source. [PLAN.md](PLAN.md) describes current behavior. The comparison below is the historical 2026-10-16 assessment; its competitor claims have not been independently re-tested here. Customer interviews and customer-data backtests remain research work.
+
 Compared on 2026-10-16 with the [AWS Pricing Calculator](https://calculator.aws/) (assumptions: estimates are USD; export is CSV or PDF; a share link is stored on AWS servers), the [Azure pricing calculator](https://azure.microsoft.com/en-us/pricing/calculator/) (display currency includes EUR and INR; the legal price is still USD; export is Excel), the [Google Cloud pricing calculator](https://cloud.google.com/products/calculator) (a currency list includes INR and EUR; share; contract prices if a billing account is linked), Databricks’ instance picker and account usage pages, and the category of invoice-connected FinOps products. This pass did not re-test every screen of those products. The table records the gap that matters for Cayfore.
 
 Paid tools in that category, such as CloudHealth, Cloudability, Vantage, Finout, and Databricks-oriented products such as Chaos Genius, start from an invoice or a workspace. Cayfore does not. That is a choice: a public page cannot hold a customer bill.
@@ -42,7 +44,7 @@ These do not change the page layout.
 
 - Display currency. List rates are USD. Azure and GCP already warn that a converted figure is not the tariff.
 - A longer GCP region list, and live GCP VM prices. The second one needs the `GCP_BILLING_API_KEY` secret.
-- Photon as 2× for All-Purpose and 2.5× for Jobs, which is what the Azure instance tables print. The engine still uses the single 2.9× sentence from the Lakeflow feature table, so classic Photon is high versus those tables.
+- Exact per-instance Photon ratings beyond the supported workload/cloud factors. Azure All-Purpose now uses 2× and classic Jobs 2.5×; pipeline and other-cloud factors remain documented planning assumptions.
 - `Standard_F4s_v2` at 0.75 DBU/hour. It was not on the Azure instance tables fetched on 2026-10-16.
 - Reserved capacity, savings plans, and the DBCU tier grid as priced options. The commit control stays a percent.
 - Promotions, including Lakehouse Real-Time through 2027-01-31. They stay off.

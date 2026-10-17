@@ -6,6 +6,7 @@ import { normalizeMix } from "./mix.js";
 import { teamPreset, type TeamPresetId } from "./presets.js";
 import type { SimplePlan } from "./project.js";
 import { basketForSpend } from "./shape.js";
+import { annualGrowthFromMonthly } from "./growth.js";
 
 /** Simple-page default. Three percent per month, not the 8% annual growth on a blank advanced portfolio. */
 const DEFAULT_MONTHLY_GROWTH = 0.03;
@@ -16,6 +17,7 @@ function withoutUsage(plan: SimplePlan): SimplePlan {
   const next = { ...plan };
   delete next.usageDbu;
   delete next.usageForecast;
+  delete next.importedPortfolio;
   return next;
 }
 
@@ -46,15 +48,39 @@ export function planForPreset(plan: SimplePlan, id: TeamPresetId, dependencies?:
 
 /** Set monthly growth and drop a fitted series so the control is the path again. */
 export function withGrowth(plan: SimplePlan, monthlyGrowth: number): SimplePlan {
-  return {
+  const next = {
     ...withoutForecast(plan),
-    monthlyGrowth: clamp(Number.isFinite(monthlyGrowth) ? monthlyGrowth : 0, 0, 0.2),
+    monthlyGrowth: clamp(Number.isFinite(monthlyGrowth) ? monthlyGrowth : 0, -0.2, 0.2),
   };
+  if (plan.importedPortfolio) {
+    const portfolio = {
+      ...plan.importedPortfolio,
+      forecast: { ...plan.importedPortfolio.forecast, annualGrowth: annualGrowthFromMonthly(next.monthlyGrowth) },
+    };
+    if (portfolio.usage) {
+      portfolio.usage = { ...portfolio.usage };
+      delete portfolio.usage.forecast;
+    }
+    next.importedPortfolio = portfolio;
+  }
+  return next;
 }
 
 /** Set the Databricks commitment discount. Cloud machines are unchanged. */
 export function withCommit(plan: SimplePlan, commitDiscount: number): SimplePlan {
-  return { ...plan, commitDiscount: clamp(Number.isFinite(commitDiscount) ? commitDiscount : 0, 0, 0.95) };
+  const discount = clamp(Number.isFinite(commitDiscount) ? commitDiscount : 0, 0, 0.95);
+  return {
+    ...plan,
+    commitDiscount: discount,
+    ...(plan.importedPortfolio
+      ? {
+          importedPortfolio: {
+            ...plan.importedPortfolio,
+            commitment: { ...plan.importedPortfolio.commitment, dbuDiscount: discount },
+          },
+        }
+      : {}),
+  };
 }
 
 /** AWS Premium, US East, medium team, 3% monthly growth. */

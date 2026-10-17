@@ -1,15 +1,15 @@
 import {
   encodePortfolio,
-  estimate,
-  forecast,
+  projectPortfolio,
   projectSimple,
   recommendations,
-  rollForward,
   type Portfolio,
+  type UsageImportPreview,
 } from "@cayfore/engine";
 import { useEffect, useMemo, useState } from "react";
 import { readStoredTheme, storeTheme } from "../theme-storage";
 import { readInitial, type SimpleSession, type Theme } from "./forecast-session";
+import { useSavedScenarios } from "./saved-scenarios";
 import { sessionActions } from "./session-actions";
 
 export type { SimpleSession };
@@ -23,25 +23,19 @@ export function useSimpleForecast(): SimpleSession {
   const [notice, setNotice] = useState("");
   const [usageError, setUsageError] = useState("");
   const [usageBusy, setUsageBusy] = useState(false);
+  const [usagePreview, setUsagePreview] = useState<UsageImportPreview | null>(null);
   const [theme, setTheme] = useState<Theme>(() => {
     if (document.documentElement.dataset.theme === "dark") return "dark";
     return readStoredTheme() === "dark" ? "dark" : "light";
   });
-
-  const projection = useMemo(() => projectSimple(plan), [plan]);
-  const portfolio = override ?? projection.portfolio;
-  const result = useMemo(() => (override ? estimate(override) : projection.estimate), [override, projection.estimate]);
-  const points = useMemo(
-    () => (override ? forecast(result, override.forecast) : projection.points),
-    [override, projection.points, result],
-  );
-  const rolled = useMemo(() => (override ? rollForward(override, result, points) : null), [override, points, result]);
-
+  const quick = useMemo(() => projectSimple(plan), [plan]);
+  const portfolio = override ?? quick.portfolio;
+  const projection = useMemo(() => projectPortfolio(portfolio), [portfolio]);
+  const ideas = useMemo(() => recommendations(portfolio).slice(0, 3), [portfolio]);
   useEffect(() => {
-    const next = `#${encodePortfolio(portfolio)}`;
+    const next = `#plan=${encodePortfolio(portfolio)}`;
     if (window.location.hash !== next) history.replaceState(null, "", next);
   }, [portfolio]);
-
   useEffect(() => {
     const root = document.documentElement;
     root.classList.add("theme-swap");
@@ -56,7 +50,6 @@ export function useSimpleForecast(): SimpleSession {
     });
     return () => cancelAnimationFrame(frame);
   }, [theme]);
-
   const actions = sessionActions({
     plan,
     portfolio,
@@ -69,31 +62,25 @@ export function useSimpleForecast(): SimpleSession {
     setNotice,
     setUsageError,
     setUsageBusy,
+    setUsagePreview,
     setTheme,
   });
-
+  const scenarios = useSavedScenarios(portfolio, actions.loadPortfolio, setNotice);
   return {
+    ...projection,
+    forecastResult: projection,
     plan,
-    portfolio,
-    estimate: result,
-    points,
-    months: rolled?.months ?? projection.months,
-    annual: rolled?.annual ?? projection.annual,
-    spreadPercent: rolled?.spreadPercent ?? projection.spreadPercent,
-    listMonthly: rolled?.listMonthly ?? projection.listMonthly,
-    cloudShare: rolled?.cloudShare ?? projection.cloudShare,
-    assumptions: override
-      ? ["These figures follow the detailed workloads below. Changing the inputs above replaces those edits."]
-      : projection.assumptions,
-    recommendations: recommendations(portfolio).slice(0, 3),
-    usingDetail: override !== null,
-    usingUsage: plan.usageDbu != null && override === null,
+    recommendations: ideas,
+    usingDetail: !portfolio.simple,
+    usingUsage: Boolean(portfolio.usage || portfolio.simple?.usageDbu),
     theme,
     notice,
     usageError,
     usageBusy,
+    usagePreview,
     selectedId,
     canUndo: undo !== null,
     ...actions,
+    ...scenarios,
   };
 }

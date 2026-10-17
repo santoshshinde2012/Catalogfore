@@ -1,5 +1,5 @@
 import { TEAM_PRESETS, type Cloud, type SimplePlan, type TeamPresetId, type Tier } from "@cayfore/engine";
-import type { Dispatch, SetStateAction } from "react";
+import { useId, useState, type Dispatch, type SetStateAction } from "react";
 import { money } from "../../format";
 import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
@@ -86,6 +86,8 @@ export function SpendSection({
   onSpend: (amount: number) => void;
   onPreset: (id: TeamPresetId) => void;
 }) {
+  const [spendError, setSpendError] = useState("");
+  const errorId = useId();
   return (
     <>
       <Step n="2" title="Starting point" disabled={usageLocked}>
@@ -97,37 +99,69 @@ export function SpendSection({
             </span>
             <Input
               inputMode="decimal"
-              aria-describedby="spend-hint"
+              aria-describedby={`spend-hint${spendError ? ` ${errorId}` : ""}`}
+              aria-invalid={Boolean(spendError)}
               className="h-12 pl-7 text-lg tabular-nums"
-              value={spendFocus ? spendText : String(Math.round(listMonthly))}
+              value={spendFocus || spendError ? spendText : String(plan.monthlySpend)}
               onFocus={() => {
                 setSpendFocus(true);
-                setSpendText(String(Math.round(listMonthly)));
+                if (!spendError) setSpendText(String(plan.monthlySpend));
               }}
-              onChange={(event) => setSpendText(event.target.value)}
+              onChange={(event) => {
+                setSpendText(event.target.value);
+                setSpendError("");
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  event.currentTarget.blur();
+                }
+              }}
               onBlur={() => {
                 setSpendFocus(false);
-                const amount = Number(spendText.replace(/[$,\s]/g, ""));
-                if (Number.isFinite(amount)) onSpend(amount);
+                const text = spendText.replace(/[$,\s]/g, "");
+                const amount = Number(text);
+                if (!text || !Number.isFinite(amount) || amount < 0 || amount > 1e9) {
+                  setSpendError("Enter a monthly spend from $0 to $1,000,000,000.");
+                  return;
+                }
+                setSpendError("");
+                onSpend(amount);
               }}
             />
           </span>
         </label>
+        {spendError && (
+          <p id={errorId} className="text-sm text-destructive" role="alert">
+            {spendError}
+          </p>
+        )}
         <p id="spend-hint" className="text-sm text-muted-foreground">
           Before any commitment discount. Or choose a team size.
         </p>
+        {Math.abs(plan.monthlySpend - listMonthly) > 0.005 && (
+          <p className="text-xs text-muted-foreground">
+            Modeled monthly baseline: {money(listMonthly, 2)}. Sizing and machine-pricing assumptions can change this
+            amount.
+          </p>
+        )}
         <SegmentedStrip
           label="Team size"
           variant="rail"
           disabled={usageLocked}
           value={pressedPreset(plan, listMonthly, usageLocked) ?? ""}
-          onValueChange={(value) => value && onPreset(value as TeamPresetId)}
+          onValueChange={(value) => {
+            if (value) {
+              setSpendError("");
+              onPreset(value as TeamPresetId);
+            }
+          }}
         >
           {TEAM_PRESETS.map((preset) => (
             <SegmentedStripItem key={preset.id} value={preset.id}>
               <span className="text-sm font-semibold">{preset.label}</span>
               <span className="text-sm font-medium tabular-nums">{money(preset.monthlySpend, 0)}</span>
-              <span className="text-xs font-normal text-muted-foreground">{preset.detail}</span>
+              <span className="hidden text-xs font-normal text-muted-foreground sm:block">{preset.detail}</span>
             </SegmentedStripItem>
           ))}
         </SegmentedStrip>

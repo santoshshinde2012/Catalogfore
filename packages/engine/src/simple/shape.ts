@@ -5,6 +5,8 @@ import { FLAT_SEASONALITY, type UsageForecast } from "../forecast.js";
 import { clamp, roundMoney } from "../money.js";
 import type { Cloud, Portfolio, SimpleBasket, Tier, Workload, WorkloadMix } from "../types.js";
 import { normalizeMix } from "./mix.js";
+import { annualGrowthFromMonthly } from "./growth.js";
+export { annualGrowthFromMonthly } from "./growth.js";
 
 const DAY_HOURS = 8;
 const DAYS = 5;
@@ -27,11 +29,6 @@ interface UnitCosts {
   sqlDbuPerCluster: number;
   mlPerToken: number;
   mlDbuPerToken: number;
-}
-
-export function annualGrowthFromMonthly(monthly: number): number {
-  const rate = clamp(Number.isFinite(monthly) ? monthly : 0, 0, 0.2);
-  return Math.pow(1 + rate, 12) - 1;
 }
 
 export function regionFor(cloud: Cloud, region: string): string {
@@ -130,11 +127,12 @@ export function portfolioShell(
     commitment: { dbuDiscount: clamp(input.commitDiscount, 0, 0.95), cloudDiscount: 0 },
     addon: "none",
     usageScale: input.usageScale && input.usageScale > 0 ? input.usageScale : 1,
+    priceBook: { version: skuCatalog.version, verifiedOn: skuCatalog.verifiedOn },
     ...(input.usageCalibrated ? { usageCalibrated: true } : {}),
     simple: {
       monthlySpend: roundMoney(Math.max(0, input.monthlySpend)),
       mix: normalizeMix(input.mix),
-      monthlyGrowth: clamp(input.monthlyGrowth, 0, 0.2),
+      monthlyGrowth: clamp(input.monthlyGrowth, -0.2, 0.2),
       commitDiscount: clamp(input.commitDiscount, 0, 0.95),
       basket: {
         etlNodes: snap(input.basket.etlNodes),

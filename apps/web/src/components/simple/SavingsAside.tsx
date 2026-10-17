@@ -49,6 +49,10 @@ export function SavingsAside({
       <h2 id="savings-heading" className="text-sm font-semibold">
         Ways to pay less
       </h2>
+      <p className="text-xs text-muted-foreground">
+        Each option compares with the current plan. Savings overlap; do not add them together. Applying an option
+        recalculates the remaining choices.
+      </p>
       {recommendations.length === 0 ? (
         <p className="text-sm text-muted-foreground">None of these changes lower the forecast.</p>
       ) : (

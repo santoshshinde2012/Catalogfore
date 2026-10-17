@@ -1,6 +1,6 @@
 # Databricks cost model research
 
-Last verified: **2026-10-16**. The 2026-10-15 tables below are unchanged unless section 15 says a figure moved.
+Pricing sources last verified: **2026-10-16**, with Photon factors rechecked **2026-10-17**. Implementation corrections are recorded in section 19. Earlier dated walkthroughs describe the behavior at that time and are superseded by section 19 where they differ.
 
 This note is the source of truth for the calculator’s pricing assumptions. Dollar rates below are **list prices for estimation**, not a quote. Databricks and the clouds change rates, promotions, and region availability without notice. Where an official page renders prices only in the browser (the public Databricks price lists and the Azure Databricks price tables returned `$-` to a static fetch on this date), the dollar figure is taken from a secondary compilation and marked as such. The app must show an “estimates only” disclaimer on every total.
 
@@ -137,7 +137,7 @@ What is actually published:
 - Photon docs: Photon instance types “consume DBUs at a different rate” and point at the pricing page ([What is Photon?](https://docs.databricks.com/aws/en/compute/photon)).
 - The same Azure page’s instance tables, fetched 2026-10-16, print Photon DBU counts directly. All-Purpose with Photon is 2× the non-Photon count (DS3 v2 0.75 → 1.50, DS13 v2 2.00 → 4.00). Jobs Compute with Photon is 2.5× (DS3 v2 0.75 → 1.88, DS13 v2 2.00 → 5.00).
 
-**Calculator rule:** classic Photon defaults to **2.9×** DBU/hour, the single multiplier printed in the Lakeflow feature table, applied only when Photon is toggled on and the SKU is classic. That overstates Azure Jobs and All-Purpose Photon relative to the instance tables (2.5× and 2×). It is one cross-cloud factor, not a per-workload Azure table. Serverless and SQL do not get a second multiplier. The multiplier is data, not a constant buried in UI code, so it can be corrected without a logic change. Tips should say Photon often still wins on total cost because jobs finish faster; the user can shorten `hours` in a comparison scenario. We will not invent a speedup factor.
+**Calculator rule, corrected 2026-10-17:** Azure classic Jobs uses **2.5×** DBU/hour and All-Purpose uses **2×**; classic pipelines retain **2.9×**. AWS/GCP classic Jobs and pipelines retain the 2.9× planning factor; All-Purpose uses the approximately 2× factor discussed by Databricks. These remain workload-level assumptions where exact instance ratings are unavailable. See `rates/photon.ts`, the [Azure tables](https://azure.microsoft.com/en-us/pricing/details/databricks/), and [Databricks cost-maturity guidance](https://www.databricks.com/blog/chaos-control-cost-maturity-journey-databricks). Serverless and SQL do not receive another multiplier. A runtime speedup remains a separate user assumption.
 
 ## 7. Spot versus on-demand
 
@@ -515,7 +515,7 @@ Recomputed from the engine after the price files and the fit were wired in. The 
 | Check                             | Result                                                                                                                                                   |
 | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Medium year                       | $170,257.52. The page rounds that to about $170,258. First month $11,996.70, month 12 $16,606.23, cloud share 29%, band ±20%.                            |
-| Small team at 3%                  | Year $28,376.23, first month $1,999.45.                                                                                                                  |
+| Small team at 3%                  | Corrected on 2026-10-17: year $28,378.81, first month $1,999.63.                                                                                         |
 | Same medium basket, growth 0      | Year $143,960.40, twelve times the first month.                                                                                                          |
 | Azure East US, same medium basket | First month $16,062.69, year $227,962.20, cloud share 33%. East US jobs meter is still $0.30, so this move versus AWS is the rate card, not a bad meter. |
 | AWS classic job, m5.xlarge, 8×5   | DBU $53.82 and cloud $99.84. That is 3 × 0.69 DBU/h × hours × $0.15, and 3 × $0.192/h × hours, with hours = 8 × 5 × 52/12. One driver and two workers.   |
@@ -583,3 +583,15 @@ The calculator uses the $/GB card and does not also multiply gigabytes by the Jo
 3. Private Link hourly: the marketing page says billed. The AWS cost-management doc says expected in the future. No dollar figure on either, so the row stays $0.
 4. The 2024 data-transfer PDF and the 2026 network docs disagree by omission. The older cross-region $0.02/GB is not applied.
 5. AWS and GCP $/DBU remain a cited secondary card. Azure meters replace that card where the region publishes one. The proxy is smaller than it was before the meter pass, and it is now scored per cell instead of described only in prose.
+
+## 19. Implementation corrections on 2026-10-17
+
+`projectPortfolio` now supplies the dated points, planning range, annual total, explanations, and exports for web, CLI, and MCP. The UI no longer exports a different growth path from its fitted chart. Independent savings alternatives are labelled as overlapping, and each applied action matches its quoted reduction.
+
+Observed usage now uses typed records and a review step. Complete calendar months are the default; partial months require explicit selection. USD, cloud, units, signed corrections, price coverage, and source basis are preserved. Effective-list prices resolve public promotions; they are distinct from negotiated or amortized effective costs. Priced amounts are not replaced by a synthetic basket or an invented VM bill. Unpriced DBUs use the correct catalog SKU, while unsupported quantities remain unresolved. See [USAGE-IMPORT.md](USAGE-IMPORT.md).
+
+Products receive explicit forecast dates. Genie promotional math is reevaluated for each month, and saved plans keep inputs rather than treating generated DBUs as permanent prices. Source-labelled custom/imported amounts remain separate from catalog-owned rates. Net effective/billed import amounts are not discounted or charged a platform add-on again. Source-confidence scores describe evidence quality and are not statistical probabilities.
+
+The UI exposes an annual budget, named scenarios, a dated usage timeline, cumulative budget comparison, and separate historical and forecast chart series. JSON, CSV, PDF, saved links, and the month table reconcile to the same canonical result. Internal navigation preserves the plan fragment. Invalid saved JSON leaves the active plan unchanged.
+
+Calendar gaps and zero periods retain their meaning when fitting history. Holdout tuning uses training observations only. The model-only interval and source/infrastructure planning range are separate; no customer forecast-accuracy claim follows from synthetic examples. Customer bill reconciliation, representative backtests, and participant research still require appropriate inputs and people.

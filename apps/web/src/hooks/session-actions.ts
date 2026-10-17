@@ -1,201 +1,82 @@
 import {
   applyRecommendation,
-  defaultPlan,
+  detachSimple,
   normalizePortfolio,
-  planForMix,
-  planForPreset,
-  planForSpend,
-  planFromUsage,
-  withCommit,
-  withGrowth,
-  withRates,
-  adjustMix,
   type Portfolio,
   type RecommendationId,
-  type SimplePlan,
 } from "@cayfore/engine";
 import { toast } from "sonner";
-import { planFromPortfolio, type SimpleSession, type Theme } from "./forecast-session";
+import { planFromPortfolio } from "./forecast-session";
+import type { SessionControls } from "./session-controls";
+import { ioActions } from "./session-io-actions";
+import { planActions } from "./session-plan-actions";
 
-interface SessionControls {
-  plan: SimplePlan;
-  portfolio: Portfolio;
-  override: Portfolio | null;
-  undo: Portfolio | null;
-  setPlan: (plan: SimplePlan | ((current: SimplePlan) => SimplePlan)) => void;
-  setOverride: (portfolio: Portfolio | null) => void;
-  setUndo: (portfolio: Portfolio | null) => void;
-  setSelectedId: (id: string | null | ((current: string | null) => string | null)) => void;
-  setNotice: (notice: string) => void;
-  setUsageError: (error: string) => void;
-  setUsageBusy: (busy: boolean) => void;
-  setTheme: (theme: Theme | ((current: Theme) => Theme)) => void;
-}
-
-/** Commands for the simple page. The hook keeps the state. These functions only change it. */
-export function sessionActions(
-  controls: SessionControls,
-): Pick<
-  SimpleSession,
-  | "setCloud"
-  | "setTier"
-  | "setRegion"
-  | "setSpend"
-  | "setPreset"
-  | "setMix"
-  | "setGrowth"
-  | "setCommit"
-  | "loadUsageText"
-  | "loadUsageFile"
-  | "loadSample"
-  | "clearUsage"
-  | "share"
-  | "reset"
-  | "toggleTheme"
-  | "loadForecastFile"
-  | "editPortfolio"
-  | "selectWorkload"
-  | "removeWorkload"
-  | "undoRemove"
-  | "applyTip"
-> {
-  const {
-    plan,
-    portfolio,
-    override,
-    undo,
-    setPlan,
-    setOverride,
-    setUndo,
-    setSelectedId,
-    setNotice,
-    setUsageError,
-    setUsageBusy,
-    setTheme,
-  } = controls;
-
-  function replacePlan(next: SimplePlan) {
-    setOverride(null);
+/** State commands delegate file boundaries and model edits to focused modules. */
+export function sessionActions(controls: SessionControls) {
+  const { portfolio, undo, setOverride, setUndo, setSelectedId } = controls;
+  function restore(previous: Portfolio) {
+    setOverride(previous);
+    const simple = planFromPortfolio(previous);
+    if (simple) controls.setPlan(simple);
+    else
+      controls.setPlan((current) => ({
+        ...current,
+        cloud: previous.cloud,
+        region: previous.region,
+        tier: previous.tier,
+        commitDiscount: previous.commitment.dbuDiscount,
+        monthlyGrowth: Math.pow(1 + previous.forecast.annualGrowth, 1 / 12) - 1,
+      }));
     setUndo(null);
-    setUsageError("");
-    setPlan(next);
   }
-
-  function loadUsageText(text: string) {
-    const loaded = planFromUsage(plan, text);
-    if (!loaded.ok) {
-      setUsageError(loaded.error);
-      return;
-    }
-    replacePlan(loaded.plan);
+  function editPortfolio(next: Portfolio) {
+    const detached = normalizePortfolio(detachSimple(next));
+    setOverride(detached);
+    setUndo(null);
+    controls.setPlan((current) => ({
+      ...current,
+      cloud: next.cloud,
+      tier: next.tier,
+      region: next.region,
+      commitDiscount: next.commitment.dbuDiscount,
+      monthlyGrowth: Math.pow(1 + next.forecast.annualGrowth, 1 / 12) - 1,
+    }));
   }
-
   return {
-    setCloud: (cloud) => replacePlan(withRates(plan, { cloud, tier: plan.tier, region: plan.region })),
-    setTier: (tier) => replacePlan(withRates(plan, { cloud: plan.cloud, tier, region: plan.region })),
-    setRegion: (region) => replacePlan(withRates(plan, { cloud: plan.cloud, tier: plan.tier, region })),
-    setSpend: (amount) => replacePlan(planForSpend(plan, amount)),
-    setPreset: (id) => replacePlan(planForPreset(plan, id)),
-    setMix: (key, value) => replacePlan(planForMix(plan, adjustMix(plan.mix, key, value))),
-    setGrowth: (rate) => replacePlan(withGrowth(plan, rate)),
-    setCommit: (rate) => replacePlan(withCommit(plan, rate)),
-    loadUsageText,
-    loadUsageFile: (file) => {
-      setUsageBusy(true);
-      void import("../security/read-upload")
-        .then(({ readUsageFile }) => readUsageFile(file))
-        .then((result) => {
-          if (!result.ok) setUsageError(result.error);
-          else loadUsageText(result.value);
-        })
-        .catch(() => setUsageError("That file could not be read."))
-        .finally(() => setUsageBusy(false));
-    },
-    loadSample: () => {
-      setUsageBusy(true);
-      setUsageError("");
-      void fetch(`${import.meta.env.BASE_URL}sample-usage.csv`)
-        .then((response) => {
-          if (!response.ok) throw new Error("missing");
-          return response.text();
-        })
-        .then((text) => loadUsageText(text))
-        .catch(() => setUsageError("The sample file did not load."))
-        .finally(() => setUsageBusy(false));
-    },
-    clearUsage: () => replacePlan(planForSpend({ ...plan, usageDbu: undefined }, plan.monthlySpend)),
-    share: async () => {
-      const url = window.location.href;
-      try {
-        await navigator.clipboard.writeText(url);
-        setNotice("Link copied");
-        toast.success("Link copied");
-      } catch {
-        window.prompt("Copy this link", url);
-      }
-      window.setTimeout(() => setNotice(""), 2500);
-    },
-    reset: () => replacePlan(defaultPlan()),
-    toggleTheme: () => setTheme((current) => (current === "light" ? "dark" : "light")),
-    loadForecastFile: (file) => {
-      void import("../security/read-upload")
-        .then(({ readForecastFile }) => readForecastFile(file))
-        .then((result) => {
-          if (!result.ok) {
-            window.alert(result.error);
-            return;
-          }
-          const parsed = result.value as { portfolio?: unknown };
-          const decoded = normalizePortfolio(parsed.portfolio ?? parsed);
-          const simple = planFromPortfolio(decoded);
-          if (simple) replacePlan(simple);
-          else {
-            const detached = { ...decoded };
-            delete detached.simple;
-            setPlan((current) => ({ ...current, cloud: decoded.cloud, tier: decoded.tier, region: decoded.region }));
-            setOverride(detached);
-            setSelectedId(detached.workloads[0]?.id ?? null);
-          }
-        })
-        .catch(() => window.alert("That file is not a forecast JSON."));
-    },
-    editPortfolio: (next) => {
-      const detached = { ...next };
-      delete detached.simple;
-      setOverride(detached);
-      setUndo(null);
-    },
+    ...planActions(controls),
+    ...ioActions(controls),
+    toggleTheme: () => controls.setTheme((current) => (current === "light" ? "dark" : "light")),
+    editPortfolio,
     selectWorkload: setSelectedId,
-    removeWorkload: (id) => {
-      const previous = portfolio;
-      setUndo(previous);
-      const next = { ...portfolio, workloads: portfolio.workloads.filter((workload) => workload.id !== id) };
-      delete next.simple;
+    removeWorkload: (id: string) => {
+      setUndo(portfolio);
+      const next = normalizePortfolio(
+        detachSimple({
+          ...portfolio,
+          workloads: portfolio.workloads.filter((workload) => workload.id !== id),
+        }),
+      );
       setOverride(next);
       setSelectedId((current) => (current === id ? null : current));
       toast("Workload removed", {
         action: {
           label: "Undo",
           onClick: () => {
-            setOverride(previous);
-            setUndo(null);
+            restore(portfolio);
           },
         },
       });
     },
     undoRemove: () => {
-      if (!undo) return;
-      setOverride(undo);
-      setUndo(null);
+      if (undo) {
+        restore(undo);
+      }
     },
     applyTip: (id: RecommendationId) => {
-      if (!override && (id === "commit_37" || id === "commit_37_cloud_30")) {
-        replacePlan(withCommit(plan, Math.max(plan.commitDiscount, 0.37)));
-        return;
-      }
-      const next = applyRecommendation(portfolio, id);
-      delete next.simple;
+      const next = detachSimple(applyRecommendation(portfolio, id));
+      setUndo(portfolio);
       setOverride(next);
+      controls.setPlan((current) => ({ ...current, commitDiscount: next.commitment.dbuDiscount }));
     },
   };
 }

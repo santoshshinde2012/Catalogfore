@@ -115,7 +115,7 @@ describe("recommendations", () => {
 });
 
 describe("uncertainty band", () => {
-  it("widens an uncalibrated estimate and tightens after a usage scale", () => {
+  it("tightens usage assumptions after calibration while retaining unresolved infrastructure risk", () => {
     const portfolio = jobPortfolio();
     const result = estimate(portfolio);
     const open = uncertaintyBand(1200, portfolio, result);
@@ -135,15 +135,15 @@ describe("uncertainty band", () => {
     const tight = uncertaintyBand(1200, portfolio, estimate(portfolio));
     expect(tight.calibrated).toBe(true);
     expect(tight.low).toBe(1140);
-    expect(tight.high).toBe(1272);
+    expect(tight.high).toBe(1536);
   });
 
-  it("round-trips an optional budget and drops a missing or empty one", () => {
+  it("round-trips an optional budget including zero and drops a missing one", () => {
     const portfolio = jobPortfolio();
     portfolio.budgetAnnual = 50000;
     expect(decodePortfolio(encodePortfolio(portfolio))?.budgetAnnual).toBe(50000);
     delete portfolio.budgetAnnual;
     expect(decodePortfolio(encodePortfolio(portfolio))?.budgetAnnual).toBeUndefined();
-    expect(decodePortfolio(encodePortfolio({ ...jobPortfolio(), budgetAnnual: 0 }))?.budgetAnnual).toBeUndefined();
+    expect(decodePortfolio(encodePortfolio({ ...jobPortfolio(), budgetAnnual: 0 }))?.budgetAnnual).toBe(0);
   });
 });

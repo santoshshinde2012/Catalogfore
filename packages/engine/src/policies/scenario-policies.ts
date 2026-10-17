@@ -12,7 +12,9 @@ function toServerless(
   const instance = catalog.instance(workload.cloud ?? cloud, workload.instanceId);
   if (!instance) return workload;
   const workers = scaledCount(workload.scale.min, workload.scale.max, workload.scale.utilization);
-  const photon = workload.photon ? catalog.photonMultiplier : 1;
+  const photon = workload.photon
+    ? (catalog.photonMultiplierFor?.(workload.cloud ?? cloud, workload.sku) ?? catalog.photonMultiplier)
+    : 1;
   const dbuPerHour = (1 + workers) * instance.dbuPerHour * photon;
   const sku = workload.sku === "jobs_classic" ? "jobs_serverless" : "dlt_serverless";
   return {

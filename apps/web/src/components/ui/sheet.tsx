@@ -13,14 +13,14 @@ export function SheetContent({ className, children, ...props }: ComponentProps<t
       <Dialog.Overlay className="fixed inset-0 z-50 bg-[#0b2026]/40 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
       <Dialog.Content
         className={cn(
-          "fixed inset-y-0 right-0 z-50 flex w-full max-w-xl flex-col gap-4 overflow-y-auto border-l bg-background p-6 shadow-xl data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:slide-in-from-right",
+          "fixed inset-y-0 right-0 z-50 flex w-full max-w-xl flex-col gap-4 overflow-y-auto overscroll-contain border-l bg-background p-5 shadow-xl data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:slide-in-from-right sm:p-6",
           className,
         )}
         {...props}
       >
         {children}
         <Dialog.Close
-          className="absolute top-4 right-4 rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="absolute top-3 right-3 flex size-11 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground sm:top-4 sm:right-4 sm:size-9"
           aria-label="Close"
         >
           <X className="size-4" />

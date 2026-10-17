@@ -1,6 +1,6 @@
 import { defaultInstanceId, skuCatalog, type Estimate, type Portfolio, type Workload } from "@cayfore/engine";
-import { forecastProducts, productById, workloadsForProduct, workloadsFromUsage } from "@cayfore/engine/products";
-import { useState } from "react";
+import { forecastProducts, productById, workloadsForProduct } from "@cayfore/engine/products";
+import { useRef } from "react";
 import { money } from "../format";
 import { Editor } from "./Editor";
 import { LedgerMenu } from "./LedgerMenu";
@@ -12,12 +12,23 @@ interface LedgerProps {
   onPortfolio: (portfolio: Portfolio) => void;
   onSelect: (id: string | null) => void;
   onRemove: (id: string) => void;
+  onUsageFile: (file: File) => void;
 }
 
-export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect, onRemove }: LedgerProps) {
+export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect, onRemove, onUsageFile }: LedgerProps) {
+  const ledgerRef = useRef<HTMLDivElement>(null);
   const selected = portfolio.workloads.find((workload) => workload.id === selectedId) ?? null;
   const breakdown = forecastProducts(estimate, portfolio);
-  const [usageNote, setUsageNote] = useState("");
+  function restoreFocus(id?: string) {
+    requestAnimationFrame(() => {
+      const rows = ledgerRef.current?.querySelectorAll<HTMLButtonElement>("button[data-workload-id]");
+      const target =
+        [...(rows ?? [])].find((row) => row.dataset.workloadId === id) ??
+        ledgerRef.current?.querySelector<HTMLButtonElement>("button[aria-controls]");
+      target?.focus({ preventScroll: true });
+      target?.scrollIntoView({ block: "nearest", behavior: "auto" });
+    });
+  }
   function update(workload: Workload) {
     onPortfolio({
       ...portfolio,
@@ -33,31 +44,12 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
     onSelect(added[0]?.id ?? null);
   }
 
-  function onUsageFile(file: File) {
-    file.text().then((text) => {
-      const loaded = workloadsFromUsage(text);
-      if (!loaded.workloads.length) {
-        setUsageNote(loaded.warnings[0] ?? "That file did not contain mapped usage rows.");
-        return;
-      }
-      onPortfolio({ ...portfolio, workloads: [...portfolio.workloads, ...loaded.workloads] });
-      onSelect(loaded.workloads[0]?.id ?? null);
-      const skipped = loaded.unmapped.length ? ` ${loaded.unmapped.length} sku names were not mapped.` : "";
-      setUsageNote(`Added ${loaded.workloads.length} products from the usage file.${skipped}`);
-    });
-  }
-
   return (
-    <div className="grid gap-3">
-      <div className="flex items-center justify-between gap-2">
+    <div ref={ledgerRef} className="grid min-w-0 gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-sm font-medium">Workloads</h2>
         <LedgerMenu onAdd={add} onUsageFile={onUsageFile} />
       </div>
-      {usageNote && (
-        <p className="text-xs text-muted-foreground" role="status">
-          {usageNote}
-        </p>
-      )}
 
       <div className="grid gap-2">
         {portfolio.workloads.map((workload) => {
@@ -72,6 +64,7 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
           return (
             <button
               key={workload.id}
+              data-workload-id={workload.id}
               type="button"
               className={
                 workload.id === selectedId
@@ -145,8 +138,16 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
             onPortfolio({ ...portfolio, workloads: [...portfolio.workloads, copy] });
             onSelect(copy.id);
           }}
-          onRemove={() => onRemove(selected.id)}
-          onClose={() => onSelect(null)}
+          onRemove={() => {
+            const index = portfolio.workloads.findIndex((item) => item.id === selected.id);
+            const next = portfolio.workloads[index + 1] ?? portfolio.workloads[index - 1];
+            onRemove(selected.id);
+            restoreFocus(next?.id);
+          }}
+          onClose={() => {
+            onSelect(null);
+            restoreFocus(selected.id);
+          }}
         />
       )}
     </div>

@@ -2,7 +2,7 @@ import type { Product } from "@cayfore/catalog";
 import { roundMoney } from "../money.js";
 import { AZURE_DATA_PROCESSED_USD_PER_GB, TOKENS_PER_MILLION, ZEROBUS_USD_PER_GB } from "../rates/published.js";
 import type { Workload } from "../types.js";
-import { GENIE_FREE_DBU_PER_USER, geniePromoFactor, genieUserUsageFree } from "./genie-window.js";
+import { DEFAULT_FORMULA_DATE, GENIE_FREE_DBU_PER_USER, geniePromoFactor, genieUserUsageFree } from "./genie-window.js";
 
 const PARSE_DBU_PER_PAGE: Record<string, number> = {
   simple: 12.5,
@@ -15,7 +15,7 @@ type Metered = Extract<Workload, { kind: "metered" }>;
 type FormulaId = NonNullable<Product["formula"]>;
 
 /** One conversion from catalog inputs to a metered workload. A new formula is a new entry. */
-export type ProductFormula = (workload: Metered) => Workload;
+export type ProductFormula = (workload: Metered, asOf?: string) => Workload;
 
 function numInput(inputs: Workload["inputs"], key: string): number {
   const value = inputs?.[key];
@@ -32,17 +32,19 @@ function dbu(workload: Metered, sku: Metered["sku"], amount: number): Workload {
  * Each function returns a new workload and does not mutate the input.
  */
 export const formulaRegistry: Record<FormulaId, ProductFormula> = {
-  genie_code: (workload) => {
+  genie_code: (workload, asOf = DEFAULT_FORMULA_DATE) => {
     const users = numInput(workload.inputs, "users");
     const each = numInput(workload.inputs, "dbuPerUser");
-    const billed = Math.max(0, users * each - users * GENIE_FREE_DBU_PER_USER) * geniePromoFactor();
-    return dbu(workload, "model_serving", billed);
+    const billed = Math.max(0, users * each - users * GENIE_FREE_DBU_PER_USER) * geniePromoFactor(Date.parse(asOf));
+    return { ...dbu(workload, "model_serving", billed), priceStatus: billed === 0 ? "free" : "priced" };
   },
-  genie_llm_free: (workload) => {
+  genie_llm_free: (workload, asOf = DEFAULT_FORMULA_DATE) => {
     const users = numInput(workload.inputs, "users");
     const each = numInput(workload.inputs, "dbuPerUser");
-    const billed = genieUserUsageFree() ? 0 : Math.max(0, users * each - users * GENIE_FREE_DBU_PER_USER);
-    return dbu(workload, "model_serving", billed);
+    const billed = genieUserUsageFree(Date.parse(asOf))
+      ? 0
+      : Math.max(0, users * each - users * GENIE_FREE_DBU_PER_USER);
+    return { ...dbu(workload, "model_serving", billed), priceStatus: billed === 0 ? "free" : "priced" };
   },
   genie_sql: (workload) =>
     dbu(
@@ -90,6 +92,6 @@ export const formulaRegistry: Record<FormulaId, ProductFormula> = {
 };
 
 /** Apply the formula registered for this id. */
-export function applyProductFormula(workload: Metered, formula: FormulaId): Workload {
-  return formulaRegistry[formula](workload);
+export function applyProductFormula(workload: Metered, formula: FormulaId, asOf?: string): Workload {
+  return formulaRegistry[formula](workload, asOf);
 }

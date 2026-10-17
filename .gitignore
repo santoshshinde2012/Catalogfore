@@ -8,3 +8,6 @@ test-results
 blob-report
 playwright/.cache
 .vite
+
+# Local research notes and agent task briefs. Not published.
+research/

@@ -1,5 +1,9 @@
+import type { SavedScenario } from "./saved-scenarios";
+
 import {
   decodePortfolio,
+  projectPortfolio,
+  type UsageImportPreview,
   defaultPlan,
   planForSpend,
   recommendations,
@@ -16,6 +20,7 @@ import {
 } from "@cayfore/engine";
 
 export interface SimpleSession {
+  forecastResult: ReturnType<typeof projectPortfolio>;
   plan: SimplePlan;
   portfolio: Portfolio;
   estimate: Estimate;
@@ -33,6 +38,19 @@ export interface SimpleSession {
   notice: string;
   usageError: string;
   usageBusy: boolean;
+  usagePreview: UsageImportPreview | null;
+  scenarios: SavedScenario[];
+  comparison: SavedScenario | null;
+  saveScenario: (name: string) => void;
+  loadScenario: (id: string) => void;
+  duplicateScenario: (id: string, name?: string) => void;
+  removeScenario: (id: string) => void;
+  compareScenario: (id: string | null) => void;
+  setBudget: (amount: number | undefined) => void;
+  setCloudDiscount: (rate: number) => void;
+  resetToQuick: () => void;
+  loadUsagePreview: (preview: UsageImportPreview, mode: "replace" | "append") => void;
+  dismissUsagePreview: () => void;
   selectedId: string | null;
   canUndo: boolean;
   setCloud: (cloud: Cloud) => void;
@@ -45,12 +63,12 @@ export interface SimpleSession {
   setCommit: (rate: number) => void;
   loadUsageText: (text: string) => void;
   loadUsageFile: (file: File) => void;
-  loadSample: () => void;
+  loadSample: (kind?: "current" | "history") => void;
   clearUsage: () => void;
   share: () => Promise<void>;
   reset: () => void;
   toggleTheme: () => void;
-  loadForecastFile: (file: File) => void;
+  loadForecastFile: (file: File) => Promise<void>;
   editPortfolio: (portfolio: Portfolio) => void;
   selectWorkload: (id: string | null) => void;
   removeWorkload: (id: string) => void;
@@ -84,12 +102,12 @@ function hydrate(plan: SimplePlan): SimplePlan {
 }
 
 export function readInitial(): { plan: SimplePlan; override: Portfolio | null } {
-  const hash = window.location.hash.replace(/^#/, "");
+  const hash = window.location.hash.replace(/^#(?:plan=)?/, "");
   if (hash) {
     const decoded = decodePortfolio(hash);
     const fromSimple = decoded ? planFromPortfolio(decoded) : null;
-    if (fromSimple) return { plan: fromSimple, override: null };
-    if (decoded && decoded.workloads.length > 0) {
+    if (fromSimple && decoded) return { plan: fromSimple, override: decoded };
+    if (decoded) {
       const detached = { ...decoded };
       delete detached.simple;
       return {
