@@ -40,12 +40,12 @@ describe("workbook rate provenance", () => {
       confidence: 92,
       band: "measured",
     });
-    expect(azure.source).toMatch(/prices.azure.com/);
+    expect(new URL(azure.source).hostname).toBe("prices.azure.com");
     expect(azure.basis).toMatch(/Exact Azure/);
     expect(result.estimate.lines[0].dbuCost / result.estimate.lines[0].dbu).toBeCloseTo(0.5 * 0.75, 4);
     expect(aws.price).toBeCloseTo(0.45 * 1.109091, 8);
     expect(aws).toMatchObject({ cloud: "aws", region: "eu-west-1", tier: "enterprise", confidence: 35, band: "proxy" });
-    expect(aws.source).toMatch(/flexera.com/);
+    expect(new URL(aws.source).hostname).toBe("www.flexera.com");
     expect(aws.basis).toMatch(/region factor/);
   });
 
@@ -126,7 +126,7 @@ describe("workbook rate provenance", () => {
     const rate = listedRateDetails(result, result.estimate.lines[0]);
     expect(rate.price).toBe(0.45);
     expect(rate.basis).toMatch(/Catalog estimate for imported DBU usage; export supplied no price/);
-    expect(rate.source).toMatch(/prices.azure.com/);
+    expect(new URL(rate.source).hostname).toBe("prices.azure.com");
   });
 
   it("retains repeated SKUs as separate traceable rows and leaves non-public rates blank in Excel", async () => {

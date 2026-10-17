@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createHash } from "node:crypto";
 import { productCatalog } from "@cayfore/catalog";
 import { regionalSkuRate, skuCatalog, skuRate, vmHourly } from "../catalog.js";
 import { blankPortfolio } from "../portfolio.js";
@@ -24,23 +25,32 @@ describe("canonical unit-cost inventory", () => {
   it("covers every product/part and platform concept with stable unique rows", () => {
     expect(catalog.products).toHaveLength(78);
     expect(new Set(catalog.rows.map((item) => item.id)).size).toBe(catalog.rows.length);
-    expect(buildUnitCostCatalog()).toEqual(catalog);
-    for (const product of productCatalog.products) {
-      expect(catalog.rows.some((item) => item.productId === product.id)).toBe(true);
-      for (const part of product.parts ?? [])
-        expect(catalog.rows.some((item) => item.productId === product.id && item.partId === part.id)).toBe(true);
-    }
+    const fingerprint = (value: unknown) => createHash("sha256").update(JSON.stringify(value)).digest("hex");
+    expect(fingerprint(buildUnitCostCatalog())).toBe(fingerprint(catalog));
+    const productIds = new Set(catalog.rows.map((item) => item.productId));
+    const partIds = new Set(catalog.rows.map((item) => `${item.productId}:${item.partId}`));
+    const missingDefinitions = productCatalog.products.flatMap((product) => [
+      ...(!productIds.has(product.id) ? [product.id] : []),
+      ...(product.parts ?? [])
+        .filter((part) => !partIds.has(`${product.id}:${part.id}`))
+        .map((part) => `${product.id}:${part.id}`),
+    ]);
+    expect(missingDefinitions).toEqual([]);
     expect(catalog.rows.filter((item) => item.status === "not_applicable")).toHaveLength(8);
-    for (const item of catalog.rows) {
-      expect(item.sources.length, item.id).toBeGreaterThan(0);
-      expect(item.sources.every((reference) => reference.url.startsWith("https://"))).toBe(true);
-      expect(item.unitPriceUsd === null || Number.isFinite(item.unitPriceUsd)).toBe(true);
-      expect(item.usdPerUnit).toBe(item.unitPriceUsd === null ? null : item.unitPriceUsd / item.unitQuantity);
-      if (item.baseRateUsd !== null) expect(item.baseRateUnit).toBeTruthy();
-      expect(item.status === "unpriced" || item.status === "not_applicable" ? item.unitPriceUsd === null : true).toBe(
-        true,
-      );
-    }
+    const invalidRows = catalog.rows
+      .filter(
+        (item) =>
+          item.sources.length === 0 ||
+          !item.sources.every((reference) => reference.url.startsWith("https://")) ||
+          !(item.unitPriceUsd === null || Number.isFinite(item.unitPriceUsd)) ||
+          !Number.isFinite(item.unitQuantity) ||
+          item.unitQuantity <= 0 ||
+          !Object.is(item.usdPerUnit, item.unitPriceUsd === null ? null : item.unitPriceUsd / item.unitQuantity) ||
+          (item.baseRateUsd !== null && !item.baseRateUnit) ||
+          ((item.status === "unpriced" || item.status === "not_applicable") && item.unitPriceUsd !== null),
+      )
+      .map((item) => item.id);
+    expect(invalidRows).toEqual([]);
   });
 
   it("uses exact Azure meters before proxy rates, including Enterprise aliasing", () => {
