@@ -12,7 +12,9 @@ export function AppHeader({
   onInputs,
   onForecast,
   onProducts,
+  onRates,
   productMapOpen = false,
+  unitCostsOpen = false,
   onAdvanced,
   onHow,
   onNew,
@@ -23,14 +25,23 @@ export function AppHeader({
   onInputs: () => void;
   onForecast: () => void;
   onProducts: () => void;
+  onRates: () => void;
   productMapOpen?: boolean;
+  unitCostsOpen?: boolean;
   onAdvanced: () => void;
   onHow: () => void;
   onNew: () => void;
   onOpen: (file: File) => void;
 }) {
   const upload = useRef<HTMLInputElement>(null);
-  const actions = { inputs: onInputs, forecast: onForecast, products: onProducts, advanced: onAdvanced, how: onHow };
+  const actions = {
+    inputs: onInputs,
+    forecast: onForecast,
+    products: onProducts,
+    rates: onRates,
+    advanced: onAdvanced,
+    how: onHow,
+  };
   const themeLabel = theme === "light" ? "Switch to dark theme" : "Switch to light theme";
 
   return (
@@ -74,9 +85,11 @@ export function AppHeader({
               <Button
                 type="button"
                 variant="ghost"
-                className="min-h-10 rounded-xl px-3 text-[13px] text-muted-foreground hover:bg-card hover:text-foreground hover:shadow-sm aria-[current=page]:bg-card aria-[current=page]:text-foreground aria-[current=page]:shadow-sm"
+                className="min-h-10 gap-1.5 rounded-xl px-2 text-xs text-muted-foreground hover:bg-card hover:text-foreground hover:shadow-sm aria-[current=page]:bg-card aria-[current=page]:text-foreground aria-[current=page]:shadow-sm"
                 aria-haspopup={id === "advanced" ? "dialog" : undefined}
-                aria-current={id === "products" && productMapOpen ? "page" : undefined}
+                aria-current={
+                  (id === "products" && productMapOpen) || (id === "rates" && unitCostsOpen) ? "page" : undefined
+                }
                 onClick={actions[id]}
               >
                 <Icon className="size-3.5" aria-hidden="true" />
@@ -146,7 +159,12 @@ export function AppHeader({
               if (file) onOpen(file);
             }}
           />
-          <WorkspaceMenu actions={actions} onNew={onNew} productMapOpen={productMapOpen} />
+          <WorkspaceMenu
+            actions={actions}
+            onNew={onNew}
+            productMapOpen={productMapOpen}
+            unitCostsOpen={unitCostsOpen}
+          />
         </div>
       </div>
     </header>

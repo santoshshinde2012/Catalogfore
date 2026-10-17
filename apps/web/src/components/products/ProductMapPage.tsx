@@ -12,7 +12,15 @@ function sortEntries(a: ProductMapEntry, b: ProductMapEntry): number {
   return Number(Boolean(a.product)) - Number(Boolean(b.product)) || a.name.localeCompare(b.name);
 }
 
-export function ProductMapPage({ onAddProduct, onBack }: { onAddProduct: (id: string) => void; onBack: () => void }) {
+export function ProductMapPage({
+  onAddProduct,
+  onInspectCosts,
+  onBack,
+}: {
+  onAddProduct: (id: string) => void;
+  onInspectCosts: (id: string) => void;
+  onBack: () => void;
+}) {
   const [query, setQuery] = useState("");
   const [domainId, setDomainId] = useState("");
   const [kind, setKind] = useState("");
@@ -133,6 +141,7 @@ export function ProductMapPage({ onAddProduct, onBack }: { onAddProduct: (id: st
               key={selected.id}
               entry={selected}
               onAdd={onAddProduct}
+              onInspectCosts={onInspectCosts}
               onSelect={explore}
               onResults={() => navigateToSection("product-directory")}
             />

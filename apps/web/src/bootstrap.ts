@@ -4,7 +4,7 @@ import { SCENARIO_STORAGE_KEY } from "./hooks/saved-scenarios";
 export function canHydratePrerender(root: HTMLElement): boolean {
   if (
     !root.hasAttribute("data-prerender") ||
-    new URL(window.location.href).searchParams.get("view") === "products" ||
+    ["products", "rates"].includes(new URL(window.location.href).searchParams.get("view") ?? "") ||
     window.location.hash ||
     document.documentElement.dataset.theme === "dark"
   ) {

@@ -31,9 +31,15 @@ Open **Product map** to explore eight Databricks domains, all 70 catalog entries
 
 ![Databricks products and services mapped across eight learning domains](docs/screenshots/product-map-light.png)
 
+Open **Unit costs** for the source prices and consumption rules behind each product. Filter by product, cloud, region, edition, component, or evidence status; inspect machines, models, token directions, and other variants; then enter a quantity to calculate a component subtotal. Product map and forecast rows link to the relevant reference costs. [Unit-cost documentation](docs/UNIT-COSTS.md) explains sources, missing prices, assumptions, and pricing conflicts.
+
+Download ordinary CSV or JSON in the browser, or run `npm run export:unit-costs` to create both locally. Complete, lossless copies are versioned as [CSV](data/unit-costs.csv.gz) and [JSON](data/unit-costs.json.gz) gzip files. They cover all 70 pricing products and eight platform concepts without treating an unknown rate as free.
+
+![Source unit costs, billing dimensions, and a quantity calculation](docs/screenshots/unit-cost-details-light.png)
+
 ![Imported spend and forecast against a budget, using the bundled historical demonstration CSV](docs/screenshots/usage-forecast.png)
 
-CSV, JSON, PDF, and shared plans use the same forecast result. Unpriced charges are identified as unresolved; the total is a known subtotal when costs are missing. The range represents planning assumptions, not a calibrated probability interval.
+Forecast CSV, JSON, PDF, and shared plans use the same forecast result. Unpriced charges are identified as unresolved; the total is a known subtotal when costs are missing. The range represents planning assumptions, not a calibrated probability interval.
 
 ![The same forecast in dark mode](docs/screenshots/forecast-dark.png)
 
@@ -56,6 +62,7 @@ Use Node 22.13+ within Node 22, or Node 24+. Run `nvm use` to select Node 22 fro
 npm test          # engine unit tests and the price-file parser
 npm run lint
 npm run typecheck
+npm run check:unit-costs # committed CSV/JSON still match their source inputs
 npm run build
 npm run test:mcp  # stdio MCP smoke test
 npm run test:e2e  # Playwright, desktop and mobile, including axe
@@ -78,6 +85,7 @@ The core JavaScript is about 290 KB gzipped, including the separately cached pri
 | `docs/CATALOG.md`            | Product catalog schema, citations, and the watch                        |
 | `docs/PRODUCTS.md`           | Product inventory and which rows have a list rate                       |
 | `docs/PRODUCT-MAP.md`        | Learning domains, service relationships, aliases, and source evidence   |
+| `docs/UNIT-COSTS.md`         | Source unit prices, dimensions, formulas, CSV/JSON, and evidence limits |
 | `docs/COVERAGE.md`           | Which products and Azure cells have a cited rate                        |
 | `docs/RESEARCH.md`           | Source for every rate                                                   |
 | `docs/NAMING.md`             | Why the product is called Cayfore                                       |

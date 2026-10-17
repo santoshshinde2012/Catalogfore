@@ -12,6 +12,7 @@ test("every desktop header action explains itself on hover and keyboard focus", 
     header.getByRole("button", { name: "Forecast", exact: true }),
     header.getByRole("button", { name: "Advanced", exact: true }),
     header.getByRole("button", { name: "Product map", exact: true }),
+    header.getByRole("button", { name: "Unit costs", exact: true }),
     header.getByRole("button", { name: "How it works", exact: true }),
     header.getByRole("link", { name: "Star on GitHub", exact: true }),
     header.getByRole("button", { name: "Switch to dark theme", exact: true }),
@@ -82,7 +83,15 @@ test("touch menu explains its actions and fits a narrow screen @mobile", async (
   await expect(menu.getByRole("menuitem", { name: /^Forecast\b/ })).toContainText(
     "Explore monthly spend, cost drivers, and your 12-month outlook.",
   );
-  for (const name of ["Edit inputs", "Forecast", "Advanced", "Product map", "How it works", "New forecast"]) {
+  for (const name of [
+    "Edit inputs",
+    "Forecast",
+    "Advanced",
+    "Product map",
+    "Unit costs",
+    "How it works",
+    "New forecast",
+  ]) {
     const action = menu.getByRole("menuitem", { name: new RegExp(`^${name}\\b`) });
     await expect(action).toBeVisible();
     await action.scrollIntoViewIfNeeded();

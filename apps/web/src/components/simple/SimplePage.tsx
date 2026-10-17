@@ -2,6 +2,7 @@ import { ChevronDown } from "lucide-react";
 import { projectPortfolio, repricePortfolio } from "@cayfore/engine";
 import { useMemo, type ReactNode } from "react";
 import type { SimpleSession } from "../../hooks/useSimpleForecast";
+import type { RatePlacement } from "../../hooks/useAppView";
 import { Card } from "../ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { AdvancedBuilder } from "./AdvancedBuilder";
@@ -21,11 +22,13 @@ export function SimplePage({
   howOpen,
   onHowOpen,
   advancedAsk,
+  onReferenceCosts,
 }: {
   session: SimpleSession;
   howOpen: boolean;
   onHowOpen: (open: boolean) => void;
   advancedAsk: number;
+  onReferenceCosts?: (productId: string, placement: RatePlacement) => void;
 }) {
   const comparison = useMemo(
     () =>
@@ -115,6 +118,7 @@ export function SimplePage({
           <Card className="p-5 shadow-[0_1px_2px_rgb(11_32_38/0.04),0_12px_32px_rgb(11_32_38/0.06)] sm:p-6">
             <ResultsPanel
               projection={session.forecastResult}
+              onReferenceCosts={onReferenceCosts}
               comparison={comparison}
               notice={session.notice}
               busy={session.usageBusy}

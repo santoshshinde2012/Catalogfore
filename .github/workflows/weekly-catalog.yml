@@ -33,6 +33,8 @@ jobs:
         run: npx vite-node scripts/weekly-catalog.ts --apply
         env:
           GCP_BILLING_API_KEY: ${{ secrets.GCP_BILLING_API_KEY }}
+      - name: Rebuild the source unit-cost CSV and JSON
+        run: npm run export:unit-costs
       - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           commit-message: "Refresh the weekly catalog and price check"
@@ -52,6 +54,8 @@ jobs:
             data/catalog-watch-state.json
             data/coverage-summary.json
             data/product-catalog.json
+            data/unit-costs.json.gz
+            data/unit-costs.csv.gz
             data/weekly-summary.md
             docs/COVERAGE.md
             CHANGELOG.md

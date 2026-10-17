@@ -15,7 +15,7 @@ const sources = [
     href: `${REPO}/blob/main/LICENSE`,
   },
   {
-    label: "Rates",
+    label: "Research",
     title: "Pricing research",
     description: "Review the published rate sources and research notes.",
     href: `${REPO}/blob/main/docs/RESEARCH.md`,
@@ -31,10 +31,12 @@ const sources = [
 export function AppFooter({
   onForecast,
   onProducts,
+  onRates,
   onHow,
 }: {
   onForecast: () => void;
   onProducts: () => void;
+  onRates: () => void;
   onHow: () => void;
 }) {
   const navigation = [
@@ -49,6 +51,12 @@ export function AppFooter({
       description: "Understand Databricks products, their domains, and how they connect.",
       href: "?view=products",
       action: onProducts,
+    },
+    {
+      label: "Unit costs",
+      description: "Inspect per-unit pricing, source evidence, and downloadable rate dimensions.",
+      href: "?view=rates",
+      action: onRates,
     },
     {
       label: "How it works",

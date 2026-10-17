@@ -54,8 +54,9 @@ The job uses the default `GITHUB_TOKEN`. Repository permission stays `contents: 
 4. Read `robots.txt` and, when that file allows it, sitemap metadata on `www.databricks.com` and `docs.databricks.com`. A new product signal is a `www.databricks.com/product/<name>` URL that was not seen before. Release-note archives and pricing URLs are ignored. The RSS feed covers release notes. `sitemapLocs` in `data/catalog-watch-state.json` starts from the product URLs listed on 2026-10-17, so an existing marketing page is not filed as new. The job does not scrape a pricing page.
 5. Diff the price files. A rate move over 20% is listed. It is not applied as a new curated `$/DBU`. The curated card stays a cited table.
 6. When something changed, bump the product-catalog version, note it under Unreleased in `CHANGELOG.md`, and write `data/weekly-summary.md`.
-7. Open or update one pull request on the branch `weekly-catalog`. The summary lists new services, price changes, and removed items.
-8. When a new sitemap product, release-note title, Azure meter, or stale citation needs research, open one GitHub issue titled `Catalog research: new public signals`, or comment on the open issue. The checklist does not change a rate.
+7. Rebuild the complete source unit-cost CSV/JSON artifacts with `npm run export:unit-costs`. The workflow includes their lossless gzip copies in the same review pull request. Observed price dates come from their inputs; generating an export does not reverify a rate.
+8. Open or update one pull request on the branch `weekly-catalog`. The summary lists new services, price changes, and removed items.
+9. When a new sitemap product, release-note title, Azure meter, or stale citation needs research, open one GitHub issue titled `Catalog research: new public signals`, or comment on the open issue. The checklist does not change a rate.
 
 `--offline` skips the network and is for tests. A dry run without `--apply` prints the summary and does not write files.
 
@@ -70,6 +71,8 @@ npx vite-node scripts/weekly-catalog.ts
 npx vite-node scripts/weekly-catalog.ts --offline
 npm run refresh-prices
 SKIP_AWS=1 npm run refresh-prices
+npm run export:unit-costs
+npm run check:unit-costs
 ```
 
 Do not commit a GCP key. Put it in the Actions secret if you want the weekly job to refresh GCE rates. `NOTICE` records which price files come from which public source.

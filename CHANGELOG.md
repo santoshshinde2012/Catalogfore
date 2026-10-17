@@ -6,6 +6,8 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Added
 
+- A separate Unit costs explorer and deterministic source CSV/JSON catalog for all 70 pricing products and eight platform concepts. Prices retain their cloud, region, edition, component, variant, units, conversion factors, source evidence, conditions, and unresolved coverage. Product map and forecast lines open reference costs; a quantity calculator shows component subtotals. Complete exports are versioned losslessly compressed and checked against the builder in CI.
+- `cayfore rates` for filtered CSV/JSON source-price exports, plus `export:unit-costs` and `check:unit-costs` commands. The weekly catalog workflow rebuilds both artifacts after price updates.
 - A separate Product map with eight learning domains, all 70 catalog entries, eight platform concepts, searchable current and legacy names, sourced relationships, and example architectures. Supported products append to the existing forecast with Undo; navigation and browser history preserve the saved plan.
 - An Excel workbook export (XLSX) from the Export menu, `cayfore estimate --xlsx`, and the MCP tool `export_xlsx`. CSV, JSON, and PDF stay. The workbook uses live `SUM` formulas, the lava header, and the disclaimer “Not affiliated with Databricks”.
 - One Monday 06:00 UTC catalog workflow. It refreshes Azure and AWS list prices, checks allowed Databricks RSS and sitemap metadata, validates the schema, flags rate moves over 20%, and opens one review pull request. It does not merge.
@@ -42,6 +44,7 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Changed
 
+- Excel source-rate sheets resolve each workload's placement and regional meter, preserve separate same-SKU workloads, and explain custom or observed costs without assigning an unrelated public DBU rate. Unit-cost evidence distinguishes old observations, documentation reviews, assumptions, and current source conflicts; existing forecast rates and formulas are unchanged.
 - Catalog refresh on 2026-10-17. Catalog `2026-10-17.1`, price book `2026-10-17.1`, instances `2026-10-17.1`, and the VM and Azure meter files `2026-10-17.2`. Azure Retail Prices and AWS EC2 offers were re-read. No list rate moved. GCP was skipped. Multi-statement transactions are generally available and are not a new SKU. The default medium AWS year stays $170,257.52.
 - Page, CSV, JSON, PDF, product totals, recommendations, CLI, and MCP share one canonical dated forecast. Promotions are evaluated per month, fitted forecasts retain calendar spacing, and zero periods remain observations.
 - Global growth and pricing changes preserve detailed workloads. Internal navigation preserves shared state. Every savings action applies the change it quotes, with alternatives labelled as overlapping comparisons.

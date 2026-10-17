@@ -50,6 +50,10 @@ for (const viewport of viewports) {
     .click();
   await page.getByRole("region", { name: "Product details", exact: true }).waitFor();
   if (new URL(page.url()).hash !== planHash) throw new Error(`${label}: product map changed the saved plan`);
+  await page.getByRole("button", { name: "Inspect unit costs", exact: true }).click();
+  await page.locator("#unit-costs").waitFor();
+  await page.getByRole("region", { name: "Unit cost details", exact: true }).waitFor();
+  if (new URL(page.url()).hash !== planHash) throw new Error(`${label}: unit costs changed the saved plan`);
   if (viewport.name === "mobile") {
     await page.getByRole("button", { name: "Menu", exact: true }).click();
     await page.getByRole("menuitem", { name: /^Forecast\b/ }).click();

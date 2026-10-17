@@ -112,7 +112,8 @@ test("advanced builder, how we got this, and theme", async ({ page }) => {
     "https://github.com/santoshshinde2012/cayfore",
   );
   await expect(footer.getByRole("link", { name: "License" })).toHaveAttribute("href", /LICENSE/);
-  await expect(footer.getByRole("link", { name: "Rates" })).toHaveAttribute("href", /RESEARCH\.md/);
+  await expect(footer.getByRole("link", { name: "Research", exact: true })).toHaveAttribute("href", /RESEARCH\.md/);
+  await expect(footer.getByRole("link", { name: "Unit costs", exact: true })).toHaveAttribute("href", "?view=rates");
   await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
   await page.getByRole("button", { name: "Switch to dark theme" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");

@@ -1,6 +1,7 @@
 import {
   BookOpen,
   ChartNoAxesCombined,
+  CircleDollarSign,
   ChevronDown,
   Menu,
   Network,
@@ -44,6 +45,13 @@ export const headerNavigation = [
     icon: Network,
   },
   {
+    id: "rates",
+    label: "Unit costs",
+    menuLabel: "Unit costs",
+    description: "Inspect source rates, billing dimensions, and quantity calculations; download CSV or JSON.",
+    icon: CircleDollarSign,
+  },
+  {
     id: "how",
     label: "How it works",
     menuLabel: "How it works",
@@ -58,10 +66,12 @@ export function WorkspaceMenu({
   actions,
   onNew,
   productMapOpen = false,
+  unitCostsOpen = false,
 }: {
   actions: NavigationActions;
   onNew: () => void;
   productMapOpen?: boolean;
+  unitCostsOpen?: boolean;
 }) {
   const menuAction = useRef<(() => void) | null>(null);
   return (
@@ -102,7 +112,9 @@ export function WorkspaceMenu({
             key={id}
             className="items-start gap-3 rounded-xl px-3 py-3"
             aria-haspopup={id === "advanced" ? "dialog" : undefined}
-            aria-current={id === "products" && productMapOpen ? "page" : undefined}
+            aria-current={
+              (id === "products" && productMapOpen) || (id === "rates" && unitCostsOpen) ? "page" : undefined
+            }
             onSelect={() => {
               menuAction.current = actions[id];
             }}

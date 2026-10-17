@@ -6,6 +6,7 @@ import { useAnimatedNumber } from "../../lib/use-animated-number";
 import { ExportBar } from "../answer/ExportBar";
 import { Button } from "../ui/button";
 import { navigateToSection } from "../../lib/page-navigation";
+import type { RatePlacement } from "../../hooks/useAppView";
 import { ForecastViews } from "./ForecastViews";
 import { PriceDisclosure } from "./PriceDisclosure";
 
@@ -26,6 +27,7 @@ export function ResultsPanel({
   busy,
   onShare,
   onReprice,
+  onReferenceCosts,
 }: {
   projection: PortfolioProjection;
   comparison?: { name: string; projection: PortfolioProjection };
@@ -33,6 +35,7 @@ export function ResultsPanel({
   busy: boolean;
   onShare: () => void;
   onReprice?: () => void;
+  onReferenceCosts?: (productId: string, placement: RatePlacement) => void;
 }) {
   const { annual, spreadPercent, cloudShare, months, portfolio, estimate, points, band } = projection;
   const { sentence, split } = yearCopy(annual, spreadPercent, cloudShare);
@@ -111,7 +114,12 @@ export function ResultsPanel({
         </div>
       )}
       <ForecastViews projection={projection} comparison={comparison} />
-      <PriceDisclosure estimate={estimate} onReprice={onReprice} />
+      <PriceDisclosure
+        estimate={estimate}
+        portfolio={portfolio}
+        onReprice={onReprice}
+        onReferenceCosts={onReferenceCosts}
+      />
       <div>
         <h3 className="text-sm font-semibold">What drives this</h3>
         <ul className="mt-3 grid gap-2 text-sm text-muted-foreground">

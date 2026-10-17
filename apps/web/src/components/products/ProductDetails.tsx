@@ -10,11 +10,13 @@ export function ProductDetails({
   entry,
   onAdd,
   onSelect,
+  onInspectCosts,
   onResults,
 }: {
   entry: ProductMapEntry;
   onAdd: (id: string) => void;
   onSelect: (id: string) => void;
+  onInspectCosts: (id: string) => void;
   onResults: () => void;
 }) {
   const product = entry.product;
@@ -99,6 +101,9 @@ export function ProductDetails({
           </>
         )}
       </div>
+      <Button type="button" variant="outline" className="mt-4 min-h-11 w-full" onClick={() => onInspectCosts(entry.id)}>
+        Inspect unit costs <ArrowRight aria-hidden="true" />
+      </Button>
       {canEstimate ? (
         <div className="mt-5">
           <InfoTooltip

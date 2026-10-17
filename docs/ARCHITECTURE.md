@@ -88,6 +88,12 @@ Pricing, forecasting, policies, recommendations, and portfolio normalization are
 
 The UI and exports receive `projectPortfolio` results. Charts prepare display rows without introducing rate formulas. A custom or imported rate has explicit provenance; ordinary product rows rehydrate catalog-owned prices. Missing rates contribute a known subtotal and visible unresolved lines. Source quality and model-only intervals are distinct concepts.
 
+## Unit-cost visibility
+
+The optional `@cayfore/engine/unit-costs` module projects the product catalog, pricing inputs, applicable dimensions, and source evidence into a read-only unit-cost inventory. The core catalog remains independent of the engine. The builder performs no IO and does not read the clock; UI, CLI, and artifact generation share its rows and serializers. A quoted quantity basis and normalized dollars per raw unit prevent token or request-batch prices from being mistaken for single-unit rates. Conditional factors and allowances remain distinct from dollar prices.
+
+The Unit costs UI and evidence data load only when that view opens. Query parameters own product/reference-placement navigation; the portfolio remains in its existing URL fragment. Unit-cost calculations do not replace forecast workloads. Browser downloads and the CLI emit ordinary CSV/JSON; `scripts/unit-costs.ts` also writes compressed canonical artifacts. CI decompresses and compares their full contents, while weekly refreshes regenerate them after their input files change. Source observation dates survive documentation reviews and rebuilds.
+
 ## Errors
 
 A missing strategy throws `MissingCostStrategyError`. A scenario id that is not in the supplied policy list throws `UnknownScenarioError`. A JSON file that is not a forecast is rejected in the session hook with a visible alert. PDF export reports a failure on the page instead of failing silently.
