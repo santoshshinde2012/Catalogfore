@@ -25,6 +25,11 @@ function watch(page, label) {
   });
 }
 
+async function workspaceAction(page, name) {
+  await page.getByRole("banner").getByRole("button", { name: "Menu", exact: true }).click();
+  await page.getByRole("menuitem", { name: new RegExp(`^${name}\\b`) }).click();
+}
+
 const browser = await chromium.launch();
 for (const viewport of viewports) {
   const page = await browser.newPage({ viewport });
@@ -38,10 +43,7 @@ for (const viewport of viewports) {
   await page.getByTestId("year-total").waitFor();
 
   const planHash = new URL(page.url()).hash;
-  if (viewport.name === "mobile") {
-    await page.getByRole("button", { name: "Menu", exact: true }).click();
-    await page.getByRole("menuitem", { name: /^Product map\b/ }).click();
-  } else await page.getByRole("banner").getByRole("button", { name: "Product map", exact: true }).click();
+  await page.getByRole("banner").getByRole("button", { name: "Product map", exact: true }).click();
   await page.locator("#product-map").waitFor();
   await page.getByLabel("Search Databricks products", { exact: true }).fill("Unity Catalog");
   await page
@@ -54,19 +56,10 @@ for (const viewport of viewports) {
   await page.locator("#unit-costs").waitFor();
   await page.getByRole("region", { name: "Unit cost details", exact: true }).waitFor();
   if (new URL(page.url()).hash !== planHash) throw new Error(`${label}: unit costs changed the saved plan`);
-  if (viewport.name === "mobile") {
-    await page.getByRole("button", { name: "Menu", exact: true }).click();
-    await page.getByRole("menuitem", { name: /^Forecast\b/ }).click();
-  } else await page.getByRole("banner").getByRole("button", { name: "Forecast", exact: true }).click();
+  await workspaceAction(page, "Forecast");
   await page.getByTestId("year-total").waitFor();
 
-  const advanced = page.getByRole("button", { name: "Advanced", exact: true });
-  if (viewport.name === "mobile") {
-    await page.getByRole("button", { name: "Menu" }).click();
-    await page.getByRole("menuitem", { name: "Advanced" }).click();
-  } else {
-    await advanced.last().click();
-  }
+  await workspaceAction(page, "Advanced");
   await page.getByRole("heading", { name: "By product" }).waitFor();
 
   await page.getByRole("button", { name: "Add product" }).click();
@@ -79,7 +72,8 @@ for (const viewport of viewports) {
   if ((await page.getByRole("radio", { name: "10%", exact: true }).getAttribute("aria-checked")) !== "true") {
     throw new Error(`${label}: saved growth was not restored`);
   }
-  await page.getByRole("button", { name: "Switch to dark theme" }).click();
+  await workspaceAction(page, "Switch to dark theme");
+  await page.locator('html[data-theme="dark"]').waitFor();
   await page.reload({ waitUntil: "networkidle" });
   if ((await page.locator("html").getAttribute("data-theme")) !== "dark")
     throw new Error(`${label}: saved dark theme was not restored`);

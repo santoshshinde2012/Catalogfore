@@ -1,7 +1,7 @@
 import { cn } from "../lib/utils";
+import { primaryNavigation, type NavigationActions } from "./header-navigation";
 import { Button } from "./ui/button";
 import { InfoTooltip } from "./ui/tooltip";
-import { headerNavigation, type NavigationActions } from "./WorkspaceMenu";
 
 export function WorkspaceNavigation({
   actions,
@@ -15,33 +15,31 @@ export function WorkspaceNavigation({
   compact?: boolean;
 }) {
   const current = productMapOpen ? "products" : unitCostsOpen ? "rates" : "inputs";
-  const items = compact
-    ? headerNavigation.filter(({ id }) => ["inputs", "products", "rates"].includes(id))
-    : headerNavigation;
   return (
     <nav
-      aria-label={compact ? "Workspace" : "Page"}
+      aria-label="Workspace"
       className={cn(
         compact
-          ? "mx-auto grid w-full max-w-7xl grid-cols-3 gap-1 px-4 py-1.5 sm:px-6"
-          : "ml-auto hidden items-center gap-0.5 rounded-2xl border bg-muted/50 p-1 xl:flex",
+          ? "grid h-13 grid-cols-3 gap-1 px-4 pt-0.5 pb-1.5 md:hidden"
+          : "hidden items-center gap-1 rounded-full border border-border/70 bg-muted/65 p-1 md:flex",
       )}
     >
-      {items.map(({ id, label, description, icon: Icon }) => (
+      {primaryNavigation.map(({ id, label, description }) => (
         <InfoTooltip key={id} label={label} description={description}>
           <Button
             type="button"
             variant="ghost"
-            aria-label={label}
-            aria-haspopup={id === "advanced" ? "dialog" : undefined}
             aria-current={id === current ? "page" : undefined}
             className={cn(
-              "min-w-0 gap-1.5 rounded-xl px-2 text-xs text-muted-foreground hover:bg-card hover:text-foreground aria-[current=page]:bg-card aria-[current=page]:font-semibold aria-[current=page]:text-link aria-[current=page]:shadow-sm",
-              compact ? "min-h-11" : "min-h-10",
+              "relative min-h-11 min-w-0 rounded-full px-3 text-[13px] text-muted-foreground hover:bg-card/70 hover:text-foreground aria-[current=page]:bg-card aria-[current=page]:font-semibold aria-[current=page]:text-foreground aria-[current=page]:shadow-[0_1px_4px_rgb(11_32_38/0.08)]",
+              compact ? "gap-1.5 px-2 text-xs" : "gap-2.5",
             )}
             onClick={actions[id]}
           >
-            <Icon className={cn("size-3.5 shrink-0", compact && "hidden min-[400px]:block")} aria-hidden="true" />
+            <span
+              className={cn("size-1.5 shrink-0 rounded-full", id === current ? "bg-lava" : "bg-transparent")}
+              aria-hidden="true"
+            />
             {label}
           </Button>
         </InfoTooltip>

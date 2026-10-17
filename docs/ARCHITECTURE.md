@@ -106,7 +106,7 @@ Reviewed native component prices and consumption conversions live in `rates/comp
 
 ## Workspace interaction
 
-The web shell exposes Plan, Product map and Unit costs as persistent destinations, including on narrow screens. A single header-height CSS variable supplies anchor and sticky-panel offsets. Navigation focuses the destination without replacing the forecast fragment; help and advanced actions remain in the workspace menu.
+The web shell exposes only Plan, Product map and Unit costs as primary destinations, including on narrow screens. A single Menu groups forecast navigation, Advanced, pricing help, saved-file actions, appearance and the project link. Shared navigation metadata supplies the labels and descriptions without duplicating primary destinations inside the menu. The desktop header becomes a single row at 768px; a single header-height CSS variable supplies anchor and sticky-panel offsets. Navigation focuses the destination without replacing the forecast fragment. Opening a file preserves browser user activation, while navigation runs after menu dismissal so its focus restoration does not override the destination.
 
 The planner brings usage import and the detailed builder ahead of quick-estimate fields. Its desktop results panel remains visible while inputs scroll. Product search and domain filters precede the directory; example architectures expand separately. Unit costs separates the primary quote/calculator task from comparisons, evidence and downloads using accessible tabs. Stateful calculation and download panels remain mounted while hidden, preserving user input. These are presentation decisions; the pricing policy and exported amounts stay in the engine.
 

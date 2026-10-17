@@ -1,26 +1,18 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { navigateWorkspace as navigate, selectTheme } from "./header-helpers";
 import { downloadRates as download, openRateTab } from "./rate-helpers";
 import type { UnitCostCatalog } from "@cayfore/engine/unit-costs";
 
 const directory = (page: Page) => page.getByRole("region", { name: "Unit cost directory", exact: true });
 const details = (page: Page) => page.getByRole("region", { name: "Unit cost details", exact: true });
-async function navigate(page: Page, name: "Unit costs" | "Product map" | "Plan", mobile: boolean) {
-  const header = page.getByRole("banner");
-  if (mobile) {
-    await header.getByRole("button", { name: "Menu", exact: true }).click();
-    await page.getByRole("menuitem", { name: new RegExp(`^${name === "Plan" ? "Edit inputs" : name}\\b`) }).click();
-  } else await header.getByRole("button", { name, exact: true }).click();
-}
-test("unit-cost navigation, product links, history, and reload preserve the active forecast", async ({
-  page,
-  isMobile,
-}) => {
+
+test("unit-cost navigation, product links, history, and reload preserve the active forecast", async ({ page }) => {
   await page.goto("./?campaign=team");
   await page.getByRole("radio", { name: "10%", exact: true }).click();
   const annual = await page.getByTestId("year-sentence").innerText();
   const hash = new URL(page.url()).hash;
-  await navigate(page, "Unit costs", isMobile);
+  await navigate(page, "Unit costs");
   await expect(page.locator("#unit-costs")).toBeFocused();
   expect(new URL(page.url()).searchParams.get("campaign")).toBe("team");
   expect(new URL(page.url()).hash).toBe(hash);
@@ -29,13 +21,13 @@ test("unit-cost navigation, product links, history, and reload preserve the acti
   expect(new URL(page.url()).searchParams.get("product")).toBe("jobs_classic");
   await page.reload();
   await expect(page.getByRole("combobox", { name: "Product or service", exact: true })).toHaveValue("jobs_classic");
-  await navigate(page, "Plan", isMobile);
+  await navigate(page, "Plan");
   await expect(page.getByTestId("year-sentence")).toHaveText(annual);
   expect(new URL(page.url()).hash).toBe(hash);
   await page.goBack();
   await expect(page.locator("#unit-costs")).toBeFocused();
   await expect(page.getByRole("combobox", { name: "Product or service", exact: true })).toHaveValue("jobs_classic");
-  await navigate(page, "Product map", isMobile);
+  await navigate(page, "Product map");
   await page.getByLabel("Search Databricks products", { exact: true }).fill("Jobs cluster");
   await page
     .getByRole("region", { name: "Product details", exact: true })
@@ -144,6 +136,6 @@ test("rate filters, keyboard details, and light/dark layouts fit narrow screens"
   await expect(directory(page)).toBeFocused();
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
-  await page.getByRole("button", { name: "Switch to dark theme", exact: true }).click();
+  await selectTheme(page, "dark");
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 });

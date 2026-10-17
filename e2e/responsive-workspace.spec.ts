@@ -7,6 +7,11 @@ test("primary workspaces are reachable on a narrow screen without opening the me
   await expect.poll(() => new URL(page.url()).hash).toMatch(/^#plan=/);
   const before = new URL(page.url()).hash;
   const navigation = page.getByRole("navigation", { name: "Workspace", exact: true });
+  const header = page.getByRole("banner");
+  await expect(header.getByRole("button")).toHaveCount(5);
+  await expect(header.getByRole("link")).toHaveCount(0);
+  await expect(navigation.getByRole("button")).toHaveCount(3);
+  expect(Math.abs((await header.boundingBox())!.height - 112)).toBeLessThanOrEqual(1);
   for (const name of ["Plan", "Product map", "Unit costs"]) {
     const action = navigation.getByRole("button", { name, exact: true });
     await expect(action).toBeInViewport();
@@ -19,8 +24,40 @@ test("primary workspaces are reachable on a narrow screen without opening the me
   ]) {
     await navigation.getByRole("button", { name, exact: true }).click();
     await expect(page.locator(`#${id}`)).toBeFocused();
+    await expect
+      .poll(async () => (await page.locator(`#${id}`).boundingBox())!.y)
+      .toBeGreaterThanOrEqual((await header.boundingBox())!.height - 1);
     await expect(navigation.getByRole("button", { name, exact: true })).toHaveAttribute("aria-current", "page");
     expect(new URL(page.url()).hash).toBe(before);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+  }
+});
+
+test("the header stays compact and aligned across its desktop breakpoint", async ({ page }) => {
+  await page.goto("./");
+  const header = page.getByRole("banner");
+  const navigation = header.getByRole("navigation", { name: "Workspace", exact: true });
+  for (const width of [320, 767, 768, 1280, 1920]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect(header.getByRole("button")).toHaveCount(5);
+    await expect(navigation.getByRole("button")).toHaveCount(3);
+    const bounds = (await header.boundingBox())!;
+    expect(Math.abs(bounds.height - (width < 768 ? 112 : 72))).toBeLessThanOrEqual(1);
+    const actionBounds = [];
+    for (const action of await header.getByRole("button").all()) {
+      const box = (await action.boundingBox())!;
+      actionBounds.push(box);
+      expect(box.height).toBeGreaterThanOrEqual(44);
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(width);
+    }
+    for (const [index, box] of actionBounds.entries()) {
+      for (const other of actionBounds.slice(index + 1)) {
+        const overlapWidth = Math.min(box.x + box.width, other.x + other.width) - Math.max(box.x, other.x);
+        const overlapHeight = Math.min(box.y + box.height, other.y + other.height) - Math.max(box.y, other.y);
+        expect(overlapWidth <= 0 || overlapHeight <= 0).toBe(true);
+      }
+    }
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
   }
 });

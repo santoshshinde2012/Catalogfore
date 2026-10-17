@@ -163,7 +163,7 @@ export const forecastExporters: readonly ForecastDownload[] = [
   {
     id: "json",
     menuLabel: "JSON",
-    detail: "Complete forecast data and assumptions. Save your forecast; reopen with Open.",
+    detail: "Complete forecast data and assumptions. Save your forecast; reopen with Menu → Open forecast.",
     icon: FileJson2,
     write: exportJson,
   },

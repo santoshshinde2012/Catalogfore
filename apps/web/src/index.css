@@ -38,7 +38,7 @@
 
 :root {
   --radius: 0.75rem;
-  --workspace-header-height: 7.5rem;
+  --workspace-header-height: 7rem;
   --background: #f6f7f9;
   --foreground: #0b2026;
   --card: #ffffff;
@@ -127,7 +127,7 @@ html.theme-swap * {
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 768px) {
   :root {
     --workspace-header-height: 4.5rem;
   }

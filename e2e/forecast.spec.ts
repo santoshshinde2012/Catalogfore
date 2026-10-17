@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { selectTheme } from "./header-helpers";
 
 async function sentence(page: Page) {
   return page.getByTestId("year-sentence").innerText();
@@ -115,9 +116,9 @@ test("advanced builder, how we got this, and theme", async ({ page }) => {
   await expect(footer.getByRole("link", { name: "Research", exact: true })).toHaveAttribute("href", /RESEARCH\.md/);
   await expect(footer.getByRole("link", { name: "Unit costs", exact: true })).toHaveAttribute("href", "?view=rates");
   await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
-  await page.getByRole("button", { name: "Switch to dark theme" }).click();
+  await selectTheme(page, "dark");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await page.getByRole("button", { name: "Switch to light theme" }).click();
+  await selectTheme(page, "light");
   await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
 });
 
@@ -139,10 +140,10 @@ test("has no serious accessibility violations", async ({ page }) => {
   await page.keyboard.press("Escape");
   const open = await new AxeBuilder({ page }).analyze();
   expect(open.violations).toEqual([]);
-  await page.getByRole("button", { name: "Switch to dark theme" }).click();
+  await selectTheme(page, "dark");
   const dark = await new AxeBuilder({ page }).analyze();
   expect(dark.violations).toEqual([]);
-  await page.getByRole("button", { name: "Switch to light theme" }).click();
+  await selectTheme(page, "light");
   const light = await new AxeBuilder({ page }).analyze();
   expect(light.violations).toEqual([]);
 });
@@ -179,7 +180,7 @@ test("an existing theme choice survives the key change", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect.poll(() => page.evaluate(() => localStorage.getItem("cayfore-theme"))).toBe("dark");
   await expect.poll(() => page.evaluate(() => localStorage.getItem("dcf-theme"))).toBeNull();
-  await page.getByRole("button", { name: "Switch to light theme" }).click();
+  await selectTheme(page, "light");
   await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
 });
 

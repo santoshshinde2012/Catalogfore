@@ -23,8 +23,8 @@ test("help stays readable on hover and closes when the pointer leaves under slow
     await expect(help).toBeVisible();
     await help.hover();
     await expect(help).toBeVisible();
-    await expect(menu).toHaveAccessibleDescription(/Navigate the planner or start a fresh forecast/);
-    await page.mouse.move(page.viewportSize()!.width - 4, 4, { steps: 5 });
+    await expect(menu).toHaveAccessibleDescription(/Open saved forecasts, edit workloads, and manage your workspace/);
+    await page.mouse.move(page.viewportSize()!.width - 4, page.viewportSize()!.height - 4, { steps: 5 });
     await expect(page.getByRole("tooltip")).toHaveCount(0);
   } finally {
     await session.send("Emulation.setCPUThrottlingRate", { rate: 1 });

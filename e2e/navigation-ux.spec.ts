@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { openWorkspaceMenu, selectWorkspaceAction, workspaceMenuTrigger } from "./header-helpers";
 
 test("brand navigation preserves the plan and Open works from the keyboard", async ({ page }) => {
   await page.goto("./");
@@ -13,8 +14,19 @@ test("brand navigation preserves the plan and Open works from the keyboard", asy
   expect(new URL(page.url()).hash).toBe(hash);
   await expect(page.getByRole("radio", { name: "10%", exact: true })).toHaveAttribute("aria-checked", "true");
 
+  const menu = await openWorkspaceMenu(page);
+  const open = menu.getByRole("menuitem", { name: /^Open forecast\b/ });
+  await open.focus();
+  const cancelled = page.waitForEvent("filechooser");
+  await page.keyboard.press("Enter");
+  await (await cancelled).setFiles([]);
+  await expect(page.getByRole("menu")).toHaveCount(0);
+  await expect(workspaceMenuTrigger(page)).toBeFocused();
+  expect(new URL(page.url()).hash).toBe(hash);
+
+  await openWorkspaceMenu(page);
+  await open.focus();
   const chooser = page.waitForEvent("filechooser");
-  await page.getByRole("button", { name: "Open forecast", exact: true }).focus();
   await page.keyboard.press("Enter");
   await (await chooser).setFiles({ name: "invalid.json", mimeType: "application/json", buffer: Buffer.from("{}") });
   await expect(
@@ -30,8 +42,7 @@ test("starting a new forecast is explicit and can be undone", async ({ page }) =
   await page.goto("./");
   await page.getByRole("radio", { name: "10%", exact: true }).click();
   const before = await page.getByTestId("year-sentence").innerText();
-  await page.getByRole("button", { name: "Menu", exact: true }).click();
-  await page.getByRole("menuitem", { name: /^New forecast\b/ }).click();
+  await selectWorkspaceAction(page, "New forecast");
   await expect(page.getByRole("radio", { name: "3%", exact: true })).toHaveAttribute("aria-checked", "true");
   await expect(page.locator("#plan-inputs")).toBeFocused();
   await page.getByRole("button", { name: "Undo last change", exact: true }).click();

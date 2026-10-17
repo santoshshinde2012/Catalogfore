@@ -10,7 +10,7 @@ Start in **Rates & calculator**. Search or choose a product, then set its refere
 
 Use **More filters** for domain, pricing coverage and evidence basis. Active refinements remain counted when collapsed. **Compare regions**, **Evidence** and **Downloads** open the supporting tools without replacing your chosen placement. Calculator input and download scope survive task switches. Keyboard arrow keys move between the workspace tabs.
 
-The same three primary workspaces—Plan, Product map and Unit costs—are visible in the header on smaller screens. The menu retains Advanced, forecast navigation and explanatory help.
+The same three primary workspaces—Plan, Product map and Unit costs—are visible in the header on smaller screens. One **Menu** groups Advanced, forecast navigation, explanatory help, saved-file actions, theme and GitHub. Use **Menu → Open forecast** to reopen a saved JSON forecast.
 
 ## Files and commands
 

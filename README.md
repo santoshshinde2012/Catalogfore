@@ -25,6 +25,8 @@ That default estimates **about $170,258 per year, with a ±20% planning range**.
 
 Usage import and Advanced are available at the top of Plan inputs. The forecast remains visible while editing on desktop, and a persistent shortcut shows the annual total on mobile. A usage CSV opens a review of its baseline month, prices, and gaps before replacing the estimate. Databricks billing and recognized FOCUS files are supported. Imported monetary costs stay observed costs; the app does not invent a separate VM bill. See [usage import](docs/USAGE-IMPORT.md).
 
+The header keeps **Plan**, **Product map** and **Unit costs** directly accessible. One **Menu** groups forecast navigation, Advanced, explanatory help, file actions, appearance and GitHub. To continue a saved JSON forecast, choose **Menu → Open forecast**.
+
 Set an annual budget, save named scenarios, and plan dated launches or retirements. Charts show observed spend, future estimates, budget variance, scenario comparisons, and monthly cost components. Advanced opens the per-workload editor. Growth and pricing controls preserve those workloads.
 
 Open **Product map** to explore eight Databricks domains, all 70 catalog entries, and eight platform concepts. Search current names or older aliases, filter by domain, expand example architectures, and inspect roles, relationships, billing context, and official sources. Supported products can be added to the current forecast with Undo. [Product map research and maintenance](docs/PRODUCT-MAP.md) explains the taxonomy and pricing boundaries.
