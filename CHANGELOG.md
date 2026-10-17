@@ -48,7 +48,7 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Changed
 
-- Redesigned the three workspaces around their main tasks: visible mobile navigation, early usage/import entry points, sticky desktop forecasts, immediate product search and domain filters, and unit-cost tabs with persistent calculator/export choices. Refined spacing, typography, source actions and narrow-screen layouts.
+- Redesigned the three workspaces around their main tasks: visible mobile navigation, early usage/import entry points, sticky desktop forecasts, immediate product search and domain filters, and unit-cost tabs with persistent calculator/export choices. Refined spacing, typography, source actions and narrow-screen layouts. Help remains hoverable and closes reliably after pointer exit on slower devices.
 
 - One injectable DBU quote policy now supplies forecasts, unit costs, source provenance and Excel. Reviewed native prices and consumption conversions share one registry. Public Azure reference components outside East US, Zerobus outside its US East reference scope, conflicted GTE capacity, and unpublished defaults remain unresolved; independently supplied costs retain custom provenance through editing and reopening.
 
