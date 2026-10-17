@@ -66,6 +66,7 @@ export default defineConfig(() => {
           // Catalog updates can be cached independently of application and chart code.
           manualChunks(id) {
             const normalized = id.replaceAll("\\", "/");
+            if (normalized.endsWith("/data/product-map.json")) return "product-map-data";
             if (normalized.endsWith("/rate-confidence.json")) return;
             const catalogDirectory = `${path.resolve(__dirname, "../../data").replaceAll("\\", "/")}/`;
             if (normalized.startsWith(catalogDirectory) && normalized.endsWith(".json")) return "pricing-catalog";

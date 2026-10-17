@@ -51,6 +51,7 @@ flowchart TB
 | Unit                            | Responsibility                                                                                                                                 | Depends on                                             |
 | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
 | `@cayfore/catalog`              | Product inventory: SKU, billing unit, confidence, citation, and the inputs a new row needs. Zod validates it.                                  | `data/product-catalog.json`                            |
+| `@cayfore/catalog/map`          | Optional educational domains, aliases, relationships, and example architectures joined to catalog products; validates coverage and references. | `data/product-map.json`, product catalog               |
 | `products.ts`                   | Turns a catalog id into one workload per underlying SKU, applies a named formula, and splits a 12-month forecast by product.                   | `@cayfore/catalog`, `createWorkload`                   |
 | `catalog/pricing-catalog.ts`    | `PricingCatalog`. The bundled object reads the versioned JSON. A test can pass a different book.                                               | JSON files, via `catalog.ts`                           |
 | `costing/strategies/*`          | One `CostStrategy` per workload kind. Each file prices that kind only.                                                                         | `PricingCatalog`, pure helpers in `costing/support.ts` |
@@ -70,6 +71,8 @@ flowchart TB
 ## How SOLID shows up
 
 **Single responsibility.** A cluster file does not forecast. The forecast file does not know what a DBU is. A React card does not encode the URL hash. `useSimpleForecast` does. The simple module only chooses workload sizes. `estimate()` still prices them.
+
+The product map loads through an optional catalog entry point and a separate web chunk. Pricing-only callers do not load or validate educational metadata. View navigation uses the `view=products` query parameter; the session owns the `#plan=` fragment and synchronizes it when view history changes. Explicit map additions use the existing product workload factory, preserve the current portfolio, and support Undo.
 
 **Open/closed.** A new workload kind is a new strategy file added to `defaultCostStrategies`, plus a presentational editor registered in `components/editor/registry.tsx`. `estimate()` does not grow a switch. A new product that uses a kind already in the registry is a row in `data/product-catalog.json`. The Advanced picker and the schema-driven fields read that row, so the new product does not need a new React component. A new what-if is a new `ScenarioPolicy` in the policy list. `applyScenario` looks the policy up. The four-input page is another caller of those interfaces. Changing the mix does not add a formula to the strategies.
 

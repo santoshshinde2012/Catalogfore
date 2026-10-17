@@ -1,10 +1,12 @@
 import {
   applyRecommendation,
+  defaultInstanceId,
   detachSimple,
   normalizePortfolio,
   type Portfolio,
   type RecommendationId,
 } from "@cayfore/engine";
+import { productById, workloadsForProduct } from "@cayfore/engine/products";
 import { toast } from "sonner";
 import { planFromPortfolio } from "./forecast-session";
 import type { SessionControls } from "./session-controls";
@@ -28,6 +30,9 @@ export function sessionActions(controls: SessionControls) {
         monthlyGrowth: Math.pow(1 + previous.forecast.annualGrowth, 1 / 12) - 1,
       }));
     setUndo(null);
+    setSelectedId((current) =>
+      previous.workloads.some((workload) => workload.id === current) ? current : (previous.workloads[0]?.id ?? null),
+    );
   }
   function editPortfolio(next: Portfolio) {
     const detached = normalizePortfolio(detachSimple(next));
@@ -47,6 +52,25 @@ export function sessionActions(controls: SessionControls) {
     ...ioActions(controls),
     toggleTheme: () => controls.setTheme((current) => (current === "light" ? "dark" : "light")),
     editPortfolio,
+    addProduct: (id: string) => {
+      const product = productById(id);
+      if (!product || product.listPrice === "unpublished") {
+        controls.setNotice(
+          "This entry has no supported catalog estimate. Review its documentation and billing context.",
+        );
+        return false;
+      }
+      const added = workloadsForProduct(id).map((workload) =>
+        workload.kind === "cluster" ? { ...workload, instanceId: defaultInstanceId(portfolio.cloud) } : workload,
+      );
+      editPortfolio({ ...portfolio, workloads: [...portfolio.workloads, ...added] });
+      setUndo(portfolio);
+      setSelectedId(added[0]?.id ?? null);
+      controls.setNotice(
+        `Added ${product.menuLabel}. Review the default usage and selected-cloud rate coverage before relying on the estimate.`,
+      );
+      return true;
+    },
     selectWorkload: setSelectedId,
     removeWorkload: (id: string) => {
       setUndo(portfolio);

@@ -6,6 +6,7 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Added
 
+- A separate Product map with eight learning domains, all 70 catalog entries, eight platform concepts, searchable current and legacy names, sourced relationships, and example architectures. Supported products append to the existing forecast with Undo; navigation and browser history preserve the saved plan.
 - An Excel workbook export (XLSX) from the Export menu, `cayfore estimate --xlsx`, and the MCP tool `export_xlsx`. CSV, JSON, and PDF stay. The workbook uses live `SUM` formulas, the lava header, and the disclaimer “Not affiliated with Databricks”.
 - One Monday 06:00 UTC catalog workflow. It refreshes Azure and AWS list prices, checks allowed Databricks RSS and sitemap metadata, validates the schema, flags rate moves over 20%, and opens one review pull request. It does not merge.
 
