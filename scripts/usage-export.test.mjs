@@ -11,6 +11,20 @@ test("the billing query is a fixed SELECT with no interpolated input", async () 
     assert.match(source, /FROM system\.billing\.usage/);
     assert.match(source, /system\.billing\.list_prices/);
     assert.match(source, /add_months\(current_date\(\), -18\)/);
+    assert.match(source, /u\.usage_date < date_trunc\('MONTH', current_date\(\)\)/);
+    assert.match(source, /p\.pricing\.effective_list\.default AS effective_list_price/);
+    assert.match(source, /p\.pricing\.default AS list_price/);
+    for (const column of [
+      "record_id",
+      "ingestion_date",
+      "workspace_id",
+      "custom_tags",
+      "usage_metadata",
+      "identity_metadata",
+      "product_features",
+    ]) {
+      assert.match(source, new RegExp(`u\\.${column}`));
+    }
   }
   assert.match(sql, /^SELECT/m);
 });

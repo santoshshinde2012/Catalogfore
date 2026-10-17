@@ -1,7 +1,7 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { money } from "../../format";
 
-export function MixPie({ workloads }: { workloads: { name: string; value: number; fill: string }[] }) {
+export function MixPie({ workloads }: { workloads: { id: string; name: string; value: number; fill: string }[] }) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart>
@@ -16,7 +16,7 @@ export function MixPie({ workloads }: { workloads: { name: string; value: number
           isAnimationActive={false}
         >
           {workloads.map((row) => (
-            <Cell key={row.name} fill={row.fill} />
+            <Cell key={row.id} fill={row.fill} />
           ))}
         </Pie>
         <Tooltip

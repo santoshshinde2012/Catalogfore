@@ -1,20 +1,15 @@
 import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from "lz-string";
-import { listRegions } from "./catalog.js";
+import { listRegions, skuCatalog } from "./catalog.js";
 import { FLAT_SEASONALITY } from "./forecast.js";
 import { normalizeWorkload } from "./normalize-workload.js";
 import { cloudOf, isRecord, num, str, tierOf } from "./portfolio-fields.js";
 import { err, ok, type Result } from "./result.js";
 import { JSON_MAX_CHARS, SHARE_MAX_CHARS, parseUntrustedJson } from "./untrusted.js";
-import type {
-  Addon,
-  Cloud,
-  Portfolio,
-  SeasonalityPreset,
-  SimpleBasket,
-  StoredSimple,
-  Workload,
-  WorkloadMix,
-} from "./types.js";
+import { savedPortfolioInput } from "./saved-schema.js";
+import { normalizeSimple } from "./simple-fields.js";
+import { normalizeEvents, normalizeUsage } from "./plan-fields.js";
+import { isMonth } from "./forecast/calendar.js";
+import type { Addon, Cloud, Portfolio, SeasonalityPreset, Workload } from "./types.js";
 
 const ADDONS: Addon[] = ["none", "compliance", "mission_critical"];
 
@@ -30,6 +25,7 @@ export function blankPortfolio(cloud: Cloud = "aws"): Portfolio {
     commitment: { dbuDiscount: 0, cloudDiscount: 0 },
     addon: "none",
     usageScale: 1,
+    priceBook: { version: skuCatalog.version, verifiedOn: skuCatalog.verifiedOn },
     forecast: { months: 12, annualGrowth: 0.08, seasonality: "flat", customSeasonality: [...FLAT_SEASONALITY] },
   };
 }
@@ -68,12 +64,21 @@ export function normalizePortfolio(input: unknown): Portfolio {
     },
     addon,
     usageScale: num(input.usageScale, 1, 0.0001, 1000),
-    ...(budget > 0 ? { budgetAnnual: budget } : {}),
+    ...(input.budgetAnnual != null ? { budgetAnnual: budget } : {}),
     ...(input.usageCalibrated === true ? { usageCalibrated: true } : {}),
     ...(simple ? { simple } : {}),
+    priceBook:
+      isRecord(input.priceBook) &&
+      typeof input.priceBook.version === "string" &&
+      typeof input.priceBook.verifiedOn === "string"
+        ? { version: input.priceBook.version.slice(0, 80), verifiedOn: input.priceBook.verifiedOn.slice(0, 10) }
+        : fallback.priceBook,
+    ...(normalizeUsage(input.usage) ? { usage: normalizeUsage(input.usage) } : {}),
+    ...(normalizeEvents(input.events, workloads) ? { events: normalizeEvents(input.events, workloads) } : {}),
     forecast: {
       months,
-      annualGrowth: num(forecast.annualGrowth, 0, -0.9, 10),
+      ...(isMonth(forecast.startMonth) ? { startMonth: forecast.startMonth } : {}),
+      annualGrowth: num(forecast.annualGrowth, 0, -0.99, 10),
       seasonality,
       customSeasonality: Array.from({ length: 12 }, (_, index) =>
         num(Array.isArray(forecast.customSeasonality) ? forecast.customSeasonality[index] : 1, 1, 0.05, 5),
@@ -82,68 +87,48 @@ export function normalizePortfolio(input: unknown): Portfolio {
   };
 }
 
-function mixOf(value: unknown): WorkloadMix {
-  const record = isRecord(value) ? value : {};
-  const etl = Math.max(0, num(record.etl, 0, 0, 1_000_000));
-  const sql = Math.max(0, num(record.sql, 0, 0, 1_000_000));
-  const ml = Math.max(0, num(record.ml, 0, 0, 1_000_000));
-  const sum = etl + sql + ml;
-  if (sum <= 0) return { etl: 1 / 3, sql: 1 / 3, ml: 1 / 3 };
-  return { etl: etl / sum, sql: sql / sum, ml: ml / sum };
-}
-
-function basketOf(value: unknown): SimpleBasket {
-  const record = isRecord(value) ? value : {};
-  return {
-    etlNodes: num(record.etlNodes, 0, 0, 1_000_000),
-    etlHoursPerDay: num(record.etlHoursPerDay, 8, 0, 24),
-    sqlClusters: num(record.sqlClusters, 0, 0, 1_000_000),
-    mlInputTokens: num(record.mlInputTokens, 0, 0, 1e15),
-  };
-}
-
-function normalizeSimple(value: unknown): StoredSimple | undefined {
-  if (!isRecord(value)) return undefined;
-  const usage = num(value.usageDbu, 0, 0, 1e15);
-  const usageForecast = forecastOf(value.usageForecast);
-  return {
-    monthlySpend: num(value.monthlySpend, 0, 0, 1e12),
-    mix: mixOf(value.mix),
-    monthlyGrowth: num(value.monthlyGrowth, 0, 0, 0.2),
-    commitDiscount: num(value.commitDiscount, 0, 0, 0.95),
-    basket: basketOf(value.basket),
-    ...(usage > 0 ? { usageDbu: usage } : {}),
-    ...(usageForecast ? { usageForecast } : {}),
-  };
-}
-
-function forecastOf(value: unknown): StoredSimple["usageForecast"] | undefined {
-  if (!isRecord(value) || !Array.isArray(value.ratios) || value.ratios.length < 12) return undefined;
-  const method = value.method;
-  if (
-    method !== "holt-winters" &&
-    method !== "log-linear-seasonal" &&
-    method !== "log-linear-weekly" &&
-    method !== "log-linear"
-  ) {
-    return undefined;
-  }
-  const ratios = value.ratios.slice(0, 12).map((ratio) => {
-    const row = isRecord(ratio) ? ratio : {};
-    const expected = num(row.expected, 1, 0, 100);
-    return {
-      low: num(row.low, expected, 0, 100),
-      expected,
-      high: num(row.high, expected, 0, 100),
-    };
-  });
-  const mape = typeof value.mape === "number" && Number.isFinite(value.mape) ? value.mape : null;
-  const holdout = num(value.holdout, 0, 0, 36);
-  return { method, mape, holdout, monthlyGrowth: num(value.monthlyGrowth, 0, -0.9, 10), ratios };
-}
-
 export function encodePortfolio(portfolio: Portfolio): string {
-  return compressToEncodedURIComponent(JSON.stringify(portfolio));
+  const shared = { ...portfolio };
+  if (portfolio.usage) {
+    const usage = { ...portfolio.usage };
+    delete usage.attribution;
+    shared.usage = usage;
+  }
+  return compressToEncodedURIComponent(JSON.stringify(shared));
+}
+
+/** Preserve an imported legacy fit when moving from the quick basket to detailed editing. */
+export function detachSimple(portfolio: Portfolio): Portfolio {
+  const next = { ...portfolio };
+  if (portfolio.simple?.usageForecast && !portfolio.usage?.forecast) {
+    next.usage = {
+      source: "system-billing",
+      selectedMonth: null,
+      currency: "USD",
+      costBasis: "Legacy usage-calibrated model; original history unavailable",
+      observedMonths: [],
+      observedUnit: "dbu",
+      coverage: { pricedRows: 0, unpricedRows: 0, usedRows: 0, skippedRows: 0 },
+      warnings: [],
+      ...portfolio.usage,
+      forecast: portfolio.simple.usageForecast,
+    };
+  }
+  delete next.simple;
+  return next;
+}
+
+export function parseSavedForecast(input: unknown): Result<Portfolio> {
+  const validated = savedPortfolioInput(input);
+  return validated.ok ? ok(normalizePortfolio(validated.value)) : validated;
+}
+
+/** Acknowledges deliberate repricing against the currently installed public price book. */
+export function repricePortfolio(portfolio: Portfolio): Portfolio {
+  return normalizePortfolio({
+    ...portfolio,
+    priceBook: { version: skuCatalog.version, verifiedOn: skuCatalog.verifiedOn },
+  });
 }
 
 /** Decode a share link. A bad link is an error value, not an exception. */
@@ -158,7 +143,8 @@ export function decodePortfolio(encoded: string): Portfolio | null {
   const json = decompressFromEncodedURIComponent(encoded);
   if (!json || json.length > JSON_MAX_CHARS) return null;
   try {
-    return normalizePortfolio(parseUntrustedJson(json));
+    const parsed = parseSavedForecast(parseUntrustedJson(json));
+    return parsed.ok ? parsed.value : null;
   } catch {
     return null;
   }

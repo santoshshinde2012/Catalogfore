@@ -27,7 +27,7 @@ const track: Record<StripVariant, string> = {
   segment: "flex w-full min-w-0 overflow-hidden rounded-xl border border-border bg-card",
   scroll:
     "flex w-full min-w-0 snap-x snap-mandatory overflow-x-auto rounded-xl border border-border bg-card [scrollbar-width:thin]",
-  rail: "flex w-full min-w-0 snap-x snap-mandatory overflow-x-auto rounded-xl border border-border bg-card [scrollbar-width:thin]",
+  rail: "flex w-full min-w-0 overflow-hidden rounded-xl border border-border bg-card",
 };
 
 /**
@@ -95,7 +95,7 @@ export function SegmentedStripItem({ value, children }: { value: string; childre
       className={cn(
         "strip-item relative inline-flex min-h-11 items-center justify-center gap-2 border-l border-border px-3 text-sm font-medium text-muted-foreground first:border-l-0 hover:text-foreground data-[state=on]:text-foreground",
         rail
-          ? "min-w-[11.5rem] flex-1 snap-start flex-col items-stretch justify-start gap-1 px-3 py-3 text-left"
+          ? "min-w-0 flex-1 flex-col items-stretch justify-start gap-1 px-2 py-3 text-left sm:px-3"
           : strip.variant === "scroll"
             ? "shrink-0 snap-start whitespace-nowrap"
             : "min-w-0 flex-1",

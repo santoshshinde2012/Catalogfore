@@ -59,10 +59,14 @@ test("cloud, commitment, exports, and a usage file", async ({ page }) => {
     mimeType: "text/csv",
     buffer: Buffer.from("not,a,usage,file"),
   });
-  await expect(page.getByText("That file did not contain usage rows.")).toBeVisible();
+  await expect(
+    page.getByRole("alert").filter({ hasText: /No data rows found|did not contain usage rows/ }),
+  ).toBeVisible();
 
   await page.getByRole("button", { name: "Load a sample" }).click();
-  await expect(page.getByTestId("usage-summary")).toContainText("From your usage file");
+  await expect(page.getByRole("heading", { name: "Review usage import" })).toBeVisible();
+  await page.getByRole("button", { name: "Use this baseline" }).click();
+  await expect(page.getByText(/Based on .* imported/)).toBeVisible();
 
   await expect(page.getByText("Estimates only").first()).toBeVisible();
   await expect(page.getByText(/The calculation stays in this browser/)).toBeVisible();
@@ -83,7 +87,7 @@ test("cloud, commitment, exports, and a usage file", async ({ page }) => {
 test("advanced builder, how we got this, and theme", async ({ page }) => {
   await page.goto("./");
   await page.getByText("How we got this").click();
-  await expect(page.getByText(/You enter dollars/)).toBeVisible();
+  await expect(page.getByText(/Growth is .*per year with flat seasonality/).first()).toBeVisible();
   await page.getByRole("button", { name: "Advanced", exact: true }).last().click();
   await expect(page.getByRole("heading", { name: "By product" })).toBeVisible();
   await page.getByRole("button", { name: "Add product" }).click();

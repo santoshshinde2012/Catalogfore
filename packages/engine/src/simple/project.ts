@@ -1,17 +1,15 @@
-import { fitUsageForecast, type UsageForecast } from "../forecast.js";
-import { usageHistory } from "../usage.js";
+import type { UsageForecast } from "../forecast.js";
 import { estimate, type EstimateDependencies } from "../estimate.js";
 import { defaultEstimateDependencies } from "../costing/estimate-portfolio.js";
-import { forecast } from "../forecast.js";
 import { clamp, roundMoney } from "../money.js";
 import type { UncertaintyBand } from "../recommend.js";
 import type { Cloud, Estimate, ForecastPoint, Portfolio, SimpleBasket, Tier, WorkloadMix } from "../types.js";
-import { importUsageCsv } from "../usage.js";
-import { bucketDbu, normalizeMix } from "./mix.js";
+import { normalizeMix } from "./mix.js";
 import { explain } from "./explain.js";
-import { rollForward, spreadPercent } from "./roll-forward.js";
+import { projectPortfolio } from "../projection.js";
 import { UploadError } from "../untrusted.js";
-import { annualGrowthFromMonthly, basketForDbu, portfolioShell, regionFor, workloadsFromBasket } from "./shape.js";
+import { annualGrowthFromMonthly, portfolioShell, regionFor, workloadsFromBasket } from "./shape.js";
+import { importedPlan } from "./import-plan.js";
 
 export interface SimplePlan {
   cloud: Cloud;
@@ -24,6 +22,7 @@ export interface SimplePlan {
   basket: SimpleBasket;
   usageDbu?: number;
   usageForecast?: UsageForecast;
+  importedPortfolio?: Portfolio;
 }
 
 export interface SimpleMonth {
@@ -52,6 +51,10 @@ export function projectSimple(
   plan: SimplePlan,
   dependencies: EstimateDependencies = defaultEstimateDependencies,
 ): SimpleProjection {
+  if (plan.importedPortfolio) {
+    const projection = projectPortfolio(plan.importedPortfolio, dependencies);
+    return { ...projection, plan: { ...plan, monthlySpend: projection.listMonthly } };
+  }
   const region = regionFor(plan.cloud, plan.region);
   const normalized = { ...plan, region, mix: normalizeMix(plan.mix) };
   let portfolio = portfolioShell(normalized, workloadsFromBasket(normalized, normalized.basket));
@@ -60,23 +63,8 @@ export function projectSimple(
     const scale = probe.dbu > 0 ? clamp(normalized.usageDbu / probe.dbu, 0.0001, 1000) : 1;
     portfolio = { ...portfolio, usageScale: snapScale(scale), usageCalibrated: true };
   }
-  const result = estimate(portfolio, dependencies);
-  const points = forecast(result, portfolio.forecast);
-  const rolled = rollForward(portfolio, result, points);
-  const fittedMonths = applyFittedMonths(normalized.usageForecast, result.total);
-  const months = fittedMonths ?? rolled.months;
-  const annual = fittedMonths
-    ? roundMoney(fittedMonths.reduce((sum, month) => sum + month.expected, 0))
-    : rolled.annual;
-  const band = fittedMonths
-    ? {
-        ...rolled.band,
-        low: roundMoney(fittedMonths.reduce((sum, month) => sum + month.low, 0)),
-        expected: annual,
-        high: roundMoney(fittedMonths.reduce((sum, month) => sum + month.high, 0)),
-        calibrated: true,
-      }
-    : rolled.band;
+  const rolled = projectPortfolio(portfolio, dependencies);
+  const { estimate: result, points, months, annual, band } = rolled;
   const stored: SimplePlan = {
     ...normalized,
     monthlySpend: roundMoney(normalized.monthlySpend),
@@ -94,7 +82,7 @@ export function projectSimple(
     months,
     annual,
     band,
-    spreadPercent: spreadPercent(band),
+    spreadPercent: rolled.spreadPercent,
     listMonthly: rolled.listMonthly,
     cloudShare: rolled.cloudShare,
     assumptions: explain(stored, result, band),
@@ -112,6 +100,7 @@ export function withRates(
     tier: next.tier,
     region: regionFor(next.cloud, next.region),
   };
+  if (draft.importedPortfolio) draft.importedPortfolio = { ...draft.importedPortfolio, ...next, region: draft.region };
   delete draft.usageForecast;
   return { ...draft, monthlySpend: projectSimple(draft, dependencies).listMonthly };
 }
@@ -122,49 +111,11 @@ export function planFromUsage(
   dependencies?: EstimateDependencies,
 ): { ok: true; plan: SimplePlan } | { ok: false; error: string } {
   try {
-    return planFromUsageText(plan, text, dependencies);
+    return { ok: true, plan: importedPlan(plan, text, dependencies) };
   } catch (error) {
     if (error instanceof UploadError) return { ok: false, error: error.message };
     throw error;
   }
-}
-
-function planFromUsageText(
-  plan: SimplePlan,
-  text: string,
-  dependencies?: EstimateDependencies,
-): { ok: true; plan: SimplePlan } | { ok: false; error: string } {
-  const history = usageHistory(text);
-  const latest = history.months.length ? history.months[history.months.length - 1].period : undefined;
-  const usage = importUsageCsv(text, history.months.length > 1 ? latest : undefined);
-  if (!(usage.dbu > 0)) return { ok: false, error: "That file did not contain usage rows." };
-  const buckets = bucketDbu(usage);
-  const basket = basketForDbu(plan, buckets, dependencies);
-  const fitted = fitUsageForecast(history);
-  const draft: SimplePlan = {
-    ...plan,
-    mix: normalizeMix(buckets),
-    basket,
-    usageDbu: usage.dbu,
-    monthlySpend: 0,
-    ...(fitted
-      ? {
-          usageForecast: fitted,
-          monthlyGrowth: clamp(fitted.monthlyGrowth, 0, 0.2),
-        }
-      : {}),
-  };
-  return { ok: true, plan: { ...draft, monthlySpend: projectSimple(draft, dependencies).listMonthly } };
-}
-
-function applyFittedMonths(forecast: UsageForecast | undefined, baseline: number): SimpleMonth[] | null {
-  if (!forecast || !(baseline > 0) || forecast.ratios.length < 12) return null;
-  return forecast.ratios.slice(0, 12).map((ratio, index) => ({
-    month: index + 1,
-    low: roundMoney(baseline * Math.min(ratio.low, ratio.expected)),
-    expected: roundMoney(baseline * ratio.expected),
-    high: roundMoney(baseline * Math.max(ratio.expected, ratio.high)),
-  }));
 }
 
 function snapScale(value: number): number {

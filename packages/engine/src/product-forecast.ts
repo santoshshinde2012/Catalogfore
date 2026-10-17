@@ -1,5 +1,6 @@
 import { productCatalog, type Product } from "@cayfore/catalog";
-import { annualTotal, forecast } from "./forecast.js";
+import { annualTotal } from "./forecast.js";
+import { forecastPortfolioMonths } from "./forecast/portfolio.js";
 import { roundMoney } from "./money.js";
 import type { Estimate, Portfolio } from "./types.js";
 
@@ -27,41 +28,41 @@ function productById(id: string): Product | undefined {
 
 /** Per-workload month and the next 12 months, using the portfolio's growth and seasonality. */
 export function forecastProducts(result: Estimate, portfolio: Portfolio): ProductForecast {
-  const points = forecast(result, { ...portfolio.forecast, months: 12 });
-  const year = annualTotal(points);
-  const base = result.dbuCost + result.cloudCost;
+  const months = forecastPortfolioMonths(
+    { ...portfolio, forecast: { ...portfolio.forecast, months: 12 } },
+    undefined,
+    result,
+  );
+  const year = annualTotal(months.map((month) => month.point));
   const drafts = result.lines.map((line) => {
     const workload = portfolio.workloads.find((item) => item.id === line.workloadId);
     const product = workload?.productId ? productById(workload.productId) : undefined;
-    const weight = base > 0 ? line.total / base : result.lines.length > 0 ? 1 / result.lines.length : 0;
     return {
       workloadId: line.workloadId,
       productId: workload?.productId ?? null,
       name: line.name,
       category: product?.category ?? null,
-      monthly: roundMoney(line.total + result.addonCost * weight),
+      monthly: 0,
       year: 0,
       published: product ? product.published : null,
       listPrice: product?.listPrice ?? null,
       billingUnit: product?.billingUnit ?? null,
     };
   });
-  let spent = 0;
-  drafts.forEach((line, index) => {
-    if (index === drafts.length - 1) line.monthly = roundMoney(result.total - spent);
-    else spent = roundMoney(spent + line.monthly);
-  });
-  let yearSpent = 0;
-  drafts.forEach((line, index) => {
-    if (result.total <= 0) {
-      line.year = 0;
-      return;
-    }
-    if (index === drafts.length - 1) line.year = roundMoney(year - yearSpent);
-    else {
-      line.year = roundMoney((line.monthly / result.total) * year);
-      yearSpent = roundMoney(yearSpent + line.year);
-    }
+  months.forEach((month, monthIndex) => {
+    let allocated = 0;
+    drafts.forEach((line, index) => {
+      const priced = month.estimate.lines.find((item) => item.workloadId === line.workloadId);
+      const weight =
+        month.estimate.total !== 0 ? (priced?.total ?? 0) / (month.estimate.dbuCost + month.estimate.cloudCost) : 0;
+      const amount =
+        index === drafts.length - 1
+          ? roundMoney(month.point.total - allocated)
+          : roundMoney(weight * month.point.total);
+      allocated = roundMoney(allocated + amount);
+      if (monthIndex === 0) line.monthly = amount;
+      line.year = roundMoney(line.year + amount);
+    });
   });
   const grouped: ProductForecastLine[] = [];
   for (const line of drafts) {
@@ -75,5 +76,5 @@ export function forecastProducts(result: Estimate, portfolio: Portfolio): Produc
     existing.monthly = roundMoney(existing.monthly + line.monthly);
     existing.year = roundMoney(existing.year + line.year);
   }
-  return { lines: grouped, monthly: result.total, year };
+  return { lines: grouped, monthly: months[0].point.total, year };
 }

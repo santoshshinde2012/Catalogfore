@@ -1,18 +1,12 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import {
-  UPLOAD_MAX_CHARS,
   catalog,
   compareScenarios,
-  defaultPlan,
   estimate,
-  forecast,
   listInstances,
   listRegions,
-  normalizePortfolio,
-  planFromUsage,
-  pricesUpdatedOn,
-  projectSimple,
+  projectPortfolio,
   referenceRegion,
   skuRate,
   vmHourly,
@@ -20,7 +14,8 @@ import {
   type ScenarioPresetId,
   type Tier,
 } from "../../packages/engine/src/index.ts";
-import { DISCLAIMER, portfolioSchema, text } from "./reply.js";
+import { DISCLAIMER, portfolioSchema, readToolPortfolio, text } from "./reply.js";
+import { registerUsageTool } from "./register-usage.js";
 
 export function registerForecastTools(server: McpServer) {
   server.registerTool(
@@ -82,7 +77,9 @@ export function registerForecastTools(server: McpServer) {
       inputSchema: { portfolio: portfolioSchema() },
     },
     async ({ portfolio }) => {
-      const normalized = normalizePortfolio(portfolio);
+      const parsed = readToolPortfolio(portfolio);
+      if (!parsed.ok) return text({ disclaimer: DISCLAIMER, error: parsed.error });
+      const normalized = parsed.value;
       return text({ disclaimer: DISCLAIMER, portfolio: normalized, estimate: estimate(normalized) });
     },
   );
@@ -95,14 +92,11 @@ export function registerForecastTools(server: McpServer) {
       inputSchema: { portfolio: portfolioSchema() },
     },
     async ({ portfolio }) => {
-      const normalized = normalizePortfolio(portfolio);
-      const result = estimate(normalized);
-      return text({
-        disclaimer: DISCLAIMER,
-        portfolio: normalized,
-        estimate: result,
-        forecast: forecast(result, normalized.forecast),
-      });
+      const parsed = readToolPortfolio(portfolio);
+      if (!parsed.ok) return text({ disclaimer: DISCLAIMER, error: parsed.error });
+      const normalized = parsed.value;
+      const result = projectPortfolio(normalized);
+      return text({ disclaimer: DISCLAIMER, ...result, forecast: result.points });
     },
   );
 
@@ -130,7 +124,9 @@ export function registerForecastTools(server: McpServer) {
       },
     },
     async ({ portfolio, presets }) => {
-      const normalized = normalizePortfolio(portfolio);
+      const parsed = readToolPortfolio(portfolio);
+      if (!parsed.ok) return text({ disclaimer: DISCLAIMER, error: parsed.error });
+      const normalized = parsed.value;
       const chosen = (presets?.length ? presets : ["as_modeled", "jobs_serverless", "commit_37"]) as ScenarioPresetId[];
       const results = compareScenarios(normalized, chosen).map((result) => ({
         id: result.id,
@@ -145,30 +141,5 @@ export function registerForecastTools(server: McpServer) {
     },
   );
 
-  server.registerTool(
-    "forecast_usage",
-    {
-      title: "Forecast from a usage CSV",
-      description:
-        "Fit a 12-month forecast from a system.billing.usage CSV. Include list_price when you joined system.billing.list_prices. A single month scales the run rate. Six or more months fit a trend. Estimates only.",
-      inputSchema: {
-        csv: z.string().max(UPLOAD_MAX_CHARS).describe("CSV text with a header row. 8 MB at most."),
-      },
-    },
-    async ({ csv }) => {
-      const loaded = planFromUsage(defaultPlan(), csv);
-      if (!loaded.ok) return text({ disclaimer: DISCLAIMER, error: loaded.error });
-      const projected = projectSimple(loaded.plan);
-      return text({
-        disclaimer: DISCLAIMER,
-        catalogVersion: catalog.version,
-        pricesUpdatedOn,
-        method: loaded.plan.usageForecast?.method ?? "run-rate",
-        mape: loaded.plan.usageForecast?.mape ?? null,
-        annual: projected.annual,
-        spreadPercent: projected.spreadPercent,
-        months: projected.months,
-      });
-    },
-  );
+  registerUsageTool(server);
 }

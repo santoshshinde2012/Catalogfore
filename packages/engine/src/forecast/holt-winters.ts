@@ -17,7 +17,7 @@ export function holtWintersForecast(points: UsagePoint[]): UsageForecast | null 
       high: (value.expected + width) / last,
     };
   });
-  const back = backtestHoltWinters(amounts, season, best, 3);
+  const back = backtestHoltWinters(amounts, season, 3);
   return {
     method: "holt-winters",
     mape: back,
@@ -44,7 +44,7 @@ function tuneHoltWinters(amounts: number[], season: number): HoltParams | null {
         if (!errors) continue;
         const sse = errors.reduce((sum, value) => sum + value * value, 0);
         if (!best || sse < best.sse) {
-          const sigma = Math.sqrt(sse / errors.length);
+          const sigma = Math.sqrt(sse / Math.max(1, errors.length));
           best = { sse, params: { alpha, beta, gamma, sigma } };
         }
       }
@@ -60,7 +60,7 @@ function holtErrors(amounts: number[], season: number, alpha: number, beta: numb
   for (let index = season; index < amounts.length; index += 1) {
     const seasonal = state.seasonal[index % season];
     const forecast = state.level + state.trend + seasonal;
-    errors.push(amounts[index] - forecast);
+    if (index >= season * 2) errors.push(amounts[index] - forecast);
     const level = alpha * (amounts[index] - seasonal) + (1 - alpha) * (state.level + state.trend);
     const trend = beta * (level - state.level) + (1 - beta) * state.trend;
     state.seasonal[index % season] = gamma * (amounts[index] - level) + (1 - gamma) * seasonal;
@@ -94,9 +94,11 @@ function holtWintersAhead(
   return out;
 }
 
-function backtestHoltWinters(amounts: number[], season: number, params: HoltParams, holdout: number): number | null {
+function backtestHoltWinters(amounts: number[], season: number, holdout: number): number | null {
   if (amounts.length - holdout < season * 2) return null;
   const train = amounts.slice(0, -holdout);
+  const params = tuneHoltWinters(train, season);
+  if (!params) return null;
   const future = holtWintersAhead(train, season, params, holdout);
   let total = 0;
   let used = 0;

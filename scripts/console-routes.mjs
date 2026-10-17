@@ -50,6 +50,21 @@ for (const viewport of viewports) {
   await page.getByText("Data Engineering").first().waitFor();
   await page.keyboard.press("Escape");
 
+  await page.keyboard.press("Escape");
+  await page.getByRole("radio", { name: "10%", exact: true }).click();
+  await page.reload({ waitUntil: "networkidle" });
+  if ((await page.getByRole("radio", { name: "10%", exact: true }).getAttribute("aria-checked")) !== "true") {
+    throw new Error(`${label}: saved growth was not restored`);
+  }
+  await page.getByRole("button", { name: "Switch to dark theme" }).click();
+  await page.reload({ waitUntil: "networkidle" });
+  if ((await page.locator("html").getAttribute("data-theme")) !== "dark")
+    throw new Error(`${label}: saved dark theme was not restored`);
+  await page.getByRole("textbox", { name: "Scenario name" }).fill("Production baseline");
+  await page.getByRole("button", { name: "Save scenario", exact: true }).click();
+  await page.goto(base, { waitUntil: "networkidle" });
+  await page.getByRole("button", { name: "Open Production baseline", exact: true }).waitFor();
+
   await page.goto(new URL("faq.html", base).href, { waitUntil: "networkidle" });
   await page.getByRole("heading", { level: 1 }).waitFor();
   await page.close();

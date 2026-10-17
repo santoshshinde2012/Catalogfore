@@ -35,10 +35,12 @@ export function explain(plan: SimplePlan, result: Estimate, band: UncertaintyBan
         ? ""
         : ` Holding out the last ${plan.usageForecast.holdout} periods, the fit missed by ${mapeText(plan.usageForecast.mape)}.`;
     lines.push(
-      `The shaded band is a prediction interval from a ${plan.usageForecast.method} fit to the usage file.${mape}`,
+      `The shaded range combines the usage-model prediction interval from a ${plan.usageForecast.method} fit with separate price and infrastructure planning assumptions. The combined range is not a calibrated probability interval.${mape}`,
     );
-  } else if (plan.monthlyGrowth > 0) {
-    lines.push(`Each month is ${percent(plan.monthlyGrowth)} higher than the month before.`);
+  } else if (plan.monthlyGrowth !== 0) {
+    lines.push(
+      `Each month is ${percent(Math.abs(plan.monthlyGrowth))} ${plan.monthlyGrowth > 0 ? "higher" : "lower"} than the month before.`,
+    );
   } else {
     lines.push("Growth is flat, so a year with no discount is about twelve times the first month.");
   }

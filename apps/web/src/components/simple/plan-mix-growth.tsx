@@ -1,5 +1,5 @@
 import { type SimplePlan, type WorkloadMix } from "@cayfore/engine";
-import type { Dispatch, SetStateAction } from "react";
+import { useId, useState, type Dispatch, type SetStateAction } from "react";
 import { Input } from "../ui/input";
 import { Slider } from "../ui/slider";
 import { SegmentedStrip, SegmentedStripItem } from "../ui/segmented-strip";
@@ -45,6 +45,7 @@ export function MixSection({
 }
 
 export function GrowthSection({
+  step = "4",
   plan,
   growthFocus,
   growthText,
@@ -54,6 +55,7 @@ export function GrowthSection({
   onGrowth,
   onCommit,
 }: {
+  step?: string;
   plan: SimplePlan;
   growthFocus: boolean;
   growthText: string;
@@ -63,14 +65,19 @@ export function GrowthSection({
   onGrowth: (rate: number) => void;
   onCommit: (rate: number) => void;
 }) {
+  const [growthError, setGrowthError] = useState("");
+  const errorId = useId();
   return (
     <>
-      <Step n="4" title="Growth">
+      <Step n={step} title="Growth">
         <SegmentedStrip
           label="Monthly growth"
           value={growthValue(plan.monthlyGrowth)}
           onValueChange={(value) => {
-            if (value) onGrowth(Number(value));
+            if (value) {
+              setGrowthError("");
+              onGrowth(Number(value));
+            }
           }}
         >
           {GROWTH.map((rate) => (
@@ -85,17 +92,33 @@ export function GrowthSection({
             <Input
               inputMode="decimal"
               aria-label="Custom monthly growth"
-              className="h-9 pr-8 tabular-nums"
-              value={growthFocus ? growthText : String(growthPercent)}
+              aria-describedby={growthError ? errorId : undefined}
+              aria-invalid={Boolean(growthError)}
+              className="h-11 pr-8 text-base tabular-nums sm:text-sm"
+              value={growthFocus || growthError ? growthText : String(growthPercent)}
               onFocus={() => {
                 setGrowthFocus(true);
-                setGrowthText(String(growthPercent));
+                if (!growthError) setGrowthText(String(growthPercent));
               }}
-              onChange={(event) => setGrowthText(event.target.value)}
+              onChange={(event) => {
+                setGrowthText(event.target.value);
+                setGrowthError("");
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  event.currentTarget.blur();
+                }
+              }}
               onBlur={() => {
                 setGrowthFocus(false);
                 const value = Number(growthText);
-                if (Number.isFinite(value)) onGrowth(value / 100);
+                if (!growthText.trim() || !Number.isFinite(value) || value < -20 || value > 20) {
+                  setGrowthError("Enter monthly growth from −20% to 20%.");
+                  return;
+                }
+                setGrowthError("");
+                onGrowth(value / 100);
               }}
             />
             <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground">
@@ -103,6 +126,11 @@ export function GrowthSection({
             </span>
           </span>
         </label>
+        {growthError && (
+          <p id={errorId} className="text-sm text-destructive" role="alert">
+            {growthError}
+          </p>
+        )}
         <div className="grid gap-2">
           <div className="flex items-center justify-between text-sm font-medium">
             <span>Commitment discount</span>

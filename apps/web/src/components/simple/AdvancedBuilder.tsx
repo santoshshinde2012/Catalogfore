@@ -1,5 +1,5 @@
 import type { Estimate, Portfolio } from "@cayfore/engine";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, LoaderCircle } from "lucide-react";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
@@ -7,7 +7,6 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 const Ledger = lazy(() => import("../Ledger").then((module) => ({ default: module.Ledger })));
 
 export function AdvancedBuilder({
-  open,
   ask = 0,
   portfolio,
   estimate,
@@ -15,8 +14,8 @@ export function AdvancedBuilder({
   onPortfolio,
   onSelect,
   onRemove,
+  onUsageFile,
 }: {
-  open: boolean;
   ask?: number;
   portfolio: Portfolio;
   estimate: Estimate;
@@ -24,11 +23,12 @@ export function AdvancedBuilder({
   onPortfolio: (portfolio: Portfolio) => void;
   onSelect: (id: string | null) => void;
   onRemove: (id: string) => void;
+  onUsageFile: (file: File) => void;
 }) {
-  const [opened, setOpened] = useState(open);
+  const [opened, setOpened] = useState(false);
   useEffect(() => {
-    if (open || ask > 0) setOpened(true);
-  }, [open, ask]);
+    if (ask > 0) setOpened(true);
+  }, [ask]);
   return (
     <Sheet open={opened} onOpenChange={setOpened}>
       <SheetTrigger asChild>
@@ -41,11 +41,17 @@ export function AdvancedBuilder({
         <SheetHeader>
           <SheetTitle>Advanced</SheetTitle>
           <SheetDescription>
-            The same forecast, one workload at a time. Edits here replace the sliders until you change an input on the
-            page.
+            The same forecast, one workload at a time. Global growth and pricing controls preserve these workloads.
           </SheetDescription>
         </SheetHeader>
-        <Suspense fallback={null}>
+        <Suspense
+          fallback={
+            <p className="flex min-h-24 items-center justify-center gap-2 text-sm text-muted-foreground" role="status">
+              <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+              Loading workload editor…
+            </p>
+          }
+        >
           <Ledger
             portfolio={portfolio}
             estimate={estimate}
@@ -53,6 +59,7 @@ export function AdvancedBuilder({
             onPortfolio={onPortfolio}
             onSelect={onSelect}
             onRemove={onRemove}
+            onUsageFile={onUsageFile}
           />
         </Suspense>
       </SheetContent>

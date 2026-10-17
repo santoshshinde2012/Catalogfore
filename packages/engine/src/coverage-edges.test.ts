@@ -107,6 +107,7 @@ describe("portfolio decode", () => {
         {
           kind: "metered",
           sku: "jobs_serverless",
+          rateProvenance: { kind: "custom", label: "Negotiated test prices", currency: "USD" },
           dbuPerMonth: 12,
           units: 100,
           rateByCloud: { aws: 0.2, azure: "0.3" },

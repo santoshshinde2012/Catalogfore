@@ -1,10 +1,16 @@
-import { UPLOAD_MAX_CHARS, UPLOAD_MAX_ROWS, parseCsv, parseUntrustedJson } from "@cayfore/engine";
+import {
+  UPLOAD_MAX_CHARS,
+  UPLOAD_MAX_ROWS,
+  parseCsv,
+  parseUntrustedJson,
+  parseSavedForecast,
+  type Portfolio,
+} from "@cayfore/engine";
 import { z } from "zod";
 
 const usageText = z.string().min(1).max(UPLOAD_MAX_CHARS);
 const usageTable = z.array(z.record(z.string().max(2_000))).max(UPLOAD_MAX_ROWS);
 const forecastText = z.string().max(UPLOAD_MAX_CHARS);
-const forecastObject = z.record(z.unknown());
 
 export type ReadResult<T> = { ok: true; value: T } | { ok: false; error: string };
 
@@ -31,7 +37,7 @@ export async function readUsageFile(file: File): Promise<ReadResult<string>> {
 }
 
 /** Read a forecast JSON file. The object must be plain data. */
-export async function readForecastFile(file: File): Promise<ReadResult<unknown>> {
+export async function readForecastFile(file: File): Promise<ReadResult<Portfolio>> {
   if (file.size > UPLOAD_MAX_CHARS) return { ok: false, error: "That file is too large." };
   let text = "";
   try {
@@ -42,12 +48,8 @@ export async function readForecastFile(file: File): Promise<ReadResult<unknown>>
   const body = forecastText.safeParse(text);
   if (!body.success) return { ok: false, error: "That file is too large." };
   try {
-    const value = parseUntrustedJson(body.data);
-    const envelope = forecastObject.safeParse(value);
-    if (!envelope.success) return { ok: false, error: "That file is not a forecast JSON." };
-    const portfolio = "portfolio" in envelope.data ? envelope.data.portfolio : envelope.data;
-    if (!forecastObject.safeParse(portfolio).success) return { ok: false, error: "That file is not a forecast JSON." };
-    return { ok: true, value: envelope.data };
+    const parsed = parseSavedForecast(parseUntrustedJson(body.data));
+    return parsed.ok ? { ok: true, value: parsed.value } : { ok: false, error: parsed.error };
   } catch {
     return { ok: false, error: "That file is not a forecast JSON." };
   }

@@ -1,107 +1,80 @@
-import type { SimpleMonth } from "@cayfore/engine";
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { money } from "../../format";
-import { usePrefersReducedMotion } from "../../lib/use-animated-number";
+import { axisMoney, cumulativeRows, monthlyRows, type ChartSeries } from "../../lib/chart-data";
+import { ChartTooltip } from "./ChartTooltip";
 
-interface ChartRow {
-  month: number;
-  low: number;
-  span: number;
-  expected: number;
-  high: number;
-}
-
-export function ForecastChart({ months, label }: { months: SimpleMonth[]; label: string }) {
-  const reduceMotion = usePrefersReducedMotion();
-  const data: ChartRow[] = months.map((month) => ({
-    month: month.month,
-    low: month.low,
-    span: Math.max(0, month.high - month.low),
-    expected: month.expected,
-    high: month.high,
-  }));
-
+export function ForecastChart({
+  label,
+  cumulative = false,
+  ...series
+}: ChartSeries & { label: string; cumulative?: boolean }) {
+  const data = cumulative ? cumulativeRows(series) : monthlyRows(series);
   return (
-    <div className="h-64 w-full" role="img" aria-label={label}>
-      <ResponsiveContainer width="100%" height="100%">
-        <ComposedChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-          <defs>
-            <linearGradient id="expectedFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--lava)" stopOpacity={0.32} />
-              <stop offset="100%" stopColor="var(--lava)" stopOpacity={0} />
-            </linearGradient>
-          </defs>
+    <div className="h-72 w-full min-w-0" role="group" aria-label={label} data-testid="forecast-chart">
+      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+        <ComposedChart data={data} margin={{ top: 12, right: 8, left: 0, bottom: 0 }} accessibilityLayer>
           <CartesianGrid vertical={false} stroke="var(--border)" />
           <XAxis
-            dataKey="month"
+            dataKey="label"
             tickLine={false}
             axisLine={false}
-            tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
-            tickFormatter={(value: number) => `M${value}`}
+            minTickGap={24}
+            tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
           />
           <YAxis
             tickLine={false}
             axisLine={false}
-            width={52}
-            tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
-            tickFormatter={(value: number) => axisMoney(value)}
+            width={58}
+            tickFormatter={axisMoney}
+            tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
           />
-          <Tooltip content={<BandTip />} />
+          <Tooltip content={<ChartTooltip />} />
           <Area
-            dataKey="low"
-            stackId="band"
-            stroke="none"
-            fill="transparent"
-            isAnimationActive={!reduceMotion}
-            animationDuration={500}
-          />
-          <Area
-            dataKey="span"
-            stackId="band"
+            dataKey="band"
+            name="Planning range"
             stroke="none"
             fill="var(--lava)"
-            fillOpacity={0.16}
-            isAnimationActive={!reduceMotion}
-            animationDuration={500}
+            fillOpacity={0.13}
+            isAnimationActive={false}
+            connectNulls={false}
           />
-          <Area
-            dataKey="expected"
-            stroke="none"
-            fill="url(#expectedFill)"
-            type="monotone"
-            isAnimationActive={!reduceMotion}
-            animationDuration={500}
+          <Line
+            dataKey="actual"
+            name="Imported spend"
+            stroke="var(--chart-actual)"
+            strokeWidth={2.5}
+            dot={{ r: 3 }}
+            isAnimationActive={false}
+            connectNulls={false}
           />
           <Line
             dataKey="expected"
+            name="Forecast"
             stroke="var(--foreground)"
             strokeWidth={2}
+            strokeDasharray="6 3"
             dot={false}
-            isAnimationActive={!reduceMotion}
-            animationDuration={500}
-            type="monotone"
+            isAnimationActive={false}
+            connectNulls={false}
+          />
+          <Line
+            dataKey="budget"
+            name="Budget"
+            stroke="var(--chart-budget)"
+            strokeWidth={1.5}
+            strokeDasharray="3 3"
+            dot={false}
+            isAnimationActive={false}
+          />
+          <Line
+            dataKey="comparison"
+            name={series.comparison?.name ?? "Saved scenario"}
+            stroke="var(--chart-comparison)"
+            strokeWidth={2}
+            dot={false}
+            isAnimationActive={false}
           />
         </ComposedChart>
       </ResponsiveContainer>
     </div>
   );
-}
-
-function BandTip({ active, payload }: { active?: boolean; payload?: ReadonlyArray<{ payload?: ChartRow }> }) {
-  const row = payload?.[0]?.payload;
-  if (!active || !row) return null;
-  return (
-    <div className="rounded-lg border bg-popover px-3 py-2 text-xs shadow-md">
-      <p className="font-medium">Month {row.month}</p>
-      <p className="mt-1 tabular-nums text-muted-foreground">Low {money(row.low, 0)}</p>
-      <p className="tabular-nums">Expected {money(row.expected, 0)}</p>
-      <p className="tabular-nums text-muted-foreground">High {money(row.high, 0)}</p>
-    </div>
-  );
-}
-
-function axisMoney(value: number): string {
-  if (value >= 1_000_000) return `$${Math.round(value / 100_000) / 10}m`;
-  if (value >= 1000) return `$${Math.round(value / 100) / 10}k`;
-  return `$${Math.round(value)}`;
 }

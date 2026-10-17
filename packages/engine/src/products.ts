@@ -1,12 +1,14 @@
 import { productCatalog, type Product } from "@cayfore/catalog";
-import { applyProductFormula } from "./formulas/registry.js";
+import { recomputeProduct } from "./formulas/product.js";
 import { geniePromoFactor, genieUserUsageFree } from "./formulas/genie-window.js";
-import { roundMoney, uid } from "./money.js";
-import { METERED_SKUS, type MeteredSku, type Workload } from "./types.js";
-import { importUsageProducts } from "./usage.js";
+import type { Workload } from "./types.js";
+import { previewUsageImport } from "./usage/preview.js";
+import type { UsageImportOptions, UsageImportPreview } from "./usage/types.js";
+import { workloadsFromUsagePreview, type UsageProductForecast } from "./usage/workloads.js";
 import { createWorkload, type MenuKind } from "./workload-seeds.js";
 
 export { geniePromoFactor, genieUserUsageFree };
+export { formulaFor, recomputeProduct } from "./formulas/product.js";
 export { forecastProducts, type ProductForecast, type ProductForecastLine } from "./product-forecast.js";
 
 export function listProducts(): readonly Product[] {
@@ -57,60 +59,14 @@ export function workloadsForProduct(productId: string): Workload[] {
   ];
 }
 
-/** Re-apply a catalog formula after an input edit. Products without a formula are unchanged. */
-export function recomputeProduct(workload: Workload): Workload {
-  const formula = formulaFor(workload);
-  if (!formula || workload.kind !== "metered") return workload;
-  return applyProductFormula(workload, formula);
-}
+export type { UsageProductForecast } from "./usage/workloads.js";
 
-export interface UsageProductForecast {
-  workloads: Workload[];
-  unmapped: string[];
-  warnings: string[];
-}
-
-/** One workload per mapped product, priced from list_price when the file has it. */
-export function workloadsFromUsage(text: string): UsageProductForecast {
-  const imported = importUsageProducts(text);
-  const warnings = [...imported.warnings];
-  const workloads: Workload[] = [];
-  for (const row of imported.products) {
-    const known = (METERED_SKUS as readonly string[]).includes(row.engineSku);
-    const sku = (known ? row.engineSku : "managed_services") as MeteredSku;
-    const product = productById(row.productId);
-    const name = product?.menuLabel ?? row.productId;
-    if (row.dollars != null) {
-      const dollars = roundMoney(row.dollars);
-      workloads.push({
-        id: uid(),
-        name: row.unit === "DBU" ? name : `${name} (${row.unit})`,
-        productId: row.productId,
-        kind: "metered",
-        sku,
-        dbuPerMonth: 0,
-        fixedUsdByCloud: { aws: dollars, azure: dollars, gcp: dollars },
-      });
-      continue;
-    }
-    if (row.unit === "DBU") {
-      workloads.push({
-        id: uid(),
-        name,
-        productId: row.productId,
-        kind: "metered",
-        sku,
-        dbuPerMonth: row.quantity,
-      });
-      continue;
-    }
-    warnings.push(`${name} is in ${row.unit} and the file has no list price, so that row was not priced.`);
-  }
-  return {
-    workloads,
-    unmapped: imported.unmapped.map((row) => row.skuName),
-    warnings,
-  };
+/** One month's known costs plus explicit catalog estimates and unpriced quantities. */
+export function workloadsFromUsage(
+  input: string | UsageImportPreview,
+  options: UsageImportOptions = {},
+): UsageProductForecast {
+  return workloadsFromUsagePreview(typeof input === "string" ? previewUsageImport(input, options) : input);
 }
 
 function applyPatch(workload: Workload, patch: Product["patch"]): Workload {
@@ -125,12 +81,4 @@ function applyPatch(workload: Workload, patch: Product["patch"]): Workload {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function formulaFor(workload: Workload): Product["formula"] {
-  if (!workload.productId) return undefined;
-  const product = productById(workload.productId);
-  if (!product) return undefined;
-  if (workload.partId) return product.parts?.find((part) => part.id === workload.partId)?.formula;
-  return product.formula;
 }

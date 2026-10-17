@@ -1,6 +1,5 @@
 import { skuCatalog } from "./catalog.js";
-import { estimate } from "./estimate.js";
-import { annualTotal, forecast } from "./forecast.js";
+import { projectPortfolio } from "./projection.js";
 import { roundMoney } from "./money.js";
 import { applyScenario } from "./scenarios.js";
 import type { Portfolio, Workload } from "./types.js";
@@ -36,8 +35,7 @@ function clone<T>(value: T): T {
 }
 
 function annualCost(portfolio: Portfolio): number {
-  const result = estimate(portfolio);
-  return annualTotal(forecast(result, portfolio.forecast));
+  return projectPortfolio(portfolio).annual;
 }
 
 function isJobOrPipeline(workload: Workload): boolean {
@@ -117,7 +115,7 @@ const CANDIDATES: {
     id: "photon_speedup_2",
     title: "Assume Photon finishes in half the time",
     detail:
-      "Turns Photon on and cuts those clusters’ hours in half. The 2× speedup is an assumption you have to measure, not a Databricks guarantee. DBU emission still uses the catalog Photon multiplier. Apply it only if you have timed the job.",
+      "Turns Photon on and cuts those clusters’ hours in half. The 2× speedup is an assumption you have to measure, not a Databricks guarantee. DBU emission uses the published factor for the workload and cloud. Apply it only if you have timed the job.",
     when: (portfolio) => portfolio.workloads.some((workload) => workload.kind === "cluster" && !workload.photon),
   },
   {

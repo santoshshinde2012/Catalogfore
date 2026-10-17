@@ -10,7 +10,7 @@ export function Slider({
 }: ComponentProps<typeof SliderPrimitive.Root>) {
   return (
     <SliderPrimitive.Root
-      className={cn("relative flex w-full touch-none items-center select-none", className)}
+      className={cn("relative flex min-h-11 w-full touch-none items-center select-none sm:min-h-8", className)}
       {...props}
     >
       <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-foreground/15">
@@ -19,7 +19,7 @@ export function Slider({
       <SliderPrimitive.Thumb
         aria-label={ariaLabel}
         aria-valuetext={ariaValueText}
-        className="block size-4 rounded-full border-2 border-foreground bg-card shadow-sm transition-transform motion-safe:hover:scale-110 motion-safe:focus-visible:scale-110"
+        className="block size-5 rounded-full border-2 border-foreground bg-card shadow-sm transition-transform motion-safe:hover:scale-110 motion-safe:focus-visible:scale-110 sm:size-4"
       />
     </SliderPrimitive.Root>
   );

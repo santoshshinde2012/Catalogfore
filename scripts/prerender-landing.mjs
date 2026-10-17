@@ -52,9 +52,12 @@ const vite = await createServer({
 
 try {
   const mod = await vite.ssrLoadModule("/src/prerender-entry.tsx");
-  const html = mod.render();
+  const html = await mod.render();
   if (!html.includes("What does the next year cost?")) {
     throw new Error("Prerender did not include the page heading");
+  }
+  if (html.includes("<!--$!-->") || html.includes("<!--$?-->")) {
+    throw new Error("Prerender has unfinished Suspense boundaries; hydration would discard their server output");
   }
   const indexPath = path.join(webRoot, "dist/index.html");
   let index = readFileSync(indexPath, "utf8");

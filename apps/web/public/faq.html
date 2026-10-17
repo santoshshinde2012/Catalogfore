@@ -10,12 +10,12 @@
     <!-- frame-ancestors is ignored in a meta policy. GitHub Pages cannot send it as a response header. -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'sha256-E/8u475mHwt6BpD0CDgsZgexXXHIMVd3KfzbMtoGMEE='; style-src 'unsafe-inline'; style-src-elem 'sha256-QncEjtIBq55dHI84kgti5DV5sob6ywBM7oEAH0sKGbo='; style-src-attr 'none'; img-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+      content="default-src 'self'; script-src 'self' 'sha256-yFnTbqJPjPAF1D3TyuaSy6M5FCud+VpQkKfBFG0GV6g='; style-src 'unsafe-inline'; style-src-elem 'sha256-QncEjtIBq55dHI84kgti5DV5sob6ywBM7oEAH0sKGbo='; style-src-attr 'none'; img-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
     />
     <title>FAQ — Cayfore Databricks cost calculator</title>
     <meta
       name="description"
-      content="Answers about the Cayfore Databricks cost calculator: what the DBU forecast includes, how it differs from a pricing estimator, and that the calculation stays in the browser."
+      content="Answers about Cayfore: local Databricks and FOCUS usage imports, budgets, named scenarios, forecast charts, planning ranges, and privacy."
     />
     <link rel="canonical" href="https://santoshshinde2012.github.io/cayfore/faq.html" />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
@@ -27,7 +27,7 @@
     <meta property="og:title" content="FAQ — Cayfore Databricks cost calculator" />
     <meta
       property="og:description"
-      content="What Cayfore estimates, what a DBU forecast includes, and why the calculation stays in the browser."
+      content="Local billing imports, budgets, scenarios, and charts in the Cayfore Databricks cost planner."
     />
     <meta property="og:url" content="https://santoshshinde2012.github.io/cayfore/faq.html" />
     <meta property="og:image" content="https://santoshshinde2012.github.io/cayfore/og.png" />
@@ -38,7 +38,7 @@
     <meta name="twitter:title" content="FAQ — Cayfore Databricks cost calculator" />
     <meta
       name="twitter:description"
-      content="What Cayfore estimates, what a DBU forecast includes, and why the calculation stays in the browser."
+      content="Local billing imports, budgets, scenarios, and charts in the Cayfore Databricks cost planner."
     />
     <meta name="twitter:image" content="https://santoshshinde2012.github.io/cayfore/og.png" />
     <meta name="twitter:image:alt" content="Cayfore, a Databricks cost calculator and DBU forecast" />
@@ -120,14 +120,18 @@
         "@context": "https://schema.org",
         "@type": "FAQPage",
         "url": "https://santoshshinde2012.github.io/cayfore/faq.html",
-        "isPartOf": { "@type": "WebSite", "name": "Cayfore", "url": "https://santoshshinde2012.github.io/cayfore/" },
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "Cayfore",
+          "url": "https://santoshshinde2012.github.io/cayfore/"
+        },
         "mainEntity": [
           {
             "@type": "Question",
             "name": "What is Cayfore?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Cayfore is an independent Databricks cost calculator. It forecasts a year of DBU and cloud spend from four inputs: cloud and tier, a starting amount or team size, a mix of pipelines, dashboards, and models, and monthly growth. It is an estimate, not a Databricks quote, and it is not affiliated with Databricks."
+              "text": "Cayfore is an independent Databricks cost calculator and budget planner. It models pipelines, dashboards, and AI workloads, compares named scenarios, and projects monthly and annual spend from assumptions or imported usage. It is an estimate, not a Databricks quote, and is not affiliated with Databricks."
             }
           },
           {
@@ -135,7 +139,7 @@
             "name": "What does the DBU forecast include?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "The forecast prices Databricks usage, measured in DBU, and the cloud machines under those workloads for 12 months. The default is AWS Premium in US East with 3 percent monthly growth: about $170,258 a year. A usage file can replace the starting amount. The year is shown as a low-to-high range."
+              "text": "Configuration estimates price Databricks usage and the relevant cloud infrastructure. Usage imports preserve the selected month’s exported monetary costs. Missing DBU prices use labelled catalog estimates; unsupported charges remain visibly unpriced. A virtual machine bill is not inferred from imported DBUs."
             }
           },
           {
@@ -143,7 +147,31 @@
             "name": "How is this different from a Databricks pricing estimator?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "A vendor pricing estimator prices one product configuration. Cayfore prices a year of mixed workloads — pipelines, dashboards, and models — and keeps the calculation in the browser. It does not sign in to a workspace and it does not read an invoice."
+              "text": "Cayfore combines mixed workloads into a plan over time, with budgets, dated changes, and named scenarios. It can read local billing CSV files and keeps the calculation in the browser. It does not require a workspace login or a connected billing account."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which usage files can I import?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Import a Databricks billing CSV or a recognized FOCUS cost and usage CSV in USD. Review the selected month, cost basis, price coverage, and warnings before replacing or adding workloads. The latest closed calendar month is selected by default. FOCUS effective and billed costs are labelled separately."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I compare scenarios against a budget?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Set an annual budget to see forecast headroom or overspend, save named scenarios, and compare their costs. Growth, dated workload changes, and pricing assumptions affect the projections. Named scenarios are saved in this browser. Export the active plan as a JSON file to open that plan in another browser."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What do the charts and forecast range mean?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The chart plots imported observed costs in USD alongside the model’s future projection. DBU-only observations appear in the history table. The low-to-high planning range combines usage uncertainty and pricing assumptions; it is not a calibrated probability interval. Unpriced charges remain outside the known cost subtotal."
             }
           },
           {
@@ -151,7 +179,7 @@
             "name": "Does Cayfore upload a usage file or the estimate?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "No. The usage file stays in this browser. The share link is only the URL hash. Cayfore does not save the estimate on a server."
+              "text": "No. Usage files and calculations stay local; Cayfore does not save them on a server. A share link embeds the plan in its URL hash, so anyone receiving it can read the shared plan. Attribution summaries are excluded from shared links. Saved forecast JSON files can contain team or owner labels."
             }
           }
         ]
@@ -172,32 +200,58 @@
       <section>
         <h2>What is Cayfore?</h2>
         <p>
-          Cayfore is an independent Databricks cost calculator. It forecasts a year of DBU and cloud spend from four
-          inputs: cloud and tier, a starting amount or team size, a mix of pipelines, dashboards, and models, and
-          monthly growth. It is an estimate, not a Databricks quote, and it is not affiliated with Databricks.
+          Cayfore is an independent Databricks cost calculator and budget planner. It models pipelines, dashboards, and
+          AI workloads, compares named scenarios, and projects monthly and annual spend from assumptions or imported
+          usage. It is an estimate, not a Databricks quote, and is not affiliated with Databricks.
         </p>
       </section>
       <section>
         <h2>What does the DBU forecast include?</h2>
         <p>
-          The forecast prices Databricks usage, measured in DBU, and the cloud machines under those workloads for 12
-          months. The default is AWS Premium in US East with 3 percent monthly growth: about $170,258 a year. A usage
-          file can replace the starting amount. The year is shown as a low-to-high range.
+          Configuration estimates price Databricks usage and the relevant cloud infrastructure. Usage imports preserve
+          the selected month’s exported monetary costs. Missing DBU prices use labelled catalog estimates; unsupported
+          charges remain visibly unpriced. A virtual machine bill is not inferred from imported DBUs.
         </p>
       </section>
       <section>
         <h2>How is this different from a Databricks pricing estimator?</h2>
         <p>
-          A vendor pricing estimator prices one product configuration. Cayfore prices a year of mixed workloads —
-          pipelines, dashboards, and models — and keeps the calculation in the browser. It does not sign in to a
-          workspace and it does not read an invoice.
+          Cayfore combines mixed workloads into a plan over time, with budgets, dated changes, and named scenarios. It
+          can read local billing CSV files and keeps the calculation in the browser. It does not require a workspace
+          login or a connected billing account.
+        </p>
+      </section>
+      <section>
+        <h2>Which usage files can I import?</h2>
+        <p>
+          Import a Databricks billing CSV or a recognized FOCUS cost and usage CSV in USD. Review the selected month,
+          cost basis, price coverage, and warnings before replacing or adding workloads. The latest closed calendar
+          month is selected by default. FOCUS effective and billed costs are labelled separately.
+        </p>
+      </section>
+      <section>
+        <h2>Can I compare scenarios against a budget?</h2>
+        <p>
+          Yes. Set an annual budget to see forecast headroom or overspend, save named scenarios, and compare their
+          costs. Growth, dated workload changes, and pricing assumptions affect the projections. Named scenarios are
+          saved in this browser. Export the active plan as a JSON file to open that plan in another browser.
+        </p>
+      </section>
+      <section>
+        <h2>What do the charts and forecast range mean?</h2>
+        <p>
+          The chart plots imported observed costs in USD alongside the model’s future projection. DBU-only observations
+          appear in the history table. The low-to-high planning range combines usage uncertainty and pricing
+          assumptions; it is not a calibrated probability interval. Unpriced charges remain outside the known cost
+          subtotal.
         </p>
       </section>
       <section>
         <h2>Does Cayfore upload a usage file or the estimate?</h2>
         <p>
-          No. The usage file stays in this browser. The share link is only the URL hash. Cayfore does not save the
-          estimate on a server.
+          No. Usage files and calculations stay local; Cayfore does not save them on a server. A share link embeds the
+          plan in its URL hash, so anyone receiving it can read the shared plan. Attribution summaries are excluded from
+          shared links. Saved forecast JSON files can contain team or owner labels.
         </p>
       </section>
       <footer>

@@ -9,7 +9,8 @@ import {
   type RegionInfo,
   type SkuCatalog,
 } from "../catalog.js";
-import type { Cloud, SkuId, Tier } from "../types.js";
+import type { Cloud, ClusterSku, SkuId, Tier } from "../types.js";
+import { publishedPhotonMultiplier } from "../rates/photon.js";
 
 export interface VmQuote {
   hourly: number;
@@ -24,6 +25,7 @@ export interface PricingCatalog {
   readonly verifiedOn: string;
   readonly disclaimer: string;
   readonly photonMultiplier: number;
+  photonMultiplierFor?(cloud: Cloud, sku: ClusterSku): number;
   readonly sqlVmDollarsPerDbuHour: number;
   readonly sqlVmNote: string;
   readonly defaultSpotDiscount: number;
@@ -49,6 +51,7 @@ export const bundledPricingCatalog: PricingCatalog = {
   verifiedOn: skuCatalog.verifiedOn,
   disclaimer: skuCatalog.disclaimer,
   photonMultiplier: skuCatalog.photonMultiplier,
+  photonMultiplierFor: publishedPhotonMultiplier,
   sqlVmDollarsPerDbuHour: skuCatalog.sqlVmDollarsPerDbuHour,
   sqlVmNote: skuCatalog.sqlVmNote,
   defaultSpotDiscount: skuCatalog.defaultSpotDiscount,

@@ -6,6 +6,12 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Added
 
+- Complete mobile and keyboard planning flows: forecast shortcuts, balanced chart tabs, persistent import actions, accessible scrolling tables, explicit reset/undo, validated input drafts, editor focus management, and responsive planning states.
+- Local budget and named-scenario planning, dated usage changes, contract-rate provenance, and a commitment break-even what-if including unused value and overage.
+- Dated observed-history/forecast charts, cumulative budget comparison, saved-scenario overlays, stacked cost components, explicit planning ranges, and reconciled month tables.
+- Shared typed Databricks and FOCUS cost imports with preview, closed-month defaults, explicit partial periods, effective-list pricing, signed corrections, duplicate detection, USD validation, and local attribution.
+- Runtime price status and source context, saved price-book references, strict saved-file validation, and financial workflow regressions across engine, CLI, MCP, and desktop/mobile browsers.
+
 - A confidence score on every product and on every cloud, region, tier, and SKU cell (`data/rate-confidence.json`). Azure meters score as measured. The US East card scores as secondary. Other AWS and GCP regions stay on the Lakehouse Real-Time proxy.
 - Zerobus Ingest at the secondary list: $0.050/GB on AWS Premium and $0.064/GB on AWS Enterprise and Azure. The example is 100 GB. GCP stays at $0. The undated launch promotion is not applied.
 - Layer checks (`dependency-cruiser`), an engine coverage threshold, CodeQL, Dependabot, CODEOWNERS, pinned GitHub Action SHAs, and a semver release workflow that reads CHANGELOG.md.
@@ -30,6 +36,10 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 - `docs/PRIVACY.md`. The calculation stays in the browser.
 
 ### Changed
+
+- Page, CSV, JSON, PDF, product totals, recommendations, CLI, and MCP share one canonical dated forecast. Promotions are evaluated per month, fitted forecasts retain calendar spacing, and zero periods remain observations.
+- Global growth and pricing changes preserve detailed workloads. Internal navigation preserves shared state. Every savings action applies the change it quotes, with alternatives labelled as overlapping comparisons.
+- Node 22.13+ within Node 22, or Node 24+, is required; `.nvmrc` and workflows select Node 22. Ownership summaries are omitted from shared URLs and remain available in local scenarios and JSON downloads.
 
 - Uploads, share links, and forecast JSON are size-capped and parsed as plain data. CSV export neutralizes spreadsheet formulas. The production page does not load a third-party script. The unused `@radix-ui/react-label` package is removed. Dependabot waits 7 days before opening a version-update pull request.
 - Price refresh and catalog watch fetch only allow-listed HTTPS hosts. The billing SQL stays a fixed `SELECT`.

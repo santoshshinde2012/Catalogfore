@@ -1,5 +1,6 @@
 import { clamp, uid } from "./money.js";
 import type { Cloud, Tier } from "./types.js";
+import { rateProvenanceOf } from "./pricing-fields.js";
 
 export const CLOUDS: Cloud[] = ["aws", "azure", "gcp"];
 export const TIERS: Tier[] = ["premium", "enterprise"];
@@ -50,11 +51,11 @@ export function placementRates(value: unknown): Partial<Record<Cloud, Partial<Re
   return Object.keys(rates).length > 0 ? rates : undefined;
 }
 
-export function cloudRates(value: unknown): Partial<Record<Cloud, number>> | undefined {
+export function cloudRates(value: unknown, signed = false): Partial<Record<Cloud, number>> | undefined {
   if (!isRecord(value)) return undefined;
   const rates: Partial<Record<Cloud, number>> = {};
   for (const cloud of CLOUDS) {
-    if (value[cloud] != null) rates[cloud] = num(value[cloud], 0, 0, 1_000_000);
+    if (value[cloud] != null) rates[cloud] = num(value[cloud], 0, signed ? -1e12 : 0, signed ? 1e12 : 1_000_000);
   }
   return Object.keys(rates).length > 0 ? rates : undefined;
 }
@@ -70,6 +71,7 @@ export function tierOf(value: unknown): Tier | undefined {
 export function base(record: Record<string, unknown>, fallbackName: string) {
   const cloud = cloudOf(record.cloud);
   const tier = tierOf(record.tier);
+  const rateProvenance = rateProvenanceOf(record.rateProvenance);
   return {
     id: str(record.id, uid()),
     name: str(record.name, fallbackName).slice(0, 80),
@@ -81,6 +83,10 @@ export function base(record: Record<string, unknown>, fallbackName: string) {
       : {}),
     ...(typeof record.partId === "string" && /^[a-z0-9_]+$/.test(record.partId) ? { partId: record.partId } : {}),
     ...(inputsOf(record.inputs) ? { inputs: inputsOf(record.inputs) } : {}),
+    ...(rateProvenance ? { rateProvenance } : {}),
+    ...(["priced", "approximate", "unpriced", "free"].includes(String(record.priceStatus))
+      ? { priceStatus: record.priceStatus as "priced" | "approximate" | "unpriced" | "free" }
+      : {}),
   };
 }
 
@@ -90,7 +96,8 @@ export function inputsOf(value: unknown): Record<string, number | string> | unde
   for (const [key, item] of Object.entries(value)) {
     if (!/^[A-Za-z][A-Za-z0-9]*$/.test(key)) continue;
     if (typeof item === "number" && Number.isFinite(item)) inputs[key] = item;
-    else if (typeof item === "string" && item.length > 0 && item.length <= 40) inputs[key] = item;
+    else if (typeof item === "string" && item.length > 0 && item.length <= (key === "sourceSku" ? 512 : 40))
+      inputs[key] = item;
   }
   return Object.keys(inputs).length > 0 ? inputs : undefined;
 }
