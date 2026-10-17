@@ -18,6 +18,7 @@ export function LedgerMenu({
   const menuRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const addRef = useRef<HTMLButtonElement>(null);
+  const restoringFocus = useRef(false);
   const choicesRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
   const categories = productCategories();
@@ -33,7 +34,9 @@ export function LedgerMenu({
         event.preventDefault();
         event.stopPropagation();
         setMenuOpen(false);
+        restoringFocus.current = true;
         addRef.current?.focus();
+        restoringFocus.current = false;
       }
     }
     document.addEventListener("mousedown", onPointer);
@@ -81,6 +84,10 @@ export function LedgerMenu({
           size="sm"
           aria-expanded={menuOpen}
           aria-controls={menuId}
+          onFocus={(event) => {
+            // Returning from the chooser must not add a tooltip to the Escape dismissal stack.
+            if (restoringFocus.current) event.preventDefault();
+          }}
           onClick={() => setMenuOpen((open) => !open)}
         >
           <Plus aria-hidden="true" />

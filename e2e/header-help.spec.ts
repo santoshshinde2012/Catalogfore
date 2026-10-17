@@ -152,3 +152,30 @@ test("chart and export help preserve keyboard tab navigation and accessible menu
   await expect(page.getByRole("menu")).toHaveCount(0);
   await expect(exportTrigger).toBeFocused();
 });
+
+test("Escape closes the product chooser, then Advanced without reopening help", async ({ page, isMobile }) => {
+  await page.goto("./");
+  const header = page.getByRole("banner");
+  if (isMobile) {
+    await header.getByRole("button", { name: "Menu", exact: true }).tap();
+    await page.getByRole("menuitem", { name: /^Advanced\b/ }).tap();
+  } else {
+    await header.getByRole("button", { name: "Advanced", exact: true }).click();
+  }
+  const advanced = page.getByRole("dialog", { name: "Advanced", exact: true });
+  await expect(advanced).toBeVisible();
+  const addProduct = advanced.getByRole("button", { name: "Add product", exact: true });
+  await addProduct.click();
+  const chooser = advanced.getByRole("region", { name: "Choose a product", exact: true });
+  await expect(chooser).toBeFocused();
+
+  await page.keyboard.press("Escape");
+  await expect(chooser).toHaveCount(0);
+  await expect(addProduct).toBeFocused();
+  await expect(advanced).toHaveAttribute("data-state", "open");
+  await expect(page.getByRole("tooltip")).toHaveCount(0);
+
+  await page.keyboard.press("Escape");
+  await expect(advanced).toHaveCount(0);
+  await expect(page.getByRole("radio", { name: "10%", exact: true })).toBeVisible();
+});
