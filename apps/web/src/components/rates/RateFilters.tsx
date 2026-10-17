@@ -29,9 +29,9 @@ export function RateFilters({
     onChange({ ...filters, [key]: value || undefined });
   }
   return (
-    <section aria-label="Filter unit costs" className="rounded-2xl border bg-card p-4 sm:p-5">
-      <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        <div className="min-w-0">
+    <section aria-label="Filter unit costs" className="border-y bg-card/60 px-3 py-3 sm:px-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="col-span-2 min-w-0 sm:col-span-1">
           <label className="field text-xs" htmlFor="rate-search">
             Search rates and services
           </label>
@@ -50,7 +50,7 @@ export function RateFilters({
             />
           </div>
         </div>
-        <label className="field text-xs">
+        <label className="field col-span-2 min-w-0 text-xs sm:col-span-1">
           Product or service
           <select
             value={filters.productId ?? ""}
@@ -66,9 +66,7 @@ export function RateFilters({
             ))}
           </select>
         </label>
-      </div>
-      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <label className="field text-xs">
+        <label className="field min-w-0 text-xs">
           Cloud
           <select
             value={filters.cloud ?? ""}
@@ -80,7 +78,7 @@ export function RateFilters({
             <option value="gcp">GCP</option>
           </select>
         </label>
-        <label className="field text-xs">
+        <label className="field min-w-0 text-xs">
           Region
           <select value={filters.region ?? ""} onChange={(event) => set("region", event.target.value)}>
             <option value="">All regions</option>
@@ -91,7 +89,7 @@ export function RateFilters({
             ))}
           </select>
         </label>
-        <label className="field text-xs">
+        <label className="field min-w-0 text-xs">
           Edition
           <select value={filters.tier ?? ""} onChange={(event) => set("tier", event.target.value)}>
             <option value="">All editions</option>
@@ -99,7 +97,7 @@ export function RateFilters({
             <option value="enterprise">Enterprise</option>
           </select>
         </label>
-        <label className="field text-xs">
+        <label className="field min-w-0 text-xs">
           Cost component
           <select value={filters.componentId ?? ""} onChange={(event) => set("componentId", event.target.value)}>
             <option value="">All components</option>
@@ -111,15 +109,12 @@ export function RateFilters({
           </select>
         </label>
       </div>
-      <div className="mt-3 flex items-start gap-2 border-t pt-2">
+      <div className="mt-2 flex items-start gap-2">
         <RateFilterRefinements catalog={catalog} filters={filters} onChange={onChange} />
         <Button type="button" variant="ghost" size="sm" className="mt-0.5 shrink-0 text-xs" onClick={onClear}>
           Reset all filters
         </Button>
       </div>
-      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-        Reference placement only. Your forecast stays unchanged.
-      </p>
     </section>
   );
 }

@@ -3,13 +3,24 @@ import { Download } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { InfoTooltip } from "../ui/tooltip";
+import { RateDataPreview } from "./RateDataPreview";
+import { useRateDataTable } from "./useRateDataTable";
 
-export function RateDownloads({ catalog, rows }: { catalog: UnitCostCatalog; rows: UnitCostRow[] }) {
+export function RateDownloads({
+  catalog,
+  rows,
+  onInspect,
+}: {
+  catalog: UnitCostCatalog;
+  rows: UnitCostRow[];
+  onInspect?: (row: UnitCostRow) => void;
+}) {
   const [scope, setScope] = useState("filtered");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState("");
+  const table = useRateDataTable(scope === "all" ? catalog.rows : rows);
   async function download(format: "csv" | "json") {
-    const selected = scope === "all" ? catalog.rows : rows;
+    const selected = table.orderedRows;
     let url: string | undefined;
     setBusy(format);
     setError("");
@@ -34,9 +45,15 @@ export function RateDownloads({ catalog, rows }: { catalog: UnitCostCatalog; row
     }
   }
   return (
-    <section aria-label="Download unit costs" className="rounded-2xl border bg-card p-4">
-      <div className="flex flex-wrap items-end gap-3">
-        <label className="field min-w-0 grow">
+    <section aria-label="Download unit costs" className="min-w-0 overflow-hidden rounded-xl border bg-card">
+      <div className="flex flex-wrap items-end gap-3 px-4 pt-4 sm:px-5">
+        <div className="min-w-0 basis-full lg:grow lg:basis-0 lg:pb-1 lg:pr-3">
+          <h2 className="text-base font-semibold tracking-tight">Explore the price catalog</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Catalog {catalog.catalogVersion} · Monetary prices in USD
+          </p>
+        </div>
+        <label className="field min-w-0 grow basis-full sm:basis-64 lg:w-70 lg:grow-0 lg:basis-auto">
           Download scope
           <select value={scope} onChange={(event) => setScope(event.target.value)} disabled={Boolean(busy)}>
             <option value="filtered">Filtered rows ({rows.length.toLocaleString("en-US")})</option>
@@ -52,7 +69,7 @@ export function RateDownloads({ catalog, rows }: { catalog: UnitCostCatalog; row
             <Button
               type="button"
               variant="outline"
-              className="min-h-11"
+              className="min-h-11 rounded-md"
               onClick={() => void download(format)}
               disabled={Boolean(busy)}
             >
@@ -62,16 +79,21 @@ export function RateDownloads({ catalog, rows }: { catalog: UnitCostCatalog; row
           </InfoTooltip>
         ))}
       </div>
-      <p className="mt-2 text-xs text-muted-foreground" role={busy ? "status" : undefined}>
+      <p
+        id="rate-preview-help"
+        className="px-4 pt-3 pb-4 text-xs leading-relaxed text-muted-foreground sm:px-5"
+        role={busy ? "status" : undefined}
+      >
         {busy
           ? "Preparing your rate file…"
-          : "Use filtered rows for a smaller file, or download every catalog dimension."}
+          : `${scope === "all" ? "Preview and export include all catalog rows, regardless of filters" : "Preview and export include all filtered rows, beyond this page"}; exports retain 40 fields and unavailable prices stay empty. Compare like-for-like billing units${onInspect ? "; select a product for details" : ""}.`}
       </p>
       {error && (
-        <p className="mt-2 text-xs text-destructive" role="alert">
+        <p className="px-4 pb-4 text-xs text-destructive sm:px-5" role="alert">
           {error}
         </p>
       )}
+      <RateDataPreview table={table} onInspect={onInspect} />
     </section>
   );
 }

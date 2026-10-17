@@ -12,6 +12,16 @@ Use **More filters** for domain, pricing coverage and evidence basis. Active ref
 
 The same three primary workspaces—Plan, Product map and Unit costs—are visible in the header on smaller screens. One **Menu** groups Advanced, forecast navigation, explanatory help, saved-file actions, theme and GitHub. Use **Menu → Open forecast** to reopen a saved JSON forecast.
 
+### Browse before exporting
+
+**Downloads** includes a spreadsheet-style preview of the same rows used for CSV and JSON. Choose **Filtered rows** to follow the workspace filters, or **Complete catalog** to browse every placement. Complete scope intentionally bypasses the filters above it. Sort a column, choose 25, 50 or 100 rows per page, and move through the result without loading the entire table into the document. Sorting applies to the export too; pagination only limits the preview. Prices with different billing units are not comparable totals.
+
+Each preview row pairs its quoted price with its billing quantity and unit, evidence classification, and source dates. Missing prices remain unavailable; consumption rules and allowances retain their nonmonetary units. **Inspect** opens that exact row's calculator, dimensions, conditions and complete evidence, adjusting the reference filters to match it. It leaves the forecast unchanged.
+
+CSV and JSON retain all 40 canonical fields, including stable IDs, normalized per-unit prices, nested dimensions, notes and every source. The preview presents the most useful columns rather than truncating the exported schema. CSV uses CRLF line endings, quoted cells where needed, blank values for unresolved prices and spreadsheet formula protection; JSON retains nulls. On narrow screens, scroll the named data-preview region horizontally with touch or the keyboard. Source links open in a new tab.
+
+![Unit-cost data preview with source evidence and export controls](screenshots/unit-cost-downloads-light.png)
+
 ## Files and commands
 
 - [unit-costs.json.gz](../data/unit-costs.json.gz): losslessly compressed JSON inventory with component, placement, dimension, price, and provenance fields.

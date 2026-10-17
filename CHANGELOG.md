@@ -6,6 +6,8 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Added
 
+- A sortable, paginated unit-cost data preview with quoted billing units, source evidence and dates, exact-row inspection, and matching CSV/JSON export scope. Files retain all 40 fields and every selected row; pagination only limits the preview.
+
 - Regional unit-cost comparison bars, a source-to-component calculation path, and an evidence-coverage visualization, all driven by shared engine analytics. Comparisons keep identical units, configurations and editions; unresolved amounts never become zero bars.
 
 - Captured first-party Databricks price-card and calculator data, hashed original responses, replayable source validation, and explicit source conflicts. Unit costs now shows evidence filters, scoped coverage counts, publisher links beside prices, and separate observation/review dates.
@@ -47,6 +49,8 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 - `docs/PRIVACY.md`. The calculation stays in the browser.
 
 ### Changed
+
+- Removed boxed header and unit-cost task navigation in favor of plain text and active underlines. Compacted the reference filters and source context to give catalog data more room.
 
 - Fixed literal release-note selection, single-pass RSS entity decoding, bounded share decompression, and additional CSV formula prefixes. Added deterministic property-based fuzz tests, refreshed security-policy accuracy, and enabled trusted scheduled Scorecard publication. Recorded and applied the repository's PR/CI branch-protection baseline; independent review, project-age and badge criteria remain explicit maintainer follow-ups.
 

@@ -33,8 +33,8 @@ export function WorkspaceMenu({
         <DropdownMenuTrigger asChild>
           <Button
             type="button"
-            variant="outline"
-            className="min-h-11 gap-2 rounded-full border-border/80 bg-card px-3.5 text-xs shadow-sm hover:border-foreground/25 data-[state=open]:bg-muted sm:px-4"
+            variant="ghost"
+            className="min-h-11 gap-2 rounded-none px-2.5 text-[13px] text-muted-foreground hover:bg-transparent hover:text-foreground data-[state=open]:text-foreground sm:px-3"
             aria-label="Menu"
           >
             <Ellipsis aria-hidden="true" />
