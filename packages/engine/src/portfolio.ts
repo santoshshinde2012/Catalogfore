@@ -1,4 +1,4 @@
-import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from "lz-string";
+import { compressToEncodedURIComponent } from "lz-string";
 import { listRegions, skuCatalog } from "./catalog.js";
 import { FLAT_SEASONALITY } from "./forecast.js";
 import { normalizeWorkload } from "./normalize-workload.js";
@@ -9,6 +9,7 @@ import { savedPortfolioInput } from "./saved-schema.js";
 import { normalizeSimple } from "./simple-fields.js";
 import { normalizeEvents, normalizeUsage } from "./plan-fields.js";
 import { isMonth } from "./forecast/calendar.js";
+import { decompressShare } from "./share-decompression.js";
 import type { Addon, Cloud, Portfolio, SeasonalityPreset, Workload } from "./types.js";
 
 const ADDONS: Addon[] = ["none", "compliance", "mission_critical"];
@@ -140,9 +141,9 @@ export function decodePortfolioResult(encoded: string): Result<Portfolio> {
 
 export function decodePortfolio(encoded: string): Portfolio | null {
   if (!encoded || encoded.length > SHARE_MAX_CHARS) return null;
-  const json = decompressFromEncodedURIComponent(encoded);
-  if (!json || json.length > JSON_MAX_CHARS) return null;
   try {
+    const json = decompressShare(encoded, JSON_MAX_CHARS);
+    if (!json || json.length > JSON_MAX_CHARS) return null;
     const parsed = parseSavedForecast(parseUntrustedJson(json));
     return parsed.ok ? parsed.value : null;
   } catch {

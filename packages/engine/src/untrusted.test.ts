@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { compressToEncodedURIComponent } from "lz-string";
 import { parseCsv } from "./csv.js";
-import { blankPortfolio, decodePortfolio, encodePortfolio, normalizePortfolio } from "./portfolio.js";
+import {
+  blankPortfolio,
+  decodePortfolio,
+  decodePortfolioResult,
+  encodePortfolio,
+  normalizePortfolio,
+} from "./portfolio.js";
 import { defaultPlan } from "./simple/plan-edits.js";
 import { planFromUsage } from "./simple/project.js";
 import {
@@ -49,6 +55,11 @@ describe("usage upload bounds", () => {
 });
 
 describe("share links", () => {
+  it("rejects a truncated compressed payload without throwing from either decoder", () => {
+    expect(decodePortfolio("y")).toBeNull();
+    expect(decodePortfolioResult("y").ok).toBe(false);
+  });
+
   it("round-trips a portfolio and drops a link that is not plain data", () => {
     const portfolio = blankPortfolio("aws");
     portfolio.name = "Nightly";
