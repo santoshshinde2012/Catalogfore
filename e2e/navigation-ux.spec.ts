@@ -5,7 +5,10 @@ test("brand navigation preserves the plan and Open works from the keyboard", asy
   await page.goto("./");
   await page.getByRole("radio", { name: "10%", exact: true }).click();
   const hash = new URL(page.url()).hash;
-  await page.getByRole("button", { name: "Cayfore — edit your plan", exact: true }).click();
+  await page
+    .getByRole("banner")
+    .getByRole("button", { name: /^Cayfore\b/ })
+    .click();
   await expect(page.locator("#plan-inputs")).toBeFocused();
   expect(new URL(page.url()).hash).toBe(hash);
   await expect(page.getByRole("radio", { name: "10%", exact: true })).toHaveAttribute("aria-checked", "true");
@@ -28,7 +31,7 @@ test("starting a new forecast is explicit and can be undone", async ({ page }) =
   await page.getByRole("radio", { name: "10%", exact: true }).click();
   const before = await page.getByTestId("year-sentence").innerText();
   await page.getByRole("button", { name: "Menu", exact: true }).click();
-  await page.getByRole("menuitem", { name: "New forecast", exact: true }).click();
+  await page.getByRole("menuitem", { name: /^New forecast\b/ }).click();
   await expect(page.getByRole("radio", { name: "3%", exact: true })).toHaveAttribute("aria-checked", "true");
   await expect(page.locator("#plan-inputs")).toBeFocused();
   await page.getByRole("button", { name: "Undo last change", exact: true }).click();

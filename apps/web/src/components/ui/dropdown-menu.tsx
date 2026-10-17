@@ -8,15 +8,19 @@ export const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
 export function DropdownMenuContent({
   className,
   sideOffset = 6,
+  regionLabel,
   ...props
-}: ComponentProps<typeof DropdownMenuPrimitive.Content>) {
+}: ComponentProps<typeof DropdownMenuPrimitive.Content> & { regionLabel?: string }) {
+  const content = (
+    <DropdownMenuPrimitive.Content
+      sideOffset={sideOffset}
+      className={cn("z-50 min-w-40 rounded-lg border bg-popover p-1 text-popover-foreground shadow-md", className)}
+      {...props}
+    />
+  );
   return (
     <DropdownMenuPrimitive.Portal>
-      <DropdownMenuPrimitive.Content
-        sideOffset={sideOffset}
-        className={cn("z-50 min-w-40 rounded-lg border bg-popover p-1 text-popover-foreground shadow-md", className)}
-        {...props}
-      />
+      {regionLabel ? <section aria-label={regionLabel}>{content}</section> : content}
     </DropdownMenuPrimitive.Portal>
   );
 }

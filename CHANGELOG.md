@@ -6,6 +6,7 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Added
 
+- A refined planning header, contextual tooltips for navigation and chart controls, and descriptive workspace/export menus with keyboard and touch support.
 - Complete mobile and keyboard planning flows: forecast shortcuts, balanced chart tabs, persistent import actions, accessible scrolling tables, explicit reset/undo, validated input drafts, editor focus management, and responsive planning states.
 - Local budget and named-scenario planning, dated usage changes, contract-rate provenance, and a commitment break-even what-if including unused value and overage.
 - Dated observed-history/forecast charts, cumulative budget comparison, saved-scenario overlays, stacked cost components, explicit planning ranges, and reconciled month tables.
