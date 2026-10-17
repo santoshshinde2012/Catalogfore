@@ -1,4 +1,6 @@
+import { productById, recomputeProduct } from "@cayfore/engine/products";
 import { listRegions, type Cloud, type Portfolio, type Tier, type Workload } from "@cayfore/engine";
+import { SchemaFields } from "./editor/SchemaFields";
 import { workloadEditors } from "./editor/registry";
 import { Button } from "./ui/button";
 
@@ -13,7 +15,15 @@ interface EditorProps {
 
 export function Editor({ workload, portfolio, onChange, onDuplicate, onRemove, onClose }: EditorProps) {
   const cloud = workload.cloud ?? portfolio.cloud;
+  const product = workload.productId ? productById(workload.productId) : undefined;
+  const part = product?.parts?.find((item) => item.id === workload.partId);
+  const editor = part?.editor ?? product?.editor;
+  const fields = part?.fields ?? product?.fields ?? [];
+  const schema = editor === "schema";
   const Fields = workloadEditors[workload.kind];
+  function change(next: Workload) {
+    onChange(recomputeProduct(next));
+  }
   return (
     <div className="mt-2 rounded-lg border p-4">
       <div className="mb-3 flex items-center justify-between gap-2">
@@ -36,12 +46,17 @@ export function Editor({ workload, portfolio, onChange, onDuplicate, onRemove, o
           <input
             value={workload.name}
             maxLength={80}
-            onChange={(event) => onChange({ ...workload, name: event.target.value })}
+            onChange={(event) => change({ ...workload, name: event.target.value })}
           />
         </label>
-        <SkuSelect workload={workload} onChange={onChange} />
+        <SkuSelect workload={workload} onChange={change} />
       </div>
-      <Fields workload={workload} portfolio={portfolio} onChange={onChange} />
+      {schema && product ? (
+        <SchemaFields workload={workload} fields={fields} onChange={change} />
+      ) : (
+        <Fields workload={workload} portfolio={portfolio} onChange={change} />
+      )}
+      {product && <p className="hint mt-3">{product.note}</p>}
       <details className="mt-3">
         <summary>Run this workload somewhere else</summary>
         <div className="mt-2 grid-3">
@@ -50,7 +65,7 @@ export function Editor({ workload, portfolio, onChange, onDuplicate, onRemove, o
             <select
               value={workload.cloud ?? ""}
               onChange={(event) =>
-                onChange({ ...workload, cloud: (event.target.value || undefined) as Cloud | undefined })
+                change({ ...workload, cloud: (event.target.value || undefined) as Cloud | undefined })
               }
             >
               <option value="">Same as portfolio</option>
@@ -63,7 +78,7 @@ export function Editor({ workload, portfolio, onChange, onDuplicate, onRemove, o
             Region
             <select
               value={workload.region ?? ""}
-              onChange={(event) => onChange({ ...workload, region: event.target.value || undefined })}
+              onChange={(event) => change({ ...workload, region: event.target.value || undefined })}
             >
               <option value="">Same as portfolio</option>
               {listRegions(cloud).map((region) => (
@@ -77,9 +92,7 @@ export function Editor({ workload, portfolio, onChange, onDuplicate, onRemove, o
             Tier
             <select
               value={workload.tier ?? ""}
-              onChange={(event) =>
-                onChange({ ...workload, tier: (event.target.value || undefined) as Tier | undefined })
-              }
+              onChange={(event) => change({ ...workload, tier: (event.target.value || undefined) as Tier | undefined })}
             >
               <option value="">Same as portfolio</option>
               <option value="premium">Premium</option>

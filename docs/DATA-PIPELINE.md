@@ -44,6 +44,10 @@ Databricks Labs LakeMeter-OSS is not a source. Its GitHub license is the Databri
 
 `.github/workflows/refresh-prices.yml` runs Mondays at 06:00 UTC, and on demand. It checks out the repo, runs the script with `GCP_BILLING_API_KEY` from the repository secret (empty when the secret is unset), runs the catalog test, and opens a pull request on `price-refresh` when one of the four files changed. Review the diff. The figures are list prices for an estimate, not a quote.
 
+## Product catalog watch
+
+`.github/workflows/catalog-watch.yml` runs Mondays at 07:00 UTC, after the price refresh, and on demand. It validates `data/product-catalog.json`, fetches Azure Databricks consumption meter names for every Azure region on the rate card, and lists names that are not in `knownAzureMeters` (Photon, free-trial, and POC meters are ignored). It rewrites [COVERAGE.md](COVERAGE.md) from the catalog, the rate card, and the meter file. It also reads `https://www.databricks.com/feed` and reports titles that look billable and have not been seen. Manual citations older than 120 days are marked stale. The job opens a pull request on `catalog-watch` when the report or the seen-item state changes. It does not rewrite `$/DBU` rates. The weekly price refresh already downloads Azure DBU meters for every region on the card. Databricks still does not publish a price JSON.
+
 ## Run it locally
 
 ```bash

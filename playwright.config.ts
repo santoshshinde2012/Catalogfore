@@ -17,7 +17,7 @@ export default defineConfig({
     timeout: 120_000,
   },
   projects: [
-    { name: "desktop", use: { ...devices["Desktop Chrome"] } },
+    { name: "desktop", grepInvert: /@mobile/, use: { ...devices["Desktop Chrome"] } },
     { name: "mobile", use: { ...devices["Pixel 5"] } },
   ],
 });

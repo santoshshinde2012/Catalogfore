@@ -1,76 +1,27 @@
+import { matchBilling } from "./billing-skus.js";
+import { parseCsv } from "./csv.js";
+export { parseCsv } from "./csv.js";
 import type { UsagePoint } from "./forecast/series.js";
 import type { UsageImport } from "./types.js";
 
-const SKU_RULES: { pattern: RegExp; sku: string }[] = [
-  { pattern: /JOBS_SERVERLESS|SERVERLESS_JOBS/i, sku: "jobs_serverless" },
-  { pattern: /ALL_PURPOSE_SERVERLESS|SERVERLESS_ALL_PURPOSE|NOTEBOOK_SERVERLESS/i, sku: "all_purpose_serverless" },
-  { pattern: /DLT_SERVERLESS|SERVERLESS_DLT|PIPELINES_SERVERLESS/i, sku: "dlt_serverless" },
-  { pattern: /JOBS_COMPUTE|JOBS_LIGHT/i, sku: "jobs_classic" },
-  { pattern: /ALL_PURPOSE/i, sku: "all_purpose_classic" },
-  { pattern: /DLT_ADVANCED|PIPELINE_ADVANCED/i, sku: "dlt_advanced" },
-  { pattern: /DLT_PRO|PIPELINE_PRO/i, sku: "dlt_pro" },
-  { pattern: /DLT_CORE|PIPELINE_CORE|DLT_COMPUTE/i, sku: "dlt_core" },
-  { pattern: /SERVERLESS_SQL|SQL_SERVERLESS/i, sku: "sql_serverless" },
-  { pattern: /SQL_PRO/i, sku: "sql_pro" },
-  { pattern: /SQL/i, sku: "sql_classic" },
-  { pattern: /INFERENCE|MODEL_SERVING|FOUNDATION/i, sku: "model_serving" },
-  { pattern: /VECTOR_SEARCH|AI_SEARCH/i, sku: "ai_search" },
-];
-
 export function mapSkuName(skuName: string): string {
-  const found = SKU_RULES.find((rule) => rule.pattern.test(skuName));
-  return found?.sku ?? "other";
+  return matchBilling(skuName).engineSku;
 }
 
-export function parseCsv(text: string): Record<string, string>[] {
-  const rows: string[][] = [];
-  let cell = "";
-  let row: string[] = [];
-  let quoted = false;
-  const source = text.replace(/^\uFEFF/, "");
-  for (let index = 0; index < source.length; index += 1) {
-    const char = source[index];
-    if (quoted) {
-      if (char === '"') {
-        if (source[index + 1] === '"') {
-          cell += '"';
-          index += 1;
-        } else quoted = false;
-      } else cell += char;
-      continue;
-    }
-    if (char === '"') {
-      quoted = true;
-      continue;
-    }
-    if (char === ",") {
-      row.push(cell);
-      cell = "";
-      continue;
-    }
-    if (char === "\n" || char === "\r") {
-      if (char === "\r" && source[index + 1] === "\n") index += 1;
-      row.push(cell);
-      cell = "";
-      if (row.some((value) => value.trim() !== "")) rows.push(row);
-      row = [];
-      continue;
-    }
-    cell += char;
-  }
-  if (cell.length || row.length) {
-    row.push(cell);
-    if (row.some((value) => value.trim() !== "")) rows.push(row);
-  }
-  if (!rows.length) return [];
-  const header = rows[0].map((value) => value.trim().toLowerCase());
-  return rows.slice(1).map((values) => {
-    const record: Record<string, string> = {};
-    header.forEach((key, index) => {
-      record[key] = values[index] ?? "";
-    });
-    return record;
-  });
+export interface ProductUsage {
+  productId: string;
+  engineSku: string;
+  unit: string;
+  quantity: number;
+  /** Sum of quantity × list price when the file has a price. Null when it does not. */
+  dollars: number | null;
+  skuNames: string[];
+}
+
+export interface ProductUsageImport {
+  products: ProductUsage[];
+  unmapped: { skuName: string; unit: string; quantity: number }[];
+  warnings: string[];
 }
 
 export interface UsageHistory {
@@ -161,6 +112,68 @@ export function importUsageCsv(text: string, month?: string): UsageImport {
   const dbu = Math.round(bySku.reduce((sum, row) => sum + row.dbu, 0) * 1000) / 1000;
   if (skippedRows) warnings.push(`${skippedRows} non-DBU or unreadable rows were skipped.`);
   return { dbu, bySku, skippedRows, usedRows, warnings };
+}
+
+export function importUsageProducts(text: string): ProductUsageImport {
+  const records = parseCsv(text);
+  const warnings: string[] = [];
+  if (!records.length) warnings.push("No data rows found. Export system.billing.usage as CSV with a header row.");
+  const groups = new Map<
+    string,
+    {
+      productId: string;
+      engineSku: string;
+      unit: string;
+      quantity: number;
+      dollars: number;
+      priced: number;
+      skuNames: Set<string>;
+    }
+  >();
+  const unmapped = new Map<string, { skuName: string; unit: string; quantity: number }>();
+  for (const record of records) {
+    const quantity = Number((record.usage_quantity ?? record.dbus ?? record.dbu ?? "").replace(/,/g, ""));
+    if (!Number.isFinite(quantity)) continue;
+    const unit = (record.usage_unit ?? record.unit ?? "DBU").trim().toUpperCase() || "DBU";
+    const skuName = (record.sku_name ?? record.sku ?? "UNKNOWN").trim() || "UNKNOWN";
+    const match = matchBilling(skuName, record.billing_origin_product ?? "");
+    if (!match.productId) {
+      const key = `${skuName}|${unit}`;
+      const prior = unmapped.get(key);
+      unmapped.set(key, { skuName, unit, quantity: (prior?.quantity ?? 0) + quantity });
+      continue;
+    }
+    const key = `${match.productId}|${unit}`;
+    const prior = groups.get(key) ?? {
+      productId: match.productId,
+      engineSku: match.engineSku,
+      unit,
+      quantity: 0,
+      dollars: 0,
+      priced: 0,
+      skuNames: new Set<string>(),
+    };
+    prior.quantity += quantity;
+    prior.skuNames.add(skuName);
+    const price = priceOf(record);
+    if (price != null) {
+      prior.dollars += quantity * price;
+      prior.priced += 1;
+    }
+    groups.set(key, prior);
+  }
+  const products = [...groups.values()]
+    .map((group) => ({
+      productId: group.productId,
+      engineSku: group.engineSku,
+      unit: group.unit,
+      quantity: Math.round(group.quantity * 1000) / 1000,
+      dollars: group.priced > 0 ? Math.round(group.dollars * 100) / 100 : null,
+      skuNames: [...group.skuNames].sort(),
+    }))
+    .sort((a, b) => (b.dollars ?? b.quantity) - (a.dollars ?? a.quantity));
+  if (unmapped.size) warnings.push(`${unmapped.size} sku names are not in the catalog map.`);
+  return { products, unmapped: [...unmapped.values()], warnings };
 }
 
 export function scaleForActuals(estimatedDbu: number, actualDbu: number): number {

@@ -1,0 +1,5 @@
+title = "Cayfore gitleaks"
+
+[allowlist]
+description = "The workspace-host test uses a fake token so redaction can be asserted. It is not a credential."
+paths = ['''scripts/workspace-host\.test\.mjs''']

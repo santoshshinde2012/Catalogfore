@@ -85,7 +85,13 @@ test("advanced builder, how we got this, and theme", async ({ page }) => {
   await page.getByText("How we got this").click();
   await expect(page.getByText(/You enter dollars/)).toBeVisible();
   await page.getByRole("button", { name: "Advanced", exact: true }).last().click();
-  await page.getByRole("button", { name: "Add" }).click();
+  await expect(page.getByRole("heading", { name: "By product" })).toBeVisible();
+  await page.getByRole("button", { name: "Add product" }).click();
+  await expect(page.getByText("Data Engineering").first()).toBeVisible();
+  await expect(page.getByText("Warehousing & BI").first()).toBeVisible();
+  await expect(page.getByText("AI/ML").first()).toBeVisible();
+  await expect(page.getByText("Apps & OLTP").first()).toBeVisible();
+  await expect(page.getByText("Governance & Sharing").first()).toBeVisible();
   await page.getByRole("button", { name: /Serverless jobs/ }).click();
   await expect(page.getByRole("button", { name: /Serverless jobs/ }).first()).toBeVisible();
   await expect(page.getByText(/detailed workloads are driving/)).toBeVisible();
@@ -113,8 +119,7 @@ test("customer note links to the account tools", async ({ page }) => {
   await expect(note.getByRole("link", { name: "ai_forecast" })).toHaveAttribute("href", /ai_forecast/);
 });
 
-test("has no serious accessibility violations", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "desktop", "axe runs once");
+test("has no serious accessibility violations", async ({ page }) => {
   await page.goto("./");
   const home = await new AxeBuilder({ page }).analyze();
   expect(home.violations).toEqual([]);
@@ -132,12 +137,11 @@ test("has no serious accessibility violations", async ({ page }, testInfo) => {
   expect(light.violations).toEqual([]);
 });
 
-test("unknown address explains that the page is not part of the forecast", async ({ page }, testInfo) => {
+test("unknown address explains that the page is not part of the forecast", async ({ page }) => {
   await page.goto("./404.html");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Page not found");
   await expect(page.getByRole("link", { name: "Back to the forecast" })).toHaveAttribute("href", "/cayfore/");
   await expect(page.locator("footer")).toContainText("not affiliated with Databricks");
-  if (testInfo.project.name !== "desktop") return;
   const result = await new AxeBuilder({ page }).analyze();
   expect(result.violations).toEqual([]);
 });
@@ -156,8 +160,20 @@ test("search and share metadata point at the Cayfore pages address", async ({ pa
   await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
 });
 
-test("mobile layout does not overflow the viewport", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "mobile", "mobile project only");
+test("an existing theme choice survives the key change", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("dcf-theme", "dark");
+    localStorage.removeItem("cayfore-theme");
+  });
+  await page.goto("./");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect.poll(() => page.evaluate(() => localStorage.getItem("cayfore-theme"))).toBe("dark");
+  await expect.poll(() => page.evaluate(() => localStorage.getItem("dcf-theme"))).toBeNull();
+  await page.getByRole("button", { name: "Switch to light theme" }).click();
+  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
+});
+
+test("mobile layout does not overflow the viewport", { tag: "@mobile" }, async ({ page }) => {
   await page.goto("./");
   const homeOverflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,

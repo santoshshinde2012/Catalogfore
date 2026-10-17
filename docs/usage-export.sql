@@ -1,6 +1,12 @@
 -- Columns Cayfore reads. Run in a workspace that can see system tables.
--- Download the result as CSV. list_price is pricing.default, the published list rate.
+-- Least privilege: USE CATALOG system; USE SCHEMA billing; SELECT on usage and list_prices.
+-- This text is fixed. The CLI prints it. It does not concatenate a workspace, a token, or a filter.
+-- A personal access token stays in the environment of the Databricks CLI or the SQL editor. Cayfore does not read it.
+-- Download the result as CSV and use Advanced → From a usage file.
+-- list_price is pricing.default, the published list rate.
 -- ORIGINAL and RETRACTION rows both belong in the file. RETRACTION quantities are negative.
+-- Every usage unit is included. DBU, GB, token, and day rows map to a product when the sku name is known.
+-- A row with list_price is forecast at quantity × that price. A DBU row without a price uses the bundled rate card.
 
 SELECT
   u.sku_name,
@@ -20,5 +26,4 @@ LEFT JOIN system.billing.list_prices AS p
  AND u.usage_end_time >= p.price_start_time
  AND (p.price_end_time IS NULL OR u.usage_end_time < p.price_end_time)
 WHERE u.usage_date >= add_months(current_date(), -18)
-  AND u.usage_unit = 'DBU'
 ORDER BY u.usage_date;

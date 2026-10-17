@@ -1,0 +1,75 @@
+import { readFile, writeFile } from "node:fs/promises";
+
+const SCORE = { measured: 92, cited: 78, secondary: 55, unpublished: 8 };
+
+/**
+ * Confidence for one region-and-SKU cell.
+ * Azure meters are measured. The reference region without a meter is the secondary US East card.
+ * Every other region is the Lakehouse Real-Time factor proxy.
+ */
+export function cellScore({ cloud, region, hasMeter, reference }) {
+  if (cloud === "azure" && hasMeter) return { score: 92, band: "measured" };
+  if (region === reference) return { score: 60, band: "secondary" };
+  return { score: 35, band: "proxy" };
+}
+
+export async function buildRateConfidence() {
+  const catalog = JSON.parse(await readFile(new URL("../data/product-catalog.json", import.meta.url), "utf8"));
+  const sku = JSON.parse(await readFile(new URL("../data/sku-rates.json", import.meta.url), "utf8"));
+  const meters = JSON.parse(await readFile(new URL("../data/azure-dbu-meters.json", import.meta.url), "utf8"));
+  const meterKeys = new Set(meters.meters.map((meter) => `${meter.region}|${meter.sku}`));
+  const reference = Object.fromEntries(
+    sku.regions.filter((region) => region.source === "reference").map((region) => [region.cloud, region.id]),
+  );
+  const skus = Object.keys(sku.rates.aws.premium);
+  const tiers = ["premium", "enterprise"];
+  const distribution = { measured: 0, secondary: 0, proxy: 0, total: 0 };
+  const cells = [];
+  for (const region of sku.regions) {
+    for (const tier of tiers) {
+      for (const id of skus) {
+        const scored = cellScore({
+          cloud: region.cloud,
+          region: region.id,
+          hasMeter: meterKeys.has(`${region.id}|${id}`),
+          reference: reference[region.cloud],
+        });
+        distribution[scored.band] += 1;
+        distribution.total += 1;
+        cells.push({ cloud: region.cloud, region: region.id, tier, sku: id, ...scored });
+      }
+    }
+  }
+  const products = Object.fromEntries(
+    catalog.products.map((product) => [
+      product.id,
+      { score: product.confidenceScore, band: product.confidence, expected: SCORE[product.confidence] },
+    ]),
+  );
+  return {
+    version: "2026-10-16.1",
+    rubric: {
+      measured: "90–100. An Azure Retail Prices meter, or a first-party meter copied into the row.",
+      cited: "70–89. A first-party number in the docs.",
+      secondary: "40–69. Two or more public compilations, or one compilation cross-checked against another.",
+      proxy: "20–39. A real rate for a different SKU or region, scaled. Lakehouse Real-Time factors are this band.",
+      unpublished: "0–19. No dollar rate is stored. The zero is not a guess.",
+    },
+    skuRatesVersion: sku.version,
+    productCatalogVersion: catalog.version,
+    products,
+    distribution,
+    cells,
+  };
+}
+
+export async function writeRateConfidence() {
+  const report = await buildRateConfidence();
+  await writeFile(new URL("../data/rate-confidence.json", import.meta.url), JSON.stringify(report, null, 2) + "\n");
+  return report;
+}
+
+if ((process.argv[1] ?? "").endsWith("rate-confidence.mjs")) {
+  const report = await writeRateConfidence();
+  console.log(JSON.stringify(report.distribution));
+}

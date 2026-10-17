@@ -12,7 +12,9 @@ npm run build
 node mcp/dist/index.js
 ```
 
-The GitHub Pages site cannot call a workspace. The SQL Statement API does not send `Access-Control-Allow-Origin` ([Databricks, CORS policy error](https://kb.databricks.com/security/cors-policy-error-when-trying-to-run-databricks-api-from-a-browser-based-application)), and a personal access token does not belong in browser JavaScript. Export usage with `docs/usage-export.sql`, then pass the CSV to `forecast_usage` or to the shell:
+The GitHub Pages site cannot call a workspace. The SQL Statement API does not send `Access-Control-Allow-Origin` ([Databricks, CORS policy error](https://kb.databricks.com/security/cors-policy-error-when-trying-to-run-databricks-api-from-a-browser-based-application)), and a personal access token does not belong in browser JavaScript. This server does not read `DATABRICKS_TOKEN` and does not open a network connection. Export usage with `docs/usage-export.sql`, then pass the CSV to `forecast_usage` or to the shell.
+
+The SQL file is a fixed `SELECT`. Run it with a principal that can read `system.billing.usage` and `system.billing.list_prices` and nothing else. A future client that does connect must take the host and token from the environment, accept only an HTTPS Databricks workspace host, time out after 30 seconds, and must not log the token. That check lives in `scripts/workspace-host.mjs`.
 
 ```bash
 npm run cayfore

@@ -529,3 +529,57 @@ Recomputed from the engine after the price files and the fit were wired in. The 
 A fitted file no longer also claims that every month steps by one flat percent. That sentence is only for a plan that is still on the growth control. Moving the control drops the fit.
 
 What this review did not change: the curated AWS and GCP $/DBU table, the Photon multiplier, the SQL $0.22 machine equivalence, promotions, and the GCP VM seeds. Those are still estimates, listed in section 16.
+
+## 18. Second pass on 2026-10-16: the $0 rows, the proxy, and confidence
+
+This pass searched the per-cloud docs, the product pricing subpages, the serverless network cost page, the data-transfer pricing page, the Lakeflow Connect pricing page, the GA Zerobus post, Microsoft Learn, the Flexera 2026 guide, SunnyData’s 2026-08-04 re-check, the 2024 data-transfer PDF, and the public GCP billing catalog. `sku-rates.json` is still `2026-10-16.1`. The medium preset is unchanged.
+
+### Confidence
+
+| Band        |  Score | Meaning                                                                                                            |
+| ----------- | -----: | ------------------------------------------------------------------------------------------------------------------ |
+| measured    | 90–100 | Azure Retail Prices meter for that cell, or a first-party meter copied into the row. Stored product score: 92.     |
+| cited       |  70–89 | A first-party number in the docs. Stored product score: 78.                                                        |
+| secondary   |  40–69 | Two public compilations, or one compilation cross-checked. Reference-region SKU cells score 60. Product score: 55. |
+| proxy       |  20–39 | A real rate for another SKU or region, scaled. Lakehouse Real-Time factors are this band. Cell score: 35.          |
+| unpublished |   0–19 | No dollar rate is stored. The zero is not a guess. Product score: 8.                                               |
+
+Products: 17 measured, 36 cited, 5 secondary, 12 unpublished.
+
+SKU cells (`data/rate-confidence.json`, 17 SKUs × 61 regions × 2 tiers = 2,074): **1,060 measured, 74 secondary, 940 proxy**. The measured cells are Azure meters on both tiers (Enterprise uses the Premium meter). The 74 secondary cells are the AWS and GCP reference regions, plus the three Azure East US SKUs that still have no meter (`managed_services`, `lakeflow_connect`, `ai_search`). Everything else is the proxy. No public AWS or GCP price file replaced it. The GCP Cloud Billing catalog does not list Databricks SKUs without a billing account. OWOX (October 2026) matches the curated US East table already in section 3, so those dollars did not move.
+
+### Zerobus, the one rate that changed
+
+| Source                            | What it says                                                                                                           |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Flexera 2026, AWS table           | Premium $0.050/GB. Enterprise $0.064/GB.                                                                               |
+| Flexera 2026, Azure table         | Premium $0.064/GB. This is the Azure table, not a second AWS Premium figure.                                           |
+| SunnyData, re-verified 2026-08-04 | AWS Enterprise us-east $0.064/GB, “includes underlying compute.” A measured $0.069/GiB is the benchmark, not the list. |
+| AWS Zerobus overview              | Billed against Jobs Serverless. The dollar rate is on the Lakeflow Connect page.                                       |
+| Azure Learn                       | Billed against Automated Serverless. Same pointer.                                                                     |
+| GA blog                           | “Volume-based” under Jobs Serverless, plus a 6-month promotion with no end date in the post.                           |
+| Lakeflow Connect pricing page     | No dollar rate in a static fetch.                                                                                      |
+| Flexera, GCP                      | Coming soon.                                                                                                           |
+
+The calculator uses the $/GB card and does not also multiply gigabytes by the Jobs Serverless DBU rate. That would double-count if the $/GB already includes compute, which SunnyData says it does. The undated promotion is not applied. The rate is not scaled by a region factor. The default row is an example of 100 GB: AWS Premium $5.00, AWS Enterprise $6.40, Azure $6.40, GCP $0 with the existing “no list rate” note.
+
+### Rows that stayed at $0
+
+| Row                                       | Why it stayed                                                                                                                                                                                                                                                                                                                       |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Private Link                              | The data-transfer page says per GB and per hour are billed. AWS and GCP are per hour and per GB. Azure per-GB charges are waived indefinitely. The AWS cost-management doc still says the hourly charge is “expected in the future.” No page prints a dollar amount. SAP capacity units from a 2025 PDF are not Databricks dollars. |
+| Delta Sharing                             | Same-region egress is not charged. A first-party PDF effective 2024-08-01 lists AWS US East cross-region at $0.02/GB and internet at $0.09/GB. The 2026 docs still do not print that rate, so the PDF is not applied.                                                                                                               |
+| NAT gateway                               | Docs point at the cloud’s own NAT price. That is the customer’s cloud bill, not a Databricks SKU.                                                                                                                                                                                                                                   |
+| Databricks One, Marketplace, Free edition | No separate SKU. Spend is on the products opened inside them, or the edition is not a rate.                                                                                                                                                                                                                                         |
+| Standard tier                             | Retired. East US Standard meters exist and are not a template.                                                                                                                                                                                                                                                                      |
+| Compliance add-on                         | The portfolio already applies 10% or 30%. A second line would double-count.                                                                                                                                                                                                                                                         |
+| Lakehouse Real-Time                       | The page is the region-factor source, not a second line.                                                                                                                                                                                                                                                                            |
+| Other foundation models, external models  | No stored DBU-per-million. The user types a rate. The default stays $0.                                                                                                                                                                                                                                                             |
+
+### Discrepancies
+
+1. Zerobus: secondary sources print $/GB. First-party docs name a DBU SKU and do not print the dollar rate. The GA post’s “volume-based” wording agrees with $/GB. The calculator follows the cross-checked $/GB and records the SKU name as the billing origin, not as a second price.
+2. Flexera’s Azure Zerobus row is $0.064, not a conflict with the AWS Premium $0.050 row. They are different tables.
+3. Private Link hourly: the marketing page says billed. The AWS cost-management doc says expected in the future. No dollar figure on either, so the row stays $0.
+4. The 2024 data-transfer PDF and the 2026 network docs disagree by omission. The older cross-region $0.02/GB is not applied.
+5. AWS and GCP $/DBU remain a cited secondary card. Azure meters replace that card where the region publishes one. The proxy is smaller than it was before the meter pass, and it is now scored per cell instead of described only in prose.

@@ -14,6 +14,7 @@ export function seasonalityVector(settings: ForecastSettings): number[] {
   return FLAT_SEASONALITY;
 }
 
+/** Project one estimate across 12, 24, or 36 months. Growth and seasonality only. */
 export function forecast(estimateResult: Estimate, settings: ForecastSettings): ForecastPoint[] {
   const seasons = seasonalityVector(settings);
   const mean = seasons.reduce((sum, value) => sum + value, 0) / seasons.length;

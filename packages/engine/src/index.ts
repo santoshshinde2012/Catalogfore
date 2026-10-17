@@ -17,3 +17,13 @@ export * from "./usage.js";
 export * from "./portfolio.js";
 export { skuCatalog as catalog } from "./catalog.js";
 export { defaultCostStrategies } from "./costing/strategies/index.js";
+export { createWorkload, type MenuKind } from "./workload-seeds.js";
+export {
+  JSON_MAX_CHARS,
+  SHARE_MAX_CHARS,
+  UPLOAD_MAX_CHARS,
+  UPLOAD_MAX_ROWS,
+  UploadError,
+  parseUntrustedJson,
+} from "./untrusted.js";
+export { neutralizeSpreadsheetFormula, pdfPlain } from "./spreadsheet.js";

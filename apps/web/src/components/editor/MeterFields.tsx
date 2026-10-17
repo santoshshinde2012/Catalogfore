@@ -165,6 +165,9 @@ export function DbuMeterFields({ workload, onChange }: KindProps) {
           <option value="managed_services">Managed services</option>
           <option value="lakeflow_connect">Lakeflow Connect</option>
           <option value="model_training">Model training</option>
+          <option value="jobs_serverless">Automated serverless</option>
+          <option value="model_serving">Model serving</option>
+          <option value="apps">Apps</option>
         </select>
       </label>
       <label className="field">

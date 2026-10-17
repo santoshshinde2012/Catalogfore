@@ -10,7 +10,15 @@ const client = new Client({ name: "cayfore-smoke", version: "0.0.0" });
 await client.connect(transport);
 const listed = await client.listTools();
 const names = listed.tools.map((tool) => tool.name).sort();
-const expected = ["compare_scenarios", "estimate_workload", "forecast", "forecast_usage", "list_skus"];
+const expected = [
+  "compare_scenarios",
+  "estimate_product",
+  "estimate_workload",
+  "forecast",
+  "forecast_usage",
+  "list_products",
+  "list_skus",
+];
 if (JSON.stringify(names) !== JSON.stringify(expected)) {
   console.error("Unexpected tools", names);
   process.exit(1);
@@ -58,6 +66,18 @@ const fitted = await client.callTool({
 const usageBody = JSON.parse(fitted.content[0].text);
 if (usageBody.method !== "run-rate" || !(usageBody.annual > 0)) {
   console.error("Unexpected usage forecast", usageBody);
+  process.exit(1);
+}
+const listedProducts = await client.callTool({ name: "list_products", arguments: {} });
+const productBody = JSON.parse(listedProducts.content[0].text);
+if (!productBody.products.some((product) => product.id === "jobs_classic" && product.published === true)) {
+  console.error("Product catalog missing jobs_classic");
+  process.exit(1);
+}
+const unpublished = await client.callTool({ name: "estimate_product", arguments: { productId: "databricks_one" } });
+const unpublishedBody = JSON.parse(unpublished.content[0].text);
+if (unpublishedBody.estimate.total !== 0 || unpublishedBody.product.published !== false) {
+  console.error("Unpublished product was priced", unpublishedBody.estimate);
   process.exit(1);
 }
 await client.close();
