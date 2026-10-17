@@ -12,6 +12,7 @@ export function RateDirectory({
   onSelect,
   onMore,
   onClear,
+  onSelected,
 }: {
   rows: UnitCostRow[];
   selectedId?: string;
@@ -19,15 +20,26 @@ export function RateDirectory({
   onSelect: (id: string) => void;
   onMore: () => void;
   onClear: () => void;
+  onSelected: () => void;
 }) {
   return (
-    <section id="rate-directory" aria-label="Unit cost directory" tabIndex={-1} className="min-w-0">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-xl font-semibold tracking-tight">Follow the cost, one unit at a time</h2>
+    <section
+      id="rate-directory"
+      aria-label="Unit cost directory"
+      tabIndex={-1}
+      className="min-w-0 rounded-2xl border bg-card p-3 sm:p-4 lg:max-h-[calc(100svh-var(--workspace-header-height)-2rem)] lg:overflow-y-auto lg:overscroll-contain"
+    >
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b px-1 pb-3">
+        <h2 className="text-base font-semibold tracking-tight">Matching rates</h2>
         <p role="status" className="text-xs text-muted-foreground">
           {rows.length.toLocaleString("en-US")} matching {rows.length === 1 ? "row" : "rows"}
         </p>
       </div>
+      {selectedId && (
+        <Button type="button" variant="outline" size="sm" className="mb-3 w-full lg:hidden" onClick={onSelected}>
+          View selected rate
+        </Button>
+      )}
       {rows.length === 0 ? (
         <div className="rounded-2xl border border-dashed bg-card p-8 text-center">
           <SearchX className="mx-auto size-7 text-muted-foreground" aria-hidden="true" />
@@ -39,7 +51,7 @@ export function RateDirectory({
         </div>
       ) : (
         <>
-          <ul className="grid gap-3">
+          <ul className="grid gap-2">
             {rows.slice(0, limit).map((row) => (
               <li key={row.id}>
                 <button
@@ -47,8 +59,8 @@ export function RateDirectory({
                   aria-pressed={row.id === selectedId}
                   onClick={() => onSelect(row.id)}
                   className={cn(
-                    "w-full min-w-0 rounded-2xl border bg-card p-4 text-left transition-colors hover:border-foreground/30",
-                    row.id === selectedId && "border-primary bg-primary/5 ring-1 ring-primary/15",
+                    "w-full min-w-0 rounded-xl border border-transparent bg-background/60 p-3 text-left transition-colors hover:border-foreground/20 hover:bg-muted/50",
+                    row.id === selectedId && "border-primary bg-primary/5 ring-1 ring-primary/10",
                   )}
                 >
                   <span className="flex items-start justify-between gap-3">
@@ -57,35 +69,26 @@ export function RateDirectory({
                       <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">
                         {row.componentName}
                       </span>
-                      {variantLabel(row) && (
-                        <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">
-                          {variantLabel(row)}
-                        </span>
-                      )}
                     </span>
-                    <ArrowUpRight className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-                  </span>
-                  <span className="mt-3 block break-words font-mono text-lg font-medium tabular-nums">
-                    {rowPrice(row)}
-                    {row.rateKind !== "unpriced" && (
-                      <span className="ml-1 font-sans text-xs font-normal text-muted-foreground">
-                        / {rowBasis(row)}
+                    <span className="max-w-[45%] shrink-0 text-right">
+                      <span className="block break-words font-mono text-base font-medium tabular-nums">
+                        {rowPrice(row)}
                       </span>
-                    )}
-                  </span>
-                  <span className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] text-muted-foreground">
-                    <span>{placementLabel(row)}</span>
-                    <span
-                      className={cn(
-                        "rounded-md border px-1.5 py-0.5",
-                        (row.status === "unpriced" || row.status === "conditional") && "border-dashed",
+                      {row.rateKind !== "unpriced" && (
+                        <span className="mt-0.5 block text-xs text-muted-foreground">/ {rowBasis(row)}</span>
                       )}
-                    >
-                      {statusLabels[row.status]}
                     </span>
                   </span>
-                  <span className="mt-3 block">
+                  {variantLabel(row) && <span className="mt-2 block text-xs leading-relaxed">{variantLabel(row)}</span>}
+                  <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">
+                    {placementLabel(row)}
+                  </span>
+                  <span className="mt-2 flex flex-wrap items-center justify-between gap-2">
                     <EvidenceBadge level={row.evidenceLevel} />
+                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                      {row.id === selectedId ? "Selected" : statusLabels[row.status]}
+                      <ArrowUpRight className="size-3.5" aria-hidden="true" />
+                    </span>
                   </span>
                 </button>
               </li>

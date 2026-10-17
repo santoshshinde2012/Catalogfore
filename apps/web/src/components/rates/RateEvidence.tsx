@@ -7,7 +7,7 @@ export function EvidenceBadge({ level }: { level: UnitCostRow["evidenceLevel"] }
   return (
     <span
       className={cn(
-        "inline-flex rounded-md border px-2 py-1 text-[11px] leading-relaxed font-medium",
+        "inline-flex rounded-md border px-2 py-1 text-xs leading-relaxed font-medium",
         level === "official" || level === "derived" ? "bg-primary/5" : "border-dashed text-muted-foreground",
       )}
     >
@@ -37,12 +37,25 @@ function sourceWebsite(url: string): string {
   }
 }
 
-export function RatePrimarySource({ row }: { row: UnitCostRow }) {
+export function RatePrimarySource({ row, compact = false }: { row: UnitCostRow; compact?: boolean }) {
   const source = row.sources.find((reference) => reference.role === "price") ?? row.sources[0];
   if (!source) return null;
+  if (compact)
+    return (
+      <a
+        href={source.url}
+        target="_blank"
+        rel="noreferrer"
+        className="inline-flex min-h-8 items-center gap-1.5 text-xs font-medium text-link underline-offset-4 hover:underline"
+      >
+        <ExternalLink className="size-3.5 shrink-0" aria-hidden="true" />
+        <span>{source.publisher} source</span>
+        <span className="sr-only"> — {source.title} (opens in a new tab)</span>
+      </a>
+    );
   return (
     <div className="mt-3 border-t pt-3">
-      <p className="text-[11px] leading-relaxed text-muted-foreground">
+      <p className="text-xs leading-relaxed text-muted-foreground">
         {roleLabels[source.role]} · {authorityLabels[source.authority]}
       </p>
       <a
@@ -57,7 +70,7 @@ export function RatePrimarySource({ row }: { row: UnitCostRow }) {
         <ExternalLink className="mt-0.5 size-3 shrink-0" aria-hidden="true" />
         <span className="sr-only"> — {source.title} (opens in a new tab)</span>
       </a>
-      <p className="text-[11px] leading-relaxed text-muted-foreground">
+      <p className="text-xs leading-relaxed text-muted-foreground">
         {source.observedOn ? `Snapshot observed ${source.observedOn}` : "No price observation recorded"}
         {source.reviewedOn ? ` · Source reviewed ${source.reviewedOn}` : ""}
       </p>
@@ -75,7 +88,7 @@ export function RateSourceEvidence({ row }: { row: UnitCostRow }) {
       <ul className="mt-3 grid gap-3">
         {row.sources.map((source, index) => (
           <li key={`${source.url}-${source.role}-${index}`} className="min-w-0 rounded-xl border bg-muted/20 p-3">
-            <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] leading-relaxed">
+            <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs leading-relaxed">
               <span className="font-semibold">{source.publisher}</span>
               <span className="text-muted-foreground">{authorityLabels[source.authority]}</span>
             </p>
@@ -89,10 +102,10 @@ export function RateSourceEvidence({ row }: { row: UnitCostRow }) {
               <ExternalLink className="mt-0.5 size-3 shrink-0" aria-hidden="true" />
               <span className="sr-only">(opens in a new tab)</span>
             </a>
-            <p className="break-words text-[11px] leading-relaxed text-muted-foreground">
+            <p className="break-words text-xs leading-relaxed text-muted-foreground">
               {roleLabels[source.role]} · {sourceWebsite(source.url)}
             </p>
-            <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
               {source.observedOn
                 ? `Snapshot observed ${source.observedOn}`
                 : source.role === "price"
@@ -101,7 +114,7 @@ export function RateSourceEvidence({ row }: { row: UnitCostRow }) {
               {source.reviewedOn ? ` · Source reviewed ${source.reviewedOn}` : " · Review date not recorded"}
             </p>
             {source.locator && (
-              <p className="mt-1 break-words text-[11px] leading-relaxed text-muted-foreground">{source.locator}</p>
+              <p className="mt-1 break-words text-xs leading-relaxed text-muted-foreground">{source.locator}</p>
             )}
           </li>
         ))}

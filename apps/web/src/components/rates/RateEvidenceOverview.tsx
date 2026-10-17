@@ -26,13 +26,13 @@ export function RateEvidenceOverview({ rows }: { rows: UnitCostRow[] }) {
       <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {coverage.buckets.map(({ level, count, percent }) => (
           <div key={level} className="flex min-w-0 flex-col rounded-xl border bg-muted/20 p-3">
-            <dt className="order-2 mt-1 text-[11px] leading-relaxed text-muted-foreground">{evidenceLabels[level]}</dt>
+            <dt className="order-2 mt-1 text-xs leading-relaxed text-muted-foreground">{evidenceLabels[level]}</dt>
             <dd className="order-1 text-xl font-semibold tabular-nums">
               <span className="flex items-center gap-2">
                 <span className={`size-2.5 shrink-0 rounded-full ${coverageColors[level]}`} aria-hidden="true" />
                 {count.toLocaleString("en-US")}
               </span>
-              <span className="mt-1 block text-[10px] font-normal text-muted-foreground">
+              <span className="mt-1 block text-xs font-normal text-muted-foreground">
                 {percent.toLocaleString("en-US", { maximumFractionDigits: 1 })}% of rows
               </span>
             </dd>

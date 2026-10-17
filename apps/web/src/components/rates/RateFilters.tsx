@@ -1,8 +1,8 @@
-import type { UnitCostCatalog, UnitCostFilters, UnitCostRow } from "@cayfore/engine/unit-costs";
+import type { UnitCostCatalog, UnitCostFilters } from "@cayfore/engine/unit-costs";
 import { Search } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { evidenceLabels, statusLabels } from "./rate-presentation";
+import { RateFilterRefinements } from "./RateFilterRefinements";
 
 export function RateFilters({
   catalog,
@@ -25,33 +25,32 @@ export function RateFilters({
   const components = [...new Map(productRows.map((row) => [row.componentId, row.componentName])).entries()].sort(
     (a, b) => a[1].localeCompare(b[1]),
   );
-  const domains = [
-    ...new Map(catalog.products.map((product) => [product.domainId, product.domainName])).entries(),
-  ].sort((a, b) => a[1].localeCompare(b[1]));
   function set(key: keyof UnitCostFilters, value: string) {
     onChange({ ...filters, [key]: value || undefined });
   }
   return (
     <section aria-label="Filter unit costs" className="rounded-2xl border bg-card p-4 sm:p-5">
-      <label className="field" htmlFor="rate-search">
-        Search rates and services
-      </label>
-      <div className="relative mt-2">
-        <Search
-          className="pointer-events-none absolute top-3.5 left-3 size-4 text-muted-foreground sm:top-2.5"
-          aria-hidden="true"
-        />
-        <Input
-          id="rate-search"
-          type="search"
-          placeholder="Service, SKU, model, unit, or source…"
-          value={filters.query ?? ""}
-          onChange={(event) => set("query", event.target.value)}
-          className="pl-9"
-        />
-      </div>
-      <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <label className="field">
+      <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="min-w-0">
+          <label className="field text-xs" htmlFor="rate-search">
+            Search rates and services
+          </label>
+          <div className="relative mt-2">
+            <Search
+              className="pointer-events-none absolute top-3.5 left-3 size-4 text-muted-foreground sm:top-2.5"
+              aria-hidden="true"
+            />
+            <Input
+              id="rate-search"
+              type="search"
+              placeholder="Service, SKU, model, unit, or source…"
+              value={filters.query ?? ""}
+              onChange={(event) => set("query", event.target.value)}
+              className="pl-9"
+            />
+          </div>
+        </div>
+        <label className="field text-xs">
           Product or service
           <select
             value={filters.productId ?? ""}
@@ -67,18 +66,9 @@ export function RateFilters({
             ))}
           </select>
         </label>
-        <label className="field">
-          Domain
-          <select value={filters.domainId ?? ""} onChange={(event) => set("domainId", event.target.value)}>
-            <option value="">All domains</option>
-            {domains.map(([id, name]) => (
-              <option key={id} value={id}>
-                {name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="field">
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <label className="field text-xs">
           Cloud
           <select
             value={filters.cloud ?? ""}
@@ -90,7 +80,7 @@ export function RateFilters({
             <option value="gcp">GCP</option>
           </select>
         </label>
-        <label className="field">
+        <label className="field text-xs">
           Region
           <select value={filters.region ?? ""} onChange={(event) => set("region", event.target.value)}>
             <option value="">All regions</option>
@@ -101,7 +91,7 @@ export function RateFilters({
             ))}
           </select>
         </label>
-        <label className="field">
+        <label className="field text-xs">
           Edition
           <select value={filters.tier ?? ""} onChange={(event) => set("tier", event.target.value)}>
             <option value="">All editions</option>
@@ -109,7 +99,7 @@ export function RateFilters({
             <option value="enterprise">Enterprise</option>
           </select>
         </label>
-        <label className="field">
+        <label className="field text-xs">
           Cost component
           <select value={filters.componentId ?? ""} onChange={(event) => set("componentId", event.target.value)}>
             <option value="">All components</option>
@@ -120,37 +110,15 @@ export function RateFilters({
             ))}
           </select>
         </label>
-        <label className="field">
-          Pricing coverage
-          <select value={filters.status ?? ""} onChange={(event) => set("status", event.target.value)}>
-            <option value="">All coverage</option>
-            {Object.entries(statusLabels).map(([id, name]) => (
-              <option key={id} value={id as UnitCostRow["status"]}>
-                {name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="field">
-          Evidence basis
-          <select value={filters.evidenceLevel ?? ""} onChange={(event) => set("evidenceLevel", event.target.value)}>
-            <option value="">All evidence</option>
-            {Object.entries(evidenceLabels).map(([id, name]) => (
-              <option key={id} value={id}>
-                {name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <div className="flex items-end sm:col-span-2 lg:col-span-4">
-          <Button type="button" variant="ghost" className="min-h-11" onClick={onClear}>
-            Reset all filters
-          </Button>
-        </div>
       </div>
-      <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-        Starts with your forecast placement. Cloud-independent context remains visible. Changing these filters does not
-        change your forecast.
+      <div className="mt-3 flex items-start gap-2 border-t pt-2">
+        <RateFilterRefinements catalog={catalog} filters={filters} onChange={onChange} />
+        <Button type="button" variant="ghost" size="sm" className="mt-0.5 shrink-0 text-xs" onClick={onClear}>
+          Reset all filters
+        </Button>
+      </div>
+      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+        Reference placement only. Your forecast stays unchanged.
       </p>
     </section>
   );

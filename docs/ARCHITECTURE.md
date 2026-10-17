@@ -104,6 +104,12 @@ The unit-cost analytics modules validate quote consistency, multiply billable qu
 
 Reviewed native component prices and consumption conversions live in `rates/components.ts`; the inventory and workload formulas share those inputs. A lightweight component-conflict registry governs both quote visibility and forecast subtotals. Generated CSV/JSON files are projections of these canonical inputs and policies.
 
+## Workspace interaction
+
+The web shell exposes Plan, Product map and Unit costs as persistent destinations, including on narrow screens. A single header-height CSS variable supplies anchor and sticky-panel offsets. Navigation focuses the destination without replacing the forecast fragment; help and advanced actions remain in the workspace menu.
+
+The planner brings usage import and the detailed builder ahead of quick-estimate fields. Its desktop results panel remains visible while inputs scroll. Product search and domain filters precede the directory; example architectures expand separately. Unit costs separates the primary quote/calculator task from comparisons, evidence and downloads using accessible tabs. Stateful calculation and download panels remain mounted while hidden, preserving user input. These are presentation decisions; the pricing policy and exported amounts stay in the engine.
+
 ## Errors
 
 A missing strategy throws `MissingCostStrategyError`. A scenario id that is not in the supplied policy list throws `UnknownScenarioError`. A JSON file that is not a forecast is rejected in the session hook with a visible alert. PDF export reports a failure on the page instead of failing silently.

@@ -1,23 +1,14 @@
 import { expect, test, type Page } from "@playwright/test";
-import { readFile } from "node:fs/promises";
+import { downloadRates as download, openRateTab, showRateRefinements } from "./rate-helpers";
 import type { UnitCostCatalog } from "@cayfore/engine/unit-costs";
 
 const details = (page: Page) => page.getByRole("region", { name: "Unit cost details", exact: true });
 const quote = (page: Page) => details(page).getByRole("group", { name: "Unit price and evidence", exact: true });
-async function download(page: Page, format: "CSV" | "JSON") {
-  const pending = page.waitForEvent("download");
-  await page
-    .getByRole("region", { name: "Download unit costs", exact: true })
-    .getByRole("button", { name: format, exact: true })
-    .click();
-  const result = await pending;
-  return readFile((await result.path())!, "utf8");
-}
-
 test("official numeric prices and planning estimates remain distinct from official background documentation", async ({
   page,
 }) => {
   await page.goto("./?view=rates&product=jobs_serverless&rateCloud=azure&rateRegion=eastus&rateTier=premium");
+  await showRateRefinements(page);
   await page.getByRole("combobox", { name: "Evidence basis", exact: true }).selectOption("official");
   await expect(quote(page).getByText("Official list price", { exact: true })).toBeVisible();
   await expect(details(page)).toContainText("Official publisher");
@@ -32,6 +23,7 @@ test("official numeric prices and planning estimates remain distinct from offici
       row.sources.some((source) => source.role === "price" && source.authority === "first_party"),
     ),
   ).toBe(true);
+  await openRateTab(page, "Evidence");
   const coverage = page.getByRole("region", { name: "Evidence coverage", exact: true });
   await expect(coverage).toContainText(rates.rows.length.toLocaleString("en-US"));
   await coverage.getByText("How to read the sources", { exact: true }).click();
@@ -42,6 +34,7 @@ test("official numeric prices and planning estimates remain distinct from offici
   await page.getByRole("combobox", { name: "Evidence basis", exact: true }).selectOption("estimate");
   await page.getByRole("combobox", { name: "Product or service", exact: true }).selectOption("jobs_classic");
   await page.getByRole("combobox", { name: "Cost component", exact: true }).selectOption("compute");
+  await openRateTab(page, "Rates & calculator");
   await expect(quote(page).getByText("Planning estimate", { exact: true })).toBeVisible();
   await expect(details(page)).toContainText("Official publisher");
   await expect(details(page)).toContainText("Consumption rule");
@@ -54,6 +47,7 @@ test("official numeric prices and planning estimates remain distinct from offici
 test("conflicting official sources suppress the price and quantity calculator", async ({ page }) => {
   await page.goto("./?view=rates&product=foundation_provisioned&rateCloud=azure&rateRegion=eastus&rateTier=premium");
   await page.getByRole("searchbox", { name: "Search rates and services", exact: true }).fill("gte");
+  await showRateRefinements(page);
   await page.getByRole("combobox", { name: "Evidence basis", exact: true }).selectOption("unresolved");
   await expect(details(page).getByText("Unresolved", { exact: true })).toBeVisible();
   await expect(details(page)).toContainText("Rate unavailable");

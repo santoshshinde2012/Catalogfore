@@ -48,6 +48,8 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Changed
 
+- Redesigned the three workspaces around their main tasks: visible mobile navigation, early usage/import entry points, sticky desktop forecasts, immediate product search and domain filters, and unit-cost tabs with persistent calculator/export choices. Refined spacing, typography, source actions and narrow-screen layouts.
+
 - One injectable DBU quote policy now supplies forecasts, unit costs, source provenance and Excel. Reviewed native prices and consumption conversions share one registry. Public Azure reference components outside East US, Zerobus outside its US East reference scope, conflicted GTE capacity, and unpublished defaults remain unresolved; independently supplied costs retain custom provenance through editing and reopening.
 
 - Excel source-rate sheets resolve each workload's placement and regional meter, preserve separate same-SKU workloads, and explain custom or observed costs without assigning an unrelated public DBU rate. Unit-cost evidence distinguishes old observations, documentation reviews, assumptions, and current source conflicts; validated first-party prices now take precedence across the shared forecast, CLI, unit-cost catalog and Excel resolver, while consumption assumptions remain labeled.

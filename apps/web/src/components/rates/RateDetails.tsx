@@ -21,9 +21,9 @@ export function RateDetails({ row, onResults }: { row: UnitCostRow; onResults: (
       id="rate-details"
       aria-label="Unit cost details"
       tabIndex={-1}
-      className="min-w-0 self-start rounded-2xl border bg-card p-5 shadow-sm sm:p-6 lg:sticky lg:top-24 lg:max-h-[calc(100svh-7rem)] lg:overflow-y-auto lg:overscroll-contain"
+      className="order-first min-w-0 self-start rounded-2xl border bg-card p-4 shadow-sm sm:p-5 lg:order-last lg:sticky lg:top-[calc(var(--workspace-header-height)+1rem)] lg:max-h-[calc(100svh-var(--workspace-header-height)-2rem)] lg:overflow-y-auto lg:overscroll-contain"
     >
-      <Button type="button" variant="ghost" size="sm" className="-ml-2 mb-4 lg:hidden" onClick={onResults}>
+      <Button type="button" variant="ghost" size="sm" className="-ml-2 mb-3 lg:hidden" onClick={onResults}>
         <ArrowLeft aria-hidden="true" />
         Back to rates
       </Button>
@@ -31,12 +31,12 @@ export function RateDetails({ row, onResults }: { row: UnitCostRow; onResults: (
         <ReceiptText className="size-4 text-link" aria-hidden="true" />
         {row.domainName}
       </p>
-      <h2 className="mt-3 text-2xl font-semibold tracking-tight text-balance">{row.productName}</h2>
-      <p className="mt-2 text-sm text-muted-foreground">{row.componentName}</p>
-      {variantLabel(row) && <p className="mt-2 text-xs font-medium">{variantLabel(row)}</p>}
-      <p className="mt-2 text-xs text-muted-foreground">{placementLabel(row)}</p>
-      <div role="group" aria-label="Unit price and evidence" className="mt-5 rounded-xl border bg-muted/30 p-4">
-        <p className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+      <h2 className="mt-2 text-xl font-semibold tracking-tight text-balance sm:text-2xl">{row.productName}</h2>
+      <p className="mt-1 text-sm text-muted-foreground">{row.componentName}</p>
+      {variantLabel(row) && <p className="mt-1.5 text-xs font-medium">{variantLabel(row)}</p>}
+      <p className="mt-1 text-xs text-muted-foreground">{placementLabel(row)}</p>
+      <div role="group" aria-label="Unit price and evidence" className="mt-4 rounded-xl border bg-muted/25 p-4">
+        <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
           {row.rateKind === "money"
             ? row.evidenceLevel === "official"
               ? "Official list price · USD"
@@ -45,18 +45,20 @@ export function RateDetails({ row, onResults }: { row: UnitCostRow; onResults: (
         </p>
         <p className="mt-2 break-words text-3xl font-semibold tabular-nums">{rowPrice(row)}</p>
         {row.rateKind !== "unpriced" && <p className="mt-1 text-sm text-muted-foreground">per {rowBasis(row)}</p>}
-        {statusLabels[row.status] !== evidenceLabels[row.evidenceLevel] && (
-          <p className="mt-3 text-xs">{statusLabels[row.status]}</p>
-        )}
-        <div className="mt-3">
+        {["conditional", "unpriced", "not_applicable"].includes(row.status) &&
+          statusLabels[row.status] !== evidenceLabels[row.evidenceLevel] && (
+            <p className="mt-3 text-xs">{statusLabels[row.status]}</p>
+          )}
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
           <EvidenceBadge level={row.evidenceLevel} />
+          <RatePrimarySource row={row} compact />
         </div>
-        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{row.evidenceSummary}</p>
-        <RatePrimarySource row={row} />
       </div>
       {row.status === "unpriced" && (
         <p className="mt-3 text-sm font-medium text-destructive">A missing price is unresolved, not a free service.</p>
       )}
+      <RateCalculator row={row} />
+      <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{row.evidenceSummary}</p>
       <RateBuildUp row={row} />
       <div className="mt-5">
         <h3 className="text-sm font-semibold">Billing dimensions</h3>
@@ -85,7 +87,6 @@ export function RateDetails({ row, onResults }: { row: UnitCostRow; onResults: (
             ))}
         </dl>
       </div>
-      <RateCalculator row={row} />
       <div className="mt-5 border-t pt-4">
         <h3 className="text-sm font-semibold">Coverage and conditions</h3>
         <p className="mt-2 text-xs leading-relaxed text-muted-foreground">

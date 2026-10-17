@@ -31,7 +31,7 @@ export function RateComparison({
             One component across regions. Each bar uses the same product, cloud, edition, billing unit, and variant.
           </p>
         </div>
-        <span className="rounded-lg border bg-muted/30 px-2.5 py-1.5 text-[11px] font-medium">
+        <span className="rounded-lg border bg-muted/30 px-2.5 py-1.5 text-xs font-medium">
           {selected.rateKind === "money" ? `USD / ${rowBasis(selected)}` : "No monetary comparison"}
         </span>
       </header>
@@ -49,12 +49,12 @@ export function RateComparison({
       </div>
       {comparison.state === "available" ? (
         <>
-          <div className="mt-5 flex justify-between gap-3 text-[10px] text-muted-foreground" aria-hidden="true">
+          <div className="mt-5 flex justify-between gap-3 text-xs text-muted-foreground" aria-hidden="true">
             <span>$0</span>
             <span>Bars start at zero · {rowPrice(comparison.points.at(-1)!.row)} maximum</span>
           </div>
           {visible.length < comparison.points.length && (
-            <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
               Showing the lowest quotes, the highest quote, and your selected region. Expand to see every comparable
               region.
             </p>
@@ -100,8 +100,8 @@ export function RateComparison({
                     />
                   </span>
                   <span className="mt-1.5 flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-[10px] text-muted-foreground">{evidenceLabels[row.evidenceLevel]}</span>
-                    <span className="text-[10px] text-muted-foreground">
+                    <span className="text-xs text-muted-foreground">{evidenceLabels[row.evidenceLevel]}</span>
+                    <span className="text-xs text-muted-foreground">
                       {isSelected ? "Selected region" : "Inspect source →"}
                     </span>
                   </span>

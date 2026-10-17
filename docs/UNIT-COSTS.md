@@ -4,6 +4,14 @@ Cayfore's **Unit costs** menu explains the bundled cost of one billing or operat
 
 The inventory covers all **70 current pricing-catalog products and 8 learning-only platform concepts**. It is a curated snapshot, not a complete worldwide Databricks tariff, every current model, or an availability guarantee. Rates are USD list-price bases before contract discounts, tax, and excluded services.
 
+## Explore the workspace
+
+Start in **Rates & calculator**. Search or choose a product, then set its reference cloud, region, edition and component. The selected quote and billable-quantity calculator are beside the matching rows on a wide screen; on a phone, use **View selected rate** and **Back to rates**. These actions leave the forecast unchanged.
+
+Use **More filters** for domain, pricing coverage and evidence basis. Active refinements remain counted when collapsed. **Compare regions**, **Evidence** and **Downloads** open the supporting tools without replacing your chosen placement. Calculator input and download scope survive task switches. Keyboard arrow keys move between the workspace tabs.
+
+The same three primary workspaces—Plan, Product map and Unit costs—are visible in the header on smaller screens. The menu retains Advanced, forecast navigation and explanatory help.
+
 ## Files and commands
 
 - [unit-costs.json.gz](../data/unit-costs.json.gz): losslessly compressed JSON inventory with component, placement, dimension, price, and provenance fields.

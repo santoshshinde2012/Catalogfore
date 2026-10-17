@@ -74,6 +74,7 @@ export function WorkspaceMenu({
   unitCostsOpen?: boolean;
 }) {
   const menuAction = useRef<(() => void) | null>(null);
+  const current = productMapOpen ? "products" : unitCostsOpen ? "rates" : "inputs";
   return (
     <DropdownMenu modal={false}>
       <InfoTooltip label="Workspace menu" description="Navigate the planner or start a fresh forecast." align="end">
@@ -110,11 +111,9 @@ export function WorkspaceMenu({
         {headerNavigation.map(({ id, menuLabel, description, icon: Icon }) => (
           <DropdownMenuItem
             key={id}
-            className="items-start gap-3 rounded-xl px-3 py-3"
+            className="items-start gap-3 rounded-xl px-3 py-3 aria-[current=page]:bg-muted aria-[current=page]:text-link"
             aria-haspopup={id === "advanced" ? "dialog" : undefined}
-            aria-current={
-              (id === "products" && productMapOpen) || (id === "rates" && unitCostsOpen) ? "page" : undefined
-            }
+            aria-current={id === current ? "page" : undefined}
             onSelect={() => {
               menuAction.current = actions[id];
             }}

@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
-import { readFile } from "node:fs/promises";
+import { downloadRates as download, openRateTab } from "./rate-helpers";
 import type { UnitCostCatalog } from "@cayfore/engine/unit-costs";
 
 const directory = (page: Page) => page.getByRole("region", { name: "Unit cost directory", exact: true });
@@ -12,16 +12,6 @@ async function navigate(page: Page, name: "Unit costs" | "Product map" | "Plan",
     await page.getByRole("menuitem", { name: new RegExp(`^${name === "Plan" ? "Edit inputs" : name}\\b`) }).click();
   } else await header.getByRole("button", { name, exact: true }).click();
 }
-async function download(page: Page, format: "CSV" | "JSON") {
-  const pending = page.waitForEvent("download");
-  await page
-    .getByRole("region", { name: "Download unit costs", exact: true })
-    .getByRole("button", { name: format, exact: true })
-    .click();
-  const result = await pending;
-  return readFile((await result.path())!, "utf8");
-}
-
 test("unit-cost navigation, product links, history, and reload preserve the active forecast", async ({
   page,
   isMobile,
@@ -68,6 +58,7 @@ test("CSV and JSON downloads retain the same filtered dimensions and complete ca
   await expect(directory(page).getByRole("status")).toHaveText(
     `${filtered.rows.length.toLocaleString("en-US")} matching ${filtered.rows.length === 1 ? "row" : "rows"}`,
   );
+  await openRateTab(page, "Downloads");
   await page.getByRole("combobox", { name: "Download scope", exact: true }).selectOption("all");
   const full = JSON.parse(await download(page, "JSON")) as UnitCostCatalog;
   expect(full.products.length).toBeGreaterThan(70);

@@ -1,108 +1,39 @@
-import { domainById, productMap, type ProductMapEntry } from "@cayfore/catalog/map";
-import { ArrowUpRight, Search, SearchX, X } from "lucide-react";
+import { domainById, type ProductMapEntry } from "@cayfore/catalog/map";
+import { ArrowUpRight, Check, SearchX } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import { CoverageBadge, DomainIcon, domainColor } from "./map-presentation";
 
 export function ProductDirectory({
   entries,
   selectedId,
-  query,
-  domainId,
-  kind,
   limit,
-  onQuery,
-  onDomain,
-  onKind,
+  hasFilters,
   onSelect,
   onMore,
   onClear,
 }: {
   entries: ProductMapEntry[];
   selectedId?: string;
-  query: string;
-  domainId: string;
-  kind: string;
   limit: number;
-  onQuery: (value: string) => void;
-  onDomain: (value: string) => void;
-  onKind: (value: string) => void;
+  hasFilters: boolean;
   onSelect: (id: string) => void;
   onMore: () => void;
   onClear: () => void;
 }) {
   return (
     <section aria-label="Product directory" id="product-directory" tabIndex={-1} className="min-w-0">
-      <div className="mb-5">
-        <p className="text-[10px] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
-          Explore the catalog
-        </p>
-        <h2 className="mt-1 text-xl font-semibold tracking-tight">Find the right building block</h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Search current names, older names, or what you want to do.
-        </p>
-      </div>
-      <div className="rounded-2xl border bg-card p-4">
-        <label className="field" htmlFor="product-search">
-          Search Databricks products
-        </label>
-        <div className="relative mt-2">
-          <Search
-            className="pointer-events-none absolute top-3.5 left-3 size-4 text-muted-foreground sm:top-2.5"
-            aria-hidden="true"
-          />
-          <Input
-            id="product-search"
-            type="search"
-            value={query}
-            onChange={(event) => onQuery(event.target.value)}
-            placeholder="Product, alias, or use case…"
-            className="pr-10 pl-9"
-          />
-          {query && (
-            <button
-              type="button"
-              aria-label="Clear search"
-              className="absolute top-0 right-0 flex h-full w-10 items-center justify-center rounded-r-lg text-muted-foreground hover:text-foreground"
-              onClick={() => onQuery("")}
-            >
-              <X className="size-4" aria-hidden="true" />
-            </button>
-          )}
-        </div>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <label className="field">
-            Filter by domain
-            <select value={domainId} onChange={(event) => onDomain(event.target.value)}>
-              <option value="">All domains</option>
-              {productMap.domains.map((domain) => (
-                <option key={domain.id} value={domain.id}>
-                  {domain.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="field">
-            Filter by entry type
-            <select value={kind} onChange={(event) => onKind(event.target.value)}>
-              <option value="">All entries</option>
-              <option value="catalog-product">Catalog products</option>
-              <option value="platform-service">Platform concepts</option>
-            </select>
-          </label>
-        </div>
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-          <p role="status">
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div>
+          <h2 className="text-base font-semibold tracking-tight">Products and services</h2>
+          <p className="mt-1 text-xs text-muted-foreground" role="status">
             {entries.length} {entries.length === 1 ? "entry" : "entries"}
-            {domainId ? " across primary and related domains" : " to explore"}
+            {hasFilters ? " match your filters" : " to explore"}
           </p>
-          {(query || domainId || kind) && (
-            <Button type="button" variant="ghost" size="sm" onClick={onClear}>
-              Clear filters
-            </Button>
-          )}
         </div>
+        <span className="rounded-lg border bg-card px-2.5 py-1 text-[11px] tabular-nums text-muted-foreground">
+          {Math.min(limit, entries.length)} shown
+        </span>
       </div>
       {entries.length === 0 ? (
         <div className="mt-4 rounded-2xl border border-dashed bg-card px-5 py-12 text-center">
@@ -117,7 +48,7 @@ export function ProductDirectory({
         </div>
       ) : (
         <>
-          <ul className="mt-4 grid gap-2.5">
+          <ul className="grid gap-2.5 lg:max-h-[min(44rem,calc(100svh-var(--workspace-header-height)-8rem))] lg:overflow-y-auto lg:overscroll-contain lg:pr-2">
             {entries.slice(0, limit).map((entry) => (
               <li key={entry.id}>
                 <button
@@ -125,8 +56,9 @@ export function ProductDirectory({
                   aria-pressed={selectedId === entry.id}
                   onClick={() => onSelect(entry.id)}
                   className={cn(
-                    "group flex w-full min-w-0 items-start gap-3 rounded-2xl border bg-card p-4 text-left transition-colors hover:border-foreground/30",
-                    selectedId === entry.id && "border-primary bg-primary/5 ring-1 ring-primary/15",
+                    "group relative flex min-h-24 w-full min-w-0 items-start gap-3 rounded-xl border bg-card p-3.5 text-left transition-colors hover:border-foreground/30 hover:bg-muted/30",
+                    selectedId === entry.id &&
+                      "border-primary bg-primary/5 shadow-sm ring-1 ring-inset ring-primary/10",
                   )}
                 >
                   <span
@@ -140,7 +72,11 @@ export function ProductDirectory({
                   <span className="min-w-0 flex-1">
                     <span className="flex items-start justify-between gap-2">
                       <span className="text-sm font-semibold">{entry.name}</span>
-                      <ArrowUpRight className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                      {selectedId === entry.id ? (
+                        <Check className="mt-0.5 size-3.5 shrink-0 text-link" aria-hidden="true" />
+                      ) : (
+                        <ArrowUpRight className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                      )}
                     </span>
                     <span className="mt-1 line-clamp-2 block text-xs leading-relaxed text-muted-foreground">
                       {entry.summary}

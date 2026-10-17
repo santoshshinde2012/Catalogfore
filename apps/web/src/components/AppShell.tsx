@@ -112,7 +112,7 @@ export function AppShell({ session }: { session: SimpleSession }) {
           {productsOpen && (
             <Suspense
               fallback={
-                <p className="mx-auto max-w-6xl px-6 py-16 text-muted-foreground" role="status">
+                <p className="mx-auto max-w-7xl px-6 py-16 text-muted-foreground" role="status">
                   Loading the product map…
                 </p>
               }
@@ -127,7 +127,7 @@ export function AppShell({ session }: { session: SimpleSession }) {
           {ratesOpen && (
             <Suspense
               fallback={
-                <p className="mx-auto max-w-6xl px-6 py-16 text-muted-foreground" role="status">
+                <p className="mx-auto max-w-7xl px-6 py-16 text-muted-foreground" role="status">
                   Loading unit costs…
                 </p>
               }

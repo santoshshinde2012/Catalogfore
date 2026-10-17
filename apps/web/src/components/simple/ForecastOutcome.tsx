@@ -1,5 +1,4 @@
-import { productCatalog } from "@cayfore/catalog";
-import { pricesUpdatedOn, type PortfolioProjection } from "@cayfore/engine";
+import type { PortfolioProjection } from "@cayfore/engine";
 import { money } from "../../format";
 import { Rise } from "../../lib/rise";
 import { useAnimatedNumber } from "../../lib/use-animated-number";
@@ -9,6 +8,8 @@ import { navigateToSection } from "../../lib/page-navigation";
 import type { RatePlacement } from "../../hooks/useAppView";
 import { ForecastViews } from "./ForecastViews";
 import { PriceDisclosure } from "./PriceDisclosure";
+import { periodAt, periodLabel } from "../../lib/chart-data";
+import { InfoTooltip } from "../ui/tooltip";
 
 export function yearCopy(annual: number, spreadPercent: number, cloudShare: number) {
   const sentence =
@@ -43,36 +44,54 @@ export function ResultsPanel({
   const animatedFirst = useAnimatedNumber(months[0]?.expected ?? 0);
   const animatedLast = useAnimatedNumber(months[11]?.expected ?? 0);
   const subtotal = estimate.coverage?.complete === false;
+  const startMonth = points[0]?.period ?? estimate.verifiedOn.slice(0, 7);
+  const endMonth = points[11]?.period ?? periodAt(startMonth, 11);
   return (
     <div id="forecast" tabIndex={-1} aria-busy={busy} className="grid gap-6">
       <Rise className="grid gap-4">
         <div>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-sm font-medium text-muted-foreground">
-              Next 12 months{subtotal ? " · known subtotal" : ""}
-            </h2>
+            <div>
+              <h2 className="text-sm font-semibold">Next 12 months</h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {periodLabel(startMonth)}–{periodLabel(endMonth)} · USD
+              </p>
+            </div>
             <div className="flex flex-wrap items-center gap-2">
-              <Button type="button" onClick={onShare}>
-                Copy link
-              </Button>
+              <InfoTooltip
+                label="Share this forecast"
+                description="Copy a link with your current plan and assumptions so someone else can open it."
+              >
+                <Button type="button" onClick={onShare}>
+                  Copy link
+                </Button>
+              </InfoTooltip>
               <ExportBar portfolio={portfolio} estimate={estimate} points={points} forecastResult={projection} />
             </div>
           </div>
-          <p
-            className="mt-3 break-words text-4xl font-semibold tracking-tight tabular-nums min-[390px]:text-5xl sm:text-6xl"
-            data-testid="year-total"
-          >
-            {money(animated, 0)}
+          <p className="mt-4">
+            <span className="sr-only" data-testid="year-sentence" aria-live="polite">
+              {sentence}
+            </span>
+            <span
+              aria-hidden="true"
+              className="block break-words text-4xl font-semibold tracking-tight tabular-nums min-[390px]:text-5xl sm:text-6xl"
+              data-testid="year-total"
+            >
+              {money(animated, 0)}
+            </span>
           </p>
+          {subtotal && (
+            <p className="mt-2 text-sm font-medium text-destructive">
+              Known subtotal · some components have unresolved prices
+            </p>
+          )}
           {busy && (
             <p className="mt-2 text-xs text-muted-foreground" role="status">
               Reading usage data…
             </p>
           )}
-          <p className="mt-2 text-sm text-muted-foreground" data-testid="year-sentence" aria-live="polite">
-            {sentence}
-          </p>
-          <p className="mt-1 text-sm tabular-nums" data-testid="annual-range">
+          <p className="mt-2 text-sm tabular-nums text-muted-foreground" data-testid="annual-range">
             Planning range {money(band.low, 0)}–{money(band.high, 0)}
           </p>
           {portfolio.usage?.sourceLabel && (
@@ -84,10 +103,9 @@ export function ResultsPanel({
             </p>
           )}
         </div>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-3">
           <Tile label="First month" value={money(animatedFirst, 0)} />
           <Tile label="Month 12" value={money(animatedLast, 0)} />
-          <Tile label="Cloud share" value={cloudShare <= 0.005 ? "None" : `${Math.round(cloudShare * 100)}%`} />
         </div>
         <p className="text-sm text-muted-foreground" data-testid="bill-split">
           {split}
@@ -132,13 +150,11 @@ export function ResultsPanel({
           </li>
           <li>{projection.assumptions[0]}</li>
           {(portfolio.events?.length ?? 0) > 0 && <li>{portfolio.events!.length} dated usage changes are included.</li>}
-          <li>{split}</li>
         </ul>
       </div>
-      <p className="text-xs text-muted-foreground">
-        Price book dated {pricesUpdatedOn}, catalog v{productCatalog.version}. Estimates only. Catalog{" "}
-        {estimate.catalogVersion}, dated {estimate.verifiedOn}. The calculation stays in this browser. Not a Databricks
-        quote, and not affiliated with Databricks.
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        Price book dated {estimate.verifiedOn}, catalog v{estimate.catalogVersion}. Estimates only. The calculation
+        stays in this browser. Not a Databricks quote.
       </p>
     </div>
   );

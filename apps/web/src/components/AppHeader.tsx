@@ -3,7 +3,8 @@ import { useRef } from "react";
 import type { Theme } from "../hooks/forecast-session";
 import { REPO } from "../site";
 import { Button } from "./ui/button";
-import { headerNavigation, WorkspaceMenu } from "./WorkspaceMenu";
+import { WorkspaceMenu } from "./WorkspaceMenu";
+import { WorkspaceNavigation } from "./WorkspaceNavigation";
 import { InfoTooltip } from "./ui/tooltip";
 
 export function AppHeader({
@@ -50,7 +51,7 @@ export function AppHeader({
         className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lava/40 to-transparent"
         aria-hidden="true"
       />
-      <div className="mx-auto flex h-20 w-full max-w-6xl items-center gap-2 px-4 sm:gap-3 sm:px-6">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-2 px-4 sm:gap-3 sm:px-6 xl:h-18">
         <InfoTooltip
           label="Your planning workspace"
           description="Return to plan inputs. Your current forecast stays intact."
@@ -76,28 +77,7 @@ export function AppHeader({
           </button>
         </InfoTooltip>
 
-        <nav
-          aria-label="Page"
-          className="ml-auto hidden items-center gap-0.5 rounded-2xl border bg-muted/50 p-1 xl:flex"
-        >
-          {headerNavigation.map(({ id, label, description, icon: Icon }) => (
-            <InfoTooltip key={id} label={label} description={description}>
-              <Button
-                type="button"
-                variant="ghost"
-                className="min-h-10 gap-1.5 rounded-xl px-2 text-xs text-muted-foreground hover:bg-card hover:text-foreground hover:shadow-sm aria-[current=page]:bg-card aria-[current=page]:text-foreground aria-[current=page]:shadow-sm"
-                aria-haspopup={id === "advanced" ? "dialog" : undefined}
-                aria-current={
-                  (id === "products" && productMapOpen) || (id === "rates" && unitCostsOpen) ? "page" : undefined
-                }
-                onClick={actions[id]}
-              >
-                <Icon className="size-3.5" aria-hidden="true" />
-                {label}
-              </Button>
-            </InfoTooltip>
-          ))}
-        </nav>
+        <WorkspaceNavigation actions={actions} productMapOpen={productMapOpen} unitCostsOpen={unitCostsOpen} />
 
         <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-1.5 xl:ml-1">
           <InfoTooltip
@@ -166,6 +146,9 @@ export function AppHeader({
             unitCostsOpen={unitCostsOpen}
           />
         </div>
+      </div>
+      <div className="border-t bg-muted/35 xl:hidden">
+        <WorkspaceNavigation compact actions={actions} productMapOpen={productMapOpen} unitCostsOpen={unitCostsOpen} />
       </div>
     </header>
   );

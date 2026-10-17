@@ -1,18 +1,13 @@
 import type { UnitCostCatalog } from "@cayfore/engine/unit-costs";
 import { expect, test, type Page } from "@playwright/test";
-import { readFile } from "node:fs/promises";
+import { downloadRates, openRateTab } from "./rate-helpers";
 
 const money = (value: number) =>
   value.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 10 });
 const comparison = (page: Page) => page.getByRole("region", { name: "Regional unit cost comparison", exact: true });
 const details = (page: Page) => page.getByRole("region", { name: "Unit cost details", exact: true });
 async function currentRows(page: Page) {
-  const pending = page.waitForEvent("download");
-  await page
-    .getByRole("region", { name: "Download unit costs", exact: true })
-    .getByRole("button", { name: "JSON", exact: true })
-    .click();
-  return JSON.parse(await readFile((await (await pending).path())!, "utf8")) as UnitCostCatalog;
+  return JSON.parse(await downloadRates(page, "JSON")) as UnitCostCatalog;
 }
 
 test("regional bars, calculation path, and downloads share the same dimensional quote", async ({ page }) => {
@@ -21,6 +16,13 @@ test("regional bars, calculation path, and downloads share the same dimensional 
   const before = new URL(page.url()).hash;
   const initial = await currentRows(page);
   const selected = initial.rows[0];
+  const path = details(page).getByRole("region", { name: "Unit cost calculation path", exact: true });
+  await expect(path).toContainText("Source price");
+  await expect(path).toContainText("Consumption for quoted quantity");
+  await expect(path).toContainText("Component quote");
+  await expect(path).toContainText(money(selected.unitPriceUsd!));
+  await expect(path).toContainText(money(selected.baseRateUsd!));
+  await openRateTab(page, "Compare regions");
   const chart = comparison(page);
   await expect(chart.getByRole("heading", { name: "Compare the same unit", exact: true })).toBeVisible();
   await expect(chart).toContainText(selected.instanceId!);
@@ -28,12 +30,6 @@ test("regional bars, calculation path, and downloads share the same dimensional 
   const selectedBar = chart.locator('button[aria-pressed="true"]');
   await expect(selectedBar).toContainText(money(selected.unitPriceUsd!));
   await expect(selectedBar).toContainText(selected.regionLabel!);
-  const path = details(page).getByRole("region", { name: "Unit cost calculation path", exact: true });
-  await expect(path).toContainText("Source price");
-  await expect(path).toContainText("Consumption for quoted quantity");
-  await expect(path).toContainText("Component quote");
-  await expect(path).toContainText(money(selected.unitPriceUsd!));
-  await expect(path).toContainText(money(selected.baseRateUsd!));
   const target = chart.locator('button[aria-pressed="false"]').first();
   const targetLabel = await target.locator("span.break-words").innerText();
   await target.focus();
@@ -51,8 +47,9 @@ test("regional bars, calculation path, and downloads share the same dimensional 
   );
   expect(sameConfiguration).toBeDefined();
   expect(sameConfiguration!.region).not.toBe(selected.region);
-  await expect(chart.locator('button[aria-pressed="true"]')).toContainText(money(sameConfiguration!.unitPriceUsd!));
   await expect(details(page)).toContainText(sameConfiguration!.instanceId!);
+  await openRateTab(page, "Compare regions");
+  await expect(chart.locator('button[aria-pressed="true"]')).toContainText(money(sameConfiguration!.unitPriceUsd!));
   expect(new URL(page.url()).hash).toBe(before);
 });
 
@@ -61,6 +58,7 @@ test("comparison keeps SQL sizes separate and never charts unresolved context as
   await page.getByRole("combobox", { name: "Cost component", exact: true }).selectOption("compute");
   const rows = (await currentRows(page)).rows;
   const selected = rows[0];
+  await openRateTab(page, "Compare regions");
   await expect(comparison(page)).toContainText(String(selected.dimensions.size));
   await expect(comparison(page)).toContainText(`USD / ${selected.unit}`);
   await expect(comparison(page).locator('button[aria-pressed="true"]')).toContainText(money(selected.unitPriceUsd!));
@@ -68,9 +66,11 @@ test("comparison keeps SQL sizes separate and never charts unresolved context as
   await expect(comparison(page)).toContainText("No monetary comparison");
   await expect(comparison(page).locator("ol")).toHaveCount(0);
   await expect(comparison(page).getByRole("status")).toContainText("no resolved monetary quote");
+  await openRateTab(page, "Evidence");
   await expect(page.getByRole("region", { name: "Evidence coverage", exact: true })).toContainText(
     "Evidence coverage, not a breakdown of spending",
   );
+  await openRateTab(page, "Rates & calculator");
   await expect(
     details(page).getByRole("region", { name: "Unit cost calculation path", exact: true }).locator("ol"),
   ).toHaveCount(0);

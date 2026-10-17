@@ -12,7 +12,7 @@ Cayfore is the interface. This repository is the forecast. It is an estimate, no
 
 ## What it answers
 
-Cloud and tier, a starting monthly amount or a team size, a mix of pipelines, dashboards, and models, and monthly growth. The page returns a low-to-high year, a sentence, a chart, and a month table.
+Cloud and tier, a starting monthly amount or a team size, a mix of pipelines, dashboards, and models, and monthly growth. The page returns an annual total, planning range, charts and monthly values.
 
 | Input          | Default                                          |
 | -------------- | ------------------------------------------------ |
@@ -21,17 +21,17 @@ Cloud and tier, a starting monthly amount or a team size, a mix of pipelines, da
 | Mix            | 45% pipelines, 40% dashboards, 15% models        |
 | Growth         | 3% a month, with an optional commitment discount |
 
-On that default the page reads **about $170,258 per year, ±20%**. First month **$11,997**. **29%** of the bill is cloud machines. The sources for the presets and the rates are in [docs/RESEARCH.md](docs/RESEARCH.md).
+That default estimates **about $170,258 per year, with a ±20% planning range**. First month **$11,997**. **29%** of the bill is cloud machines. The sources for the presets and the rates are in [docs/RESEARCH.md](docs/RESEARCH.md).
 
-A usage CSV opens a review of its baseline month, prices, and gaps before replacing the estimate. Databricks billing and recognized FOCUS files are supported. Imported monetary costs stay observed costs; the app does not invent a separate VM bill. See [usage import](docs/USAGE-IMPORT.md).
+Usage import and Advanced are available at the top of Plan inputs. The forecast remains visible while editing on desktop, and a persistent shortcut shows the annual total on mobile. A usage CSV opens a review of its baseline month, prices, and gaps before replacing the estimate. Databricks billing and recognized FOCUS files are supported. Imported monetary costs stay observed costs; the app does not invent a separate VM bill. See [usage import](docs/USAGE-IMPORT.md).
 
 Set an annual budget, save named scenarios, and plan dated launches or retirements. Charts show observed spend, future estimates, budget variance, scenario comparisons, and monthly cost components. Advanced opens the per-workload editor. Growth and pricing controls preserve those workloads.
 
-Open **Product map** to explore eight Databricks domains, all 70 catalog entries, and eight platform concepts. Search current names or older aliases, follow example architectures, and inspect roles, relationships, billing context, and official sources. Supported products can be added to the current forecast with Undo. [Product map research and maintenance](docs/PRODUCT-MAP.md) explains the taxonomy and pricing boundaries.
+Open **Product map** to explore eight Databricks domains, all 70 catalog entries, and eight platform concepts. Search current names or older aliases, filter by domain, expand example architectures, and inspect roles, relationships, billing context, and official sources. Supported products can be added to the current forecast with Undo. [Product map research and maintenance](docs/PRODUCT-MAP.md) explains the taxonomy and pricing boundaries.
 
 ![Databricks products and services mapped across eight learning domains](docs/screenshots/product-map-light.png)
 
-Open **Unit costs** for the source prices and consumption rules behind each product. Official price links, publisher names, snapshot dates, and evidence labels appear beside prices. Direct official prices, derived rates, planning estimates, and unresolved conflicts can be filtered separately. Filter by product, cloud, region, edition, component, or evidence status; inspect machines, models, token directions, and other variants; then enter a quantity to calculate a component subtotal. Compare the same configured unit across regions, inspect the source-to-quote calculation path, and view evidence coverage without combining unlike prices. The calculator, visual scales, CSV/JSON and Excel share the engine quote policy. Product map and forecast rows link to the relevant reference costs. [Unit-cost documentation](docs/UNIT-COSTS.md) explains sources, missing prices, assumptions, and pricing conflicts.
+Open **Unit costs** for the source prices and consumption rules behind each product. **Rates & calculator** opens the working quote immediately; **Compare regions**, **Evidence** and **Downloads** provide focused supporting views. **More filters** reveals the additional evidence and coverage controls. Official price links, publisher names, snapshot dates, and evidence labels appear beside prices. Direct official prices, derived rates, planning estimates, and unresolved conflicts can be filtered separately. Filter by product, cloud, region, edition, component, or evidence status; inspect machines, models, token directions, and other variants; then enter a quantity to calculate a component subtotal. Compare the same configured unit across regions, inspect the source-to-quote calculation path, and view evidence coverage without combining unlike prices. The calculator, visual scales, CSV/JSON and Excel share the engine quote policy. Product map and forecast rows link to the relevant reference costs. [Unit-cost documentation](docs/UNIT-COSTS.md) explains sources, missing prices, assumptions, and pricing conflicts.
 
 Download ordinary CSV or JSON in the browser, or run `npm run export:unit-costs` to create both locally. Complete, lossless copies are versioned as [CSV](data/unit-costs.csv.gz) and [JSON](data/unit-costs.json.gz) gzip files. They cover all 70 pricing products and eight platform concepts without treating an unknown rate as free.
 

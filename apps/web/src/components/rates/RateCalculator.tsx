@@ -11,7 +11,10 @@ export function RateCalculator({ row }: { row: UnitCostRow }) {
   const valid = calculation.status !== "invalid_quantity" && calculation.status !== "overflow";
   const total = calculation.totalUsd;
   return (
-    <section aria-label="Unit cost calculator" className="mt-5 rounded-xl border bg-muted/30 p-4">
+    <section
+      aria-label="Unit cost calculator"
+      className="mt-4 rounded-xl border border-primary/20 bg-primary/[0.035] p-4"
+    >
       <h3 className="flex items-center gap-2 text-sm font-semibold">
         <Calculator className="size-4" aria-hidden="true" />
         Try a quantity
@@ -40,7 +43,11 @@ export function RateCalculator({ row }: { row: UnitCostRow }) {
             Enter units after applicable allowances and consumption adjustments; this calculator multiplies an already
             billable quantity.
           </p>
-          <p id="rate-calculation" className="mt-3 break-words text-sm tabular-nums" role="status">
+          <p
+            id="rate-calculation"
+            className="mt-3 break-words rounded-lg border bg-card p-3 text-base font-medium tabular-nums"
+            role="status"
+          >
             {total !== null && Number.isFinite(total)
               ? `${amount.toLocaleString("en-US", { maximumFractionDigits: 10 })} × ${unitMoney(calculation.unitRateUsd!)} = ${unitMoney(total)}`
               : calculation.reason}

@@ -30,34 +30,36 @@ export function CloudSection({
             </SegmentedStripItem>
           ))}
         </SegmentedStrip>
-        <SegmentedStrip
-          label="Tier"
-          className="w-fit max-w-full"
-          value={plan.tier}
-          onValueChange={(value) => value && onTier(value as Tier)}
-        >
-          {TIERS.map((tier) => (
-            <SegmentedStripItem key={tier.id} value={tier.id}>
-              {tier.label}
-            </SegmentedStripItem>
-          ))}
-        </SegmentedStrip>
-        <label className="grid gap-2 text-sm font-medium">
-          Region
-          <Select value={plan.region} onValueChange={onRegion}>
-            <SelectTrigger aria-label="Region">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {regions.map((region) => (
-                <SelectItem key={region.id} value={region.id}>
-                  {region.label}
-                </SelectItem>
+        <div className="grid min-w-0 items-start gap-4 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+          <div className="grid min-w-0 gap-2">
+            <p className="text-sm font-medium">Edition</p>
+            <SegmentedStrip label="Tier" value={plan.tier} onValueChange={(value) => value && onTier(value as Tier)}>
+              {TIERS.map((tier) => (
+                <SegmentedStripItem key={tier.id} value={tier.id}>
+                  {tier.label}
+                </SegmentedStripItem>
               ))}
-            </SelectContent>
-          </Select>
-        </label>
-        <p className="text-sm text-muted-foreground">Optional. Each cloud starts in its reference region.</p>
+            </SegmentedStrip>
+          </div>
+          <label className="grid min-w-0 gap-2 text-sm font-medium">
+            Region
+            <Select value={plan.region} onValueChange={onRegion}>
+              <SelectTrigger aria-label="Region">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {regions.map((region) => (
+                  <SelectItem key={region.id} value={region.id}>
+                    {region.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </label>
+        </div>
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          Prices follow the selected region. New plans start in each cloud's reference region.
+        </p>
       </Step>
     </>
   );
@@ -94,7 +96,10 @@ export function SpendSection({
         <label className="grid gap-2 text-sm font-medium">
           Starting monthly spend
           <span className="relative block font-normal">
-            <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground">
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
+            >
               $
             </span>
             <Input

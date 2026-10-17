@@ -2,7 +2,7 @@
 
 Reviewed on **2026-10-17**. The Product map helps users understand what a service does, where it fits, which services it can work with, and what to consider before estimating its cost.
 
-Open **Product map** from the desktop navigation or mobile workspace menu. Search names, aliases, and use cases; select a domain or an example architecture to explore related entries. The selected service explains its role, costs, relationships, and sources. Supported catalog components can be appended to the active forecast with Undo. Browser history and reload retain the current plan.
+Open **Product map** from the persistent header navigation. Search names, aliases and use cases, then use the compact domain navigation or filters to narrow the directory. Example architectures expand under **See how the pieces work together** below the workspace. The selected service explains its role, costs, relationships, and sources. Supported catalog components can be appended to the active forecast with Undo. Browser history and reload retain the current plan.
 
 ![Search results beside a service's role, cost context, and related services](screenshots/product-map-details.png)
 
