@@ -72,15 +72,15 @@ test("cloud, commitment, exports, and a usage file", async ({ page }) => {
   await expect(page.getByText(/The calculation stays in this browser/)).toBeVisible();
   await page.getByRole("button", { name: "Export" }).click();
   const csvPromise = page.waitForEvent("download");
-  await page.getByRole("menuitem", { name: "CSV", exact: true }).click();
+  await page.getByRole("menuitem", { name: /^CSV\b/ }).click();
   expect((await csvPromise).suggestedFilename()).toMatch(/\.csv$/);
   await page.getByRole("button", { name: "Export" }).click();
   const jsonPromise = page.waitForEvent("download");
-  await page.getByRole("menuitem", { name: "JSON", exact: true }).click();
+  await page.getByRole("menuitem", { name: /^JSON\b/ }).click();
   expect((await jsonPromise).suggestedFilename()).toMatch(/\.json$/);
   await page.getByRole("button", { name: "Export" }).click();
   const pdfPromise = page.waitForEvent("download");
-  await page.getByRole("menuitem", { name: "PDF" }).click();
+  await page.getByRole("menuitem", { name: /^PDF\b/ }).click();
   expect((await pdfPromise).suggestedFilename()).toMatch(/\.pdf$/);
 });
 

@@ -1,9 +1,10 @@
-import { FolderOpen, Menu, Moon, RotateCcw, Star, Sun } from "lucide-react";
+import { ArrowUpRight, FolderOpen, Moon, Star, Sun } from "lucide-react";
 import { useRef } from "react";
 import type { Theme } from "../hooks/forecast-session";
 import { REPO } from "../site";
 import { Button } from "./ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { headerNavigation, WorkspaceMenu } from "./WorkspaceMenu";
+import { InfoTooltip } from "./ui/tooltip";
 
 export function AppHeader({
   theme,
@@ -25,60 +26,108 @@ export function AppHeader({
   onOpen: (file: File) => void;
 }) {
   const upload = useRef<HTMLInputElement>(null);
-  const menuAction = useRef<(() => void) | null>(null);
+  const actions = { inputs: onInputs, forecast: onForecast, advanced: onAdvanced, how: onHow };
+  const themeLabel = theme === "light" ? "Switch to dark theme" : "Switch to light theme";
+
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-2 px-4 sm:gap-3 sm:px-6">
-        <button
-          type="button"
-          className="-ml-2 flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-2 text-sm font-semibold tracking-tight hover:bg-muted"
-          onClick={onInputs}
-          aria-label="Cayfore — edit your plan"
+    <header className="sticky top-0 z-40 border-b bg-card/90 shadow-[0_1px_12px_rgb(0_0_0/0.03)] backdrop-blur-xl">
+      <div
+        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lava/40 to-transparent"
+        aria-hidden="true"
+      />
+      <div className="mx-auto flex h-20 w-full max-w-6xl items-center gap-2 px-4 sm:gap-3 sm:px-6">
+        <InfoTooltip
+          label="Your planning workspace"
+          description="Return to plan inputs. Your current forecast stays intact."
+          align="start"
         >
-          <span className="flex size-7 items-center justify-center rounded-lg bg-foreground" aria-hidden="true">
-            <span className="size-2 rounded-full bg-lava" />
-          </span>
-          Cayfore
-        </button>
-        <nav aria-label="Page" className="ml-3 hidden items-center gap-1 lg:flex">
-          <Button type="button" variant="ghost" onClick={onForecast}>
-            Forecast
-          </Button>
-          <Button type="button" variant="ghost" onClick={onAdvanced}>
-            Advanced
-          </Button>
-          <Button type="button" variant="ghost" onClick={onHow}>
-            How it works
-          </Button>
+          <button
+            type="button"
+            className="group -ml-1 flex min-h-11 shrink-0 items-center gap-2.5 rounded-xl px-1 py-1 text-left sm:gap-3"
+            onClick={onInputs}
+          >
+            <span
+              className="relative flex size-9 items-center justify-center overflow-hidden rounded-xl border border-foreground/10 bg-foreground shadow-sm transition-transform group-hover:-translate-y-0.5 sm:size-10"
+              aria-hidden="true"
+            >
+              <span className="size-2.5 rounded-full bg-lava shadow-[0_0_0_5px_rgb(255_54_33/0.12)]" />
+            </span>
+            <span>
+              <span className="block text-base font-semibold tracking-tight">Cayfore</span>
+              <span className="hidden text-[9px] font-medium tracking-[0.16em] text-muted-foreground uppercase sm:block">
+                Cost planning
+              </span>
+            </span>
+          </button>
+        </InfoTooltip>
+
+        <nav
+          aria-label="Page"
+          className="ml-auto hidden items-center gap-0.5 rounded-2xl border bg-muted/50 p-1 lg:flex"
+        >
+          {headerNavigation.map(({ id, label, description, icon: Icon }) => (
+            <InfoTooltip key={id} label={label} description={description}>
+              <Button
+                type="button"
+                variant="ghost"
+                className="min-h-10 rounded-xl px-3 text-[13px] text-muted-foreground hover:bg-card hover:text-foreground hover:shadow-sm"
+                aria-haspopup={id === "advanced" ? "dialog" : undefined}
+                onClick={actions[id]}
+              >
+                <Icon className="size-3.5" aria-hidden="true" />
+                {label}
+              </Button>
+            </InfoTooltip>
+          ))}
         </nav>
-        <div className="ml-auto flex shrink-0 items-center gap-1">
-          <Button type="button" variant="outline" size="sm" className="hidden md:inline-flex" asChild>
-            <a href={REPO} target="_blank" rel="noreferrer">
-              <Star />
-              Star
-            </a>
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            aria-label={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
-            title={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
-            onClick={onTheme}
+
+        <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-1.5 lg:ml-1">
+          <InfoTooltip
+            label="Support Cayfore"
+            description="View the source and star the project on GitHub. Opens in a new tab."
           >
-            {theme === "light" ? <Moon /> : <Sun />}
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            className="size-11 p-0 sm:h-9 sm:w-auto sm:px-3.5"
-            aria-label="Open forecast"
-            title="Open a saved forecast"
-            onClick={() => upload.current?.click()}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="hidden min-h-10 rounded-xl text-muted-foreground md:inline-flex"
+              asChild
+            >
+              <a href={REPO} target="_blank" rel="noreferrer" aria-label="Star on GitHub">
+                <Star aria-hidden="true" />
+                <span className="hidden xl:inline">Star</span>
+                <ArrowUpRight className="hidden size-3 xl:block" aria-hidden="true" />
+              </a>
+            </Button>
+          </InfoTooltip>
+          <InfoTooltip label={themeLabel} description="Choose the appearance that feels best for your workspace.">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="rounded-xl text-muted-foreground"
+              aria-label={themeLabel}
+              onClick={onTheme}
+            >
+              {theme === "light" ? <Moon aria-hidden="true" /> : <Sun aria-hidden="true" />}
+            </Button>
+          </InfoTooltip>
+          <div className="mx-1 hidden h-5 w-px bg-border sm:block" aria-hidden="true" />
+          <InfoTooltip
+            label="Open a saved forecast"
+            description="Load a Cayfore JSON file to continue a previously exported plan."
           >
-            <FolderOpen />
-            <span className="hidden sm:inline">Open</span>
-          </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="size-11 rounded-xl bg-background/60 p-0 sm:h-10 sm:w-auto sm:px-3"
+              aria-label="Open forecast"
+              onClick={() => upload.current?.click()}
+            >
+              <FolderOpen className="text-link" aria-hidden="true" />
+              <span className="hidden sm:inline">Open</span>
+            </Button>
+          </InfoTooltip>
           <input
             ref={upload}
             className="sr-only"
@@ -92,61 +141,7 @@ export function AppHeader({
               if (file) onOpen(file);
             }}
           />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button type="button" variant="ghost" size="icon" aria-label="Menu">
-                <Menu />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              onCloseAutoFocus={(event) => {
-                const action = menuAction.current;
-                if (!action) return;
-                event.preventDefault();
-                menuAction.current = null;
-                requestAnimationFrame(action);
-              }}
-            >
-              <DropdownMenuItem
-                onSelect={() => {
-                  menuAction.current = onInputs;
-                }}
-              >
-                Edit inputs
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() => {
-                  menuAction.current = onForecast;
-                }}
-              >
-                Forecast
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() => {
-                  menuAction.current = onAdvanced;
-                }}
-              >
-                Advanced
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() => {
-                  menuAction.current = onHow;
-                }}
-              >
-                How it works
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="mt-1 gap-2 border-t pt-2"
-                onSelect={() => {
-                  menuAction.current = onNew;
-                }}
-              >
-                <RotateCcw className="size-4" />
-                New forecast
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <WorkspaceMenu actions={actions} onNew={onNew} />
         </div>
       </div>
     </header>

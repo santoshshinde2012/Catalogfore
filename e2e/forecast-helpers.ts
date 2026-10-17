@@ -11,7 +11,7 @@ export interface SavedDownload {
 export async function exportText(page: Page, format: "JSON" | "CSV"): Promise<string> {
   await page.getByRole("button", { name: "Export", exact: true }).click();
   const pending = page.waitForEvent("download");
-  await page.getByRole("menuitem", { name: format, exact: true }).click();
+  await page.getByRole("menuitem", { name: new RegExp(`^${format}\\b`) }).click();
   const path = await (await pending).path();
   if (!path) throw new Error("Download file is unavailable");
   return readFile(path, "utf8");

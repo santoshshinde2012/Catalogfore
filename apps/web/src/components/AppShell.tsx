@@ -6,7 +6,7 @@ import type { SimpleSession } from "../hooks/useSimpleForecast";
 import { REPO } from "../site";
 import { SimplePage } from "./simple/SimplePage";
 import { Toaster } from "./ui/sonner";
-import { TooltipProvider } from "./ui/tooltip";
+import { InfoTooltip, TooltipProvider } from "./ui/tooltip";
 
 export function AppShell({ session }: { session: SimpleSession }) {
   const [howOpen, setHowOpen] = useState(false);
@@ -70,38 +70,77 @@ export function AppShell({ session }: { session: SimpleSession }) {
                 </p>
               </div>
               <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium">
-                <a
-                  className="text-link underline-offset-4 hover:underline"
-                  href="#forecast"
-                  onClick={(event) => navigate(event, "forecast")}
+                <InfoTooltip
+                  label="Forecast"
+                  description="Return to your annual estimate and interactive cost charts."
+                  side="top"
                 >
-                  Forecast
-                </a>
-                <a
-                  className="text-link underline-offset-4 hover:underline"
-                  href="#how-it-works"
-                  onClick={(event) => {
-                    setHowOpen(true);
-                    navigate(event, "how-it-works");
-                  }}
+                  <a
+                    className="text-link underline-offset-4 hover:underline"
+                    href="#forecast"
+                    onClick={(event) => navigate(event, "forecast")}
+                  >
+                    Forecast
+                  </a>
+                </InfoTooltip>
+                <InfoTooltip
+                  label="How it works"
+                  description="Understand the assumptions and pricing behind this estimate."
+                  side="top"
                 >
-                  How it works
-                </a>
-                <a className="text-link underline-offset-4 hover:underline" href={REPO}>
-                  Source
-                </a>
-                <a className="text-link underline-offset-4 hover:underline" href={`${REPO}/blob/main/LICENSE`}>
-                  License
-                </a>
-                <a className="text-link underline-offset-4 hover:underline" href={`${REPO}/blob/main/docs/RESEARCH.md`}>
-                  Rates
-                </a>
-                <a
-                  className="text-link underline-offset-4 hover:underline"
-                  href={`${REPO}/blob/main/docs/ARCHITECTURE.md`}
+                  <a
+                    className="text-link underline-offset-4 hover:underline"
+                    href="#how-it-works"
+                    onClick={(event) => {
+                      setHowOpen(true);
+                      navigate(event, "how-it-works");
+                    }}
+                  >
+                    How it works
+                  </a>
+                </InfoTooltip>
+                <InfoTooltip
+                  label="Source code"
+                  description="Explore Cayfore's implementation and contribute on GitHub."
+                  side="top"
                 >
-                  Architecture
-                </a>
+                  <a className="text-link underline-offset-4 hover:underline" href={REPO}>
+                    Source
+                  </a>
+                </InfoTooltip>
+                <InfoTooltip
+                  label="MIT License"
+                  description="Read the terms for using and adapting this open-source project."
+                  side="top"
+                >
+                  <a className="text-link underline-offset-4 hover:underline" href={`${REPO}/blob/main/LICENSE`}>
+                    License
+                  </a>
+                </InfoTooltip>
+                <InfoTooltip
+                  label="Pricing research"
+                  description="Review the published rate sources and research notes."
+                  side="top"
+                >
+                  <a
+                    className="text-link underline-offset-4 hover:underline"
+                    href={`${REPO}/blob/main/docs/RESEARCH.md`}
+                  >
+                    Rates
+                  </a>
+                </InfoTooltip>
+                <InfoTooltip
+                  label="Architecture"
+                  description="See how the catalog, forecasting engine, and web app fit together."
+                  side="top"
+                >
+                  <a
+                    className="text-link underline-offset-4 hover:underline"
+                    href={`${REPO}/blob/main/docs/ARCHITECTURE.md`}
+                  >
+                    Architecture
+                  </a>
+                </InfoTooltip>
               </nav>
             </div>
             <p className="text-xs text-muted-foreground">MIT License</p>

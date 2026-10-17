@@ -1,7 +1,9 @@
 import type { PortfolioProjection } from "@cayfore/engine";
+import { ChartColumnIncreasing, ChartNoAxesCombined, Layers, Table2 } from "lucide-react";
 import { lazy, Suspense } from "react";
 import { periodAt, periodLabel, type ChartSeries } from "../../lib/chart-data";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { InfoTooltip } from "../ui/tooltip";
 import { Breakdown } from "./Breakdown";
 import { MonthTable } from "./MonthTable";
 
@@ -36,18 +38,50 @@ export function ForecastViews({
         aria-label="Forecast views"
         className="grid h-auto w-full grid-cols-2 gap-1 p-1 sm:inline-flex sm:w-auto sm:gap-0 sm:p-0"
       >
-        <TabsTrigger className="rounded-lg border-0 px-3 sm:rounded-none" value="chart">
-          Chart
-        </TabsTrigger>
-        <TabsTrigger className="rounded-lg border-0 px-3 sm:rounded-none" value="cumulative">
-          Cumulative
-        </TabsTrigger>
-        <TabsTrigger className="rounded-lg border-0 px-3 sm:rounded-none" value="composition">
-          Cost split
-        </TabsTrigger>
-        <TabsTrigger className="rounded-lg border-0 px-3 sm:rounded-none" value="months">
-          Months
-        </TabsTrigger>
+        <InfoTooltip
+          label="Monthly spend"
+          description="Explore forecast costs by month, including the planning range, imported history, and budget when available."
+        >
+          <TabsTrigger className="rounded-lg border-0 px-3 sm:rounded-none" value="chart">
+            <span className="inline-flex items-center gap-2">
+              <ChartColumnIncreasing aria-hidden="true" className="size-4" />
+              Chart
+            </span>
+          </TabsTrigger>
+        </InfoTooltip>
+        <InfoTooltip
+          label="Cumulative spend"
+          description="Track accumulated forecast costs and compare with an equally phased annual budget when one is set."
+        >
+          <TabsTrigger className="rounded-lg border-0 px-3 sm:rounded-none" value="cumulative">
+            <span className="inline-flex items-center gap-2">
+              <ChartNoAxesCombined aria-hidden="true" className="size-4" />
+              Cumulative
+            </span>
+          </TabsTrigger>
+        </InfoTooltip>
+        <InfoTooltip
+          label="Understand the cost split"
+          description="Break each forecast month into Databricks usage, cloud machines, and add-ons. Imported service costs keep their billing basis."
+        >
+          <TabsTrigger className="rounded-lg border-0 px-3 sm:rounded-none" value="composition">
+            <span className="inline-flex items-center gap-2">
+              <Layers aria-hidden="true" className="size-4" />
+              Cost split
+            </span>
+          </TabsTrigger>
+        </InfoTooltip>
+        <InfoTooltip
+          label="Monthly values"
+          description="Review the first 12 forecast months in a table, with expected costs and the low-to-high planning range."
+        >
+          <TabsTrigger className="rounded-lg border-0 px-3 sm:rounded-none" value="months">
+            <span className="inline-flex items-center gap-2">
+              <Table2 aria-hidden="true" className="size-4" />
+              Months
+            </span>
+          </TabsTrigger>
+        </InfoTooltip>
       </TabsList>
       <TabsContent value="chart">
         <ChartHeading title="Monthly spend" startMonth={startMonth} />
