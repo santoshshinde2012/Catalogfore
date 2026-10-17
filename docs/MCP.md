@@ -20,6 +20,7 @@ The SQL file is a fixed `SELECT`. Run it with a principal that can read `system.
 npm run cayfore
 npm run cayfore -- usage apps/web/public/sample-usage-history.csv --cloud aws --as-of 2026-10-17
 npm run cayfore -- forecast saved-plan.json
+npm run cayfore -- estimate --xlsx forecast.xlsx
 npm run cayfore -- sql
 ```
 
@@ -111,7 +112,11 @@ The default baseline is the latest complete month. A partial month requires an e
 
 Enough contiguous history can fit a trend; shorter histories use a run rate. Responses include `method`, `mape`, `selectedMonth`, `asOf`, `costBasis`, `sourceCoverage`, `estimateCoverage`, `warnings`, `assumptions`, `pricesUpdatedOn`, and the same canonical `forecast`, `months`, `annual`, and `band` as the website. Planning ranges are not calibrated probabilities. A fitted diagnostic on synthetic data is not evidence of customer forecast accuracy.
 
-The CLI accepts the corresponding options as `--cloud`, `--tier`, `--region`, `--as-of`, `--month`, and `--cost-basis`. `forecast saved-plan.json` and `estimate saved-plan.json` reopen versioned JSON exports using strict validation.
+The CLI accepts the corresponding options as `--cloud`, `--tier`, `--region`, `--as-of`, `--month`, and `--cost-basis`. `forecast saved-plan.json` and `estimate saved-plan.json` reopen versioned JSON exports using strict validation. `estimate --xlsx forecast.xlsx` writes an Excel workbook for the default plan. `forecast saved-plan.json --xlsx forecast.xlsx` writes one for a saved plan.
+
+### `export_xlsx`
+
+Same `portfolio` as `forecast`. Returns `filename` (`cayfore-forecast-<cloud>-<YYYY-MM-DD>.xlsx`) and `workbookBase64`. The workbook has Summary, Monthly forecast, Breakdown, Products, Savings, and Rates sheets. Totals are Excel `SUM` formulas. It is an estimate, not a quote, and it says it is not affiliated with Databricks.
 
 ## What this server will not do
 

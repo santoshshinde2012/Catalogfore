@@ -20,7 +20,7 @@ Import a Databricks billing CSV or a recognized FOCUS cost and usage CSV in USD.
 
 ## Can I compare scenarios against a budget?
 
-Yes. Set an annual budget to see forecast headroom or overspend, save named scenarios, and compare their costs. Growth, dated workload changes, and pricing assumptions affect the projections. Named scenarios are saved in this browser. Export the active plan as a JSON file to open that plan in another browser.
+Yes. Set an annual budget to see forecast headroom or overspend, save named scenarios, and compare their costs. Growth, dated workload changes, and pricing assumptions affect the projections. Named scenarios are saved in this browser. Export the active plan as a JSON file to open that plan in another browser. The Export menu also downloads an Excel workbook of the same forecast.
 
 ## What do the charts and forecast range mean?
 

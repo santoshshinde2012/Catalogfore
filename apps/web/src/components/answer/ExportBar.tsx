@@ -1,7 +1,7 @@
 import type { Estimate, ForecastPoint, Portfolio } from "@cayfore/engine";
 import { ChevronDown, Download, FileJson2, FileSpreadsheet, FileText } from "lucide-react";
 import { useState } from "react";
-import { exportCsv, exportJson, exportPdf } from "../../export";
+import { exportCsv, exportJson, exportPdf, exportXlsx } from "../../export";
 import type { ForecastExportResult } from "../../export-data";
 import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
@@ -18,18 +18,23 @@ export function ExportBar({
   points: ForecastPoint[];
   forecastResult?: ForecastExportResult;
 }) {
-  const [pdfBusy, setPdfBusy] = useState(false);
-  const [pdfError, setPdfError] = useState("");
+  const [busy, setBusy] = useState("");
+  const [downloadError, setDownloadError] = useState("");
 
-  async function downloadPdf() {
-    setPdfBusy(true);
-    setPdfError("");
+  async function downloadFile(kind: "pdf" | "xlsx") {
+    setBusy(kind);
+    setDownloadError("");
     try {
-      await exportPdf(portfolio, estimate, points, forecastResult);
+      if (kind === "xlsx") await exportXlsx(portfolio, estimate, points, forecastResult);
+      else await exportPdf(portfolio, estimate, points, forecastResult);
     } catch {
-      setPdfError("The PDF did not download. Try again, or use CSV.");
+      setDownloadError(
+        kind === "xlsx"
+          ? "The Excel file did not download. Try again, or use CSV."
+          : "The PDF did not download. Try again, or use CSV.",
+      );
     } finally {
-      setPdfBusy(false);
+      setBusy("");
     }
   }
 
@@ -38,7 +43,7 @@ export function ExportBar({
       <DropdownMenu modal={false}>
         <InfoTooltip
           label="Download your forecast"
-          description="Export the results and assumptions as a spreadsheet, JSON data, or a PDF report."
+          description="Export an Excel workbook, CSV spreadsheet, JSON data, or a PDF report."
           align="end"
         >
           <DropdownMenuTrigger asChild>
@@ -54,6 +59,19 @@ export function ExportBar({
             <p className="text-sm font-semibold">Download forecast</p>
             <p className="mt-0.5 text-xs text-muted-foreground">Choose a format for your forecast.</p>
           </div>
+          <DropdownMenuItem
+            className="gap-3 rounded-xl px-2.5 py-2.5"
+            onSelect={() => void downloadFile("xlsx")}
+            disabled={busy === "xlsx"}
+          >
+            <FileSpreadsheet aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
+            <span className="min-w-0">
+              <span className="block font-medium">{busy === "xlsx" ? "Preparing Excel…" : "XLSX"}</span>
+              <span className="mt-0.5 block text-xs text-muted-foreground">
+                Excel workbook with formulas, rates, and sources
+              </span>
+            </span>
+          </DropdownMenuItem>
           <DropdownMenuItem
             className="gap-3 rounded-xl px-2.5 py-2.5"
             onSelect={() => exportCsv(portfolio, estimate, points, forecastResult)}
@@ -78,12 +96,12 @@ export function ExportBar({
           </DropdownMenuItem>
           <DropdownMenuItem
             className="gap-3 rounded-xl px-2.5 py-2.5"
-            onSelect={() => void downloadPdf()}
-            disabled={pdfBusy}
+            onSelect={() => void downloadFile("pdf")}
+            disabled={busy === "pdf"}
           >
             <FileText aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
             <span className="min-w-0">
-              <span className="block font-medium">{pdfBusy ? "Preparing PDF…" : "PDF"}</span>
+              <span className="block font-medium">{busy === "pdf" ? "Preparing PDF…" : "PDF"}</span>
               <span className="mt-0.5 block text-xs text-muted-foreground">
                 Shareable report with costs and assumptions
               </span>
@@ -91,9 +109,9 @@ export function ExportBar({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      {pdfError && (
+      {downloadError && (
         <p role="alert" className="w-full text-sm text-destructive">
-          {pdfError}
+          {downloadError}
         </p>
       )}
     </>

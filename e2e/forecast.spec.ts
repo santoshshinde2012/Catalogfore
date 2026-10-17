@@ -71,6 +71,10 @@ test("cloud, commitment, exports, and a usage file", async ({ page }) => {
   await expect(page.getByText("Estimates only").first()).toBeVisible();
   await expect(page.getByText(/The calculation stays in this browser/)).toBeVisible();
   await page.getByRole("button", { name: "Export" }).click();
+  const xlsxPromise = page.waitForEvent("download");
+  await page.getByRole("menuitem", { name: /^XLSX\b/ }).click();
+  expect((await xlsxPromise).suggestedFilename()).toMatch(/^cayfore-forecast-[a-z]+-\d{4}-\d{2}-\d{2}\.xlsx$/);
+  await page.getByRole("button", { name: "Export" }).click();
   const csvPromise = page.waitForEvent("download");
   await page.getByRole("menuitem", { name: /^CSV\b/ }).click();
   expect((await csvPromise).suggestedFilename()).toMatch(/\.csv$/);

@@ -59,7 +59,7 @@ Medium on AWS is about **$11,997** in month one. Switch the cloud to Azure and k
 
 ## What moved off the front door
 
-The quick inputs remain on the first screen. Budget and named-scenario controls follow the main forecast. Savings stay under “Ways to pay less,” each with an annual amount and an explicit overlapping-alternatives explanation. Copy link is the primary action. CSV, JSON, and PDF sit in the Export menu.
+The quick inputs remain on the first screen. Budget and named-scenario controls follow the main forecast. Savings stay under “Ways to pay less,” each with an annual amount and an explicit overlapping-alternatives explanation. Copy link is the primary action. Excel, CSV, JSON, and PDF sit in the Export menu.
 
 ## Advanced, checked by hand
 

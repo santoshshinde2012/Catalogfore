@@ -16,6 +16,7 @@ import {
 } from "../../packages/engine/src/index.ts";
 import { DISCLAIMER, portfolioSchema, readToolPortfolio, text } from "./reply.js";
 import { registerUsageTool } from "./register-usage.js";
+import { registerXlsxTool } from "./register-xlsx.js";
 
 export function registerForecastTools(server: McpServer) {
   server.registerTool(
@@ -142,4 +143,5 @@ export function registerForecastTools(server: McpServer) {
   );
 
   registerUsageTool(server);
+  registerXlsxTool(server);
 }

@@ -42,15 +42,28 @@ Databricks Labs LakeMeter-OSS is not a source. Its GitHub license is the Databri
 
 ## GitHub Action
 
-`.github/workflows/refresh-prices.yml` runs Mondays at 06:00 UTC, and on demand. It checks out the repo, runs the script with `GCP_BILLING_API_KEY` from the repository secret (empty when the secret is unset), runs the catalog test, and opens a pull request on `price-refresh` when one of the four files changed. Review the diff. The figures are list prices for an estimate, not a quote.
+`.github/workflows/weekly-catalog.yml` is the only scheduled catalog job. It runs Mondays at 06:00 UTC, and on demand. It replaces the earlier Monday price refresh (`0 6 * * 1`) and catalog watch (`0 7 * * 1`).
 
-## Product catalog watch
+The job uses the default `GITHUB_TOKEN`. Repository permission stays `contents: read`. The job itself may write contents, open one pull request, and open or comment on one research issue. It does not merge.
 
-`.github/workflows/catalog-watch.yml` runs Mondays at 07:00 UTC, after the price refresh, and on demand. It validates `data/product-catalog.json`, fetches Azure Databricks consumption meter names for every Azure region on the rate card, and lists names that are not in `knownAzureMeters` (Photon, free-trial, and POC meters are ignored). It rewrites [COVERAGE.md](COVERAGE.md) from the catalog, the rate card, and the meter file. It also reads `https://www.databricks.com/feed` and reports titles that look billable and have not been seen. Manual citations older than 120 days are marked stale. The job opens a pull request on `catalog-watch` when the report or the seen-item state changes. It does not rewrite `$/DBU` rates. The weekly price refresh already downloads Azure DBU meters for every region on the card. Databricks still does not publish a price JSON.
+`npx vite-node scripts/weekly-catalog.ts --apply` does the work:
+
+1. Validate `data/product-catalog.json` with the catalog schema, and validate the price files. A schema or sanity error exits 1. Nothing is committed.
+2. Refresh Azure Retail Prices and AWS EC2 offers. `GCP_BILLING_API_KEY` comes from the repository secret and is empty when the secret is unset, which skips GCP.
+3. Run the catalog watch: Azure Databricks meter names, the coverage report, and `https://www.databricks.com/feed`.
+4. Read `robots.txt` and, when that file allows it, sitemap metadata on `www.databricks.com` and `docs.databricks.com`. A new product signal is a `www.databricks.com/product/<name>` URL that was not seen before. Release-note archives and pricing URLs are ignored. The RSS feed covers release notes. `sitemapLocs` in `data/catalog-watch-state.json` starts from the product URLs listed on 2026-10-17, so an existing marketing page is not filed as new. The job does not scrape a pricing page.
+5. Diff the price files. A rate move over 20% is listed. It is not applied as a new curated `$/DBU`. The curated card stays a cited table.
+6. When something changed, bump the product-catalog version, note it under Unreleased in `CHANGELOG.md`, and write `data/weekly-summary.md`.
+7. Open or update one pull request on the branch `weekly-catalog`. The summary lists new services, price changes, and removed items.
+8. When a new sitemap product, release-note title, Azure meter, or stale citation needs research, open one GitHub issue titled `Catalog research: new public signals`, or comment on the open issue. The checklist does not change a rate.
+
+`--offline` skips the network and is for tests. A dry run without `--apply` prints the summary and does not write files.
 
 ## Run it locally
 
 ```bash
+npx vite-node scripts/weekly-catalog.ts
+npx vite-node scripts/weekly-catalog.ts --offline
 npm run refresh-prices
 SKIP_AWS=1 npm run refresh-prices
 ```

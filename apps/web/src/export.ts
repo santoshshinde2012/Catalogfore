@@ -30,6 +30,23 @@ export function exportJson(
   download(`${slug(portfolio.name)}.json`, new Blob([forecastJson(canonical)], { type: "application/json" }));
 }
 
+export async function exportXlsx(
+  portfolio: Portfolio,
+  estimate: Estimate,
+  points: ForecastPoint[],
+  result?: ForecastExportResult,
+) {
+  const { buildForecastWorkbook, forecastWorkbookName } = await import("@cayfore/sheet");
+  const canonical = exportResult(portfolio, estimate, points, result);
+  const bytes = await buildForecastWorkbook(canonical);
+  const body = new Uint8Array(bytes.byteLength);
+  body.set(bytes);
+  download(
+    forecastWorkbookName(canonical.portfolio.cloud),
+    new Blob([body], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }),
+  );
+}
+
 export function exportCsv(
   portfolio: Portfolio,
   estimate: Estimate,
@@ -110,6 +127,7 @@ export async function exportPdf(
 
 /** Exporters the page can offer. A new format is a new entry. */
 export const forecastExporters = [
+  { id: "xlsx", write: exportXlsx },
   { id: "json", write: exportJson },
   { id: "csv", write: exportCsv },
   { id: "pdf", write: exportPdf },

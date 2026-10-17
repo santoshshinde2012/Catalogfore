@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, test } from "node:test";
@@ -57,6 +57,15 @@ test("CLI rejects unrelated saved JSON and invalid usage options", () => {
   const usage = fixture("empty.csv", "sku_name,usage_quantity,usage_unit\nJOBS_COMPUTE,100,DBU");
   assert.equal(run("usage", usage, "--cloud", "unknown").status, 1);
   assert.equal(run("usage", usage, "--month", "2026-13").status, 1);
+});
+
+test("estimate --xlsx writes a workbook and keeps the JSON summary", () => {
+  const path = join(directory, "forecast.xlsx");
+  const result = run("estimate", "--xlsx", path);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(JSON.parse(result.stdout).annual, 170257.52);
+  assert.equal(existsSync(path), true);
+  assert.equal(run("estimate", "--xlsx").status, 1);
 });
 
 test("SQL helper remains available without a usage file", () => {

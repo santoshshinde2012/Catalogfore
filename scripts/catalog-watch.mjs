@@ -157,6 +157,7 @@ async function main() {
     unknownMeters: unknown,
     rssGuids: [...new Set([...(state.rssGuids ?? []), ...posts.map((post) => post.guid)])].slice(-200),
     staleProductIds: stale,
+    sitemapLocs: Array.isArray(state.sitemapLocs) ? state.sitemapLocs : [],
   };
   const changed =
     JSON.stringify(next.unknownMeters) !== JSON.stringify(state.unknownMeters ?? []) ||

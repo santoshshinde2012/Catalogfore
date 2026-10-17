@@ -41,4 +41,4 @@ The four-input page is unchanged. It still builds classic jobs, serverless SQL, 
 
 ## Watch
 
-`node scripts/catalog-watch.mjs` validates the file, compares Azure Databricks meter names in every rate-card region with `knownAzureMeters`, rewrites the coverage report, and reads `https://www.databricks.com/feed`. `--offline` skips the network. The workflow is `.github/workflows/catalog-watch.yml`. It does not scrape Databricks price pages. The site terms disallow that, and those pages are not a rate feed.
+`node scripts/catalog-watch.mjs` validates the file, compares Azure Databricks meter names in every rate-card region with `knownAzureMeters`, rewrites the coverage report, and reads `https://www.databricks.com/feed`. `--offline` skips the network. The Monday workflow is `.github/workflows/weekly-catalog.yml` (`scripts/weekly-catalog.ts`). It runs that watch, the price refresh, and a robots-and-sitemap metadata check. It does not scrape Databricks price pages. The site terms disallow that, and those pages are not a rate feed.

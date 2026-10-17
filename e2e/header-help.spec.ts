@@ -132,12 +132,17 @@ test("chart and export help preserve keyboard tab navigation and accessible menu
   await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())));
   await exportTrigger.focus();
   await expect(page.getByRole("tooltip", { name: /^Download your forecast\b/ })).toBeVisible();
-  await expect(exportTrigger).toHaveAccessibleDescription(/spreadsheet, JSON data, or a PDF report/);
+  await expect(exportTrigger).toHaveAccessibleDescription(
+    /Excel workbook, CSV spreadsheet, JSON data, or a PDF report/,
+  );
   await exportTrigger.press("Enter");
   await expect(exportTrigger).toHaveAttribute("data-state", "open");
   const exports = page.getByRole("region", { name: "Forecast export", exact: true });
   const menu = exports.getByRole("menu");
   await expect(menu).toBeVisible();
+  await expect(menu.getByRole("menuitem", { name: /^XLSX\b/ })).toContainText(
+    "Excel workbook with formulas, rates, and sources",
+  );
   await expect(menu.getByRole("menuitem", { name: /^CSV\b/ })).toContainText(
     "Costs and monthly forecasts for spreadsheets",
   );

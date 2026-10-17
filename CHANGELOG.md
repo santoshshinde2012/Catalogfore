@@ -6,6 +6,9 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Added
 
+- An Excel workbook export (XLSX) from the Export menu, `cayfore estimate --xlsx`, and the MCP tool `export_xlsx`. CSV, JSON, and PDF stay. The workbook uses live `SUM` formulas, the lava header, and the disclaimer “Not affiliated with Databricks”.
+- One Monday 06:00 UTC catalog workflow. It refreshes Azure and AWS list prices, checks allowed Databricks RSS and sitemap metadata, validates the schema, flags rate moves over 20%, and opens one review pull request. It does not merge.
+
 - A refined planning header, contextual tooltips for navigation and chart controls, and descriptive workspace/export menus with keyboard and touch support.
 - Complete mobile and keyboard planning flows: forecast shortcuts, balanced chart tabs, persistent import actions, accessible scrolling tables, explicit reset/undo, validated input drafts, editor focus management, and responsive planning states.
 - Local budget and named-scenario planning, dated usage changes, contract-rate provenance, and a commitment break-even what-if including unused value and overage.
@@ -23,12 +26,12 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 - Advanced “Add product”, grouped by category, with schema-driven inputs for products that do not have their own editor.
 - Per-product month and 12-month totals in Advanced.
 - MCP tools `list_products` and `estimate_product`, and CLI commands `products` and `product <id>`.
-- A Monday catalog watch that flags unknown Azure meters, stale manual citations, and possible new billable features from the Databricks RSS feed.
+- A catalog watch that flags unknown Azure meters, stale manual citations, and possible new billable features from the Databricks RSS feed. It now runs inside the Monday weekly catalog workflow.
 - A 12-month forecast from cloud, starting amount, workload mix, and growth, with a low-to-high band.
 - Usage CSV import. One month sets the run rate. Six or more months fit a trend. The sample files are in `apps/web/public/`.
-- CSV, JSON, and PDF export, and a share link that keeps the plan in the URL.
+- CSV, JSON, and PDF export, and a share link that keeps the plan in the URL. Excel joined them later; see the first Added note.
 - CLI (`npm run cayfore`) and a stdio MCP server with the same engine.
-- Weekly price refresh for AWS on-demand rates and Azure VM and DBU meters. See `docs/DATA-PIPELINE.md`.
+- Weekly price refresh for AWS on-demand rates and Azure VM and DBU meters, now part of the single Monday catalog workflow. See `docs/DATA-PIPELINE.md`.
 - `robots.txt`, a sitemap, a web manifest, and JSON-LD (`WebSite`, `WebApplication`, `SoftwareApplication`) on the production page.
 - A static FAQ at `/faq.html` and `docs/FAQ.md`. The forecast page layout is unchanged.
 - A production Content-Security-Policy meta tag and a referrer policy. See `docs/ROADMAP.md` for what GitHub Pages cannot set.

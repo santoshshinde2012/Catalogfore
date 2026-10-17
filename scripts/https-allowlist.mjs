@@ -5,6 +5,7 @@ const ALLOWED_HOSTS = new Set([
   "spot-bid-advisor.s3.amazonaws.com",
   "cloudbilling.googleapis.com",
   "www.databricks.com",
+  "docs.databricks.com",
 ]);
 
 export function assertAllowedUrl(value) {
@@ -15,13 +16,26 @@ export function assertAllowedUrl(value) {
   return url;
 }
 
+/** A redirect is followed only when the next URL is still an allow-listed HTTPS host. */
+export function allowedRedirect(current, location) {
+  return assertAllowedUrl(new URL(location, current)).toString();
+}
+
 export async function fetchAllowed(value, userAgent) {
-  const allowed = assertAllowedUrl(value);
-  return fetch(allowed, {
-    headers: { "user-agent": userAgent },
-    signal: AbortSignal.timeout(30_000),
-    redirect: "error",
-  });
+  let current = assertAllowedUrl(value).toString();
+  for (let hop = 0; hop < 4; hop += 1) {
+    const response = await fetch(current, {
+      headers: { "user-agent": userAgent },
+      signal: AbortSignal.timeout(30_000),
+      redirect: "manual",
+    });
+    if (response.status < 300 || response.status >= 400) return response;
+    const location = response.headers.get("location");
+    await response.body?.cancel();
+    if (!location) throw new Error("Redirect was missing a location");
+    current = allowedRedirect(current, location);
+  }
+  throw new Error("Too many redirects");
 }
 
 export function redactUrl(value) {

@@ -57,18 +57,23 @@ npm run test:mcp  # stdio MCP smoke test
 npm run test:e2e  # Playwright, desktop and mobile, including axe
 ```
 
-The core JavaScript is about 282 KB gzipped, including the separately cached price catalog. Charts and PDF export load in separate chunks. CSS is about 9 KB gzipped, before the font files.
+The core JavaScript is about 287 KB gzipped, including the separately cached price catalog. Charts, PDF, and Excel export load in separate chunks. CSS is about 10 KB gzipped, before the font files.
 
 ## Repository
 
 | Path                         | Role                                                                    |
 | ---------------------------- | ----------------------------------------------------------------------- |
 | `packages/engine`            | Pricing, the four-input forecast, scenarios, and usage import           |
+| `packages/sheet`             | Excel workbook export. Loaded only when someone exports                 |
 | `data/`                      | Versioned rates, instance ratings, and virtual-machine prices           |
 | `apps/web`                   | The forecast page                                                       |
 | `mcp/`                       | The stdio server over the same engine                                   |
+| `scripts/weekly-catalog.ts`  | Monday catalog and price check. Dry-run by default                      |
 | `scripts/refresh-prices.mjs` | VM and Azure DBU meter refresh. Instance DBU counts stay cited.         |
 | `docs/DATA-PIPELINE.md`      | Where those prices come from, and how the weekly job runs               |
+| `docs/CATALOG.md`            | Product catalog schema, citations, and the watch                        |
+| `docs/PRODUCTS.md`           | Product inventory and which rows have a list rate                       |
+| `docs/COVERAGE.md`           | Which products and Azure cells have a cited rate                        |
 | `docs/RESEARCH.md`           | Source for every rate                                                   |
 | `docs/NAMING.md`             | Why the product is called Cayfore                                       |
 | `docs/ARCHITECTURE.md`       | How the pricing code is split                                           |
@@ -79,6 +84,8 @@ The core JavaScript is about 282 KB gzipped, including the separately cached pri
 | `docs/PRIVACY.md`            | What stays in the browser                                               |
 | `docs/FAQ.md`                | Short answers for the public FAQ page                                   |
 | `docs/MCP.md`                | Tool arguments and a client config                                      |
+| `docs/MAINTENANCE.md`        | How dependency updates are grouped                                      |
+| `SECURITY.md`                | How to report a vulnerability                                           |
 | `CHANGELOG.md`               | What is unreleased. GitHub Releases are cut by the owner                |
 | `NOTICE`                     | License notice for the code and the price sources                       |
 
@@ -88,11 +95,11 @@ Pushes to `main` publish the site from `.github/workflows/pages.yml`. The addres
 
 Vite’s base path is `/cayfore/`. Unknown addresses serve `404.html`. The repository social-preview image is `.github/social-preview.png` (1280×640). Upload that file in the repository settings if GitHub has not picked it up. Topics and the description belong on the repository, not in the page.
 
-A weekly workflow opens a pull request when AWS or Azure list prices change: EC2 on-demand for every catalog region, and Azure VM and Databricks DBU meters. Instance DBU counts stay in the cited table. GCP virtual-machine rates stay seeded unless `GCP_BILLING_API_KEY` is set. Do not commit that key. The curated $/DBU table is not rewritten. Details are in [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md).
+One weekly workflow, Mondays at 06:00 UTC, refreshes AWS and Azure list prices and checks allowed Databricks metadata for new or renamed products. It opens a single review pull request and does not merge. GCP virtual-machine rates stay seeded unless `GCP_BILLING_API_KEY` is set. Do not commit that key. The curated $/DBU table is not rewritten. The forecast page prints `Prices updated on <date>, catalog vX`. Details are in [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md).
 
 ## MCP
 
-`mcp/` speaks stdio and does not log into a workspace. A browser page cannot call the Databricks SQL API. Tools: `list_skus`, `list_products`, `estimate_workload`, `estimate_product`, `forecast`, `compare_scenarios`, and `forecast_usage`. `npm run cayfore` runs the same forecast from the shell.
+`mcp/` speaks stdio and does not log into a workspace. A browser page cannot call the Databricks SQL API. Tools: `list_skus`, `list_products`, `estimate_workload`, `estimate_product`, `forecast`, `compare_scenarios`, `forecast_usage`, and `export_xlsx`. `npm run cayfore -- estimate --xlsx forecast.xlsx` writes the same Excel workbook the page downloads.
 
 ```bash
 npm run build

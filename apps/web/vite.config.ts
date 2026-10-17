@@ -27,7 +27,12 @@ function productionPolicy(): Plugin {
         url: SITE,
         image: `${SITE}og.png`,
         description: PAGE_DESCRIPTION,
-        featureList: ["Databricks cost calculator", "DBU forecast", "Databricks pricing estimator"],
+        featureList: [
+          "Databricks cost calculator",
+          "DBU forecast",
+          "Databricks pricing estimator",
+          "Excel workbook export",
+        ],
         offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
         isAccessibleForFree: true,
         inLanguage: "en",
@@ -54,13 +59,16 @@ export default defineConfig(() => {
     base: BASE_PATH,
     plugins: [react(), tailwindcss(), productionPolicy()],
     build: {
-      chunkSizeWarningLimit: 1000,
+      // The ExcelJS chunk is downloaded only when someone exports a workbook.
+      chunkSizeWarningLimit: 1400,
       rollupOptions: {
         output: {
           // Catalog updates can be cached independently of application and chart code.
           manualChunks(id) {
+            const normalized = id.replaceAll("\\", "/");
+            if (normalized.endsWith("/rate-confidence.json")) return;
             const catalogDirectory = `${path.resolve(__dirname, "../../data").replaceAll("\\", "/")}/`;
-            if (id.replaceAll("\\", "/").startsWith(catalogDirectory) && id.endsWith(".json")) return "pricing-catalog";
+            if (normalized.startsWith(catalogDirectory) && normalized.endsWith(".json")) return "pricing-catalog";
           },
         },
       },
