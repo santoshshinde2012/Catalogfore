@@ -142,13 +142,23 @@ export function pickAzureDbuMeters(items) {
   const rows = [];
   for (const item of items ?? []) {
     if (item.priceType && item.priceType !== "Consumption") continue;
-    if (!(item.unitPrice > 0)) continue;
+    if (item.currencyCode && item.currencyCode !== "USD") continue;
+    if ((item.tierMinimumUnits ?? 0) !== 0) continue;
+    if (typeof item.unitPrice !== "number" || !Number.isFinite(item.unitPrice) || item.unitPrice <= 0) continue;
     const name = String(item.meterName ?? "");
     if (/photon|free trial|poc /i.test(name)) continue;
     const spec = AZURE_DBU_METERS.find((row) => row.meter === name);
     if (!spec) continue;
     for (const sku of spec.skus) {
-      rows.push({ sku, usdPerDbu: item.unitPrice, meterName: name });
+      rows.push({
+        sku,
+        usdPerDbu: item.unitPrice,
+        meterName: name,
+        ...(item.meterId ? { meterId: item.meterId } : {}),
+        ...(item.effectiveStartDate ? { effectiveStartDate: item.effectiveStartDate } : {}),
+        ...(item.unitOfMeasure ? { unitOfMeasure: item.unitOfMeasure } : {}),
+        ...(typeof item.isPrimaryMeterRegion === "boolean" ? { isPrimaryMeterRegion: item.isPrimaryMeterRegion } : {}),
+      });
     }
   }
   return rows;

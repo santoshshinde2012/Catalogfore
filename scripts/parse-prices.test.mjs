@@ -115,6 +115,39 @@ test("azure picker treats a missing priceType as consumption", () => {
   assert.equal(picked.onDemandHourly, 0.293);
 });
 
+test("Azure DBU observations preserve meter identity and exclude incompatible price bases", () => {
+  const meter = {
+    priceType: "Consumption",
+    unitPrice: 0.3,
+    meterName: "Premium Jobs Compute DBU",
+    currencyCode: "USD",
+    tierMinimumUnits: 0,
+    meterId: "meter-1",
+    unitOfMeasure: "1 Hour",
+    effectiveStartDate: "2026-01-01T00:00:00Z",
+    isPrimaryMeterRegion: true,
+  };
+  assert.deepEqual(
+    pickAzureDbuMeters([
+      meter,
+      { ...meter, currencyCode: "EUR" },
+      { ...meter, tierMinimumUnits: 100 },
+      { ...meter, unitPrice: Infinity },
+    ]),
+    [
+      {
+        sku: "jobs_classic",
+        usdPerDbu: 0.3,
+        meterName: meter.meterName,
+        meterId: "meter-1",
+        unitOfMeasure: "1 Hour",
+        effectiveStartDate: meter.effectiveStartDate,
+        isPrimaryMeterRegion: true,
+      },
+    ],
+  );
+});
+
 test("gcp machine hour is cores times the core sku plus memory times the ram sku", () => {
   const skus = [
     {

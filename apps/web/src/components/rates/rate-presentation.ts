@@ -8,6 +8,14 @@ export const statusLabels: Record<UnitCostRow["status"], string> = {
   not_applicable: "No standalone rate",
 };
 
+export const evidenceLabels: Record<UnitCostRow["evidenceLevel"], string> = {
+  official: "Official list price",
+  derived: "Derived from official rates",
+  estimate: "Planning estimate",
+  unresolved: "Unresolved",
+  not_applicable: "Platform context",
+};
+
 /** Preserve small token/storage rates instead of displaying a misleading $0.00. */
 export function unitMoney(value: number): string {
   if (value !== 0 && Math.abs(value) < 1e-9) return `$${value.toExponential(6)}`;

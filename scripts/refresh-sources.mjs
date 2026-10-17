@@ -1,15 +1,32 @@
 import { gcpMachineHour, pickAzureDbuMeters, pickAzureLinuxHour, pickAzureSpotHour } from "./parse-prices.mjs";
 import { DATABRICKS_PROBES, SPOT_ADVISOR, fetchJson, fetchText, today } from "./refresh-http.mjs";
 
-export async function fetchAzureItems(filter) {
+export async function fetchAzureItems(filter, fetchPage = fetchJson) {
   let url = `https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview&$filter=${encodeURIComponent(filter)}`;
   const items = [];
   for (let page = 0; page < 8 && url; page += 1) {
-    const payload = await fetchJson(url);
+    const payload = await fetchPage(url);
     items.push(...(payload.Items ?? []));
     url = payload.NextPageLink || "";
   }
+  if (url) throw new Error("Azure pagination limit reached; refusing a partial price snapshot");
   return items;
+}
+
+export async function azureDbuRegion(region) {
+  const filter = `serviceName eq 'Azure Databricks' and armRegionName eq '${region}' and priceType eq 'Consumption'`;
+  const items = await fetchAzureItems(filter);
+  return pickAzureDbuMeters(items).map((row) => {
+    const lookup = row.meterId
+      ? `meterId eq '${row.meterId}' and armRegionName eq '${region}' and priceType eq 'Consumption'`
+      : `${filter} and meterName eq '${row.meterName}'`;
+    return {
+      ...row,
+      region,
+      asOf: today,
+      sourceUrl: `https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview&$filter=${encodeURIComponent(lookup)}`,
+    };
+  });
 }
 
 export async function azureRegion(region, instanceIds) {
@@ -40,9 +57,7 @@ export async function azureRegion(region, instanceIds) {
   }
   let meters = [];
   try {
-    const filter = `serviceName eq 'Azure Databricks' and armRegionName eq '${region}' and priceType eq 'Consumption'`;
-    const items = await fetchAzureItems(filter);
-    meters = pickAzureDbuMeters(items).map((row) => ({ ...row, region }));
+    meters = await azureDbuRegion(region);
     summary.push(`azure ${region} meters: ${meters.length}`);
   } catch (error) {
     summary.push(`azure ${region} meters: ${error instanceof Error ? error.message : String(error)}`);
@@ -110,7 +125,7 @@ export async function probeDatabricks() {
   for (const url of DATABRICKS_PROBES) {
     try {
       const text = await fetchText(url);
-      const useful = /dbu_rate|usdPerDbu|instanceType/i.test(text) && text.length > 200;
+      const useful = /"baserate"|"premium"/.test(text) && text.length > 200;
       checks.push({ url, status: useful ? "prices" : "no-prices", bytes: text.length });
     } catch (error) {
       checks.push({ url, status: error instanceof Error ? error.message : String(error) });
@@ -120,6 +135,6 @@ export async function probeDatabricks() {
     checkedOn: today,
     foundPublicJson: checks.some((check) => check.status === "prices"),
     checks,
-    note: "Databricks pricing pages are a client bundle. These probes look for a JSON document of rates. They do not scrape the bundle. No public rate JSON means the curated table stays.",
+    note: "Diagnostic presence checks for the official price-card and calculator JSON endpoints. Validated numeric prices and retained source captures are maintained separately by refresh-databricks-rates.mjs; a successful probe alone does not verify a price.",
   };
 }

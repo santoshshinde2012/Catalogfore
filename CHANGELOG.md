@@ -6,6 +6,8 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Added
 
+- Captured first-party Databricks price-card and calculator data, hashed original responses, replayable source validation, and explicit source conflicts. Unit costs now shows evidence filters, scoped coverage counts, publisher links beside prices, and separate observation/review dates.
+
 - A separate Unit costs explorer and deterministic source CSV/JSON catalog for all 70 pricing products and eight platform concepts. Prices retain their cloud, region, edition, component, variant, units, conversion factors, source evidence, conditions, and unresolved coverage. Product map and forecast lines open reference costs; a quantity calculator shows component subtotals. Complete exports are versioned losslessly compressed and checked against the builder in CI.
 - `cayfore rates` for filtered CSV/JSON source-price exports, plus `export:unit-costs` and `check:unit-costs` commands. The weekly catalog workflow rebuilds both artifacts after price updates.
 - A separate Product map with eight learning domains, all 70 catalog entries, eight platform concepts, searchable current and legacy names, sourced relationships, and example architectures. Supported products append to the existing forecast with Undo; navigation and browser history preserve the saved plan.
@@ -20,7 +22,7 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 - Runtime price status and source context, saved price-book references, strict saved-file validation, and financial workflow regressions across engine, CLI, MCP, and desktop/mobile browsers.
 
 - A confidence score on every product and on every cloud, region, tier, and SKU cell (`data/rate-confidence.json`). Azure meters score as measured. The US East card scores as secondary. Other AWS and GCP regions stay on the Lakehouse Real-Time proxy.
-- Zerobus Ingest at the secondary list: $0.050/GB on AWS Premium and $0.064/GB on AWS Enterprise and Azure. The example is 100 GB. GCP stays at $0. The undated launch promotion is not applied.
+- Zerobus Ingest at the captured official US East list: $0.050/GB on AWS Premium and $0.064/GB on AWS Enterprise and Azure. The example is 100 GB. GCP remains unresolved. The undated launch promotion is not applied.
 - Layer checks (`dependency-cruiser`), an engine coverage threshold, CodeQL, Dependabot, CODEOWNERS, pinned GitHub Action SHAs, and a semver release workflow that reads CHANGELOG.md.
 - A versioned product catalog (`data/product-catalog.json`, `@cayfore/catalog`) covering Databricks products as of 2026-10-16. A row with a published rate or a documented underlying SKU is priced. A row with nothing billable stays at $0 and says so.
 - Usage-based estimators for Genie, Genie Code, AI/BI dashboards, and `ai_parse_document`. Allowance math follows the docs. DBU per question and DBU per refresh are labeled assumptions.
@@ -44,7 +46,7 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Changed
 
-- Excel source-rate sheets resolve each workload's placement and regional meter, preserve separate same-SKU workloads, and explain custom or observed costs without assigning an unrelated public DBU rate. Unit-cost evidence distinguishes old observations, documentation reviews, assumptions, and current source conflicts; existing forecast rates and formulas are unchanged.
+- Excel source-rate sheets resolve each workload's placement and regional meter, preserve separate same-SKU workloads, and explain custom or observed costs without assigning an unrelated public DBU rate. Unit-cost evidence distinguishes old observations, documentation reviews, assumptions, and current source conflicts; validated first-party prices now take precedence across the shared forecast, CLI, unit-cost catalog and Excel resolver, while consumption assumptions remain labeled.
 - Catalog refresh on 2026-10-17. Catalog `2026-10-17.1`, price book `2026-10-17.1`, instances `2026-10-17.1`, and the VM and Azure meter files `2026-10-17.2`. Azure Retail Prices and AWS EC2 offers were re-read. No list rate moved. GCP was skipped. Multi-statement transactions are generally available and are not a new SKU. The default medium AWS year stays $170,257.52.
 - Page, CSV, JSON, PDF, product totals, recommendations, CLI, and MCP share one canonical dated forecast. Promotions are evaluated per month, fitted forecasts retain calendar spacing, and zero periods remain observations.
 - Global growth and pricing changes preserve detailed workloads. Internal navigation preserves shared state. Every savings action applies the change it quotes, with alternatives labelled as overlapping comparisons.

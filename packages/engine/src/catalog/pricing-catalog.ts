@@ -4,10 +4,15 @@ import {
   skuCatalog,
   regionalSkuRate,
   skuRate,
+  firstPartyDbuRate,
+  firstPartyBaseDbuRate,
+  firstPartyDbuConflict,
   vmHourly,
   type InstanceInfo,
   type RegionInfo,
   type SkuCatalog,
+  type DbuRateObservation,
+  type DbuRateConflict,
 } from "../catalog.js";
 import type { Cloud, ClusterSku, SkuId, Tier } from "../types.js";
 import { publishedPhotonMultiplier } from "../rates/photon.js";
@@ -41,6 +46,9 @@ export interface PricingCatalog {
   readonly defaultEgressPerGb: SkuCatalog["defaultEgressPerGb"];
   skuRate(cloud: Cloud, tier: Tier, sku: SkuId): number;
   regionalSkuRate?(cloud: Cloud, region: string, tier: Tier, sku: SkuId): number | null;
+  firstPartyDbuRate?(cloud: Cloud, region: string | null, tier: Tier, sku: SkuId): DbuRateObservation | null;
+  firstPartyBaseDbuRate?(cloud: Cloud, tier: Tier, sku: SkuId): DbuRateObservation | null;
+  firstPartyDbuConflict?(cloud: Cloud, region: string | null, tier: Tier, sku: SkuId): DbuRateConflict | null;
   region(cloud: Cloud, regionId: string): RegionInfo;
   instance(cloud: Cloud, id: string): InstanceInfo | undefined;
   vmHourly(cloud: Cloud, region: string, instanceId: string): VmQuote;
@@ -67,6 +75,9 @@ export const bundledPricingCatalog: PricingCatalog = {
   defaultEgressPerGb: skuCatalog.defaultEgressPerGb,
   skuRate,
   regionalSkuRate,
+  firstPartyDbuRate,
+  firstPartyBaseDbuRate,
+  firstPartyDbuConflict,
   region: regionInfo,
   instance: findInstance,
   vmHourly,

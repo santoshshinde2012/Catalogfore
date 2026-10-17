@@ -1,9 +1,13 @@
 import { productMap } from "@cayfore/catalog/map";
-import { productCatalog, type Product } from "@cayfore/catalog";
-import { azureDbuMeters, referenceRegion, regionalSkuRate, skuCatalog, skuRate, type RegionInfo } from "../catalog.js";
+import { type Product } from "@cayfore/catalog";
+import { skuCatalog, type RegionInfo } from "../catalog.js";
+import { dbuRate } from "./dbu-rate.js";
+import { consumptionSource } from "./sources.js";
+export { dbuRate } from "./dbu-rate.js";
+export { source, consumptionSource, secondarySource, pricingSource } from "./sources.js";
 import type { Cloud, SkuId, Tier } from "../types.js";
-import type { UnitCostProduct, UnitCostRow, UnitCostSource } from "./types.js";
-import { sourceDefaultDate } from "./evidence.js";
+import type { UnitCostProduct, UnitCostRow } from "./types.js";
+import { sourceReference } from "./provenance.js";
 
 export const TIERS: Tier[] = ["premium", "enterprise"];
 export const CLOUDS: Cloud[] = ["aws", "azure", "gcp"];
@@ -15,32 +19,12 @@ export const inventory: UnitCostProduct[] = productMap.entries.map((entry) => ({
   category: entry.product?.category ?? null,
   aliases: entry.aliases,
   kind: entry.kind,
-  sources: entry.sources.map((source) => ({
-    title: source.title,
-    url: source.url,
-    observedOn: productMap.reviewedOn,
-    role: "context",
+  sources: entry.sources.map((reference) => ({
+    ...sourceReference(reference.title, reference.url, "context"),
+    reviewedOn: productMap.reviewedOn,
   })),
 }));
 
-export const source = (title: string, url: string, role: UnitCostSource["role"], locator?: string): UnitCostSource => ({
-  title,
-  url,
-  role,
-  observedOn: sourceDefaultDate(url, productCatalog.verifiedOn),
-  ...(locator ? { locator } : {}),
-});
-export const consumptionSource = source(
-  "Azure Databricks serverless consumption guide",
-  "https://learn.microsoft.com/en-us/azure/databricks/resources/pricing",
-  "consumption",
-);
-export const secondarySource = source(
-  "Curated secondary US East price reference; see research methodology",
-  "https://www.flexera.com/blog/finops/databricks-pricing-guide/",
-  "price",
-);
-export const pricingSource = source("Databricks pricing", "https://www.databricks.com/product/pricing", "context");
 export interface RowContext {
   product: Product;
   partId: string | null;
@@ -74,6 +58,8 @@ export function append(context: RowContext, draft: Draft): void {
     sourceRegion: null,
     status: "unpriced",
     confidence: "unpublished",
+    evidenceLevel: "unresolved",
+    evidenceSummary: "No trustworthy unit quote is stored.",
     rateKind: "unpriced",
     value: null,
     formula: "No trustworthy unit rate is stored.",
@@ -115,52 +101,6 @@ export function placements(callback: (region: RegionInfo, tier: Tier) => void): 
   for (const region of skuCatalog.regions) for (const tier of TIERS) callback(region, tier);
 }
 
-export function dbuRate(region: RegionInfo, tier: Tier, sku: SkuId) {
-  const meter = regionalSkuRate(region.cloud, region.id, tier, sku);
-  const base = skuRate(region.cloud, tier, sku);
-  const exact = meter !== null;
-  const confidence = exact ? "measured" : region.id === referenceRegion[region.cloud] ? "secondary" : "proxy";
-  const sources = exact
-    ? [
-        source(
-          "Azure Retail Prices API",
-          "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
-          "price",
-          azureDbuMeters.find((item) => item.region === region.id && item.sku === sku)?.meterName,
-        ),
-      ]
-    : [secondarySource];
-  if (!exact)
-    sources.push(
-      source(
-        "Lakehouse Real-Time regional ratio used as a planning proxy",
-        "https://docs.databricks.com/aws/en/compute/sql-warehouse/real-time-pricing",
-        "region",
-      ),
-    );
-  return {
-    cloud: region.cloud,
-    region: region.id,
-    regionLabel: region.label,
-    tier,
-    sku,
-    baseRateUsd: exact ? meter : base,
-    regionFactor: exact ? 1 : region.factor,
-    sourceRegion: exact ? region.id : referenceRegion[region.cloud],
-    confidence: confidence as UnitCostRow["confidence"],
-    status: (exact ? "priced" : "approximate") as UnitCostRow["status"],
-    sources,
-    rate: exact ? meter : base * region.factor,
-    notes: [
-      "Public list-price snapshot; contract discounts and taxes are excluded.",
-      ...(region.cloud === "azure" && tier === "enterprise"
-        ? ["Azure Enterprise uses the Premium list rate in Cayfore."]
-        : []),
-      ...(!exact ? ["Reference price × regional proxy; this is not a published regional tariff."] : []),
-    ],
-  };
-}
-
 export function dbuComponent(context: RowContext, sku: SkuId, componentId = "dbu", componentName = "Databricks usage") {
   placements((region, tier) => {
     const { rate, ...price } = dbuRate(region, tier, sku);
@@ -197,10 +137,11 @@ export function converted(context: RowContext, sku: SkuId, draft: Draft, dbuPerB
           } as const)
         : {}),
       dbuPerUnit: dbuPerBasis / (draft.unitQuantity ?? 1),
-      unitPriceUsd: rate * dbuPerBasis,
+      unitPriceUsd: rate === null ? null : rate * dbuPerBasis,
       sources: [...price.sources, consumptionSource, ...(draft.sources ?? [])],
       notes: [...price.notes, ...(draft.notes ?? []), ...(proxy ? [proxyNote] : [])],
       includesCompute: sku === "model_training" ? null : skuCatalog.includesCompute[sku],
+      ...(rate === null ? ({ status: "unpriced", confidence: "conflict" } as const) : {}),
     });
   });
 }

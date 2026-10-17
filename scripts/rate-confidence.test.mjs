@@ -10,6 +10,15 @@ test("reference cells are secondary and other regions are the proxy", () => {
   });
   assert.equal(cellScore({ cloud: "aws", region: "sa-east-1", hasMeter: false, reference: "us-east-1" }).band, "proxy");
   assert.equal(cellScore({ cloud: "azure", region: "eastus", hasMeter: true, reference: "eastus" }).band, "measured");
+  assert.equal(cellScore({ cloud: "gcp", region: "us-central1", hasFirstPartyRate: true }).band, "measured");
+  assert.equal(
+    cellScore({ cloud: "aws", region: "us-east-1", reference: "us-east-1", hasFirstPartyBase: true }).band,
+    "cited",
+  );
+  assert.equal(
+    cellScore({ cloud: "aws", region: "eu-west-1", reference: "us-east-1", hasFirstPartyBase: true }).band,
+    "proxy",
+  );
 });
 
 test("stored confidence matches the catalog and the bands sum", async () => {
@@ -20,7 +29,11 @@ test("stored confidence matches the catalog and the bands sum", async () => {
   assert.equal(report.version, sku.version);
   assert.equal(report.productCatalogVersion, catalog.version);
   assert.equal(
-    report.distribution.measured + report.distribution.secondary + report.distribution.proxy,
+    report.distribution.measured +
+      report.distribution.cited +
+      report.distribution.secondary +
+      report.distribution.proxy +
+      report.distribution.conflict,
     report.distribution.total,
   );
   assert.equal(report.cells.length, report.distribution.total);

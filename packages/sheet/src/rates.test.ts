@@ -43,10 +43,41 @@ describe("workbook rate provenance", () => {
     expect(new URL(azure.source).hostname).toBe("prices.azure.com");
     expect(azure.basis).toMatch(/Exact Azure/);
     expect(result.estimate.lines[0].dbuCost / result.estimate.lines[0].dbu).toBeCloseTo(0.5 * 0.75, 4);
-    expect(aws.price).toBeCloseTo(0.45 * 1.109091, 8);
-    expect(aws).toMatchObject({ cloud: "aws", region: "eu-west-1", tier: "enterprise", confidence: 35, band: "proxy" });
-    expect(new URL(aws.source).hostname).toBe("www.flexera.com");
-    expect(aws.basis).toMatch(/region factor/);
+    expect(aws.price).toBe(0.5);
+    expect(aws).toMatchObject({
+      cloud: "aws",
+      region: "eu-west-1",
+      tier: "enterprise",
+      confidence: 92,
+      band: "measured",
+    });
+    expect(new URL(aws.source).hostname).toBe("www.databricks.com");
+    expect(aws.basis).toMatch(/Exact Databricks first-party/);
+    expect(result.estimate.lines[1].dbuCost / result.estimate.lines[1].dbu).toBeCloseTo(0.5 * 0.75, 4);
+  });
+
+  it("keeps an unsupported regional quote distinct from exact primary observations", () => {
+    const result = project([metered({ cloud: "aws", region: "eu-west-1", tier: "premium", sku: "ai_search" })]);
+    const rate = listedRateDetails(result, result.estimate.lines[0]);
+    expect(rate.price).toBeCloseTo(0.07 * 1.109091, 8);
+    expect(rate.band).toBe("proxy");
+    expect(new URL(rate.source).hostname).toBe("www.flexera.com");
+    expect(rate.basis).toMatch(/Bundled secondary reference.*planning proxy/);
+  });
+
+  it("withholds conflicted first-party rates and preserves their exact evidence in Excel", async () => {
+    const result = project([metered({ cloud: "gcp", region: "europe-west1", tier: "enterprise" })]);
+    const rate = listedRateDetails(result, result.estimate.lines[0]);
+    expect(rate.price).toBe("");
+    expect(rate.band).toBe("conflict");
+    expect(rate.basis).toMatch(/Conflicting first-party prices.*withheld/);
+    expect(rate.source).toContain("/cards.json");
+    expect(rate.source).toContain("/GCP.json");
+    expect(result.estimate.coverage!.complete).toBe(false);
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(Buffer.from(await buildForecastWorkbook(result)) as never);
+    expect(workbook.getWorksheet("Rates")!.getCell("B2").value).toBe("");
+    expect(workbook.getWorksheet("Rates")!.getCell("E2").value).toBe("conflict");
   });
 
   it("does not replace supplied, observed, non-DBU, or unpriced amounts with a public rate", () => {
@@ -163,7 +194,7 @@ describe("workbook rate provenance", () => {
     expect(rates.getCell("B2").value).toBe(0.5);
     expect(rates.getCell("B3").value).toBe(0.45);
     expect(rates.getCell("E2").value).toBe("measured");
-    expect(rates.getCell("E3").value).toBe("secondary");
+    expect(rates.getCell("E3").value).toBe("measured");
     expect(rates.getCell("G2").value).toBe("Europe jobs");
     expect(rates.getCell("H2").value).toBe("azure");
     expect(rates.getCell("I2").value).toBe("westeurope");

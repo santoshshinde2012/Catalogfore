@@ -136,9 +136,9 @@ export function ResultsPanel({
         </ul>
       </div>
       <p className="text-xs text-muted-foreground">
-        Prices updated on {pricesUpdatedOn}, catalog v{productCatalog.version}. Estimates only. Catalog{" "}
-        {estimate.catalogVersion}, verified {estimate.verifiedOn}. The calculation stays in this browser. Not a
-        Databricks quote, and not affiliated with Databricks.
+        Price book dated {pricesUpdatedOn}, catalog v{productCatalog.version}. Estimates only. Catalog{" "}
+        {estimate.catalogVersion}, dated {estimate.verifiedOn}. The calculation stays in this browser. Not a Databricks
+        quote, and not affiliated with Databricks.
       </p>
     </div>
   );

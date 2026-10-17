@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { RateDetails } from "./RateDetails";
 import { RateDirectory } from "./RateDirectory";
 import { RateDownloads } from "./RateDownloads";
+import { RateEvidenceOverview } from "./RateEvidence";
 import { RateFilters } from "./RateFilters";
 
 const catalog = buildUnitCostCatalog();
@@ -106,8 +107,8 @@ export function UnitCostsPage({
               units; adding them together would not give a service total. Unresolved prices stay empty in downloads.
             </p>
             <p className="mt-2">
-              Catalog {catalog.catalogVersion} · verified {catalog.verifiedOn}. Source observation dates are shown on
-              each row.
+              Catalog {catalog.catalogVersion} · source registry reviewed {catalog.reviewedOn}. Each row records its own
+              price observation and source review dates; this is a bundled snapshot, not a live price feed.
             </p>
           </div>
         </aside>
@@ -117,6 +118,7 @@ export function UnitCostsPage({
           </p>
         )}
         <RateFilters catalog={catalog} filters={filters} onChange={change} onClear={clear} />
+        <RateEvidenceOverview rows={rows} />
         <RateDownloads catalog={catalog} rows={rows} />
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <RateDirectory

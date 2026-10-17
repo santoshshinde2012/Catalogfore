@@ -1,3 +1,11 @@
+import { firstPartyDbuRate, firstPartyBaseDbuRate } from "./catalog/first-party-dbu.js";
+export {
+  firstPartyDbuRate,
+  firstPartyBaseDbuRate,
+  firstPartyDbuConflict,
+  azureDbuMeters,
+} from "./catalog/first-party-dbu.js";
+export type { AzureDbuMeter, DbuRateObservation, DbuRateConflict } from "./catalog/dbu-rate-types.js";
 import azureMetersJson from "../../../data/azure-dbu-meters.json";
 import skuRatesJson from "../../../data/sku-rates.json";
 import instancesJson from "../../../data/instances.json";
@@ -31,13 +39,6 @@ export interface VmPrice {
   spotHourly?: number;
   source: string;
   asOf: string;
-}
-
-export interface AzureDbuMeter {
-  region: string;
-  sku: SkuId;
-  usdPerDbu: number;
-  meterName: string;
 }
 
 export interface SkuCatalog {
@@ -82,7 +83,6 @@ export const skuCatalog = skuRatesJson as SkuCatalog;
 export const instances = instancesJson.instances as InstanceInfo[];
 export const vmPrices = vmPricesJson.prices as VmPrice[];
 export const referenceRegion = vmPricesJson.referenceRegion as Record<Cloud, string>;
-export const azureDbuMeters = azureMetersJson.meters as AzureDbuMeter[];
 export const pricesUpdatedOn = [vmPricesJson.updatedOn, azureMetersJson.updatedOn, skuCatalog.verifiedOn]
   .filter((value) => typeof value === "string")
   .sort()
@@ -91,8 +91,6 @@ export const pricesUpdatedOn = [vmPricesJson.updatedOn, azureMetersJson.updatedO
 const instanceKey = (cloud: Cloud, id: string) => `${cloud}:${id}`;
 const instanceMap = new Map(instances.map((row) => [instanceKey(row.cloud, row.id), row]));
 const priceMap = new Map(vmPrices.map((row) => [`${row.cloud}:${row.region}:${row.instanceId}`, row]));
-const azureRateMap = new Map(azureDbuMeters.map((row) => [`${row.region}:${row.sku}`, row.usdPerDbu]));
-
 export function regionInfo(cloud: Cloud, regionId: string): RegionInfo {
   return (
     skuCatalog.regions.find((region) => region.cloud === cloud && region.id === regionId) ??
@@ -144,15 +142,13 @@ export function vmHourly(
   return { hourly: 0, spotHourly: null, approximate: true, source: "missing" };
 }
 
-/** Azure Retail Prices meter for this region, or null when the curated rate and region factor still apply. */
+/** Exact first-party regional meter; otherwise the reference rate and planning factor still apply. */
 export function regionalSkuRate(cloud: Cloud, region: string, tier: Tier, sku: SkuId): number | null {
-  if (cloud !== "azure") return null;
-  if (tier !== "premium" && tier !== "enterprise") return null;
-  return azureRateMap.get(`${region}:${sku}`) ?? null;
+  return firstPartyDbuRate(cloud, region, tier, sku)?.usdPerDbu ?? null;
 }
 
 export function skuRate(cloud: Cloud, tier: Tier, sku: SkuId): number {
-  return skuCatalog.rates[cloud][tier][sku];
+  return firstPartyBaseDbuRate(cloud, tier, sku)?.usdPerDbu ?? skuCatalog.rates[cloud][tier][sku];
 }
 
 export function sqlSizeLabel(size: SqlSize): string {

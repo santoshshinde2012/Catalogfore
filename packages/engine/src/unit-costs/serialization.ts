@@ -10,7 +10,16 @@ export function filterUnitCosts(rows: readonly UnitCostRow[], filters: UnitCostF
   const terms = normalize(filters.query ?? "")
     .split(/\s+/)
     .filter(Boolean);
-  const dimensions = ["productId", "domainId", "cloud", "region", "tier", "componentId", "status"] as const;
+  const dimensions = [
+    "productId",
+    "domainId",
+    "cloud",
+    "region",
+    "tier",
+    "componentId",
+    "status",
+    "evidenceLevel",
+  ] as const;
   return rows.filter((row) => {
     if (
       dimensions.some((key) => {
@@ -36,6 +45,8 @@ export function filterUnitCosts(rows: readonly UnitCostRow[], filters: UnitCostF
         row.unit,
         row.status,
         row.confidence,
+        row.evidenceLevel,
+        row.evidenceSummary,
         ...row.notes,
         ...Object.values(row.dimensions),
         ...row.sources.flatMap((source) => [source.title, source.url]),
@@ -74,6 +85,8 @@ const columns = [
   "sourceRegion",
   "status",
   "confidence",
+  "evidenceLevel",
+  "evidenceSummary",
   "rateKind",
   "value",
   "formula",

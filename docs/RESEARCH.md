@@ -1,8 +1,10 @@
 # Databricks cost model research
 
-Pricing sources last verified: **2026-10-17**. Dollar rates did not move on that refresh. Photon factors were rechecked the same day. Implementation corrections are recorded in section 19. The price refresh is section 20. Earlier dated walkthroughs describe the behavior at that time and are superseded by sections 19 and 20 where they differ.
+Current source-of-truth update: **2026-10-17, catalog and price book `2026-10-17.2`**. The shared resolver now prefers captured first-party Databricks price cards/calculator data and exact Azure Retail Prices meters. All 530 mapped Azure DBU rows across 39 supported regions were fetched with per-meter observation dates and IDs. First-party source captures, fingerprints, accepted prices, and quarantined disagreements are recorded in `data/databricks-dbu-rates.json` and `data/sources/`.
 
-This note is the source of truth for the calculator’s pricing assumptions. Dollar rates below are **list prices for estimation**, not a quote. Databricks and the clouds change rates, promotions, and region availability without notice. Where an official page renders prices only in the browser (the public Databricks price lists and the Azure Databricks price tables returned `$-` to a static fetch on this date), the dollar figure is taken from a secondary compilation and marked as such. The app must show an “estimates only” disclaimer on every total.
+[Unit-cost evidence and maintenance](UNIT-COSTS.md) defines current source precedence, numeric evidence levels, review versus observation dates, and coverage limits. `npm run check:sources` replays the retained first-party captures, and `npm run check:unit-costs` verifies CSV/JSON outputs. UI, forecast, CLI, and Excel share the same resolver. Negotiated or imported customer prices retain their own provenance.
+
+The sections below document the original research and fallback assumptions. Older claims that no first-party price JSON exists and secondary reference tables are authoritative are superseded by the captured official sources. The legacy reference table remains a fallback where no qualified official match exists. First-party disagreements do not justify inventing a replacement rate; those components remain unresolved. Every total is an estimate, not a quote.
 
 ## 1. How Databricks bills
 

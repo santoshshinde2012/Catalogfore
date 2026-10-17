@@ -1,8 +1,8 @@
 # Catalog coverage
 
-Generated from `data/product-catalog.json`, `data/sku-rates.json`, and `data/azure-dbu-meters.json`. Estimates only. Cayfore is not affiliated with Databricks.
+Generated from `data/product-catalog.json`, `data/sku-rates.json`, `data/azure-dbu-meters.json`, and `data/databricks-dbu-rates.json`. Estimates only. Cayfore is not affiliated with Databricks.
 
-Catalog coverage: 59 of 70 products (84.3%) have a stored rate or a priced underlying SKU. Azure meters fill 97.1% of region-and-SKU cells across 39 regions. AWS (16 regions) and GCP (6 regions) use the US East card times a Lakehouse Real-Time region factor, not a per-region meter.
+Catalog coverage: 59 of 70 products (84.3%) have a stored rate or a priced underlying SKU. Azure meters fill 97.1% of mapped region-and-SKU cells across 39 regions. AWS and GCP use validated first-party regional prices where captured; remaining reference bases, consumption assumptions, and regional proxies stay labeled. Stored-price coverage does not establish service availability.
 
 ## By product
 
@@ -33,8 +33,8 @@ Regions that are not a full meter set:
 | switzerlandwest |               92.9% |
 | westcentralus   |               92.9% |
 
-AWS: 16 of 16 regions have a Lakehouse Real-Time factor (Premium $/DBU ÷ $0.55). None of those regions has a public per-SKU meter. The US East $/DBU table is the curated secondary card in [RESEARCH.md](RESEARCH.md), cross-checked across Flexera 2026, LakeSentry, and OWOX. Databricks does not publish a price JSON, and the website terms disallow scraping the pricing client. Marketplace private listings are not a public rate card.
+AWS: 512 of 544 cloud/region/edition/SKU cells have a validated exact regional first-party DBU price.
 
-GCP: 6 of 6 regions have a factor. Factors outside the reference region are labeled proxies. No first-party GCP regional DBU table was found. GCP virtual-machine prices stay seeds unless `GCP_BILLING_API_KEY` is set for the price refresh.
+GCP: 181 of 204 cloud/region/edition/SKU cells have a validated exact regional first-party DBU price.
 
-The default AWS US East forecast is unchanged by this report. Region factors are not a new rate.
+The resolver uses exact Azure meters or validated Databricks price-card and calculator data before reference fallbacks. A no-region source price is a reference base, and reuse outside its scope remains an estimate. Conflicting first-party prices are withheld pending review. GCP virtual-machine prices remain separate and stay seeds unless `GCP_BILLING_API_KEY` is set. See [source evidence and maintenance](UNIT-COSTS.md).

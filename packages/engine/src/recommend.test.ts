@@ -33,7 +33,7 @@ describe("recommendations", () => {
     expect(result.lines[0].notes[0]).toContain("3 nodes (2 workers + 1 driver)");
     expect(result.lines[0].notes[0]).toContain("0.69 DBU/h");
     expect(result.lines[0].notes[0]).toContain("$0.15/DBU");
-    expect(result.lines[0].notes[0]).toContain("region ×1");
+    expect(result.lines[0].notes[0]).toContain("Databricks public price card for this region");
     expect(result.lines[0].notes.some((note) => note.startsWith("VM $0.192/h"))).toBe(true);
     const recs = recommendations(portfolio);
     const serverless = recs.find((rec) => rec.id === "jobs_serverless");

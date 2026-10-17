@@ -1,6 +1,9 @@
 import { productCatalog } from "@cayfore/catalog";
 import {
   referenceRegion,
+  firstPartyDbuRate,
+  firstPartyBaseDbuRate,
+  firstPartyDbuConflict,
   regionInfo,
   regionalSkuRate,
   skuCatalog,
@@ -27,7 +30,6 @@ export interface ListedRateDetails {
 const scores = new Map(
   confidenceFile.cells.map((cell) => [`${cell.cloud}|${cell.region}|${cell.tier}|${cell.sku}`, cell]),
 );
-const AZURE_SOURCE = "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview";
 const SECONDARY_SOURCE = "https://www.flexera.com/blog/finops/databricks-pricing-guide/";
 
 /** Describe the DBU price actually used by this workload, before portfolio discounts. */
@@ -49,6 +51,16 @@ export function listedRateDetails(result: PortfolioProjection, line: LineItem): 
   };
   const unavailable = (basis: string, band = "unpublished"): ListedRateDetails => ({ ...details, basis, band });
   if (!workload) return unavailable("Workload context is missing; a public USD/DBU rate cannot be resolved.");
+  const supplied =
+    workload.kind === "metered" && (workload.rateByCloud || workload.rateByPlacement || workload.fixedUsdByCloud);
+  const conflict = !supplied && firstPartyDbuConflict(cloud, region.id, tier, line.sku as SkuId);
+  if (conflict)
+    return {
+      ...details,
+      source: conflict.sources.map((source) => source.url).join("; "),
+      band: "conflict",
+      basis: `Conflicting first-party prices (${conflict.values.map((value) => `$${value}/DBU`).join(" versus ")}); the qualified public rate is withheld. ${conflict.sources.map((source) => source.locator).join("; ")}`,
+    };
   if (line.priceStatus === "unpriced" || workload.priceStatus === "unpriced")
     return unavailable("Unpriced usage; no resolved USD/DBU rate is asserted.");
   const embedded =
@@ -96,6 +108,8 @@ export function listedRateDetails(result: PortfolioProjection, line: LineItem): 
     );
   const sku = line.sku as SkuId;
   const regional = regionalSkuRate(cloud, region.id, tier, sku);
+  const observed = firstPartyDbuRate(cloud, region.id, tier, sku);
+  const reference = firstPartyBaseDbuRate(cloud, tier, sku);
   const price = regional ?? skuRate(cloud, tier, sku) * region.factor;
   if (!Number.isFinite(price)) return unavailable("A finite catalog USD/DBU rate could not be resolved.");
   const score = scores.get(`${cloud}|${region.id}|${tier}|${sku}`);
@@ -103,14 +117,14 @@ export function listedRateDetails(result: PortfolioProjection, line: LineItem): 
   return {
     ...details,
     price,
-    source: regional == null ? SECONDARY_SOURCE : AZURE_SOURCE,
+    source: observed?.sourceUrl ?? reference?.sourceUrl ?? SECONDARY_SOURCE,
     confidence: score?.score ?? "",
     band: score?.band ?? "",
     basis:
       prefix +
       (regional == null
-        ? `Bundled ${referenceRegion[cloud]} USD/DBU reference × region factor ${region.factor}; regional proxy outside the reference region. Before portfolio discounts.`
-        : "Exact Azure consumption meter for this workload's region; before portfolio discounts."),
+        ? `${reference ? "First-party reference" : "Bundled secondary reference"} USD/DBU base × region factor ${region.factor}; reference region ${referenceRegion[cloud]}. Regional pricing remains a planning proxy. Before portfolio discounts.`
+        : `Exact ${cloud === "azure" ? "Azure consumption meter" : "Databricks first-party USD/DBU observation"} for this workload's region; observed ${observed?.observedOn ?? "date not recorded"}. Before portfolio discounts.`),
   };
 }
 

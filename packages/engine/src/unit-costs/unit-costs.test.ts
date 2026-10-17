@@ -1,13 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { createHash } from "node:crypto";
 import { productCatalog } from "@cayfore/catalog";
-import { regionalSkuRate, skuCatalog, skuRate, vmHourly } from "../catalog.js";
+import { firstPartyDbuRate, regionalSkuRate, skuCatalog, skuRate, vmHourly } from "../catalog.js";
 import { blankPortfolio } from "../portfolio.js";
 import { estimate } from "../estimate.js";
 import { workloadsForProduct, recomputeProduct } from "../products.js";
 import { buildUnitCostCatalog, filterUnitCosts, unitCostCsv, unitCostJson } from "./index.js";
 import type { UnitCostRow } from "./types.js";
-import { applyEvidence, sourceDefaultDate } from "./evidence.js";
+import { applyEvidence } from "./evidence.js";
+import { sourceReviewedOn } from "./provenance.js";
 
 const catalog = buildUnitCostCatalog();
 const row = (productId: string, filters: Partial<UnitCostRow> = {}) => {
@@ -42,6 +43,8 @@ describe("canonical unit-cost inventory", () => {
         (item) =>
           item.sources.length === 0 ||
           !item.sources.every((reference) => reference.url.startsWith("https://")) ||
+          !item.sources.every((reference) => reference.authority && reference.publisher) ||
+          !item.evidenceSummary ||
           !(item.unitPriceUsd === null || Number.isFinite(item.unitPriceUsd)) ||
           !Number.isFinite(item.unitQuantity) ||
           item.unitQuantity <= 0 ||
@@ -53,15 +56,25 @@ describe("canonical unit-cost inventory", () => {
     expect(invalidRows).toEqual([]);
   });
 
-  it("uses exact Azure meters before proxy rates, including Enterprise aliasing", () => {
+  it("uses exact first-party regional prices before proxies, including Azure Enterprise aliasing", () => {
     const direct = row("jobs_serverless", east);
     expect(direct.unitPriceUsd).toBe(regionalSkuRate("azure", "eastus", "premium", "jobs_serverless"));
     expect(direct.confidence).toBe("measured");
     expect(direct.sourceRegion).toBe("eastus");
     expect(row("jobs_serverless", { ...east, tier: "enterprise" }).unitPriceUsd).toBe(direct.unitPriceUsd);
     const proxyRegion = skuCatalog.regions.find((region) => region.cloud === "aws" && region.id !== "us-east-1")!;
-    const proxy = row("jobs_serverless", { cloud: "aws", region: proxyRegion.id, tier: "premium" });
-    expect(proxy.unitPriceUsd).toBeCloseTo(skuRate("aws", "premium", "jobs_serverless") * proxyRegion.factor);
+    const published = row("jobs_serverless", { cloud: "aws", region: proxyRegion.id, tier: "premium" });
+    expect(published.unitPriceUsd).toBe(
+      firstPartyDbuRate("aws", proxyRegion.id, "premium", "jobs_serverless")!.usdPerDbu,
+    );
+    expect(published.evidenceLevel).toBe("official");
+    const proxy = row("vector_search_standard", {
+      cloud: "aws",
+      region: proxyRegion.id,
+      tier: "premium",
+      componentId: "compute",
+    });
+    expect(proxy.unitPriceUsd).toBeCloseTo(skuRate("aws", "premium", "ai_search") * proxyRegion.factor * 4);
     expect(proxy.confidence).toBe("proxy");
     expect(proxy.sourceRegion).toBe("us-east-1");
   });
@@ -78,12 +91,10 @@ describe("canonical unit-cost inventory", () => {
     const oldReference = { ...oldVm.sources[0], observedOn: "2026-01-01" };
     const reconciled = applyEvidence([{ ...oldVm, sources: [oldReference] }])[0];
     expect(reconciled.sources.find((reference) => reference.role === "price")!.observedOn).toBe("2026-01-01");
-    const secondary = row("jobs_serverless", { cloud: "aws", region: "us-east-1", tier: "premium" });
+    const secondary = row("vector_search_standard", { cloud: "aws", region: "us-east-1", tier: "premium" });
     expect(secondary.sources.find((reference) => reference.role === "price")!.observedOn).toBe("2026-10-15");
-    expect(sourceDefaultDate("https://azure.microsoft.com/en-us/pricing/details/databricks/", "2026-10-17")).toBe(
-      "2026-10-16",
-    );
-    expect(sourceDefaultDate("https://example.com/not-in-registry", "2025-01-01")).toBe("2025-01-01");
+    expect(sourceReviewedOn("https://azure.microsoft.com/en-us/pricing/details/databricks/")).toBe("2026-10-16");
+    expect(sourceReviewedOn("https://example.com/not-in-registry")).toBeNull();
   });
 
   it("never treats example default usage as a conversion rate", () => {

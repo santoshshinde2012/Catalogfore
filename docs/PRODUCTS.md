@@ -1,8 +1,8 @@
 # Databricks product inventory
 
-Checked 2026-10-17. Catalog version `2026-10-17.1`. Figures are list estimates, not a quote. Cayfore is not affiliated with Databricks.
+Checked 2026-10-17. Catalog version `2026-10-17.2`. Figures are list estimates, not a quote. Cayfore is not affiliated with Databricks.
 
-A row marked **No** has no list rate in this catalog, and the forecast line is $0. **No distinct rate** means the line reuses another SKU and says so. **Yes** means a list rate is applied. Azure meter rows are re-checked by the price refresh. Manual rows are cited and go stale after 120 days.
+A row marked **No** has no resolved list rate in this catalog; its missing cost remains a gap in the known subtotal. **No distinct rate** means the line reuses another SKU and says so. **Yes** means a stored rate is applied, with its actual component evidence shown in Unit costs. Captured first-party prices take precedence over references. Product-level confidence is catalog metadata; it does not verify every region or consumption assumption. Manual citations go stale after 120 days.
 
 The four-input page does not list these products. It maps Pipelines and jobs to classic jobs, Dashboards to serverless SQL, and Models to the Llama 3.1 8B foundation-model line inside `projectSimple`. Advanced adds any row below. Sizes (SQL 2XS–4XL, Photon, spot) stay inputs on the existing editors.
 
@@ -25,7 +25,7 @@ The table is generated from `data/product-catalog.json` by `scripts/products-doc
 | AI Forecast                                 | Data Engineering     | DBU                                                 | Yes              | cited       | manual              | Microsoft Learn, Azure Databricks pricing and serverless multipliers (2026-10-15) |
 | Serverless GPU compute                      | Data Engineering     | DBU-hour on the serving GPU table                   | No distinct rate | cited       | manual              | Databricks model serving pricing (2026-10-16)                                     |
 | Lakehouse Real-Time                         | Data Engineering     | Unpublished as its own line                         | No               | unpublished | manual              | Databricks Lakehouse Real-Time regional $/DBU (2026-10-15)                        |
-| Zerobus                                     | Data Engineering     | $/GB                                                | Yes              | secondary   | manual              | Flexera Databricks pricing guide (2026), cross-checked SunnyData (2026-10-16)     |
+| Zerobus                                     | Data Engineering     | $/GB                                                | Yes              | measured    | manual              | Databricks official Zerobus price card; USD per GB (2026-10-17)                   |
 | Standard tier                               | Data Engineering     | Unpublished in this forecast                        | No               | unpublished | manual              | Azure Retail Prices API, Azure Databricks consumption meters (2026-10-17)         |
 | SQL warehouse Classic                       | Warehousing & BI     | DBU-hour + VM assumption                            | Yes              | measured    | azure-retail-prices | Azure Retail Prices API, Azure Databricks consumption meters (2026-10-17)         |
 | SQL warehouse Pro                           | Warehousing & BI     | DBU-hour + VM assumption                            | Yes              | measured    | azure-retail-prices | Azure Retail Prices API, Azure Databricks consumption meters (2026-10-17)         |

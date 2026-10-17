@@ -18,13 +18,39 @@ npm run export:unit-costs
 # Fail if checked-in exports no longer match their inputs.
 npm run check:unit-costs
 
+# Validate accepted official prices against retained first-party response bytes.
+npm run check:sources
+
+# Fetch the official Databricks price data for a reviewed catalog update.
+npm run refresh:databricks
+
 # Query the same inventory without opening the website. JSON is the default.
-npm run cayfore -- rates --format csv --product jobs_classic --cloud azure --region eastus --tier premium
+npm run cayfore -- rates --format csv --product jobs_classic --cloud azure --region eastus --tier premium --evidence official
 ```
 
 Generation reads local catalog inputs; it does not fetch live prices or use a customer's account. Source review dates describe what was checked, while stored rate dates describe the underlying snapshot. Rebuilding a file does not make its rates newly verified. Cloud-price refreshes and manually researched consumption changes remain separate maintenance actions.
 
 `export:unit-costs` writes ordinary `data/unit-costs.csv` and `data/unit-costs.json` files for local use, plus the versioned `.gz` copies. The expanded grid repeats evidence across many placement and variant combinations, so the repository stores compressed copies to keep updates small. Decompress either copy with a standard archive tool or `gzip -dk data/unit-costs.csv.gz` (use the JSON filename for JSON). The website and CLI download ordinary CSV/JSON without requiring decompression. CI expands the committed copies and compares their complete contents against the current builder.
+
+## Source of truth and evidence levels
+
+The shared resolver in `packages/engine/src/catalog.ts` supplies the forecast, usage estimates, CLI, Excel export, and unit-cost builder. It resolves an exact Azure Retail Prices meter or a validated Databricks regional USD/DBU observation first. A documented reference base can be used only as a labeled planning fallback. Legacy secondary values and region factors remain visible where no stronger matching source exists. A known same-offering first-party conflict blocks the qualified quote rather than silently choosing a source.
+
+`data/databricks-dbu-rates.json` contains normalized first-party prices, source locators, observations, exclusions, and quarantined issues. Its inputs are [Databricks price cards](https://www.databricks.com/en-pricing-assets/data/pricing/cards.json), [AWS calculator data](https://www.databricks.com/en-pricing-assets/data/pricing/AWS.json), and [Google Cloud calculator data](https://www.databricks.com/en-pricing-assets/data/pricing/GCP.json). Exact response bytes are retained as compressed files under `data/sources/`; SHA-256 fingerprints identify each capture. `check:sources` replays the parsers and compares the entire normalized result. This is reproducible snapshot validation, not a live-price promise.
+
+The parsers map explicit product, cloud, edition, region, currency, and billing-unit dimensions. They exclude SAP, government offerings, incompatible units, and ambiguous values. A calculator's instance-hour example is checked against its DBU basis, and source disagreements remain reviewable. Product availability is not inferred from a price-card entry.
+
+| UI label                    | Export value     | Meaning                                                                                                                                                         |
+| --------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Official list price         | `official`       | A first-party numeric price observation matches the row's unit and placement.                                                                                   |
+| Derived from official rates | `derived`        | Published consumption rules or eligible conditions are applied; monetary quotes also require a first-party price. Azure-only rules do not verify another cloud. |
+| Planning estimate           | `estimate`       | A consumption assumption, seeded infrastructure rate, regional proxy, secondary reference, or incomplete numeric provenance contributes to the result.          |
+| Unresolved                  | `unresolved`     | Missing prices or conflicting sources prevent a qualified quote.                                                                                                |
+| Platform context            | `not_applicable` | No standalone unit quote is asserted; connected workloads can still incur charges.                                                                              |
+
+Every source records `authority`, `publisher`, its numeric or contextual `role`, a nullable `observedOn`, and a separate nullable `reviewedOn`. An authentic vendor page can explain a service without proving its price. A later documentation review does not refresh an older price. Unknown observation dates stay null. Catalog `verifiedOn` is retained for compatibility as a catalog metadata date; it does not verify all component prices. `reviewedOn` describes the evidence registry review.
+
+The UI includes a source link beside the displayed price, complete source cards, evidence filters, and counts for the currently filtered rows. Browser, CLI, CSV, and JSON use the same evidence classification. Use `--evidence official` for direct first-party prices or `--evidence derived` for calculated official-rate rows.
 
 ## Read the units before calculating
 
@@ -50,7 +76,7 @@ Missing prices use JSON `null` and an empty numeric CSV cell. Missing, conflicte
 
 The source registry records the role of each link: a dollar meter, a consumption conversion, a tariff, explanatory documentation, or a secondary compilation. A page explaining a product is not proof of every numeric rate on that product. Confidence belongs to the resolved **component and placement**, not merely to the product name.
 
-- **Regional DBUs:** exact Azure meters take precedence. AWS/GCP reference prices and fallback regions retain secondary or proxy labels. Lakehouse Real-Time regional ratios are product-specific; applying those ratios to other SKUs remains a planning assumption, even if a stored region source is named `lakehouse-rt`. [Lakehouse Real-Time Beta pricing](https://docs.databricks.com/aws/en/compute/sql-warehouse/real-time-pricing).
+- **Regional DBUs:** exact Azure meters and validated first-party Databricks regional observations take precedence. Unscoped bases and fallback regions retain reference or proxy labels. Same-key disagreements between official price cards and calculator data remain unresolved, including some Google Cloud automated-compute and serving entries. Lakehouse Real-Time regional ratios are product-specific; applying those ratios to other SKUs remains a planning assumption, even if a stored region source is named `lakehouse-rt`. [Lakehouse Real-Time Beta pricing](https://docs.databricks.com/aws/en/compute/sql-warehouse/real-time-pricing).
 - **VMs and Spot:** AWS offer-file and Azure meter rates retain their own dates. GCP VM seeds and reference-region fallbacks are identified. Advisor-derived AWS Spot estimates are not live availability-zone quotes. [AWS Price List](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/price-changes.html), [Spot price history](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances-history.html).
 - **Foundation models:** the current provisioned heading is DBU/hour **per 50 model units**, with workload-dependent throughput. GTE is a source conflict: the bundled/Azure Learn value is 20, while the current Databricks page gives 100 on its quoted basis. An unqualified operational quote must remain unresolved. Current cache, priority, batch, reservation, context, residency, and additional-model dimensions are not comprehensively modeled. [Foundation Model Serving pricing](https://www.databricks.com/product/pricing/foundation-model-serving).
 - **Search storage:** the flat standard/optimized storage values and standard allowance are bundled assumptions. Azure's documented DSU rule differs from the stored flat rate. Compute-unit examples on the AI Search page do not verify every stored storage price. [AI Search pricing](https://www.databricks.com/product/pricing/ai-search).
@@ -58,12 +84,14 @@ The source registry records the role of each link: a dollar meter, a consumption
 - **Photon and add-ons:** Photon factors are consumption assumptions by cloud and workload. The forecast's 10%/30% add-on scenarios are not equivalent to the Azure API's dollars-per-DBU meters. These are separately labeled planning bases, and duplicate product charges must be avoided.
 - **Genie promotions:** user and service-principal rules differ. The 150 DBU user allowance, One/Agents free window through January 31, 2027, and Code metering promotion do not create one universal free or per-user price. SQL and connected services remain separate. [Genie billing and eligibility](https://docs.databricks.com/aws/en/genie/monitor-cost).
 
-The unit-cost work exposes these limits without silently rewriting the established forecast rates or formulas. Review an actual `system.billing.list_prices` export and your cloud bill when reconciling an invoice.
+Validated first-party rates now feed the shared forecast resolver as well as the unit-cost inventory. Consumption assumptions and formulas remain separately identified. Some regional estimates change, and source conflicts can make a forecast subtotal incomplete; the interface exposes those gaps. Review an actual `system.billing.list_prices` export and your cloud bill when reconciling an invoice.
 
 ## Join and maintain the data
 
 Use stable product/component IDs and explicit cloud, region, tier, unit, and dimension columns; labels can change. Preserve source IDs and dates in downstream tables. Do not join a source's raw `1 Hour` meter label to a VM hour without checking what that meter actually monetizes. Do not aggregate rows across variants as if they were usage records.
 
 For customer billing, resolve prices by SKU, cloud, currency, usage unit, and the effective time interval. Keep `pricing.default`, promotional prices, and `pricing.effective_list.default` distinct; keep contract overrides separate. Free Genie usage can legitimately have no matching price-table row. [Databricks pricing system table reference](https://docs.databricks.com/aws/en/admin/system-tables/pricing).
+
+Each Azure meter keeps its own `asOf`, meter ID, raw API unit, effective start date, and filtered lookup URL. Partial refreshes preserve older per-meter observations instead of stamping them with a new review date. A pagination limit fails rather than accepting a truncated response.
 
 When updating the inventory, verify the source's exact offering, unit basis, region, currency, eligibility, and effective date; update the maintained input and its evidence; rebuild both exports; and run the consistency check. A newly added catalog product or dimension must appear in the inventory with either a sourced rate or an explicit unresolved reason. Price coverage is not product-availability coverage.

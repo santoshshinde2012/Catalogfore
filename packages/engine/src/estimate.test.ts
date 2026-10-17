@@ -89,16 +89,17 @@ describe("classic jobs estimate", () => {
     expect(estimate(portfolio).cloudCost).toBe(99.84);
   });
 
-  it("scales DBU price by a regional factor and flags the VM rate", () => {
+  it("uses the published regional DBU rate before a planning factor and keeps the actual regional VM rate", () => {
     const portfolio = jobPortfolio();
     portfolio.region = "sa-east-1";
     const result = estimate(portfolio);
     const factor = regionInfo("aws", "sa-east-1").factor;
     const dbu = 3 * 0.69 * hours;
     expect(factor).toBeCloseTo(0.87 / 0.55, 5);
-    expect(result.dbuCost).toBe(roundMoney(dbu * 0.15 * factor));
+    expect(result.dbuCost).toBe(roundMoney(dbu * 0.15));
     expect(result.cloudCost).toBe(roundMoney(3 * 0.306 * hours));
     expect(result.lines[0].approximateVm).toBe(false);
+    expect(result.lines[0].notes.some((note) => note.includes("DBU region factor is a proxy"))).toBe(false);
   });
 
   it("flags a VM when the instance is not in the price file", () => {

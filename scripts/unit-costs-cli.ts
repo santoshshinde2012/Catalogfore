@@ -16,6 +16,7 @@ const keys: Record<string, keyof UnitCostFilters | "format"> = {
   "--region": "region",
   "--tier": "tier",
   "--status": "status",
+  "--evidence": "evidenceLevel",
   "--component": "componentId",
   "--query": "query",
 };
@@ -41,6 +42,11 @@ export function printUnitCosts(args: string[]): void {
     !["priced", "approximate", "conditional", "unpriced", "not_applicable"].includes(filters.status)
   )
     throw new Error("Unknown price status");
+  if (
+    filters.evidenceLevel &&
+    !["official", "derived", "estimate", "unresolved", "not_applicable"].includes(filters.evidenceLevel)
+  )
+    throw new Error("evidence must be official, derived, estimate, unresolved, or not_applicable");
   const regions = filters.cloud
     ? listRegions(filters.cloud as Cloud)
     : ["aws", "azure", "gcp"].flatMap((cloud) => listRegions(cloud as Cloud));

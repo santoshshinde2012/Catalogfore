@@ -32,9 +32,9 @@ function pricedAll(productId: string, cloud: Cloud = "aws") {
 }
 
 describe("product catalog", () => {
-  it("prices Zerobus per GB from the secondary card and leaves GCP unpriced", () => {
-    expect(productById("zerobus")?.confidence).toBe("secondary");
-    expect(productById("zerobus")?.confidenceScore).toBe(55);
+  it("prices Zerobus per GB from the captured official card and leaves GCP unpriced", () => {
+    expect(productById("zerobus")?.confidence).toBe("measured");
+    expect(productById("zerobus")?.confidenceScore).toBe(92);
     expect(priced(workloadForProduct("zerobus")).total).toBe(5);
     const enterprise = estimate({
       ...blankPortfolio("aws"),

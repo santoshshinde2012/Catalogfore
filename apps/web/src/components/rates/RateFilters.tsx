@@ -2,7 +2,7 @@ import type { UnitCostCatalog, UnitCostFilters, UnitCostRow } from "@cayfore/eng
 import { Search } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { statusLabels } from "./rate-presentation";
+import { evidenceLabels, statusLabels } from "./rate-presentation";
 
 export function RateFilters({
   catalog,
@@ -131,7 +131,18 @@ export function RateFilters({
             ))}
           </select>
         </label>
-        <div className="flex items-end">
+        <label className="field">
+          Evidence basis
+          <select value={filters.evidenceLevel ?? ""} onChange={(event) => set("evidenceLevel", event.target.value)}>
+            <option value="">All evidence</option>
+            {Object.entries(evidenceLabels).map(([id, name]) => (
+              <option key={id} value={id}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <div className="flex items-end sm:col-span-2 lg:col-span-4">
           <Button type="button" variant="ghost" className="min-h-11" onClick={onClear}>
             Reset all filters
           </Button>

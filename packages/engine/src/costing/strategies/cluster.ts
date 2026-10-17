@@ -53,7 +53,10 @@ export const clusterStrategy = defineStrategy("cluster", (workload, context): Ra
       `${Math.round(spotShare * 100)}% of worker hours use a ${Math.round(spotDiscount * 100)}% spot discount. The driver stays on demand. DBUs are not discounted.`,
     );
   }
-  if (placement.regionSource.startsWith("proxy")) {
+  if (
+    placement.regionSource.startsWith("proxy") &&
+    catalog.regionalSkuRate?.(placement.cloud, placement.region, placement.tier, workload.sku) == null
+  ) {
     notes.push("DBU region factor is a proxy from published Lakehouse Real-Time ratios, not a per-SKU tariff.");
   }
   return {

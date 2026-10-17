@@ -2,6 +2,7 @@ import type { UnitCostRow } from "@cayfore/engine/unit-costs";
 import { ArrowUpRight, SearchX } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
+import { EvidenceBadge } from "./RateEvidence";
 import { placementLabel, rowBasis, rowPrice, statusLabels, variantLabel } from "./rate-presentation";
 
 export function RateDirectory({
@@ -82,6 +83,9 @@ export function RateDirectory({
                     >
                       {statusLabels[row.status]}
                     </span>
+                  </span>
+                  <span className="mt-3 block">
+                    <EvidenceBadge level={row.evidenceLevel} />
                   </span>
                 </button>
               </li>

@@ -3,10 +3,17 @@ import type { Cloud, SkuId, Tier } from "../types.js";
 export type UnitCostStatus = "priced" | "approximate" | "conditional" | "unpriced" | "not_applicable";
 export type UnitCostConfidence =
   "measured" | "cited" | "secondary" | "proxy" | "assumption" | "unpublished" | "conflict";
+export type SourceAuthority = "first_party" | "secondary" | "project" | "unknown";
+export type UnitCostEvidenceLevel = "official" | "derived" | "estimate" | "unresolved" | "not_applicable";
 export interface UnitCostSource {
   title: string;
   url: string;
+  authority: SourceAuthority;
+  publisher: string;
+  /** Date the stored numeric observation was captured; a documentation review does not refresh it. */
   observedOn: string | null;
+  /** Date this source's scope and documentation were reviewed, independent of the stored price. */
+  reviewedOn: string | null;
   role: "price" | "consumption" | "region" | "context";
   locator?: string;
 }
@@ -50,6 +57,8 @@ export interface UnitCostRow {
   sourceRegion: string | null;
   status: UnitCostStatus;
   confidence: UnitCostConfidence;
+  evidenceLevel: UnitCostEvidenceLevel;
+  evidenceSummary: string;
   rateKind: "money" | "consumption" | "multiplier" | "allowance" | "unpriced";
   value: number | null;
   formula: string;
@@ -65,6 +74,7 @@ export interface UnitCostCatalog {
   schemaVersion: "1.0.0";
   catalogVersion: string;
   verifiedOn: string;
+  reviewedOn: string;
   disclaimer: string;
   products: UnitCostProduct[];
   rows: UnitCostRow[];
@@ -78,4 +88,5 @@ export interface UnitCostFilters {
   tier?: Tier | string;
   status?: UnitCostStatus | string;
   componentId?: string;
+  evidenceLevel?: UnitCostEvidenceLevel | string;
 }

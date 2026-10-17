@@ -1,8 +1,8 @@
 {
   "$schema": "../packages/catalog/product-catalog.schema.json",
-  "version": "2026-10-17.1",
+  "version": "2026-10-17.2",
   "verifiedOn": "2026-10-17",
-  "disclaimer": "Estimates only. Not a quote, invoice, or commitment. Unpublished rows are $0 on purpose. Azure meters were checked on 2026-10-17. AWS and GCP $/DBU remain the curated table.",
+  "disclaimer": "Estimates only. Not a quote, invoice, or commitment. Source rates resolve from captured first-party Azure and Databricks calculator data where supported; missing and conflicted prices remain unresolved. Planning assumptions and reference fallbacks are labeled separately. A catalog product does not guarantee availability in every cloud or region.",
   "categories": [
     {
       "id": "data_engineering",
@@ -580,8 +580,8 @@
       "sku": null,
       "listPrice": "distinct",
       "published": true,
-      "confidence": "secondary",
-      "confidenceScore": 55,
+      "confidence": "measured",
+      "confidenceScore": 92,
       "automation": "manual",
       "template": "metered",
       "editor": "schema",
@@ -590,11 +590,11 @@
       ],
       "defaults": "Example of 100 GB. AWS Premium $0.050/GB. AWS Enterprise and Azure $0.064/GB. GCP is not priced.",
       "source": {
-        "title": "Flexera Databricks pricing guide (2026), cross-checked SunnyData",
-        "url": "https://www.flexera.com/blog/finops/databricks-pricing-guide/",
-        "fetchedOn": "2026-10-16"
+        "title": "Databricks official Zerobus price card; USD per GB",
+        "url": "https://www.databricks.com/en-pricing-assets/data/pricing/cards.json",
+        "fetchedOn": "2026-10-17"
       },
-      "note": "Secondary list rates, not a first-party number printed on a static page. Flexera (2026) lists Zerobus Ingest at $0.050/GB on AWS Premium and $0.064/GB on AWS Enterprise. The Azure table lists $0.064/GB, which matches Enterprise rather than a second Premium rate. SunnyData re-verified $0.064/GB for AWS Enterprise us-east on 2026-08-04 and says the rate includes compute. Official docs bill the usage against Jobs Serverless (AWS) or Automated Serverless (Azure) and point at the Lakeflow Connect price page, which does not render a dollar rate to a static fetch. The GA post calls the price volume-based and mentions a 6-month promotion with no end date, so the promotion is not applied. GCP is listed as coming soon. The example is 100 GB. The rate is not scaled by region. Same-region client egress is still not a second charge.",
+      "note": "The retained official price-card capture verifies US East reference prices of $0.050/GB on AWS Premium and $0.064/GB on AWS Enterprise and Azure Premium. The Lakeflow Connect pricing page identifies the Zerobus ingestion billing unit separately from connector DBUs and OpenTelemetry ingestion. These GB prices are not normalized into the generic USD/DBU table. No regional scaling is applied. GCP prices in the current price card do not by themselves establish supported product availability, so this template keeps GCP unresolved. Undated promotions are not applied. The example is 100 GB.",
       "fields": [
         {
           "path": "inputs.gb",

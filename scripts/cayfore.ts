@@ -132,7 +132,7 @@ if (command === "sql") {
   );
 } else {
   fail(
-    "commands: estimate [--xlsx out.xlsx] [plan.json], forecast <plan.json> [--xlsx out.xlsx], usage <file.csv> [--cloud aws|azure|gcp --tier premium|enterprise --region id --as-of YYYY-MM-DD --month YYYY-MM --cost-basis effective|billed], sql, products, product <id>, rates [--format json|csv --product id --cloud aws|azure|gcp --region id --tier premium|enterprise]",
+    "commands: estimate [--xlsx out.xlsx] [plan.json], forecast <plan.json> [--xlsx out.xlsx], usage <file.csv> [--cloud aws|azure|gcp --tier premium|enterprise --region id --as-of YYYY-MM-DD --month YYYY-MM --cost-basis effective|billed], sql, products, product <id>, rates [--format json|csv --product id --cloud aws|azure|gcp --region id --tier premium|enterprise --evidence official|derived|estimate|unresolved|not_applicable]",
   );
 }
 

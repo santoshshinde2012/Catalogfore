@@ -31,7 +31,7 @@ export function clusterRows(context: RowContext, workload: Extract<Workload, { k
         vmPrices.find(
           (item) => item.cloud === instance.cloud && item.region === sourceRegion && item.instanceId === instance.id,
         );
-      vmSource.observedOn = observation?.asOf ?? null;
+      vmSource.observedOn = observation?.source === "seed" ? null : (observation?.asOf ?? null);
       const missing = quote.source === "missing";
       monetary(context, {
         componentId: "vm",
@@ -82,6 +82,8 @@ export function clusterRows(context: RowContext, workload: Extract<Workload, { k
                   "AWS Spot Advisor savings estimate",
                   "https://aws.amazon.com/ec2/spot/instance-advisor/",
                   "price",
+                  instance.id,
+                  observation?.asOf ?? null,
                 )
               : vmSource,
           ],
@@ -131,11 +133,11 @@ function convertedAtPlacement(
     componentId: "compute",
     componentName: "Databricks node usage",
     unit: "node-hour",
-    unitPriceUsd: rate * instance.dbuPerHour,
+    unitPriceUsd: rate === null ? null : rate * instance.dbuPerHour,
     dbuPerUnit: instance.dbuPerHour,
     includesCompute: false,
-    status: "approximate",
-    confidence: "assumption",
+    status: rate === null ? "unpriced" : "approximate",
+    confidence: rate === null ? "conflict" : "assumption",
     instanceId: instance.id,
     variant: "non_photon",
     formula: "Node-hours × DBU/node-hour × USD/DBU",

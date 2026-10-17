@@ -52,6 +52,7 @@ test("rates CLI rejects dimensions that could silently select the wrong source p
     ["--domain", "missing"],
     ["--component", "missing"],
     ["--status", "free"],
+    ["--evidence", "trustworthy"],
     ["--format", "xlsx"],
     ["--cloud"],
     ["--cloud", "aws", "--cloud", "azure"],
@@ -62,4 +63,28 @@ test("rates CLI rejects dimensions that could silently select the wrong source p
     assert.equal(result.stdout, "");
     assert.ok(result.stderr.length > 0);
   }
+});
+
+test("rates CLI can export direct first-party prices without mixing in derived or planning rows", () => {
+  const result = run(
+    "--product",
+    "jobs_serverless",
+    "--cloud",
+    "azure",
+    "--region",
+    "eastus",
+    "--tier",
+    "premium",
+    "--evidence",
+    "official",
+  );
+  assert.equal(result.status, 0, result.stderr);
+  const book = JSON.parse(result.stdout);
+  assert.ok(book.rows.length > 0);
+  assert.ok(book.rows.every((row) => row.evidenceLevel === "official" && row.unitPriceUsd !== null));
+  assert.ok(
+    book.rows.every((row) =>
+      row.sources.some((source) => source.authority === "first_party" && source.role === "price"),
+    ),
+  );
 });

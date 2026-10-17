@@ -34,7 +34,10 @@ jobs:
         env:
           GCP_BILLING_API_KEY: ${{ secrets.GCP_BILLING_API_KEY }}
       - name: Rebuild the source unit-cost CSV and JSON
-        run: npm run export:unit-costs
+        run: |
+          npm run check:sources
+          node scripts/rate-confidence.mjs
+          npm run export:unit-costs
       - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           commit-message: "Refresh the weekly catalog and price check"
@@ -42,13 +45,18 @@ jobs:
           body: |
             Automated weekly check of list prices and public catalog signals.
 
-            The job refreshes Azure Retail Prices and AWS EC2 offer files. GCP virtual-machine rates run only when `GCP_BILLING_API_KEY` is set. It validates the product catalog with the schema, checks price files, and flags any rate move over 20%. It reads the Databricks RSS feed plus robots.txt and sitemap metadata on www.databricks.com and docs.databricks.com. It does not fetch Databricks pricing pages.
+            The job captures the first-party Databricks AWS/GCP calculator JSON, refreshes Azure Retail Prices and AWS EC2 offer files, and validates normalized prices against retained source captures. GCP virtual-machine rates run only when `GCP_BILLING_API_KEY` is set. It validates the product catalog, checks price files, and flags rate moves over 20%. It also reads Databricks RSS, robots.txt, and sitemap metadata. Ambiguous calculator values remain quarantined for review.
 
             `data/weekly-summary.md` in this branch lists new services, price changes, and removed items. A schema error fails the job. This pull request is for review. The workflow does not merge it.
           branch: weekly-catalog
           add-paths: |
             data/cloud-vm-prices.json
             data/azure-dbu-meters.json
+            data/databricks-dbu-rates.json
+            data/sources/databricks-calculator-aws.json.gz
+            data/sources/databricks-calculator-gcp.json.gz
+            data/sources/databricks-price-cards.json.gz
+            data/rate-confidence.json
             data/pricing-probe.json
             data/catalog-watch-report.md
             data/catalog-watch-state.json

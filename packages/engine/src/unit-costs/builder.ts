@@ -5,7 +5,7 @@ import { aiRows } from "./ai.js";
 import { clusterRows } from "./compute.js";
 import { simpleComputeRows } from "./simple-compute.js";
 import { append, inventory, source, type RowContext } from "./context.js";
-import { applyEvidence, unitCostScope } from "./evidence.js";
+import { applyEvidence, unitCostReviewedOn, unitCostScope } from "./evidence.js";
 import { meteredRows } from "./metered.js";
 import { storageRows } from "./storage.js";
 import type { UnitCostCatalog, UnitCostRow } from "./types.js";
@@ -82,6 +82,8 @@ export function buildUnitCostCatalog(): UnitCostCatalog {
       sourceRegion: null,
       status: "not_applicable",
       confidence: "unpublished",
+      evidenceLevel: "not_applicable",
+      evidenceSummary: "Platform context has no independent unit quote.",
       rateKind: "unpriced",
       value: null,
       formula: "No independent unit tariff: inspect connected compute, storage and product charges",
@@ -104,6 +106,7 @@ export function buildUnitCostCatalog(): UnitCostCatalog {
     schemaVersion: "1.0.0",
     catalogVersion: productCatalog.version,
     verifiedOn: productCatalog.verifiedOn,
+    reviewedOn: unitCostReviewedOn,
     disclaimer: unitCostScope,
     products: inventory,
     rows: applyEvidence(enriched),

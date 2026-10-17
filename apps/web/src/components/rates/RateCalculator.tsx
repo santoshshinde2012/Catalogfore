@@ -1,7 +1,7 @@
 import type { UnitCostRow } from "@cayfore/engine/unit-costs";
 import { Calculator } from "lucide-react";
 import { useState } from "react";
-import { unitMoney } from "./rate-presentation";
+import { evidenceLabels, unitMoney } from "./rate-presentation";
 
 export function RateCalculator({ row }: { row: UnitCostRow }) {
   const [quantity, setQuantity] = useState("100");
@@ -18,6 +18,9 @@ export function RateCalculator({ row }: { row: UnitCostRow }) {
       </h3>
       {usable ? (
         <>
+          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            {unitMoney(row.usdPerUnit!)} / {row.unit} · {evidenceLabels[row.evidenceLevel]}
+          </p>
           <label className="field mt-3" htmlFor="rate-quantity">
             Billable quantity ({row.unit})
           </label>

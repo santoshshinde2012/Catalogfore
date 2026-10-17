@@ -88,6 +88,12 @@ Pricing, forecasting, policies, recommendations, and portfolio normalization are
 
 The UI and exports receive `projectPortfolio` results. Charts prepare display rows without introducing rate formulas. A custom or imported rate has explicit provenance; ordinary product rows rehydrate catalog-owned prices. Missing rates contribute a known subtotal and visible unresolved lines. Source quality and model-only intervals are distinct concepts.
 
+## Source resolution
+
+`catalog.ts` resolves exact Azure meters and validated first-party Databricks regional prices before reference fallbacks. Price-source metadata travels with the resolved observation. The forecast strategies, unit-cost projection, imported usage estimates, and Excel source sheets use these same lookup functions. Known conflicting first-party values produce unresolved components and a known subtotal.
+
+Network retrieval belongs to scripts. Fixed first-party endpoints produce retained compressed captures and normalized USD/DBU rows. Offline replay verifies the captures' SHA-256 fingerprints, dimensions, unit mappings, accepted values, and quarantines. The runtime engine reads those versioned inputs without network access. Publisher identity, numeric role, observation date, scope, and consumption assumptions contribute separately to evidence classification; a vendor hostname alone does not verify a price.
+
 ## Unit-cost visibility
 
 The optional `@cayfore/engine/unit-costs` module projects the product catalog, pricing inputs, applicable dimensions, and source evidence into a read-only unit-cost inventory. The core catalog remains independent of the engine. The builder performs no IO and does not read the clock; UI, CLI, and artifact generation share its rows and serializers. A quoted quantity basis and normalized dollars per raw unit prevent token or request-batch prices from being mistaken for single-unit rates. Conditional factors and allowances remain distinct from dollar prices.

@@ -1,4 +1,13 @@
-import type { Estimate, LineItem, Portfolio, PriceCoverage, PriceStatus, RateProvenance, Workload } from "../types.js";
+import type {
+  Estimate,
+  LineItem,
+  Portfolio,
+  PriceCoverage,
+  PriceStatus,
+  RateProvenance,
+  SkuId,
+  Workload,
+} from "../types.js";
 import type { EstimateDependencies } from "./estimate-portfolio.js";
 import { resolvePlacement } from "./support.js";
 import type { RawLine } from "./types.js";
@@ -9,14 +18,26 @@ export function lineProvenance(
   workload: Workload,
   portfolio: Portfolio,
   dependencies: EstimateDependencies,
-): { priceStatus: PriceStatus; rateProvenance: RateProvenance } {
+): { priceStatus: PriceStatus; rateProvenance: RateProvenance; notes: string[] } {
   const placement = resolvePlacement(dependencies.catalog, portfolio, workload);
-  const missing = raw.notes.some((note) =>
-    /no list rate|not priced|unknown (?:instance|foundation|GPU)|missing (?:VM |price|rate)|unpriced/i.test(note),
-  );
-  const approximate = raw.approximateVm || placement.regionSource.startsWith("proxy");
   const embedded =
     workload.kind === "metered" && (workload.rateByCloud || workload.fixedUsdByCloud || workload.rateByPlacement);
+  const conflict =
+    !embedded &&
+    dependencies.catalog.firstPartyDbuConflict?.(placement.cloud, placement.region, placement.tier, raw.sku as SkuId);
+  const missing =
+    Boolean(conflict) ||
+    raw.notes.some((note) =>
+      /no list rate|not priced|unknown (?:instance|foundation|GPU)|missing (?:VM |price|rate)|unpriced/i.test(note),
+    );
+  const exactRate = dependencies.catalog.firstPartyDbuRate?.(
+    placement.cloud,
+    placement.region,
+    placement.tier,
+    raw.sku as SkuId,
+  );
+  const baseRate = dependencies.catalog.firstPartyBaseDbuRate?.(placement.cloud, placement.tier, raw.sku as SkuId);
+  const approximate = raw.approximateVm || (!embedded && !exactRate && placement.regionSource.startsWith("proxy"));
   const provenance =
     workload.rateProvenance ??
     ({
@@ -24,17 +45,34 @@ export function lineProvenance(
       label: embedded && !workload.productId ? "Unlabelled supplied rate" : "Bundled public price book",
       currency: "USD",
       catalogVersion: dependencies.catalog.version,
-      verifiedOn: dependencies.catalog.verifiedOn,
+      ...((exactRate ?? baseRate)?.observedOn ? { verifiedOn: (exactRate ?? baseRate)!.observedOn! } : {}),
     } satisfies RateProvenance);
   const source =
-    placement.cloud === "azure"
+    (exactRate ?? baseRate)?.sourceUrl ??
+    (placement.cloud === "azure"
       ? "https://azure.microsoft.com/en-us/pricing/details/databricks/"
-      : "https://www.databricks.com/product/pricing";
-  const rateProvenance = provenance.kind === "catalog" && !provenance.source ? { ...provenance, source } : provenance;
+      : "https://www.databricks.com/product/pricing");
+  const rateProvenance: RateProvenance = conflict
+    ? {
+        kind: "catalog",
+        label: "Unresolved first-party price conflict",
+        currency: "USD",
+        catalogVersion: dependencies.catalog.version,
+        source: conflict.sources[0]?.url,
+      }
+    : provenance.kind === "catalog" && !provenance.source
+      ? { ...provenance, source }
+      : provenance;
   const declaredStatus =
     workload.priceStatus === "free" && (raw.dbuCost !== 0 || raw.cloudCost !== 0) ? "priced" : workload.priceStatus;
   const priceStatus = missing ? "unpriced" : (declaredStatus ?? (approximate ? "approximate" : "priced"));
-  return { priceStatus, rateProvenance };
+  const notes = conflict
+    ? [
+        ...raw.notes,
+        "First-party price sources disagree for this SKU and placement. Databricks cost is withheld; totals show any other known components.",
+      ]
+    : raw.notes;
+  return { priceStatus, rateProvenance, notes };
 }
 
 export function priceCoverage(lines: LineItem[]): PriceCoverage {

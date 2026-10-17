@@ -1,10 +1,8 @@
 import evidence from "../../../../data/unit-cost-evidence.json";
 import type { UnitCostRow } from "./types.js";
+import { sourceReference, withEvidenceLevel } from "./provenance.js";
 
-/** A registry review never refreshes an explicit stored price observation. */
-export function sourceDefaultDate(url: string, fallback: string): string {
-  return evidence.sources.find((reference) => reference.url === url)?.verifiedOn ?? fallback;
-}
+export const unitCostReviewedOn = evidence.reviewedOn;
 
 interface Applicability {
   productIds?: string[];
@@ -26,12 +24,9 @@ export function applyEvidence(rows: UnitCostRow[]): UnitCostRow[] {
       conflict ||= caveat.status === "source-conflict";
       for (const id of caveat.sourceIds) {
         const reference = evidence.sources.find((item) => item.id === id)!;
-        sources.push({
-          title: reference.title,
-          url: reference.url,
-          observedOn: reference.verifiedOn,
-          role: reference.role === "consumption" ? "consumption" : "context",
-        });
+        sources.push(
+          sourceReference(reference.title, reference.url, reference.role === "consumption" ? "consumption" : "context"),
+        );
       }
     }
     const uniqueSources = sources.filter(
@@ -40,8 +35,8 @@ export function applyEvidence(rows: UnitCostRow[]): UnitCostRow[] {
           (item) => item.url === reference.url && item.role === reference.role && item.locator === reference.locator,
         ) === index,
     );
-    if (!conflict) return { ...row, notes: [...new Set(notes)], sources: uniqueSources };
-    return {
+    if (!conflict) return withEvidenceLevel({ ...row, notes: [...new Set(notes)], sources: uniqueSources });
+    return withEvidenceLevel({
       ...row,
       status: "unpriced",
       confidence: "conflict",
@@ -53,7 +48,7 @@ export function applyEvidence(rows: UnitCostRow[]): UnitCostRow[] {
       value: null,
       notes: [...new Set(notes)],
       sources: uniqueSources,
-    };
+    });
   });
 }
 

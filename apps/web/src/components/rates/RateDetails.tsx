@@ -1,9 +1,11 @@
 import type { UnitCostRow } from "@cayfore/engine/unit-costs";
-import { ArrowLeft, ExternalLink, ReceiptText } from "lucide-react";
+import { ArrowLeft, ReceiptText } from "lucide-react";
 import { Button } from "../ui/button";
 import { RateCalculator } from "./RateCalculator";
+import { EvidenceBadge, RatePrimarySource, RateSourceEvidence } from "./RateEvidence";
 import {
   dimensionLabel,
+  evidenceLabels,
   placementLabel,
   rowBasis,
   rowPrice,
@@ -34,13 +36,22 @@ export function RateDetails({ row, onResults }: { row: UnitCostRow; onResults: (
       <p className="mt-2 text-xs text-muted-foreground">{placementLabel(row)}</p>
       <div className="mt-5 rounded-xl border bg-muted/30 p-4">
         <p className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
-          {row.rateKind === "money" ? "Source unit cost · USD" : "Billing context"}
+          {row.rateKind === "money"
+            ? row.evidenceLevel === "official"
+              ? "Official list price · USD"
+              : "Reference unit cost · USD"
+            : "Billing context"}
         </p>
         <p className="mt-2 break-words text-3xl font-semibold tabular-nums">{rowPrice(row)}</p>
         {row.rateKind !== "unpriced" && <p className="mt-1 text-sm text-muted-foreground">per {rowBasis(row)}</p>}
-        <p className="mt-3 text-xs">
-          {statusLabels[row.status]} · {row.confidence} evidence
-        </p>
+        {statusLabels[row.status] !== evidenceLabels[row.evidenceLevel] && (
+          <p className="mt-3 text-xs">{statusLabels[row.status]}</p>
+        )}
+        <div className="mt-3">
+          <EvidenceBadge level={row.evidenceLevel} />
+        </div>
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{row.evidenceSummary}</p>
+        <RatePrimarySource row={row} />
       </div>
       {row.status === "unpriced" && (
         <p className="mt-3 text-sm font-medium text-destructive">A missing price is unresolved, not a free service.</p>
@@ -98,29 +109,7 @@ export function RateDetails({ row, onResults }: { row: UnitCostRow; onResults: (
           </p>
         )}
       </div>
-      <div className="mt-5 border-t pt-4">
-        <h3 className="text-sm font-semibold">Source evidence</h3>
-        <ul className="mt-3 grid gap-3">
-          {row.sources.map((source, index) => (
-            <li key={`${source.url}-${source.role}-${index}`}>
-              <a
-                href={source.url}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex min-h-7 items-start gap-2 text-xs leading-relaxed text-link underline-offset-4 hover:underline"
-              >
-                <span className="min-w-0 break-words">{source.title}</span>
-                <ExternalLink className="mt-0.5 size-3 shrink-0" aria-hidden="true" />
-                <span className="sr-only">(opens in a new tab)</span>
-              </a>
-              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-                {source.role} evidence · observed {source.observedOn ?? "date not recorded"}
-                {source.locator ? ` · ${source.locator}` : ""}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <RateSourceEvidence row={row} />
     </section>
   );
 }

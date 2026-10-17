@@ -1,4 +1,4 @@
-import { AZURE_DATA_PROCESSED_USD_PER_GB, ZEROBUS_USD_PER_GB } from "../rates/published.js";
+import { AZURE_DATA_PROCESSED_USD_PER_GB } from "../rates/published.js";
 import { formulaFor } from "../products.js";
 import type { Workload } from "../types.js";
 import {
@@ -14,6 +14,7 @@ import {
   type RowContext,
 } from "./context.js";
 
+import { zerobusRows } from "./ingestion.js";
 import { genieConditions } from "./promotions.js";
 
 const fixedConversions: Record<string, { dbu: number; unit: string; basis?: number }> = {
@@ -25,30 +26,7 @@ const fixedConversions: Record<string, { dbu: number; unit: string; basis?: numb
 
 export function meteredRows(context: RowContext, workload: Extract<Workload, { kind: "metered" }>) {
   const formula = formulaFor(workload);
-  if (formula === "zerobus_gb") {
-    for (const cloud of CLOUDS)
-      for (const tier of TIERS) {
-        const rate = ZEROBUS_USD_PER_GB[cloud]?.[tier] ?? null;
-        monetary(context, {
-          componentId: "ingestion",
-          componentName: "Zerobus ingestion",
-          cloud,
-          tier,
-          region: cloud === "aws" ? "us-east-1" : cloud === "azure" ? "eastus" : null,
-          regionLabel: cloud === "aws" ? "US East" : cloud === "azure" ? "East US" : null,
-          sourceRegion: cloud === "aws" ? "us-east-1" : cloud === "azure" ? "eastus" : null,
-          unit: "GB",
-          unitPriceUsd: rate,
-          status: rate === null ? "unpriced" : "approximate",
-          confidence: rate === null ? "unpublished" : "secondary",
-          formula: "Ingested GB × reference USD/GB; no region factor",
-          includesCompute: true,
-          sources: [source(context.product.source.title, context.product.source.url, "price")],
-          notes: ["Reference-region snapshot; no price is inferred for another region or unsupported cloud."],
-        });
-      }
-    return;
-  }
+  if (formula === "zerobus_gb") return zerobusRows(context);
   if (formula === "azure_data_processed") {
     azureOnly(context, "networking", "Data Processed", "GB", AZURE_DATA_PROCESSED_USD_PER_GB);
     return;
@@ -181,6 +159,14 @@ function azureOnly(context: RowContext, componentId: string, componentName: stri
         confidence: cloud === "azure" ? "measured" : "unpublished",
         formula: `${unit} quantity × USD/${unit}`,
         notes: ["Only the Azure East US observation is stored; no rate is inferred for other clouds or regions."],
-        sources: [source(context.product.source.title, context.product.source.url, "price")],
+        sources: [
+          source(
+            context.product.source.title,
+            context.product.source.url,
+            "price",
+            undefined,
+            cloud === "azure" ? context.product.source.fetchedOn : null,
+          ),
+        ],
       });
 }
