@@ -59,5 +59,5 @@ These do not change the page layout.
 - Optional: add the `GCP_BILLING_API_KEY` repository secret if GCP VM rows should refresh.
 - Optional: publish a GitHub Release from `CHANGELOG.md`. Nothing in this repo does that automatically.
 - Optional: put a host in front of Pages if you want HTTP security headers. The meta policy is what Pages can carry.
-- The repository is `cayfore`. Pages publishes at https://santoshshinde2012.github.io/Catalogfore/ after this merges to `main`. The product name is Catalogfore. The theme key is `cayfore-theme`.
+- The repository is [Catalogfore](https://github.com/santoshshinde2012/Catalogfore). Pages publishes at https://santoshshinde2012.github.io/Catalogfore/. The theme key is `cayfore-theme`.
 - Upload `.github/social-preview.png` as the repository social preview if Settings does not show it yet.
