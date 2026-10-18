@@ -1,20 +1,22 @@
 import { skuCatalog } from "@cayfore/engine";
+import { OptionSelect } from "../ui/option-select";
 import { type KindProps, numberOr, ScheduleFields } from "./fields";
 
 export function SearchFields({ workload, onChange }: KindProps) {
   if (workload.kind !== "ai_search") return null;
   return (
     <div className="mt-3 grid gap-3">
-      <label className="field">
-        Endpoint
-        <select
-          value={workload.variant}
-          onChange={(event) => onChange({ ...workload, variant: event.target.value as typeof workload.variant })}
-        >
-          <option value="standard">Standard · 4 DBU/h · ~2M vectors</option>
-          <option value="storage_optimized">Storage optimized · 18.29 DBU/h</option>
-        </select>
-      </label>
+      <OptionSelect
+        tone="field"
+        label="Endpoint"
+        value={workload.variant}
+        searchable={false}
+        onValueChange={(variant) => onChange({ ...workload, variant: variant as typeof workload.variant })}
+        options={[
+          { value: "standard", label: "Standard · 4 DBU/h · ~2M vectors" },
+          { value: "storage_optimized", label: "Storage optimized · 18.29 DBU/h" },
+        ]}
+      />
       <div className="grid-2">
         <label className="field">
           Units
@@ -46,16 +48,17 @@ export function AppFields({ workload, onChange }: KindProps) {
   if (workload.kind !== "app") return null;
   return (
     <div className="mt-3 grid gap-3">
-      <label className="field">
-        Size
-        <select
-          value={workload.size}
-          onChange={(event) => onChange({ ...workload, size: event.target.value as typeof workload.size })}
-        >
-          <option value="medium">Medium · 0.5 DBU/h</option>
-          <option value="large">Large · 1 DBU/h</option>
-        </select>
-      </label>
+      <OptionSelect
+        tone="field"
+        label="Size"
+        value={workload.size}
+        searchable={false}
+        onValueChange={(size) => onChange({ ...workload, size: size as typeof workload.size })}
+        options={[
+          { value: "medium", label: "Medium · 0.5 DBU/h" },
+          { value: "large", label: "Large · 1 DBU/h" },
+        ]}
+      />
       <ScheduleFields schedule={workload.schedule} onChange={(schedule) => onChange({ ...workload, schedule })} />
     </div>
   );
@@ -156,20 +159,21 @@ export function DbuMeterFields({ workload, onChange }: KindProps) {
   if (workload.kind !== "metered") return null;
   return (
     <div className="mt-3 grid-2">
-      <label className="field">
-        Meter
-        <select
-          value={workload.sku}
-          onChange={(event) => onChange({ ...workload, sku: event.target.value as typeof workload.sku })}
-        >
-          <option value="managed_services">Managed services</option>
-          <option value="lakeflow_connect">Lakeflow Connect</option>
-          <option value="model_training">Model training</option>
-          <option value="jobs_serverless">Automated serverless</option>
-          <option value="model_serving">Model serving</option>
-          <option value="apps">Apps</option>
-        </select>
-      </label>
+      <OptionSelect
+        tone="field"
+        label="Meter"
+        value={workload.sku}
+        searchable={false}
+        onValueChange={(sku) => onChange({ ...workload, sku: sku as typeof workload.sku })}
+        options={[
+          { value: "managed_services", label: "Managed services" },
+          { value: "lakeflow_connect", label: "Lakeflow Connect" },
+          { value: "model_training", label: "Model training" },
+          { value: "jobs_serverless", label: "Automated serverless" },
+          { value: "model_serving", label: "Model serving" },
+          { value: "apps", label: "Apps" },
+        ]}
+      />
       <label className="field">
         DBU / month
         <input

@@ -1,6 +1,7 @@
 import type { UnitCostRow, UnitCostSource } from "@cayfore/engine/unit-costs";
 import { ExternalLink } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { APP_NAME } from "../../site";
 import { evidenceLabels } from "./rate-presentation";
 
 export function EvidenceBadge({ level }: { level: UnitCostRow["evidenceLevel"] }) {
@@ -19,7 +20,7 @@ export function EvidenceBadge({ level }: { level: UnitCostRow["evidenceLevel"] }
 const authorityLabels: Record<UnitCostSource["authority"], string> = {
   first_party: "Official publisher",
   secondary: "Third-party reference",
-  project: "Cayfore assumption",
+  project: `${APP_NAME} assumption`,
   unknown: "Unverified publisher",
 };
 const roleLabels: Record<UnitCostSource["role"], string> = {

@@ -8,7 +8,7 @@ test("every desktop header action explains itself on hover and keyboard focus", 
   await expect.poll(() => new URL(page.url()).hash).toMatch(/^#plan=/);
   const header = page.getByRole("banner");
   const actions = [
-    header.getByRole("button", { name: /^Cayfore\b/ }),
+    header.getByRole("button", { name: /^Catalogfore\b/ }),
     header.getByRole("button", { name: "Plan", exact: true }),
     header.getByRole("button", { name: "Product map", exact: true }),
     header.getByRole("button", { name: "Unit costs", exact: true }),
@@ -101,7 +101,7 @@ test("touch menu explains its actions and fits a narrow screen @mobile", async (
   await expect(menu.getByRole("menuitem", { name: /^(Plan|Product map|Unit costs)\b/ })).toHaveCount(0);
   await expect(menu.getByRole("menuitem", { name: /^Advanced\b/ })).toHaveAttribute("aria-haspopup", "dialog");
   const source = menu.getByRole("menuitem", { name: /^Star on GitHub\b/ });
-  await expect(source).toHaveAttribute("href", "https://github.com/santoshshinde2012/cayfore");
+  await expect(source).toHaveAttribute("href", "https://github.com/santoshshinde2012/Catalogfore");
   await expect(source).toHaveAttribute("target", "_blank");
   await expect(source).toHaveAttribute("rel", /noreferrer/);
   await menu.getByRole("menuitem", { name: /^Forecast\b/ }).focus();

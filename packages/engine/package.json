@@ -4,13 +4,14 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/santoshshinde2012/cayfore.git",
+    "url": "git+https://github.com/santoshshinde2012/Catalogfore.git",
     "directory": "packages/engine"
   },
   "type": "module",
-  "description": "Shared estimate and forecast engine for Cayfore",
+  "description": "Shared estimate and forecast engine for Catalogfore",
   "exports": {
     ".": "./src/index.ts",
+    "./product-name": "./src/product-name.ts",
     "./products": "./src/products.ts",
     "./unit-costs": "./src/unit-costs/index.ts"
   },

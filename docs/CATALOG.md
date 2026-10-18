@@ -1,6 +1,6 @@
 # Product catalog
 
-Cayfore's [`data/product-catalog.json`](../data/product-catalog.json) describes products, workload templates, editable drivers and source context. It is an inventory, not a complete worldwide tariff or an availability guarantee. [PRODUCTS.md](PRODUCTS.md) is its generated product directory.
+Catalogfore's [`data/product-catalog.json`](../data/product-catalog.json) describes products, workload templates, editable drivers and source context. It is an inventory, not a complete worldwide tariff or an availability guarantee. [PRODUCTS.md](PRODUCTS.md) is its generated product directory.
 
 Public dollar prices resolve through the shared engine policy. Exact Azure Retail Prices meters and validated Databricks price-card/calculator observations take precedence over labelled reference estimates. Native component prices and consumption conversions use the shared component registry. Customer-supplied rates and imported monetary costs retain their own provenance. [UNIT-COSTS.md](UNIT-COSTS.md) explains the quote policy, units, evidence and exclusions; [DATA-PIPELINE.md](DATA-PIPELINE.md) describes source capture and maintenance.
 

@@ -564,7 +564,7 @@
       "summary": "Regional rates are factors only",
       "category": "data_engineering",
       "billingUnit": "Unpublished as its own line",
-      "note": "The Lakehouse Real-Time page publishes regional $/DBU for LAKEHOUSE_SERVERLESS_COMPUTE. Cayfore uses those ratios as region factors on other SKUs. It does not add a second DBU price for the same usage. This line has no resolved standalone quote.",
+      "note": "The Lakehouse Real-Time page publishes regional $/DBU for LAKEHOUSE_SERVERLESS_COMPUTE. Catalogfore uses those ratios as region factors on other SKUs. It does not add a second DBU price for the same usage. This line has no resolved standalone quote.",
       "confidenceScore": 8
     },
     {
@@ -634,7 +634,7 @@
         "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
         "fetchedOn": "2026-10-17"
       },
-      "note": "Azure still lists Standard jobs, all-purpose, SQL, and Jobs Light meters. Standard is retired and is not a Cayfore template, so no standalone quote is asserted. East US examples on 2026-10-17: Jobs $0.15, All-purpose $0.40, SQL $0.22, Jobs Light $0.07.",
+      "note": "Azure still lists Standard jobs, all-purpose, SQL, and Jobs Light meters. Standard is retired and is not a Catalogfore template, so no standalone quote is asserted. East US examples on 2026-10-17: Jobs $0.15, All-purpose $0.40, SQL $0.22, Jobs Light $0.07.",
       "fields": [],
       "patch": {
         "sku": "managed_services",
@@ -2545,7 +2545,7 @@
       "summary": "Route and endpoint tariffs need a matching quote",
       "category": "governance_sharing",
       "billingUnit": "Route-dependent GB and endpoint-hours; not modeled",
-      "note": "Private connectivity can include per-GB and endpoint-hour charges. The current pricing page links an official data-transfer tariff effective 2024-08-01; current documentation differs on endpoint-hour applicability. Cayfore does not yet map every route, cloud, endpoint and effective interval. This component remains unresolved rather than implying the network is free. Azure’s Data Processed observation is a separate scoped component, and customer-cloud networking can add charges.",
+      "note": "Private connectivity can include per-GB and endpoint-hour charges. The current pricing page links an official data-transfer tariff effective 2024-08-01; current documentation differs on endpoint-hour applicability. Catalogfore does not yet map every route, cloud, endpoint and effective interval. This component remains unresolved rather than implying the network is free. Azure’s Data Processed observation is a separate scoped component, and customer-cloud networking can add charges.",
       "confidenceScore": 8
     },
     {

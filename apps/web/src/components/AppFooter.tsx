@@ -1,11 +1,11 @@
-import { REPO } from "../site";
+import { APP_NAME, REPO } from "../site";
 import { InfoTooltip } from "./ui/tooltip";
 
 const sources = [
   {
     label: "Source",
     title: "Source code",
-    description: "Explore Cayfore's implementation and contribute on GitHub.",
+    description: `Explore ${APP_NAME}'s implementation and contribute on GitHub.`,
     href: REPO,
   },
   {
@@ -74,7 +74,7 @@ export function AppFooter({
               <span className="flex size-5 items-center justify-center rounded-md bg-foreground" aria-hidden="true">
                 <span className="size-1.5 rounded-full bg-lava" />
               </span>
-              Cayfore
+              {APP_NAME}
             </p>
             <p className="mt-2 text-sm text-muted-foreground">
               An independent estimate of Databricks spend. Not a quote, and not affiliated with Databricks.

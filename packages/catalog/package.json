@@ -4,11 +4,11 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/santoshshinde2012/cayfore.git",
+    "url": "git+https://github.com/santoshshinde2012/Catalogfore.git",
     "directory": "packages/catalog"
   },
   "type": "module",
-  "description": "Versioned Databricks product catalog for Cayfore. Schema, citations, and confidence. Not a price feed from Databricks.",
+  "description": "Versioned Databricks product catalog for Catalogfore. Schema, citations, and confidence. Not a price feed from Databricks.",
   "exports": {
     ".": "./src/index.ts",
     "./map": "./src/map.ts",

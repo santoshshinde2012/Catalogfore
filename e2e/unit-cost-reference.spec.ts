@@ -1,5 +1,6 @@
 import type { Portfolio } from "@cayfore/engine";
 import { expect, test } from "@playwright/test";
+import { expectComboboxValue } from "./combobox";
 import { savedDownload } from "./forecast-helpers";
 
 test("forecast references keep a workload's cloud, region and edition through reload and browser Back", async ({
@@ -43,14 +44,14 @@ test("forecast references keep a workload's cloud, region and edition through re
   await page.getByText("Inspect rates and assumptions", { exact: true }).click();
   await page.getByRole("button", { name: "View reference unit costs", exact: true }).click();
   await expect(page.locator("#unit-costs")).toBeFocused();
-  await expect(page.getByRole("combobox", { name: "Product or service", exact: true })).toHaveValue("jobs_serverless");
-  await expect(page.getByRole("combobox", { name: "Cloud", exact: true })).toHaveValue("azure");
-  await expect(page.getByRole("combobox", { name: "Region", exact: true })).toHaveValue("eastus");
-  await expect(page.getByRole("combobox", { name: "Edition", exact: true })).toHaveValue("enterprise");
+  await expectComboboxValue(page, "Product or service", "jobs_serverless");
+  await expectComboboxValue(page, "Cloud", "azure");
+  await expectComboboxValue(page, "Region", "eastus");
+  await expectComboboxValue(page, "Edition", "enterprise");
   expect(new URL(page.url()).hash).toBe(hash);
   await page.reload();
-  await expect(page.getByRole("combobox", { name: "Cloud", exact: true })).toHaveValue("azure");
-  await expect(page.getByRole("combobox", { name: "Region", exact: true })).toHaveValue("eastus");
+  await expectComboboxValue(page, "Cloud", "azure");
+  await expectComboboxValue(page, "Region", "eastus");
   await page.goBack();
   await expect(page.getByTestId("year-sentence")).toBeVisible();
   expect(new URL(page.url()).hash).toBe(hash);

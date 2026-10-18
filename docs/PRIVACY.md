@@ -1,6 +1,6 @@
 # Privacy
 
-Cayfore calculates in the browser. The page does not send the forecast, the usage file, or the share link to a Cayfore server. There is no account.
+Catalogfore calculates in the browser. The page does not send the forecast, the usage file, or the share link to a Catalogfore server. There is no account.
 
 A usage CSV is read on your machine. It is not uploaded. The same is true of the exports: CSV, Excel, JSON, and PDF are built locally.
 
@@ -12,4 +12,4 @@ The theme choice is stored in this browser under the key `cayfore-theme`. A brow
 
 Scripts, styles, and fonts are served with the page. The build does not load an analytics script and does not set a cookie. Browser storage contains the theme and any scenarios the user saves.
 
-GitHub Pages, and your browser, still have their own logs. This note covers what Cayfore itself does.
+GitHub Pages, and your browser, still have their own logs. This note covers what Catalogfore itself does.

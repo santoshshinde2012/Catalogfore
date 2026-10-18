@@ -1,14 +1,14 @@
-# Cayfore
+# Catalogfore
 
 A browser-local Databricks budget and scenario planner, with a 12-month cost forecast.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-111111)](LICENSE)
 [![Node 22.13+](https://img.shields.io/badge/node-22.13%2B-111111)](package.json)
-[![Live site](https://img.shields.io/badge/live-GitHub%20Pages-111111)](https://santoshshinde2012.github.io/cayfore/)
+[![Live site](https://img.shields.io/badge/live-GitHub%20Pages-111111)](https://santoshshinde2012.github.io/Catalogfore/)
 
-Cayfore is the interface. This repository is the forecast. It is an estimate, not a quote, and it is not affiliated with Databricks. The calculation stays in the browser. See [docs/PRIVACY.md](docs/PRIVACY.md).
+Catalogfore is the interface. This repository is the forecast. It is an estimate, not a quote, and it is not affiliated with Databricks. The calculation stays in the browser. See [docs/PRIVACY.md](docs/PRIVACY.md).
 
-![Cayfore on a wide screen: quick inputs and a year total with a planning range](docs/screenshots/forecast-light.png)
+![Catalogfore on a wide screen: quick inputs and a year total with a planning range](docs/screenshots/forecast-light.png)
 
 ## What it answers
 
@@ -62,7 +62,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173/cayfore/
+Open http://localhost:5173/Catalogfore/
 
 Use Node 22.13+ within Node 22, or Node 24+. Run `nvm use` to select Node 22 from `.nvmrc`.
 
@@ -78,6 +78,61 @@ npm run test:e2e  # Playwright, desktop and mobile, including axe
 ```
 
 The core JavaScript is about 290 KB gzipped, including the separately cached price catalog. Charts, the product map and its metadata, PDF, and Excel export load in separate chunks. CSS is about 11 KB gzipped, before the font files.
+
+## Architecture
+
+The web app, the command line, and the MCP server call one forecast engine. Pricing stays in versioned files. A new screen does not keep its own rate table.
+
+```mermaid
+flowchart TB
+  subgraph clients [Clients]
+    direction LR
+    Web[Web app]
+    CLI[CLI]
+    MCP[MCP server]
+  end
+
+  subgraph application [Application]
+    direction LR
+    Plan[Plan and scenarios]
+    Map[Product map]
+    Rates[Unit costs]
+    Sheet[Excel workbook]
+  end
+
+  subgraph engine [Forecast engine]
+    direction LR
+    Projection[Projection]
+    Estimate[Estimate]
+    Strategies[Cost strategies]
+    Policies[Scenario policies]
+  end
+
+  subgraph sources [Versioned sources]
+    direction LR
+    Catalog[(Product catalog)]
+    Prices[(Price book)]
+  end
+
+  Web --> Plan
+  Web --> Map
+  Web --> Rates
+  Web --> Sheet
+  CLI --> Projection
+  MCP --> Projection
+  Plan --> Projection
+  Sheet --> Projection
+  Map --> Catalog
+  Rates --> Catalog
+  Rates --> Prices
+  Projection --> Estimate
+  Projection --> Policies
+  Estimate --> Strategies
+  Strategies --> Catalog
+  Strategies --> Prices
+```
+
+Clients choose a plan, a product, or a unit price. The engine projects that request through an estimate and a cost strategy. Strategies read the product catalog and the price book. Excel export is a separate package and loads only when someone exports. The layering, and how to add a product without editing the estimate, is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Repository
 
@@ -97,7 +152,7 @@ The core JavaScript is about 290 KB gzipped, including the separately cached pri
 | `docs/UNIT-COSTS.md`         | Source unit prices, dimensions, formulas, CSV/JSON, and evidence limits |
 | `docs/COVERAGE.md`           | Which products and Azure cells have a cited rate                        |
 | `docs/RESEARCH.md`           | Source for every rate                                                   |
-| `docs/NAMING.md`             | Why the product is called Cayfore                                       |
+| `docs/NAMING.md`             | Why the product is called Catalogfore                                   |
 | `docs/ARCHITECTURE.md`       | How the pricing code is split                                           |
 | `docs/USABILITY.md`          | Walkthroughs for evaluating, budgeting, and a usage file                |
 | `docs/USAGE-IMPORT.md`       | Typed import, period selection, currencies, corrections, and cost basis |
@@ -113,9 +168,9 @@ The core JavaScript is about 290 KB gzipped, including the separately cached pri
 
 ## Publish
 
-Pushes to `main` publish the site from `.github/workflows/pages.yml`. The address is https://santoshshinde2012.github.io/cayfore/
+Pushes to `main` publish the site from `.github/workflows/pages.yml`. The address is https://santoshshinde2012.github.io/Catalogfore/
 
-Vite’s base path is `/cayfore/`. Unknown addresses serve `404.html`. The repository social-preview image is `.github/social-preview.png` (1280×640). Upload that file in the repository settings if GitHub has not picked it up. Topics and the description belong on the repository, not in the page.
+Vite’s base path is `/Catalogfore/`. Unknown addresses serve `404.html`. The repository social-preview image is `.github/social-preview.png` (1280×640). Upload that file in the repository settings if GitHub has not picked it up. Topics and the description belong on the repository, not in the page.
 
 One weekly workflow, Mondays at 06:00 UTC, refreshes AWS and Azure list prices and checks allowed Databricks metadata for new or renamed products. It opens a single review pull request and does not merge. GCP virtual-machine rates stay seeded unless `GCP_BILLING_API_KEY` is set. Do not commit that key. The job captures and validates official Databricks price-card and calculator JSON before updating the shared resolver. Saved source responses make the accepted rates reproducible. The forecast page prints the catalog date; individual source observation dates are separate. Details are in [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md).
 

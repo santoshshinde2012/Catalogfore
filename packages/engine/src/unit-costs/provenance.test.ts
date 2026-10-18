@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildUnitCostCatalog } from "./builder.js";
 import { filterUnitCosts } from "./serialization.js";
+import { PRODUCT_NAME } from "../product-name.js";
 import { sourceIdentity, sourceReference, withEvidenceLevel } from "./provenance.js";
 import type { UnitCostRow } from "./types.js";
 
@@ -21,9 +22,10 @@ describe("source authority and numeric evidence", () => {
       "first_party",
     );
     expect(sourceIdentity("https://community.databricks.com/t5/example").authority).toBe("secondary");
-    expect(sourceIdentity("https://github.com/santoshshinde2012/cayfore/blob/main/data/instances.json").authority).toBe(
-      "project",
-    );
+    expect(sourceIdentity("https://github.com/santoshshinde2012/Catalogfore/blob/main/data/instances.json")).toEqual({
+      authority: "project",
+      publisher: PRODUCT_NAME,
+    });
     for (const url of [
       "https://prices.azure.com.example.org/rates",
       "https://www.databricks.com.evil.example/pricing",
@@ -31,6 +33,7 @@ describe("source authority and numeric evidence", () => {
       "https://user@prices.azure.com/api/retail/prices",
       "http://prices.azure.com/api/retail/prices",
       "https://prices.azure.com:444/api/retail/prices",
+      "https://github.com/santoshshinde2012/Catalogfore-unrelated/blob/main/data.json",
       "https://github.com/santoshshinde2012/cayfore-unrelated/blob/main/data.json",
       "not a URL",
     ])

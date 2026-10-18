@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import type { Theme } from "../hooks/forecast-session";
+import { APP_NAME } from "../site";
 import { WorkspaceMenu } from "./WorkspaceMenu";
 import { WorkspaceNavigation } from "./WorkspaceNavigation";
 import { InfoTooltip } from "./ui/tooltip";
@@ -70,7 +71,9 @@ export function AppHeader({
               </svg>
             </span>
             <span>
-              <span className="block text-[19px] leading-6 font-semibold tracking-[-0.045em]">Cayfore</span>
+              <span className="block text-[17px] leading-6 font-semibold tracking-[-0.04em] whitespace-nowrap sm:text-[19px]">
+                {APP_NAME}
+              </span>
               <span className="block text-[10px] leading-3.5 font-medium tracking-[0.015em] text-muted-foreground">
                 Databricks cost planning
               </span>

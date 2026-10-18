@@ -31,7 +31,7 @@ The process speaks MCP over stdin and stdout. A client config looks like this (u
   "mcpServers": {
     "cayfore": {
       "command": "node",
-      "args": ["/absolute/path/cayfore/mcp/dist/index.js"]
+      "args": ["/absolute/path/Catalogfore/mcp/dist/index.js"]
     }
   }
 }
@@ -116,7 +116,7 @@ The CLI accepts the corresponding options as `--cloud`, `--tier`, `--region`, `-
 
 ### `export_xlsx`
 
-Same `portfolio` as `forecast`. Returns `filename` (`cayfore-forecast-<cloud>-<YYYY-MM-DD>.xlsx`) and `workbookBase64`. The workbook has Summary, Monthly forecast, Breakdown, Products, Savings, and Rates sheets. Totals are Excel `SUM` formulas. It is an estimate, not a quote, and it says it is not affiliated with Databricks.
+Same `portfolio` as `forecast`. Returns `filename` (`catalogfore-forecast-<cloud>-<YYYY-MM-DD>.xlsx`) and `workbookBase64`. The workbook has Summary, Monthly forecast, Breakdown, Products, Savings, and Rates sheets. Totals are Excel `SUM` formulas. It is an estimate, not a quote, and it says it is not affiliated with Databricks.
 
 ## What this server will not do
 

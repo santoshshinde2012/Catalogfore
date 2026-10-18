@@ -10,7 +10,7 @@ npm test
 npm run dev
 ```
 
-The site is at http://localhost:5173/cayfore/.
+The site is at http://localhost:5173/Catalogfore/.
 
 Before a pull request:
 

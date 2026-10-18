@@ -1,6 +1,6 @@
 # Usability
 
-Updated against the running app on **2026-10-18**. The quick page uses rate card **2026-10-17.1** and the product catalog is **2026-10-17.1**. These are reproducible walkthroughs and browser checks, not participant usability research. Figures are estimates, not a quote. Cayfore is not affiliated with Databricks.
+Updated against the running app on **2026-10-18**. The quick page uses rate card **2026-10-17.1** and the product catalog is **2026-10-17.1**. These are reproducible walkthroughs and browser checks, not participant usability research. Figures are estimates, not a quote. Catalogfore is not affiliated with Databricks.
 
 The page is one forecast. Cloud and tier, a starting monthly amount or a team size, a mix of pipelines / dashboards / models, and monthly growth. The year updates as those change. A shaded 12-month band, the year total, one sentence, and a month table are the result. Region, a commitment discount, a usage file, and the per-workload builder sit behind that.
 
@@ -10,7 +10,7 @@ Light is the default. Dark mode is optional. Databricks’ own forecast (Usage D
 
 On a phone, **View forecast** jumps from the inputs to the result; **Edit inputs** returns to the form. The fixed summary respects the device's safe area. Chart tabs form a balanced two-column layout on narrow screens. Month tables and billing details scroll within named, keyboard-focusable regions.
 
-The Cayfore brand returns to the inputs while keeping the current plan. **Menu → New forecast** explicitly starts again; **Undo last change** restores the previous plan. Section navigation preserves the shared URL and moves keyboard focus to its destination. The Open forecast menu item works with a keyboard or touch. Header destinations use plain text and active underlines, with one unboxed Menu trigger for secondary actions.
+The Catalogfore brand returns to the inputs while keeping the current plan. **Menu → New forecast** explicitly starts again; **Undo last change** restores the previous plan. Section navigation preserves the shared URL and moves keyboard focus to its destination. The Open forecast menu item works with a keyboard or touch. Header destinations use plain text and active underlines, with one unboxed Menu trigger for secondary actions.
 
 Starting spend retains the amount entered. A separate modeled baseline explains sizing differences. Enter applies spend or custom growth; invalid drafts show an error and preserve the last valid forecast. Adding or selecting an advanced workload reveals and focuses its editor; closing or removing it restores focus to the workload list.
 

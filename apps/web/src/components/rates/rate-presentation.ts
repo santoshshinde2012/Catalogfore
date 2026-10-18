@@ -27,6 +27,15 @@ export function unitMoney(value: number): string {
   }).format(value);
 }
 
+/** Difference between two quotes of the same billing unit. Equal within a nano-dollar is the same price. */
+export function regionalQuoteDelta(baseline: number, quote: number): string {
+  const raw = quote - baseline;
+  if (Math.abs(raw) <= 1e-9) return "Same price";
+  const delta = Number(raw.toPrecision(12));
+  const amount = unitMoney(Math.abs(delta));
+  return delta > 0 ? `${amount} higher` : `${amount} lower`;
+}
+
 export function rowPrice(row: UnitCostRow): string {
   if (row.rateKind === "money" && row.unitPriceUsd !== null) return unitMoney(row.unitPriceUsd);
   if (row.rateKind === "consumption" && row.dbuPerUnit !== null)

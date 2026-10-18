@@ -1,4 +1,5 @@
 import { listInstances, skuCatalog } from "@cayfore/engine";
+import { OptionSelect } from "../ui/option-select";
 import { type KindProps, numberOr, ScaleFields, ScheduleFields } from "./fields";
 
 export function ClusterFields({ workload, portfolio, onChange }: KindProps) {
@@ -6,19 +7,16 @@ export function ClusterFields({ workload, portfolio, onChange }: KindProps) {
   const cloud = workload.cloud ?? portfolio.cloud;
   return (
     <div className="mt-3 grid gap-3">
-      <label className="field">
-        Instance
-        <select
-          value={workload.instanceId}
-          onChange={(event) => onChange({ ...workload, instanceId: event.target.value })}
-        >
-          {listInstances(cloud).map((instance) => (
-            <option key={instance.id} value={instance.id}>
-              {instance.label} · {instance.vCPU} vCPU · {instance.dbuPerHour} DBU/h · {instance.family}
-            </option>
-          ))}
-        </select>
-      </label>
+      <OptionSelect
+        tone="field"
+        label="Instance"
+        value={workload.instanceId}
+        onValueChange={(instanceId) => onChange({ ...workload, instanceId })}
+        options={listInstances(cloud).map((instance) => ({
+          value: instance.id,
+          label: `${instance.label} · ${instance.vCPU} vCPU · ${instance.dbuPerHour} DBU/h · ${instance.family}`,
+        }))}
+      />
       <ScaleFields label="Workers" scale={workload.scale} onChange={(scale) => onChange({ ...workload, scale })} />
       <ScheduleFields schedule={workload.schedule} onChange={(schedule) => onChange({ ...workload, schedule })} />
       <div className="grid-2">

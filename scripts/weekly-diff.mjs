@@ -137,7 +137,7 @@ export function sitemapLocs(xml) {
 export function renderResearchIssue(items) {
   if (!items.length) return "";
   return [
-    "The weekly catalog check found public signals that are not in the Cayfore catalog yet.",
+    "The weekly catalog check found public signals that are not in the Catalogfore catalog yet.",
     "",
     "This is a research checklist. It does not change a rate by itself.",
     "",

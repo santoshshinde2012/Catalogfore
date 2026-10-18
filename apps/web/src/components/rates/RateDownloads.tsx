@@ -1,10 +1,17 @@
 import { unitCostCsv, unitCostJson, type UnitCostCatalog, type UnitCostRow } from "@cayfore/engine/unit-costs";
-import { Download } from "lucide-react";
+import { Braces, FileSpreadsheet, LoaderCircle } from "lucide-react";
 import { useState } from "react";
+import { APP_NAME } from "../../site";
 import { Button } from "../ui/button";
+import { OptionSelect } from "../ui/option-select";
 import { InfoTooltip } from "../ui/tooltip";
 import { RateDataPreview } from "./RateDataPreview";
 import { useRateDataTable } from "./useRateDataTable";
+
+const formats = [
+  { id: "csv", label: "CSV", icon: FileSpreadsheet, hint: "Spreadsheet of the selected rows" },
+  { id: "json", label: "JSON", icon: Braces, hint: "Catalog file with the same rows" },
+] as const;
 
 export function RateDownloads({
   catalog,
@@ -19,6 +26,7 @@ export function RateDownloads({
   const [error, setError] = useState("");
   const [busy, setBusy] = useState("");
   const table = useRateDataTable(scope === "all" ? catalog.rows : rows);
+  const count = (value: number) => value.toLocaleString("en-US");
   async function download(format: "csv" | "json") {
     const selected = table.orderedRows;
     let url: string | undefined;
@@ -32,7 +40,7 @@ export function RateDownloads({
       );
       const anchor = document.createElement("a");
       anchor.href = url;
-      anchor.download = `cayfore-unit-costs-${scope}.${format}`;
+      anchor.download = `${APP_NAME.toLowerCase()}-unit-costs-${scope}.${format}`;
       document.body.append(anchor);
       anchor.click();
       anchor.remove();
@@ -46,38 +54,50 @@ export function RateDownloads({
   }
   return (
     <section aria-label="Download unit costs" className="min-w-0 overflow-hidden rounded-xl border bg-card">
-      <div className="flex flex-wrap items-end gap-3 px-4 pt-4 sm:px-5">
-        <div className="min-w-0 basis-full lg:grow lg:basis-0 lg:pb-1 lg:pr-3">
+      <div className="flex flex-wrap items-end justify-between gap-3 px-4 pt-4 sm:px-5">
+        <div className="min-w-0 basis-full lg:max-w-md lg:basis-auto lg:pb-1">
           <h2 className="text-base font-semibold tracking-tight">Explore the price catalog</h2>
           <p className="mt-1 text-xs text-muted-foreground">
             Catalog {catalog.catalogVersion} · Monetary prices in USD
           </p>
         </div>
-        <label className="field min-w-0 grow basis-full sm:basis-64 lg:w-70 lg:grow-0 lg:basis-auto">
-          Download scope
-          <select value={scope} onChange={(event) => setScope(event.target.value)} disabled={Boolean(busy)}>
-            <option value="filtered">Filtered rows ({rows.length.toLocaleString("en-US")})</option>
-            <option value="all">Complete catalog ({catalog.rows.length.toLocaleString("en-US")})</option>
-          </select>
-        </label>
-        {(["csv", "json"] as const).map((format) => (
-          <InfoTooltip
-            key={format}
-            label={`Download ${format.toUpperCase()}`}
-            description="Includes unit prices, dimensions, formulas, evidence, and source URLs. Empty prices remain unresolved."
-          >
-            <Button
-              type="button"
-              variant="outline"
-              className="min-h-11 rounded-md"
-              onClick={() => void download(format)}
-              disabled={Boolean(busy)}
-            >
-              <Download aria-hidden="true" />
-              {busy === format ? `Preparing ${format.toUpperCase()}…` : format.toUpperCase()}
-            </Button>
-          </InfoTooltip>
-        ))}
+        <div className="flex w-full flex-wrap items-end gap-2 sm:w-auto">
+          <OptionSelect
+            className="min-w-0 grow basis-full sm:w-72 sm:grow-0 sm:basis-auto"
+            label="Download scope"
+            value={scope}
+            disabled={Boolean(busy)}
+            onValueChange={setScope}
+            options={[
+              { value: "filtered", label: `Filtered rows (${count(rows.length)})` },
+              { value: "all", label: `Complete catalog (${count(catalog.rows.length)})` },
+            ]}
+          />
+          <div role="group" aria-label="Export format" className="flex gap-2">
+            {formats.map(({ id, label, icon: Icon, hint }) => {
+              const preparing = busy === id;
+              return (
+                <InfoTooltip key={id} label={`Download ${label}`} description={hint}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-11 min-w-[6.5rem] justify-start px-3 sm:h-10"
+                    aria-label={preparing ? `Preparing ${label}` : label}
+                    onClick={() => void download(id)}
+                    disabled={Boolean(busy)}
+                  >
+                    {preparing ? (
+                      <LoaderCircle className="animate-spin" aria-hidden="true" />
+                    ) : (
+                      <Icon aria-hidden="true" />
+                    )}
+                    {preparing ? "Preparing…" : label}
+                  </Button>
+                </InfoTooltip>
+              );
+            })}
+          </div>
+        </div>
       </div>
       <p
         id="rate-preview-help"

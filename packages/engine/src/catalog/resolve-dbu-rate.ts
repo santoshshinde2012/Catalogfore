@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "../product-name.js";
 import type { Cloud, SkuId, Tier } from "../types.js";
 import type { DbuRateConflict, DbuRateObservation } from "./dbu-rate-types.js";
 import type { PricingCatalog } from "./pricing-catalog.js";
@@ -139,7 +140,9 @@ export function resolveDbuRate(catalog: RateCatalog, placement: DbuRatePlacement
   const description = cloud === "azure" ? "Azure consumption meter" : "Databricks first-party USD/DBU observation";
   const notes = [
     "Public list-price snapshot; contract discounts and taxes are excluded.",
-    ...(cloud === "azure" && tier === "enterprise" ? ["Azure Enterprise uses the Premium list rate in Cayfore."] : []),
+    ...(cloud === "azure" && tier === "enterprise"
+      ? [`Azure Enterprise uses the Premium list rate in ${PRODUCT_NAME}.`]
+      : []),
     ...(!exact ? ["Reference price × regional proxy; this is not a published regional tariff."] : []),
     ...(numericSource?.region === null && !exact
       ? [

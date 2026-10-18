@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { defineConfig, type Plugin } from "vite";
 import { productionCsp } from "./src/csp";
-import { BASE_PATH, PAGE_DESCRIPTION, SITE } from "./src/site";
+import { APP_NAME, BASE_PATH, PAGE_DESCRIPTION, SITE } from "./src/site";
 
 /** Production-only CSP and JSON-LD. Dev keeps the Vite client, which needs inline scripts. */
 function productionPolicy(): Plugin {
@@ -12,14 +12,14 @@ function productionPolicy(): Plugin {
     "@graph": [
       {
         "@type": "WebSite",
-        name: "Cayfore",
+        name: APP_NAME,
         url: SITE,
         description: PAGE_DESCRIPTION,
         inLanguage: "en",
       },
       {
         "@type": ["WebApplication", "SoftwareApplication"],
-        name: "Cayfore",
+        name: APP_NAME,
         applicationCategory: "BusinessApplication",
         applicationSubCategory: "Databricks cost calculator",
         operatingSystem: "Web",

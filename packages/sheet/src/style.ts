@@ -1,5 +1,5 @@
 import type ExcelJS from "exceljs";
-import { neutralizeSpreadsheetFormula } from "@cayfore/engine";
+import { PRODUCT_NAME, neutralizeSpreadsheetFormula } from "@cayfore/engine";
 
 /** Lava accent used by the page. Header text sits on it in white. */
 const ACCENT = "FFFF3621";
@@ -26,8 +26,8 @@ export function prepareSheet(sheet: ExcelJS.Worksheet, columnCount: number): voi
     horizontalCentered: true,
   };
   sheet.headerFooter = {
-    oddHeader: "&LCayfore&CForecast",
-    evenHeader: "&LCayfore&CForecast",
+    oddHeader: `&L${PRODUCT_NAME}&CForecast`,
+    evenHeader: `&L${PRODUCT_NAME}&CForecast`,
     oddFooter: "&LNot affiliated with Databricks&RPage &P of &N",
     evenFooter: "&LNot affiliated with Databricks&RPage &P of &N",
   };

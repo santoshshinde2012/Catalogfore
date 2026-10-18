@@ -1659,7 +1659,7 @@
         "billing",
         "pricing"
       ],
-      "billingContext": "Cayfore already applies portfolio add-ons. Avoid a second line for the same charge."
+      "billingContext": "Catalogfore already applies portfolio add-ons. Avoid a second line for the same charge."
     },
     {
       "id": "unity_catalog",

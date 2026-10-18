@@ -3,6 +3,7 @@ import type { LucideIcon } from "lucide-react";
 import { FileJson2, FileSpreadsheet, FileText } from "lucide-react";
 
 import { exportResult, forecastCsv, forecastJson, type ForecastExportResult } from "./export-data";
+import { APP_NAME } from "./site";
 
 export type ForecastDownload = {
   id: string;
@@ -104,7 +105,7 @@ export async function exportPdf(
   const yearBand = canonical.band;
   const ideas = recommendations(portfolio).slice(0, 4);
   doc.setFont("times", "bold");
-  write("Cayfore", 12, 14);
+  write(APP_NAME, 12, 14);
   write(portfolio.name || "Untitled forecast", 20, 22);
   doc.setFont("times", "normal");
   write(`${portfolio.cloud.toUpperCase()} · ${portfolio.region} · ${portfolio.tier}`);

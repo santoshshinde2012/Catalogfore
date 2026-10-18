@@ -1,4 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { PRODUCT_NAME } from "../../packages/engine/src/product-name.ts";
 import { DISCLAIMER, forecastOf, portfolioSchema, text } from "./reply.js";
 import { registerToolModule } from "./tool-modules.js";
 
@@ -7,8 +8,7 @@ export function registerXlsxTool(server: McpServer) {
     "export_xlsx",
     {
       title: "Export a forecast workbook",
-      description:
-        "Build a Cayfore Excel workbook for a portfolio. Returns the filename and a base64 .xlsx. Estimates only, not a quote. Not affiliated with Databricks.",
+      description: `Build a ${PRODUCT_NAME} Excel workbook for a portfolio. Returns the filename and a base64 .xlsx. Estimates only, not a quote. Not affiliated with Databricks.`,
       inputSchema: { portfolio: portfolioSchema() },
     },
     async ({ portfolio }) => {

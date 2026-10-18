@@ -1,21 +1,23 @@
 import { skuCatalog, PROVISIONED_MODEL_UNITS_PER_BLOCK } from "@cayfore/engine";
 import { useId } from "react";
+import { OptionSelect } from "../ui/option-select";
 import { type KindProps, numberOr, ScheduleFields } from "./fields";
 
 export function ServingFields({ workload, onChange }: KindProps) {
   if (workload.kind !== "model_serving") return null;
   return (
     <div className="mt-3 grid gap-3">
-      <label className="field">
-        Mode
-        <select
-          value={workload.mode}
-          onChange={(event) => onChange({ ...workload, mode: event.target.value as "cpu" | "gpu" })}
-        >
-          <option value="cpu">CPU · per concurrent request</option>
-          <option value="gpu">GPU · per replica</option>
-        </select>
-      </label>
+      <OptionSelect
+        tone="field"
+        label="Mode"
+        value={workload.mode}
+        searchable={false}
+        onValueChange={(mode) => onChange({ ...workload, mode: mode as "cpu" | "gpu" })}
+        options={[
+          { value: "cpu", label: "CPU · per concurrent request" },
+          { value: "gpu", label: "GPU · per replica" },
+        ]}
+      />
       {workload.mode === "cpu" ? (
         <label className="field">
           Average concurrent requests
@@ -29,16 +31,17 @@ export function ServingFields({ workload, onChange }: KindProps) {
         </label>
       ) : (
         <>
-          <label className="field">
-            GPU
-            <select value={workload.gpuId} onChange={(event) => onChange({ ...workload, gpuId: event.target.value })}>
-              {skuCatalog.servingGpuDbuPerHour.map((gpu) => (
-                <option key={gpu.id} value={gpu.id}>
-                  {gpu.label} · {gpu.dbuPerHour} DBU/h
-                </option>
-              ))}
-            </select>
-          </label>
+          <OptionSelect
+            tone="field"
+            label="GPU"
+            value={workload.gpuId}
+            searchable={false}
+            onValueChange={(gpuId) => onChange({ ...workload, gpuId })}
+            options={skuCatalog.servingGpuDbuPerHour.map((gpu) => ({
+              value: gpu.id,
+              label: `${gpu.label} · ${gpu.dbuPerHour} DBU/h`,
+            }))}
+          />
           <label className="field">
             Replicas
             <input
@@ -61,16 +64,13 @@ export function FoundationFields({ workload, onChange }: KindProps) {
   if (workload.kind !== "foundation_model") return null;
   return (
     <div className="mt-3 grid gap-3">
-      <label className="field">
-        Model
-        <select value={workload.modelId} onChange={(event) => onChange({ ...workload, modelId: event.target.value })}>
-          {skuCatalog.foundationModels.map((model) => (
-            <option key={model.id} value={model.id}>
-              {model.label}
-            </option>
-          ))}
-        </select>
-      </label>
+      <OptionSelect
+        tone="field"
+        label="Model"
+        value={workload.modelId}
+        onValueChange={(modelId) => onChange({ ...workload, modelId })}
+        options={skuCatalog.foundationModels.map((model) => ({ value: model.id, label: model.label }))}
+      />
       <div className="grid-2">
         <label className="field">
           Input tokens / month

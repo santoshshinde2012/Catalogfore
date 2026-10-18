@@ -1,10 +1,10 @@
 # Security
 
-Cayfore is an independent estimate. It does not log into a Databricks workspace, and the public site does not send the forecast anywhere.
+Catalogfore is an independent estimate. It does not log into a Databricks workspace, and the public site does not send the forecast anywhere.
 
 ## Reporting a vulnerability
 
-Please use [private vulnerability reporting](https://github.com/santoshshinde2012/cayfore/security/advisories/new). Include the affected path, what an attacker can do, and a suggested fix if you have one. Do not open a public issue for a vulnerability, and do not include a personal access token, a customer invoice, or a contract.
+Please use [private vulnerability reporting](https://github.com/santoshshinde2012/Catalogfore/security/advisories/new). Include the affected path, what an attacker can do, and a suggested fix if you have one. Do not open a public issue for a vulnerability, and do not include a personal access token, a customer invoice, or a contract.
 
 We will acknowledge a report within 7 days and aim to ship a fix or a documented mitigation within 30 days when the issue is in this repository.
 

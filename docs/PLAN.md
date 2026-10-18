@@ -2,7 +2,7 @@
 
 Updated **2026-10-17**. Pricing sources are in [RESEARCH.md](RESEARCH.md), import semantics in [USAGE-IMPORT.md](USAGE-IMPORT.md), and module boundaries in [ARCHITECTURE.md](ARCHITECTURE.md).
 
-Cayfore helps a Databricks owner prepare a budget and compare planned changes without workspace credentials. It is a browser-local estimate, not a vendor quote. The web app, CLI, and MCP use the same cost and forecast engine.
+Catalogfore helps a Databricks owner prepare a budget and compare planned changes without workspace credentials. It is a browser-local estimate, not a vendor quote. The web app, CLI, and MCP use the same cost and forecast engine.
 
 ## Start a plan
 
@@ -60,7 +60,7 @@ Cost strategies, product formulas, usage sources, scenario policies, and exporte
 
 Use Node **22.13+ within Node 22, or Node 24+**; `.nvmrc` and workflows select Node 22. Checks include lint, typecheck, covered engine tests, script tests, CLI/MCP checks, production build, and desktop/mobile Playwright flows with axe.
 
-The app retains GitHub Pages deployment at `/cayfore/`. This implementation changes source locally; publishing remains the repository's existing deployment workflow.
+The app retains GitHub Pages deployment at `/Catalogfore/`. This implementation changes source locally; publishing remains the repository's existing deployment workflow.
 
 ## Work requiring additional evidence
 

@@ -1,8 +1,10 @@
 # Naming
 
-The product is **Cayfore**. The GitHub repository is [cayfore](https://github.com/santoshshinde2012/cayfore). The Pages address is https://santoshshinde2012.github.io/cayfore/. The root package name is `cayfore`.
+The product is **Catalogfore**. The GitHub repository is [Catalogfore](https://github.com/santoshshinde2012/Catalogfore). The Pages address is https://santoshshinde2012.github.io/Catalogfore/. The npm scope and root package name stay `@cayfore` and `cayfore`.
 
-Cayfore is not affiliated with Databricks. The name does not use Databricks, Lakehouse, or DBU. A cay is a small island; “fore” is ahead. The wordmark is the forecast you can see before you commit.
+Catalogfore is not affiliated with Databricks. The name does not use Databricks, Lakehouse, or DBU.
+
+The table below is the 2026-10-16 search that first selected Cayfore. A cay is a small island; “fore” is ahead. The wordmark, repository, and Pages path are now Catalogfore. The npm scope and `cayfore-theme` storage key stay `cayfore`.
 
 Checked on 2026-10-16. A blank cell means no hit. This is a knockout search, not a legal opinion.
 
@@ -21,7 +23,7 @@ Checked on 2026-10-16. A blank cell means no hit. This is a knockout search, not
 | Web, including Product Hunt    | No product. Nearby “Cayfor” is a person’s name, and “cay for sale” is a real-estate phrase. | No product. Surf pages for Shoal Bay are a place, not this string. | No product under this string. The word FIRN alone has live marks, including class 9 wearables. | No product under this string. |
 | Databricks marks               | None of these words                                                                         | None                                                               | None                                                                                           | None                          |
 
-Cayfore is the one that is both unused and short enough to replace the old wordmark without changing the header layout. Shoalfore is the first alternate. Meterfirn is the second, with the FIRN class 9 note. Atollfore is the third.
+Cayfore was the candidate that was both unused and short enough for the header at the time. Shoalfore was the first alternate. Meterfirn was the second, with the FIRN class 9 note. Atollfore was the third. The product name is now Catalogfore.
 
 ## Names that were not free
 
@@ -46,10 +48,12 @@ Fifteen further candidates, same checks. “Taken” is the first conflict that 
 | Dbufore                                 | 404 | 404  | 0            | 404    | 0                   | DBU is Databricks’ billing unit. Left unused on purpose.                                |
 | Lakehouse                               | —   | —    | —            | —      | 6, live             | Databricks product name.                                                                |
 
-Databricks is a registered mark (USPTO registrations 5003730 and 6365720, owner Databricks, Inc.). Lakebase is also in a Databricks opposition. None of those words are in Cayfore.
+Databricks is a registered mark (USPTO registrations 5003730 and 6365720, owner Databricks, Inc.). Lakebase is also in a Databricks opposition. None of those words are in Catalogfore.
 
 ## What was renamed
 
-The wordmark, page title, Open Graph and Twitter titles, the 404 page, the PDF heading, the README, the docs, the MCP server name (`cayfore`), the workspace packages (`@cayfore/engine`, `@cayfore/web`, `@cayfore/mcp`), and the shell command `npm run cayfore`.
+The wordmark, page title, Open Graph and Twitter titles, the 404 page, the PDF heading, the README, and the docs now say Catalogfore. Excel and unit-cost downloads use the `catalogfore-` file prefix.
+
+The MCP server name (`cayfore`), the workspace packages (`@cayfore/engine`, `@cayfore/web`, `@cayfore/mcp`), and the shell command `npm run cayfore` keep the package scope. The public repository is Catalogfore.
 
 The repository, the Pages path, and the root npm package were renamed to `cayfore` on 2026-10-16. They had been `databricks-cost-forecaster`. The theme was stored as `dcf-theme`. It is now `cayfore-theme`. A browser that still has the old key is copied once, so an existing dark-mode choice stays.

@@ -2,15 +2,15 @@
   "name": "cayfore",
   "private": true,
   "version": "0.1.0",
-  "description": "Cayfore is an independent Databricks cost calculator and DBU forecast.",
+  "description": "Catalogfore is an independent Databricks cost calculator and DBU forecast.",
   "license": "MIT",
-  "homepage": "https://santoshshinde2012.github.io/cayfore/",
+  "homepage": "https://santoshshinde2012.github.io/Catalogfore/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/santoshshinde2012/cayfore.git"
+    "url": "git+https://github.com/santoshshinde2012/Catalogfore.git"
   },
   "bugs": {
-    "url": "https://github.com/santoshshinde2012/cayfore/issues"
+    "url": "https://github.com/santoshshinde2012/Catalogfore/issues"
   },
   "type": "module",
   "workspaces": [

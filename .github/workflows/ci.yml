@@ -39,7 +39,7 @@ jobs:
           trap 'kill "$(cat /tmp/cayfore-preview.pid)" || true' EXIT
           ready=0
           for _ in $(seq 1 40); do
-            if curl -sf -o /dev/null http://127.0.0.1:4175/cayfore/; then
+            if curl -sf -o /dev/null http://127.0.0.1:4175/Catalogfore/; then
               ready=1
               break
             fi

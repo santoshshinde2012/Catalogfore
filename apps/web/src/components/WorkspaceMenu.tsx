@@ -1,7 +1,7 @@
 import { Ellipsis, FolderOpen, Moon, RotateCcw, Star, Sun } from "lucide-react";
 import { useRef } from "react";
 import type { Theme } from "../hooks/forecast-session";
-import { REPO } from "../site";
+import { APP_NAME, REPO } from "../site";
 import { secondaryNavigation, type NavigationActions } from "./header-navigation";
 import { WorkspaceMenuEntry } from "./WorkspaceMenuEntry";
 import { Button } from "./ui/button";
@@ -72,7 +72,7 @@ export function WorkspaceMenu({
         <MenuGroupLabel separated>Forecast files</MenuGroupLabel>
         <WorkspaceMenuEntry
           label="Open forecast"
-          description="Continue from a saved Cayfore JSON file."
+          description={`Continue from a saved ${APP_NAME} JSON file.`}
           icon={FolderOpen}
           onSelect={onOpen}
         />

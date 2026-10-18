@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { ProductActions } from "./ProductActions";
 import { CoverageBadge, DomainIcon, domainColor } from "./map-presentation";
 import { cn } from "../../lib/utils";
+import { APP_NAME } from "../../site";
 
 export function ProductDetails({
   entry,
@@ -58,7 +59,7 @@ export function ProductDetails({
       )}
       {product && product.menuLabel !== entry.name && (
         <p className="mt-2 text-xs text-muted-foreground">
-          Cayfore pricing entry: <span className="font-medium">{product.menuLabel}</span>
+          {APP_NAME} pricing entry: <span className="font-medium">{product.menuLabel}</span>
         </p>
       )}
       <div className="mt-4 flex flex-wrap gap-1.5">

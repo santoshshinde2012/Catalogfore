@@ -95,7 +95,7 @@ export function renderCoverageMarkdown(report) {
     .join("\n");
   return `# Catalog coverage
 
-Generated from \`data/product-catalog.json\`, \`data/sku-rates.json\`, \`data/azure-dbu-meters.json\`, and \`data/databricks-dbu-rates.json\`. Estimates only. Cayfore is not affiliated with Databricks.
+Generated from \`data/product-catalog.json\`, \`data/sku-rates.json\`, \`data/azure-dbu-meters.json\`, and \`data/databricks-dbu-rates.json\`. Estimates only. Catalogfore is not affiliated with Databricks.
 
 ${report.assumption}
 

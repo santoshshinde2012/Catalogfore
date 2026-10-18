@@ -75,7 +75,7 @@ test("cloud, commitment, exports, and a usage file", async ({ page }) => {
   await page.getByRole("button", { name: "Export" }).click();
   const xlsxPromise = page.waitForEvent("download");
   await page.getByRole("menuitem", { name: /^XLSX\b/ }).click();
-  expect((await xlsxPromise).suggestedFilename()).toMatch(/^cayfore-forecast-[a-z]+-\d{4}-\d{2}-\d{2}\.xlsx$/);
+  expect((await xlsxPromise).suggestedFilename()).toMatch(/^catalogfore-forecast-[a-z]+-\d{4}-\d{2}-\d{2}\.xlsx$/);
   await page.getByRole("button", { name: "Export" }).click();
   const csvPromise = page.waitForEvent("download");
   await page.getByRole("menuitem", { name: /^CSV\b/ }).click();
@@ -110,7 +110,7 @@ test("advanced builder, how we got this, and theme", async ({ page }) => {
   await page.keyboard.press("Escape");
   await expect(footer.getByRole("link", { name: "Source" })).toHaveAttribute(
     "href",
-    "https://github.com/santoshshinde2012/cayfore",
+    "https://github.com/santoshshinde2012/Catalogfore",
   );
   await expect(footer.getByRole("link", { name: "License" })).toHaveAttribute("href", /LICENSE/);
   await expect(footer.getByRole("link", { name: "Research", exact: true })).toHaveAttribute("href", /RESEARCH\.md/);
@@ -151,21 +151,21 @@ test("has no serious accessibility violations", async ({ page }) => {
 test("unknown address explains that the page is not part of the forecast", async ({ page }) => {
   await page.goto("./404.html");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Page not found");
-  await expect(page.getByRole("link", { name: "Back to the forecast" })).toHaveAttribute("href", "/cayfore/");
+  await expect(page.getByRole("link", { name: "Back to the forecast" })).toHaveAttribute("href", "/Catalogfore/");
   await expect(page.locator("footer")).toContainText("not affiliated with Databricks");
   const result = await new AxeBuilder({ page }).analyze();
   expect(result.violations).toEqual([]);
 });
 
-test("search and share metadata point at the Cayfore pages address", async ({ page }) => {
+test("search and share metadata point at the Catalogfore pages address", async ({ page }) => {
   await page.goto("./");
-  await expect(page).toHaveTitle("Cayfore — Databricks cost calculator and DBU forecast");
+  await expect(page).toHaveTitle("Catalogfore — Databricks cost calculator and DBU forecast");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    "https://santoshshinde2012.github.io/cayfore/",
+    "https://santoshshinde2012.github.io/Catalogfore/",
   );
   await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /Databricks pricing estimator/);
-  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /\/cayfore\/og\.png$/);
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /\/Catalogfore\/og\.png$/);
   await expect(page.locator('link[rel="manifest"]')).toHaveAttribute("href", /manifest\.webmanifest$/);
   await expect(page.locator("#crawl-content")).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);

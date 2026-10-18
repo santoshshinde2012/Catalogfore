@@ -148,7 +148,7 @@ function convertedAtPlacement(
         "Curated non-Photon DBU/node-hour ratings",
         instance.cloud === "azure"
           ? "https://azure.microsoft.com/en-us/pricing/details/databricks/"
-          : "https://github.com/santoshshinde2012/cayfore/blob/main/data/instances.json",
+          : "https://github.com/santoshshinde2012/Catalogfore/blob/main/data/instances.json",
         "consumption",
         instance.id,
       ),

@@ -1,6 +1,6 @@
 # Catalog coverage
 
-Generated from `data/product-catalog.json`, `data/sku-rates.json`, `data/azure-dbu-meters.json`, and `data/databricks-dbu-rates.json`. Estimates only. Cayfore is not affiliated with Databricks.
+Generated from `data/product-catalog.json`, `data/sku-rates.json`, `data/azure-dbu-meters.json`, and `data/databricks-dbu-rates.json`. Estimates only. Catalogfore is not affiliated with Databricks.
 
 Catalog coverage: 59 of 70 products (84.3%) have a stored rate or a priced underlying SKU. Azure meters fill 97.1% of mapped region-and-SKU cells across 39 regions. AWS and GCP use validated first-party regional prices where captured; remaining reference bases, consumption assumptions, and regional proxies stay labeled. Stored-price coverage does not establish service availability.
 

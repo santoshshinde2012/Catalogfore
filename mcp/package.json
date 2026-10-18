@@ -4,11 +4,11 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/santoshshinde2012/cayfore.git",
+    "url": "git+https://github.com/santoshshinde2012/Catalogfore.git",
     "directory": "mcp"
   },
   "type": "module",
-  "description": "MCP server for the Cayfore forecast engine",
+  "description": "MCP server for the Catalogfore forecast engine",
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/index.js --external:@modelcontextprotocol/sdk --external:zod --external:exceljs --banner:js=\"#!/usr/bin/env node\"",
     "typecheck": "tsc --noEmit",
