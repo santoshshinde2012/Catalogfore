@@ -1,10 +1,10 @@
 # FAQ
 
-The same answers are on the public page at https://santoshshinde2012.github.io/cayfore/faq.html. The forecast page layout does not include this section.
+The same answers are on the public page at https://santoshshinde2012.github.io/Catalogfore/faq.html. The forecast page layout does not include this section.
 
-## What is Cayfore?
+## What is Catalogfore?
 
-Cayfore is an independent Databricks cost calculator and budget planner. It models pipelines, dashboards, and AI workloads, compares named scenarios, and projects monthly and annual spend from assumptions or imported usage. It is an estimate, not a Databricks quote, and is not affiliated with Databricks.
+Catalogfore is an independent Databricks cost calculator and budget planner. It models pipelines, dashboards, and AI workloads, compares named scenarios, and projects monthly and annual spend from assumptions or imported usage. It is an estimate, not a Databricks quote, and is not affiliated with Databricks.
 
 ## What does the DBU forecast include?
 
@@ -12,7 +12,7 @@ Configuration estimates price Databricks usage and the relevant cloud infrastruc
 
 ## How is this different from a Databricks pricing estimator?
 
-Cayfore combines mixed workloads into a plan over time, with budgets, dated changes, and named scenarios. It can read local billing CSV files and keeps the calculation in the browser. It does not require a workspace login or a connected billing account.
+Catalogfore combines mixed workloads into a plan over time, with budgets, dated changes, and named scenarios. It can read local billing CSV files and keeps the calculation in the browser. It does not require a workspace login or a connected billing account.
 
 ## Which usage files can I import?
 
@@ -26,6 +26,6 @@ Yes. Set an annual budget to see forecast headroom or overspend, save named scen
 
 The chart plots imported observed costs in USD alongside the model’s future projection. DBU-only observations appear in the history table. The low-to-high planning range combines usage uncertainty and pricing assumptions; it is not a calibrated probability interval. Unpriced charges remain outside the known cost subtotal.
 
-## Does Cayfore upload a usage file or the estimate?
+## Does Catalogfore upload a usage file or the estimate?
 
-No. Usage files and calculations stay local; Cayfore does not save them on a server. A share link embeds the plan in its URL hash, so anyone receiving it can read the shared plan. Attribution summaries are excluded from shared links. Saved forecast JSON files can contain team or owner labels.
+No. Usage files and calculations stay local; Catalogfore does not save them on a server. A share link embeds the plan in its URL hash, so anyone receiving it can read the shared plan. Attribution summaries are excluded from shared links. Saved forecast JSON files can contain team or owner labels.

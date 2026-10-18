@@ -14,8 +14,10 @@ describe("forecast workbook", () => {
     const bytes = await buildForecastWorkbook(named, new Date("2026-10-17T00:00:00Z"));
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(Buffer.from(bytes) as never);
-    expect(forecastWorkbookName("aws", new Date("2026-10-17T00:00:00Z"))).toBe("cayfore-forecast-aws-2026-10-17.xlsx");
-    expect(workbook.creator).toBe("Cayfore");
+    expect(forecastWorkbookName("aws", new Date("2026-10-17T00:00:00Z"))).toBe(
+      "catalogfore-forecast-aws-2026-10-17.xlsx",
+    );
+    expect(workbook.creator).toBe("Catalogfore");
     expect(workbook.description).toMatch(/Not affiliated with Databricks/);
     expect(workbook.worksheets.map((sheet) => sheet.name)).toEqual([
       "Monthly forecast",
@@ -27,7 +29,7 @@ describe("forecast workbook", () => {
     ]);
 
     const summary = workbook.getWorksheet("Summary")!;
-    expect(summary.getCell("A1").value).toBe("Cayfore");
+    expect(summary.getCell("A1").value).toBe("Catalogfore");
     expect(summary.getCell("A1").font?.bold).toBe(true);
     expect(summary.getCell("A1").fill).toMatchObject({ fgColor: { argb: "FFFF3621" } });
     expect(summary.getCell("B3").value).toBe("AWS");

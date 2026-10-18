@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const devUrl = "http://127.0.0.1:5173/cayfore/";
+const devUrl = "http://127.0.0.1:5173/Catalogfore/";
 const previewUrl = process.env.PLAYWRIGHT_BASE_URL;
 
 export default defineConfig({

@@ -1,9 +1,9 @@
 import { buildUnitCostComparison, type UnitCostRow } from "@cayfore/engine/unit-costs";
-import { ChartNoAxesColumnIncreasing, Check, MapPin } from "lucide-react";
+import { ChartNoAxesColumnIncreasing, ChevronsDown, ChevronsUp, Search } from "lucide-react";
 import { useMemo, useState } from "react";
-import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
-import { evidenceLabels, rowBasis, rowPrice, variantLabel } from "./rate-presentation";
+import { RateComparisonRow } from "./RateComparisonRow";
+import { regionalQuoteDelta, rowBasis, rowPrice, unitMoney, variantLabel } from "./rate-presentation";
 
 export function RateComparison({
   rows,
@@ -16,9 +16,29 @@ export function RateComparison({
 }) {
   const comparison = useMemo(() => buildUnitCostComparison(rows, selected), [rows, selected]);
   const [expanded, setExpanded] = useState(false);
-  const visible = comparison.points.filter(
-    (point, index) => expanded || index < 6 || index === comparison.points.length - 1 || point.isSelected,
-  );
+  const [query, setQuery] = useState("");
+  const [trackedId, setTrackedId] = useState(selected.id);
+  if (trackedId !== selected.id) {
+    setTrackedId(selected.id);
+    setQuery("");
+  }
+  const baseline = selected.unitPriceUsd;
+  const queryActive = query.trim().length > 0;
+  const matched = comparison.points.filter((point) => {
+    if (!queryActive) return true;
+    const label = `${point.row.regionLabel ?? ""} ${point.row.region ?? ""}`.toLowerCase();
+    return label.includes(query.trim().toLowerCase());
+  });
+  const collapsed = !expanded && !queryActive && comparison.points.length > 7;
+  const visible = collapsed
+    ? matched.filter((point, index) => index < 6 || index === matched.length - 1 || point.isSelected)
+    : matched;
+  const prices = comparison.points
+    .map((point) => point.row.unitPriceUsd)
+    .filter((price): price is number => price !== null);
+  const lowest = prices.length ? Math.min(...prices) : null;
+  const highest = prices.length ? Math.max(...prices) : null;
+  const uniform = lowest !== null && highest !== null && highest - lowest <= 1e-9;
   return (
     <section aria-label="Regional unit cost comparison" className="min-w-0 rounded-2xl border bg-card p-4 sm:p-6">
       <header className="flex flex-wrap items-start justify-between gap-3">
@@ -27,7 +47,7 @@ export function RateComparison({
             <ChartNoAxesColumnIncreasing className="size-5 shrink-0 text-link" aria-hidden="true" />
             Compare the same unit
           </h2>
-          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+          <p className="mt-2 max-w-2xl text-xs leading-relaxed text-muted-foreground">
             One component across regions. Each bar uses the same product, cloud, edition, billing unit, and variant.
           </p>
         </div>
@@ -47,75 +67,79 @@ export function RateComparison({
           unchanged.
         </p>
       </div>
-      {comparison.state === "available" ? (
+      {comparison.state === "available" && lowest !== null && highest !== null ? (
         <>
-          <div className="mt-5 flex justify-between gap-3 text-xs text-muted-foreground" aria-hidden="true">
-            <span>$0</span>
-            <span>Bars start at zero · {rowPrice(comparison.points.at(-1)!.row)} maximum</span>
-          </div>
-          {visible.length < comparison.points.length && (
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+          <dl className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {(
+              [
+                ["Regions", comparison.points.length.toLocaleString("en-US")],
+                ["Lowest", unitMoney(lowest)],
+                ["Highest", unitMoney(highest)],
+                ["Spread", uniform ? "None" : unitMoney(highest - lowest)],
+              ] as const
+            ).map(([label, value]) => (
+              <div key={label} className="rounded-xl border bg-background px-3 py-2.5">
+                <dt className="text-[11px] font-medium text-muted-foreground">{label}</dt>
+                <dd className="mt-1 font-mono text-sm font-medium tabular-nums">{value}</dd>
+              </div>
+            ))}
+          </dl>
+          {uniform && (
+            <p className="mt-3 rounded-xl border border-dashed bg-muted/20 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+              This snapshot has the same unit price in every comparable region. The bars match because none of these
+              quotes is higher than the others.
+            </p>
+          )}
+          {collapsed && (
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
               Showing the lowest quotes, the highest quote, and your selected region. Expand to see every comparable
               region.
             </p>
           )}
-          {comparison.points.every((point) => point.barPercent === 100) && (
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-              This snapshot has the same unit price in every comparable region.
+          {comparison.points.length > 8 && (
+            <div className="relative mt-3">
+              <Search
+                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <input
+                type="search"
+                aria-label="Filter regions"
+                placeholder="Filter regions"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                className="h-11 w-full rounded-lg border border-input bg-background pr-3 pl-9 text-sm outline-none focus-visible:border-ring sm:h-10"
+              />
+            </div>
+          )}
+          <div className="mt-4 flex justify-between gap-3 text-xs text-muted-foreground" aria-hidden="true">
+            <span>$0</span>
+            <span>Bars start at zero · {rowPrice(comparison.points.at(-1)!.row)} maximum</span>
+          </div>
+          {visible.length === 0 && (
+            <p className="mt-3 rounded-xl border border-dashed px-3 py-6 text-center text-sm text-muted-foreground">
+              No regions match that filter.
             </p>
           )}
           <ol className="mt-2 grid gap-2">
-            {visible.map(({ row, barPercent, isSelected }) => (
-              <li key={row.id}>
-                <button
-                  type="button"
-                  aria-pressed={isSelected}
-                  onClick={() => onSelect(row)}
-                  className={cn(
-                    "group w-full min-w-0 rounded-xl border px-3 py-2.5 text-left transition-colors hover:border-foreground/30",
-                    isSelected ? "border-primary bg-primary/5" : "bg-background",
-                  )}
-                >
-                  <span className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
-                    <span className="flex min-w-0 items-start gap-2 text-xs font-medium">
-                      {isSelected ? (
-                        <Check className="mt-0.5 size-3.5 shrink-0 text-link" aria-hidden="true" />
-                      ) : (
-                        <MapPin className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
-                      )}
-                      <span className="break-words">{row.regionLabel ?? row.region ?? "Not region-specific"}</span>
-                    </span>
-                    <span className="font-mono text-sm font-medium tabular-nums">
-                      {rowPrice(row)}
-                      <span className="sr-only"> per {rowBasis(row)}</span>
-                    </span>
-                  </span>
-                  <span className="mt-1.5 block h-2 overflow-hidden rounded-full bg-muted" aria-hidden="true">
-                    <span
-                      className={cn(
-                        "block h-full rounded-full",
-                        isSelected ? "bg-primary" : "bg-[var(--chart-actual)]",
-                      )}
-                      style={{ width: `${barPercent}%` }}
-                    />
-                  </span>
-                  <span className="mt-1.5 flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-xs text-muted-foreground">{evidenceLabels[row.evidenceLevel]}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {isSelected ? "Selected region" : "Inspect source →"}
-                    </span>
-                  </span>
-                </button>
-              </li>
+            {visible.map((point) => (
+              <RateComparisonRow
+                key={point.row.id}
+                point={point}
+                delta={baseline === null ? "" : regionalQuoteDelta(baseline, point.row.unitPriceUsd ?? baseline)}
+                onSelect={onSelect}
+              />
             ))}
           </ol>
-          {visible.length < comparison.points.length && (
+          {collapsed && (
             <Button type="button" variant="outline" className="mt-3 min-h-11 w-full" onClick={() => setExpanded(true)}>
+              <ChevronsDown aria-hidden="true" />
               Show all {comparison.points.length} comparable regions
             </Button>
           )}
-          {expanded && comparison.points.length > 7 && (
+          {expanded && !queryActive && comparison.points.length > 7 && (
             <Button type="button" variant="ghost" className="mt-3 min-h-11 w-full" onClick={() => setExpanded(false)}>
+              <ChevronsUp aria-hidden="true" />
               Show fewer regions
             </Button>
           )}

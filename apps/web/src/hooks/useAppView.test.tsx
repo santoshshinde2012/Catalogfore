@@ -6,7 +6,7 @@ import { readAppView, readRateProductId, useAppView } from "./useAppView";
 
 beforeEach(() => {
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
-  history.replaceState(null, "", "/cayfore/");
+  history.replaceState(null, "", "/Catalogfore/");
 });
 afterEach(() => vi.unstubAllGlobals());
 

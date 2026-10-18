@@ -1,6 +1,6 @@
 # Architecture
 
-Cayfore prices a portfolio by composing small units. The website and the MCP server both call the same engine. Neither one owns a rate table or a pricing formula.
+Catalogfore prices a portfolio by composing small units. The website and the MCP server both call the same engine. Neither one owns a rate table or a pricing formula.
 
 ```mermaid
 flowchart TB

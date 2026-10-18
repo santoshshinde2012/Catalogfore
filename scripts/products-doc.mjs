@@ -29,7 +29,7 @@ export function renderProductsMarkdown(catalog, notes) {
   const body = lines.join("\n");
   return `# Databricks product inventory
 
-Checked ${catalog.verifiedOn}. Catalog version \`${catalog.version}\`. Figures are list estimates, not a quote. Cayfore is not affiliated with Databricks.
+Checked ${catalog.verifiedOn}. Catalog version \`${catalog.version}\`. Figures are list estimates, not a quote. Catalogfore is not affiliated with Databricks.
 
 A row marked **No** has no resolved list rate in this catalog; its missing cost remains a gap in the known subtotal. **No distinct rate** means the line reuses another SKU and says so. **Yes** means a stored rate is applied, with its actual component evidence shown in Unit costs. Captured first-party prices take precedence over references. Product-level confidence is catalog metadata; it does not verify every region or consumption assumption. Manual citations go stale after 120 days.
 

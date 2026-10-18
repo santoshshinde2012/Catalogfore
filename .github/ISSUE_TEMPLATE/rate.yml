@@ -7,7 +7,7 @@ body:
     id: figure
     attributes:
       label: Which figure
-      description: Cloud, tier, region, SKU or instance, the number in Cayfore, and the number you expected.
+      description: Cloud, tier, region, SKU or instance, the number in Catalogfore, and the number you expected.
     validations:
       required: true
   - type: input

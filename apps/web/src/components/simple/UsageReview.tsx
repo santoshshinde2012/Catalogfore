@@ -1,6 +1,7 @@
 import { selectUsageMonth, type UsageImportPreview } from "@cayfore/engine";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "../ui/button";
+import { OptionSelect } from "../ui/option-select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "../ui/sheet";
 import { UsageImportSummary } from "./UsageImportSummary";
 import { UsageOwnership } from "./UsageOwnership";
@@ -40,24 +41,21 @@ export function UsageReview({
         </SheetHeader>
         <div className="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain px-5 py-5 sm:px-6">
           {selected.availableMonths.length > 0 ? (
-            <label className="field">
-              Baseline month
-              <select
-                aria-label="Import baseline month"
-                value={month}
-                onChange={(event) => setMonth(event.target.value)}
-              >
-                {!month && <option value="">Select a month</option>}
-                {selected.availableMonths.map((period) => (
-                  <option key={period} value={period}>
-                    {period}
-                    {selected.completeMonths.includes(period)
-                      ? " · closed calendar month"
-                      : " · partial observed month"}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <OptionSelect
+              tone="field"
+              label="Baseline month"
+              name="Import baseline month"
+              value={month}
+              placeholder="Select a month"
+              onValueChange={setMonth}
+              options={[
+                ...(!month ? [{ value: "", label: "Select a month" }] : []),
+                ...selected.availableMonths.map((period) => ({
+                  value: period,
+                  label: `${period}${selected.completeMonths.includes(period) ? " · closed calendar month" : " · partial observed month"}`,
+                })),
+              ]}
+            />
           ) : (
             <p className="rounded-lg border bg-muted/40 p-3 text-sm text-muted-foreground">
               No dated month is available. Only the observed rows in this export can be used.

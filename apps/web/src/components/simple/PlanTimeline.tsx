@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { periodAt, periodLabel } from "../../lib/chart-data";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { OptionSelect } from "../ui/option-select";
 
 export function PlanTimeline({
   portfolio,
@@ -104,17 +105,16 @@ export function PlanTimeline({
             />
           </label>
         </div>
-        <label className="field">
-          Applies to
-          <select value={selectedTarget} onChange={(event) => setTarget(event.target.value)}>
-            <option value="">All workloads</option>
-            {portfolio.workloads.map((workload) => (
-              <option key={workload.id} value={workload.id}>
-                {workload.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <OptionSelect
+          tone="field"
+          label="Applies to"
+          value={selectedTarget}
+          onValueChange={setTarget}
+          options={[
+            { value: "", label: "All workloads" },
+            ...portfolio.workloads.map((workload) => ({ value: workload.id, label: workload.name })),
+          ]}
+        />
         <Button type="submit" className="min-h-11" variant="outline" disabled={!valid}>
           Add planned change
         </Button>

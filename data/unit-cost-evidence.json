@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "reviewedOn": "2026-10-17",
-  "scope": "Evidence for Cayfore's curated unit-cost snapshot. Exact Azure meters and validated first-party Databricks price-card/calculator observations take precedence. Review dates, price observations, tariff effective dates, and product availability are separate facts; missing or conflicted prices remain unresolved.",
+  "scope": "Evidence for Catalogfore's curated unit-cost snapshot. Exact Azure meters and validated first-party Databricks price-card/calculator observations take precedence. Review dates, price observations, tariff effective dates, and product availability are separate facts; missing or conflicted prices remain unresolved.",
   "sources": [
     {
       "id": "azure-retail",
       "title": "Azure Retail Prices API",
       "url": "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview",
       "role": "meter",
-      "scope": "Azure commercial-cloud consumption meters. Exact region and meter matches apply; Azure Enterprise uses the same Premium meters in Cayfore. Excludes Standard, free-trial, POC, reservation, and negotiated rates.",
+      "scope": "Azure commercial-cloud consumption meters. Exact region and meter matches apply; Azure Enterprise uses the same Premium meters in Catalogfore. Excludes Standard, free-trial, POC, reservation, and negotiated rates.",
       "verifiedOn": "2026-10-17",
       "verification": "All 530 mapped DBU meters across 39 catalog Azure regions fetched on 2026-10-17. Stored rows preserve meter ID, filtered source URL, effective start date, raw API unit, primary-region flag and their own asOf. The raw DBU meter unit may read 1 Hour; normalize to DBU, not VM-hour. Other VM or embedded-product rows retain separate provenance."
     },
@@ -62,7 +62,7 @@
       "title": "Lakehouse Real-Time Beta pricing",
       "url": "https://docs.databricks.com/aws/en/compute/sql-warehouse/real-time-pricing",
       "role": "tariff",
-      "scope": "Published rates apply to LAKEHOUSE_SERVERLESS_COMPUTE during Beta. Reusing their regional ratios for other SKUs is a Cayfore planning proxy, including regions whose stored source is lakehouse-rt.",
+      "scope": "Published rates apply to LAKEHOUSE_SERVERLESS_COMPUTE during Beta. Reusing their regional ratios for other SKUs is a Catalogfore planning proxy, including regions whose stored source is lakehouse-rt.",
       "verifiedOn": "2026-10-17",
       "verification": "Region table and the introductory DBU-emission promotion reviewed; not an authoritative regional tariff for Jobs, serving, SQL, or Lakebase."
     },
@@ -89,7 +89,7 @@
       "title": "AWS Spot price history and scope",
       "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances-history.html",
       "role": "documentation",
-      "scope": "Spot varies by instance, operating system, availability zone, and time. Cayfore's advisor-derived spotHourly is a planning estimate, not a live fulfillment quote.",
+      "scope": "Spot varies by instance, operating system, availability zone, and time. Catalogfore's advisor-derived spotHourly is a planning estimate, not a live fulfillment quote.",
       "verifiedOn": "2026-10-17",
       "verification": "Documentation reviewed. Existing pipeline derives rates from savings bands at https://spot-bid-advisor.s3.amazonaws.com/spot-advisor-data.json."
     },
@@ -127,7 +127,7 @@
       "role": "documentation",
       "scope": "Databricks versus customer-cloud networking, applicable connections, same-region exemptions, and transfer units. The documented endpoint-hour timeline differs from the product price page.",
       "verifiedOn": "2026-10-17",
-      "verification": "Current page reviewed. Billing 1 GB means 2^30 bytes; this is not evidence that Cayfore's generic internet-egress assumption prices every network route."
+      "verification": "Current page reviewed. Billing 1 GB means 2^30 bytes; this is not evidence that Catalogfore's generic internet-egress assumption prices every network route."
     },
     {
       "id": "networking-pricing",
@@ -145,7 +145,7 @@
       "role": "tariff",
       "scope": "Historical official AWS/GCP data-transfer, public-connectivity, private-connectivity, and endpoint-hour price tables. Current linking does not remove the 2024 effective date or settle billing applicability.",
       "verifiedOn": "2026-10-17",
-      "verification": "PDF inspected. Rates omitted from Cayfore should be described as not covered in the bundled calculator, rather than claiming that no public tariff exists."
+      "verification": "PDF inspected. Rates omitted from Catalogfore should be described as not covered in the bundled calculator, rather than claiming that no public tariff exists."
     },
     {
       "id": "pricing-system-table",
@@ -248,7 +248,7 @@
         ]
       },
       "status": "coverage",
-      "message": "Cayfore does not model every route, endpoint, public-connectivity, or private-connectivity tariff. A current Databricks page links an official table effective 2024-08-01, while current documents differ on endpoint-hour billing timing. Missing bundled charges mean unknown or excluded, not free or that no public price exists. Azure's specific Data Processed meter must not be applied to every private-link or egress route.",
+      "message": "Catalogfore does not model every route, endpoint, public-connectivity, or private-connectivity tariff. A current Databricks page links an official table effective 2024-08-01, while current documents differ on endpoint-hour billing timing. Missing bundled charges mean unknown or excluded, not free or that no public price exists. Azure's specific Data Processed meter must not be applied to every private-link or egress route.",
       "sourceIds": [
         "networking-cost",
         "networking-pricing",

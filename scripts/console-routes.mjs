@@ -1,6 +1,6 @@
 import { chromium } from "@playwright/test";
 
-const base = process.env.PREVIEW_URL ?? "http://127.0.0.1:4175/cayfore/";
+const base = process.env.PREVIEW_URL ?? "http://127.0.0.1:4175/Catalogfore/";
 const viewports = [
   { name: "desktop", width: 1440, height: 900 },
   { name: "mobile", width: 390, height: 844 },

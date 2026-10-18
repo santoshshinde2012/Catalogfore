@@ -2,6 +2,7 @@ import { productMap } from "@cayfore/catalog/map";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { OptionSelect } from "../ui/option-select";
 
 export function ProductFilters({
   query,
@@ -25,11 +26,11 @@ export function ProductFilters({
   return (
     <section aria-label="Find products and services" className="rounded-2xl border bg-card p-4 shadow-sm sm:p-5">
       <div className="grid grid-cols-2 items-end gap-3 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,1fr)]">
-        <div className="col-span-2 min-w-0 md:col-span-1">
-          <label className="field" htmlFor="product-search">
+        <div className="col-span-2 grid min-w-0 gap-2 md:col-span-1">
+          <label className="text-sm font-medium" htmlFor="product-search">
             Search Databricks products
           </label>
-          <div className="relative mt-2">
+          <div className="relative">
             <Search
               className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
               aria-hidden="true"
@@ -55,25 +56,32 @@ export function ProductFilters({
             )}
           </div>
         </div>
-        <label className="field min-w-0">
-          Filter by domain
-          <select value={domainId} onChange={(event) => onDomain(event.target.value)} aria-controls="product-directory">
-            <option value="">All domains</option>
-            {productMap.domains.map((domain) => (
-              <option key={domain.id} value={domain.id}>
-                {domain.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="field min-w-0">
-          Filter by entry type
-          <select value={kind} onChange={(event) => onKind(event.target.value)} aria-controls="product-directory">
-            <option value="">All entries</option>
-            <option value="catalog-product">Catalog products</option>
-            <option value="platform-service">Platform concepts</option>
-          </select>
-        </label>
+        <OptionSelect
+          className="min-w-0"
+          tone="field"
+          label="Filter by domain"
+          value={domainId}
+          controls="product-directory"
+          onValueChange={onDomain}
+          options={[
+            { value: "", label: "All domains" },
+            ...productMap.domains.map((domain) => ({ value: domain.id, label: domain.name })),
+          ]}
+        />
+        <OptionSelect
+          className="min-w-0"
+          tone="field"
+          label="Filter by entry type"
+          value={kind}
+          controls="product-directory"
+          onValueChange={onKind}
+          searchable={false}
+          options={[
+            { value: "", label: "All entries" },
+            { value: "catalog-product", label: "Catalog products" },
+            { value: "platform-service", label: "Platform concepts" },
+          ]}
+        />
       </div>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-xs text-muted-foreground">
         <p className="flex items-center gap-2">

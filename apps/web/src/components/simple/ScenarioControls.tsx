@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import type { SimpleSession } from "../../hooks/useSimpleForecast";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { OptionSelect } from "../ui/option-select";
 
 export function ScenarioControls({ session }: { session: SimpleSession }) {
   const [name, setName] = useState("");
@@ -54,25 +55,22 @@ export function ScenarioControls({ session }: { session: SimpleSession }) {
         </p>
       )}
       {session.scenarios.length > 0 && (
-        <label className="field mt-5">
-          Compare current plan with
-          <select
-            aria-label="Compare scenario"
-            value={session.comparison?.id ?? ""}
-            className="min-h-11"
-            onChange={(event) => {
-              session.compareScenario(event.target.value || null);
-              setFeedback(event.target.value ? "Comparison added to the forecast charts." : "Comparison removed.");
-            }}
-          >
-            <option value="">No comparison</option>
-            {session.scenarios.map((scenario) => (
-              <option key={scenario.id} value={scenario.id}>
-                {scenario.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <OptionSelect
+          className="mt-5"
+          tone="field"
+          label="Compare current plan with"
+          name="Compare scenario"
+          value={session.comparison?.id ?? ""}
+          onValueChange={(id) => {
+            session.compareScenario(id || null);
+            setFeedback(id ? "Comparison added to the forecast charts." : "Comparison removed.");
+          }}
+          options={[
+            { value: "", label: "No comparison" },
+            ...session.scenarios.map((scenario) => ({ value: scenario.id, label: scenario.name })),
+          ]}
+          searchable={false}
+        />
       )}
       {session.scenarios.length === 0 && (
         <div className="mt-4 rounded-lg border border-dashed bg-background/60 px-4 py-6 text-center">

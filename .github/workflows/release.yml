@@ -35,4 +35,4 @@ jobs:
         run: |
           version="${GITHUB_REF_NAME#v}"
           notes="$(node scripts/changelog-notes.mjs "$version")"
-          gh release create "$GITHUB_REF_NAME" --title "Cayfore $version" --notes "$notes" cayfore.cdx.json
+          gh release create "$GITHUB_REF_NAME" --title "Catalogfore $version" --notes "$notes" cayfore.cdx.json

@@ -10,6 +10,7 @@ import {
   SearchX,
 } from "lucide-react";
 import { Button } from "../ui/button";
+import { OptionSelect } from "../ui/option-select";
 import { useEffect, useRef } from "react";
 import { RateTableRow } from "./RateTableRow";
 import type { RateDataTableState, RateSortKey } from "./useRateDataTable";
@@ -121,20 +122,15 @@ export function RateDataPreview({
           {count(orderedRows.length)} rows
         </p>
         <div className="flex flex-wrap items-center gap-3">
-          <label className="flex items-center gap-2 text-xs text-muted-foreground">
-            Rows per page
-            <select
-              value={pageSize}
-              onChange={(event) => setPageSize(Number(event.target.value))}
-              className="min-h-11 rounded-md border border-input bg-background px-2 text-foreground"
-            >
-              {[25, 50, 100].map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
-          </label>
+          <OptionSelect
+            layout="inline"
+            label="Rows per page"
+            value={String(pageSize)}
+            onValueChange={(size) => setPageSize(Number(size))}
+            options={[25, 50, 100].map((size) => ({ value: String(size), label: String(size) }))}
+            searchable={false}
+            triggerClassName="w-20"
+          />
           <nav aria-label="Catalog preview pagination" className="flex items-center gap-0.5">
             <Button
               type="button"

@@ -8,7 +8,7 @@ test("brand navigation preserves the plan and Open works from the keyboard", asy
   const hash = new URL(page.url()).hash;
   await page
     .getByRole("banner")
-    .getByRole("button", { name: /^Cayfore\b/ })
+    .getByRole("button", { name: /^Catalogfore\b/ })
     .click();
   await expect(page.locator("#plan-inputs")).toBeFocused();
   expect(new URL(page.url()).hash).toBe(hash);

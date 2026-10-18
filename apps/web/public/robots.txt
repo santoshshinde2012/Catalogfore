@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://santoshshinde2012.github.io/cayfore/sitemap.xml
+Sitemap: https://santoshshinde2012.github.io/Catalogfore/sitemap.xml

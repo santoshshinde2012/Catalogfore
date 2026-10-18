@@ -4,7 +4,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/santoshshinde2012/cayfore.git",
+    "url": "git+https://github.com/santoshshinde2012/Catalogfore.git",
     "directory": "apps/web"
   },
   "type": "module",

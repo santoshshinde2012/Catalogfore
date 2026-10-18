@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { chooseOptionByName } from "./combobox";
 import { navigateWorkspace as navigate, selectTheme } from "./header-helpers";
 import { savedDownload } from "./forecast-helpers";
 
@@ -97,7 +98,9 @@ test("domain and entry filters remain accessible on a narrow screen", async ({ p
   await page.goto("./?view=products");
   await expect(page.locator("#product-map")).toBeVisible();
   const domains = page.getByRole("combobox", { name: "Filter by domain", exact: true });
-  const options = await domains.locator("option").allTextContents();
+  await domains.click();
+  const options = (await page.getByRole("option").allTextContents()).map((option) => option.trim());
+  await page.keyboard.press("Escape");
   expect(options.length).toBeGreaterThan(4);
   const domainButton = page
     .getByRole("group", { name: "Product domains", exact: true })
@@ -105,12 +108,10 @@ test("domain and entry filters remain accessible on a narrow screen", async ({ p
   await domainButton.focus();
   await domainButton.press("Enter");
   await expect(domainButton).toHaveAttribute("aria-pressed", "true");
-  await expect(domains.locator("option:checked")).toHaveText(options[1]);
+  await expect(domains).toContainText(options[1]);
   await expect(directory(page).locator("ul > li > button").first()).toBeVisible();
-  await domains.selectOption({ label: "All domains" });
-  await page
-    .getByRole("combobox", { name: "Filter by entry type", exact: true })
-    .selectOption({ label: "Platform concepts" });
+  await chooseOptionByName(page, "Filter by domain", "All domains");
+  await chooseOptionByName(page, "Filter by entry type", "Platform concepts");
   await expect(directory(page).locator("ul > li > button").first()).toBeVisible();
   await directory(page).locator("ul > li > button").first().click();
   await expect(details(page)).toBeFocused();

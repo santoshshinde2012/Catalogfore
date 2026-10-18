@@ -5,6 +5,7 @@ import { SchemaFields } from "./editor/SchemaFields";
 import { MeteredPricingFields } from "./editor/MeteredPricingFields";
 import { workloadEditors } from "./editor/registry";
 import { Button } from "./ui/button";
+import { OptionSelect } from "./ui/option-select";
 
 interface EditorProps {
   workload: Workload;
@@ -83,45 +84,41 @@ export function Editor({ workload, portfolio, onChange, onDuplicate, onRemove, o
       <details className="mt-3">
         <summary>Run this workload somewhere else</summary>
         <div className="mt-2 grid-3">
-          <label className="field">
-            Cloud
-            <select
-              value={workload.cloud ?? ""}
-              onChange={(event) =>
-                change({ ...workload, cloud: (event.target.value || undefined) as Cloud | undefined })
-              }
-            >
-              <option value="">Same as portfolio</option>
-              <option value="aws">AWS</option>
-              <option value="azure">Azure</option>
-              <option value="gcp">GCP</option>
-            </select>
-          </label>
-          <label className="field">
-            Region
-            <select
-              value={workload.region ?? ""}
-              onChange={(event) => change({ ...workload, region: event.target.value || undefined })}
-            >
-              <option value="">Same as portfolio</option>
-              {listRegions(cloud).map((region) => (
-                <option key={region.id} value={region.id}>
-                  {region.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="field">
-            Tier
-            <select
-              value={workload.tier ?? ""}
-              onChange={(event) => change({ ...workload, tier: (event.target.value || undefined) as Tier | undefined })}
-            >
-              <option value="">Same as portfolio</option>
-              <option value="premium">Premium</option>
-              <option value="enterprise">Enterprise</option>
-            </select>
-          </label>
+          <OptionSelect
+            tone="field"
+            label="Cloud"
+            value={workload.cloud ?? ""}
+            searchable={false}
+            onValueChange={(cloud) => change({ ...workload, cloud: (cloud || undefined) as Cloud | undefined })}
+            options={[
+              { value: "", label: "Same as portfolio" },
+              { value: "aws", label: "AWS" },
+              { value: "azure", label: "Azure" },
+              { value: "gcp", label: "GCP" },
+            ]}
+          />
+          <OptionSelect
+            tone="field"
+            label="Region"
+            value={workload.region ?? ""}
+            onValueChange={(region) => change({ ...workload, region: region || undefined })}
+            options={[
+              { value: "", label: "Same as portfolio" },
+              ...listRegions(cloud).map((region) => ({ value: region.id, label: region.label })),
+            ]}
+          />
+          <OptionSelect
+            tone="field"
+            label="Tier"
+            value={workload.tier ?? ""}
+            searchable={false}
+            onValueChange={(tier) => change({ ...workload, tier: (tier || undefined) as Tier | undefined })}
+            options={[
+              { value: "", label: "Same as portfolio" },
+              { value: "premium", label: "Premium" },
+              { value: "enterprise", label: "Enterprise" },
+            ]}
+          />
         </div>
       </details>
     </div>
@@ -131,49 +128,52 @@ export function Editor({ workload, portfolio, onChange, onDuplicate, onRemove, o
 function SkuSelect({ workload, onChange }: { workload: Workload; onChange: (workload: Workload) => void }) {
   if (workload.kind === "cluster") {
     return (
-      <label className="field">
-        SKU
-        <select
-          value={workload.sku}
-          onChange={(event) => onChange({ ...workload, sku: event.target.value as typeof workload.sku })}
-        >
-          <option value="jobs_classic">Jobs classic</option>
-          <option value="all_purpose_classic">All-purpose classic</option>
-          <option value="dlt_core">Pipelines Core</option>
-          <option value="dlt_pro">Pipelines Pro</option>
-          <option value="dlt_advanced">Pipelines Advanced</option>
-        </select>
-      </label>
+      <OptionSelect
+        tone="field"
+        label="SKU"
+        value={workload.sku}
+        searchable={false}
+        onValueChange={(sku) => onChange({ ...workload, sku: sku as typeof workload.sku })}
+        options={[
+          { value: "jobs_classic", label: "Jobs classic" },
+          { value: "all_purpose_classic", label: "All-purpose classic" },
+          { value: "dlt_core", label: "Pipelines Core" },
+          { value: "dlt_pro", label: "Pipelines Pro" },
+          { value: "dlt_advanced", label: "Pipelines Advanced" },
+        ]}
+      />
     );
   }
   if (workload.kind === "serverless_compute") {
     return (
-      <label className="field">
-        SKU
-        <select
-          value={workload.sku}
-          onChange={(event) => onChange({ ...workload, sku: event.target.value as typeof workload.sku })}
-        >
-          <option value="jobs_serverless">Jobs serverless</option>
-          <option value="all_purpose_serverless">Notebooks serverless</option>
-          <option value="dlt_serverless">Pipelines serverless</option>
-        </select>
-      </label>
+      <OptionSelect
+        tone="field"
+        label="SKU"
+        value={workload.sku}
+        searchable={false}
+        onValueChange={(sku) => onChange({ ...workload, sku: sku as typeof workload.sku })}
+        options={[
+          { value: "jobs_serverless", label: "Jobs serverless" },
+          { value: "all_purpose_serverless", label: "Notebooks serverless" },
+          { value: "dlt_serverless", label: "Pipelines serverless" },
+        ]}
+      />
     );
   }
   if (workload.kind === "sql") {
     return (
-      <label className="field">
-        Edition
-        <select
-          value={workload.edition}
-          onChange={(event) => onChange({ ...workload, edition: event.target.value as typeof workload.edition })}
-        >
-          <option value="classic">Classic</option>
-          <option value="pro">Pro</option>
-          <option value="serverless">Serverless</option>
-        </select>
-      </label>
+      <OptionSelect
+        tone="field"
+        label="Edition"
+        value={workload.edition}
+        searchable={false}
+        onValueChange={(edition) => onChange({ ...workload, edition: edition as typeof workload.edition })}
+        options={[
+          { value: "classic", label: "Classic" },
+          { value: "pro", label: "Pro" },
+          { value: "serverless", label: "Serverless" },
+        ]}
+      />
     );
   }
   return null;

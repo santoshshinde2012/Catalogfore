@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { chooseOption, expectComboboxValue } from "./combobox";
 import { downloadRates as download, openRateTab, showRateRefinements } from "./rate-helpers";
 import type { UnitCostCatalog } from "@cayfore/engine/unit-costs";
 
@@ -9,7 +10,7 @@ test("official numeric prices and planning estimates remain distinct from offici
 }) => {
   await page.goto("./?view=rates&product=jobs_serverless&rateCloud=azure&rateRegion=eastus&rateTier=premium");
   await showRateRefinements(page);
-  await page.getByRole("combobox", { name: "Evidence basis", exact: true }).selectOption("official");
+  await chooseOption(page, "Evidence basis", "official");
   await expect(quote(page).getByText("Official list price", { exact: true })).toBeVisible();
   await expect(details(page)).toContainText("Official publisher");
   await expect(details(page)).toContainText("Price evidence");
@@ -31,9 +32,9 @@ test("official numeric prices and planning estimates remain distinct from offici
     "An official documentation link can explain a service without establishing its numeric price",
   );
 
-  await page.getByRole("combobox", { name: "Evidence basis", exact: true }).selectOption("estimate");
-  await page.getByRole("combobox", { name: "Product or service", exact: true }).selectOption("jobs_classic");
-  await page.getByRole("combobox", { name: "Cost component", exact: true }).selectOption("compute");
+  await chooseOption(page, "Evidence basis", "estimate");
+  await chooseOption(page, "Product or service", "jobs_classic");
+  await chooseOption(page, "Cost component", "compute");
   await openRateTab(page, "Rates & calculator");
   await expect(quote(page).getByText("Planning estimate", { exact: true })).toBeVisible();
   await expect(details(page)).toContainText("Official publisher");
@@ -48,7 +49,7 @@ test("conflicting official sources suppress the price and quantity calculator", 
   await page.goto("./?view=rates&product=foundation_provisioned&rateCloud=azure&rateRegion=eastus&rateTier=premium");
   await page.getByRole("searchbox", { name: "Search rates and services", exact: true }).fill("gte");
   await showRateRefinements(page);
-  await page.getByRole("combobox", { name: "Evidence basis", exact: true }).selectOption("unresolved");
+  await chooseOption(page, "Evidence basis", "unresolved");
   await expect(details(page).getByText("Unresolved", { exact: true })).toBeVisible();
   await expect(details(page)).toContainText("Rate unavailable");
   await expect(details(page)).toContainText("Official publisher");
@@ -68,9 +69,9 @@ test("a regional first-party price conflict exposes both exact observations and 
   await page.goto(
     `./?view=rates&product=jobs_serverless&rateCloud=gcp&rateRegion=europe-west1&rateTier=enterprise${hash}`,
   );
-  await expect(page.getByRole("combobox", { name: "Cloud", exact: true })).toHaveValue("gcp");
-  await expect(page.getByRole("combobox", { name: "Region", exact: true })).toHaveValue("europe-west1");
-  await expect(page.getByRole("combobox", { name: "Edition", exact: true })).toHaveValue("enterprise");
+  await expectComboboxValue(page, "Cloud", "gcp");
+  await expectComboboxValue(page, "Region", "europe-west1");
+  await expectComboboxValue(page, "Edition", "enterprise");
   await expect(details(page).getByText("Unresolved", { exact: true })).toBeVisible();
   await expect(details(page)).toContainText("Rate unavailable");
   await expect(details(page)).toContainText("0.5 versus 0.39");
@@ -96,7 +97,7 @@ test("a regional first-party price conflict exposes both exact observations and 
   await expect(page.getByTestId("year-sentence")).toHaveText(annual);
   expect(new URL(page.url()).hash).toBe(hash);
   await page.goBack();
-  await expect(page.getByRole("combobox", { name: "Region", exact: true })).toHaveValue("europe-west1");
+  await expectComboboxValue(page, "Region", "europe-west1");
   await expect(details(page)).toContainText("Rate unavailable");
   expect(new URL(page.url()).hash).toBe(hash);
 });

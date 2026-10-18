@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/santoshshinde2012/cayfore/packages/catalog/product-catalog.schema.json",
-  "title": "Cayfore product catalog",
+  "$id": "https://github.com/santoshshinde2012/Catalogfore/packages/catalog/product-catalog.schema.json",
+  "title": "Catalogfore product catalog",
   "type": "object",
   "additionalProperties": false,
   "required": ["version", "verifiedOn", "disclaimer", "categories", "knownAzureMeters", "products"],

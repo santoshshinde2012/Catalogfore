@@ -4,11 +4,11 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/santoshshinde2012/cayfore.git",
+    "url": "git+https://github.com/santoshshinde2012/Catalogfore.git",
     "directory": "packages/sheet"
   },
   "type": "module",
-  "description": "Excel workbook export for a Cayfore forecast. Not a quote.",
+  "description": "Excel workbook export for a Catalogfore forecast. Not a quote.",
   "exports": {
     ".": "./src/workbook.ts"
   },

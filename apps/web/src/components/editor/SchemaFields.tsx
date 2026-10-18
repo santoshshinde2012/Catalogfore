@@ -1,4 +1,5 @@
 import type { Workload } from "@cayfore/engine";
+import { OptionSelect } from "../ui/option-select";
 import { numberOr } from "./fields";
 
 interface ProductField {
@@ -23,40 +24,40 @@ export function SchemaFields({
   if (fields.length === 0) return null;
   return (
     <div className="mt-3 grid gap-3">
-      {fields.map((field) => (
-        <label key={field.path} className="field">
-          {field.label}
-          {field.type === "boolean" ? (
-            <input
-              type="checkbox"
-              checked={Boolean(readPath(workload, field.path))}
-              onChange={(event) => onChange(writePath(workload, field.path, event.target.checked))}
-            />
-          ) : field.type === "select" ? (
-            <select
-              value={String(readPath(workload, field.path) ?? "")}
-              onChange={(event) => onChange(writePath(workload, field.path, event.target.value))}
-            >
-              {(field.options ?? []).map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <input
-              type="number"
-              min={field.min}
-              max={field.max}
-              step={field.step}
-              value={Number(readPath(workload, field.path) ?? 0)}
-              onChange={(event) =>
-                onChange(writePath(workload, field.path, numberOr(event.target.value, Number(field.min ?? 0))))
-              }
-            />
-          )}
-        </label>
-      ))}
+      {fields.map((field) =>
+        field.type === "select" ? (
+          <OptionSelect
+            key={field.path}
+            tone="field"
+            label={field.label}
+            value={String(readPath(workload, field.path) ?? "")}
+            onValueChange={(next) => onChange(writePath(workload, field.path, next))}
+            options={field.options ?? []}
+          />
+        ) : (
+          <label key={field.path} className="field">
+            {field.label}
+            {field.type === "boolean" ? (
+              <input
+                type="checkbox"
+                checked={Boolean(readPath(workload, field.path))}
+                onChange={(event) => onChange(writePath(workload, field.path, event.target.checked))}
+              />
+            ) : (
+              <input
+                type="number"
+                min={field.min}
+                max={field.max}
+                step={field.step}
+                value={Number(readPath(workload, field.path) ?? 0)}
+                onChange={(event) =>
+                  onChange(writePath(workload, field.path, numberOr(event.target.value, Number(field.min ?? 0))))
+                }
+              />
+            )}
+          </label>
+        ),
+      )}
     </div>
   );
 }

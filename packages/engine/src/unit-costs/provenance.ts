@@ -1,4 +1,5 @@
 import evidence from "../../../../data/unit-cost-evidence.json";
+import { PRODUCT_NAME } from "../product-name.js";
 import type { SourceAuthority, UnitCostRow, UnitCostSource } from "./types.js";
 
 interface SourceIdentity {
@@ -35,8 +36,8 @@ export function sourceIdentity(value: string): SourceIdentity {
     return { authority: "secondary", publisher: "Flexera" };
   if (url.hostname === "community.databricks.com")
     return { authority: "secondary", publisher: "Databricks Community contributors" };
-  if (url.hostname === "github.com" && /^\/santoshshinde2012\/cayfore(?:\/|$)/.test(url.pathname))
-    return { authority: "project", publisher: "Cayfore" };
+  if (url.hostname === "github.com" && /^\/santoshshinde2012\/(?:catalogfore|cayfore)(?:\/|$)/i.test(url.pathname))
+    return { authority: "project", publisher: PRODUCT_NAME };
   return { authority: "unknown", publisher: url.hostname };
 }
 

@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { chooseOption, chooseOptionByName } from "./combobox";
 import { savedDownload } from "./forecast-helpers";
 
 test("named budget scenarios save, compare, duplicate, and reopen after reload", async ({ page }) => {
@@ -8,7 +9,7 @@ test("named budget scenarios save, compare, duplicate, and reopen after reload",
   await page.getByRole("textbox", { name: "Scenario name" }).fill("Budget baseline");
   await page.getByRole("button", { name: "Save scenario", exact: true }).click();
   await page.getByRole("radio", { name: "10%", exact: true }).click();
-  await page.getByRole("combobox", { name: "Compare scenario" }).selectOption({ label: "Budget baseline" });
+  await chooseOptionByName(page, "Compare scenario", "Budget baseline", false);
   await expect(page.getByTestId("scenario-delta")).toContainText("more than Budget baseline");
   await expect(page.getByTestId("budget-variance")).toContainText("annual budget");
   await expect(page.getByTestId("forecast-chart").locator("path.recharts-line-curve[d]")).toHaveCount(3);
@@ -56,7 +57,7 @@ test("a partial-only usage file stays reviewable until its month is explicitly c
   });
   await expect(page.getByRole("heading", { name: "Review usage import" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Use this baseline" })).toBeDisabled();
-  await page.getByRole("combobox", { name: "Import baseline month" }).selectOption(month);
+  await chooseOption(page, "Import baseline month", month, false);
   await expect(page.getByRole("button", { name: "Use this baseline" })).toBeEnabled();
   await page.getByRole("button", { name: "Use this baseline" }).click();
   expect((await savedDownload(page)).portfolio.usage?.selectedMonth).toBe(month);

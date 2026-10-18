@@ -6,6 +6,8 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Added
 
+- The product name is Catalogfore. The GitHub repository and Pages site are [Catalogfore](https://github.com/santoshshinde2012/Catalogfore) and https://santoshshinde2012.github.io/Catalogfore/. The npm scope and `cayfore-theme` key stay `cayfore`. Excel downloads use `catalogfore-forecast-*.xlsx`.
+
 - A sortable, paginated unit-cost data preview with quoted billing units, source evidence and dates, exact-row inspection, and matching CSV/JSON export scope. Files retain all 40 fields and every selected row; pagination only limits the preview.
 
 - Regional unit-cost comparison bars, a source-to-component calculation path, and an evidence-coverage visualization, all driven by shared engine analytics. Comparisons keep identical units, configurations and editions; unresolved amounts never become zero bars.
@@ -69,5 +71,5 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 - Uploads, share links, and forecast JSON are size-capped and parsed as plain data. CSV export neutralizes spreadsheet formulas. The production page does not load a third-party script. The unused `@radix-ui/react-label` package is removed. Dependabot waits 7 days before opening a version-update pull request.
 - Price refresh and catalog watch fetch only allow-listed HTTPS hosts. The billing SQL stays a fixed `SELECT`.
 - The product name is Cayfore. The theme is stored as `cayfore-theme`. A browser that still has `dcf-theme` is copied once, then the old key is removed.
-- The GitHub repository, the Pages path, and the root package are `cayfore` (https://santoshshinde2012.github.io/cayfore/). They were previously `databricks-cost-forecaster`.
+- The GitHub repository, the Pages path, and the root package were `cayfore` (https://santoshshinde2012.github.io/cayfore/). They were previously `databricks-cost-forecaster`.
 - Instance DBU counts are a cited table. Azure rows that Microsoft publishes are cited to the Azure Databricks pricing page. AWS, GCP, and `Standard_F4s_v2` stay manual. The refresh does not download LakeMeter-OSS.

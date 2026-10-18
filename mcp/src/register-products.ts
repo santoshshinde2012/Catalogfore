@@ -1,6 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import {
+  PRODUCT_NAME,
   blankPortfolio,
   defaultInstanceId,
   estimate,
@@ -23,8 +24,7 @@ export function registerProductTools(server: McpServer) {
     "list_products",
     {
       title: "List Databricks products",
-      description:
-        "List every Cayfore product: billing unit, whether a list rate is published, confidence, and the source. Unpublished rows are not given a guessed price.",
+      description: `List every ${PRODUCT_NAME} product: billing unit, whether a list rate is published, confidence, and the source. Unpublished rows are not given a guessed price.`,
       inputSchema: {},
     },
     async () => {

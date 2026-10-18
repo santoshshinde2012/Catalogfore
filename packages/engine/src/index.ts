@@ -1,3 +1,4 @@
+export { PRODUCT_NAME } from "./product-name.js";
 export * from "./types.js";
 export * from "./catalog.js";
 export * from "./money.js";

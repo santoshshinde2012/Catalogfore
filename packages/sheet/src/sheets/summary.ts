@@ -1,5 +1,5 @@
 import { productCatalog } from "@cayfore/catalog";
-import { pricesUpdatedOn, type PortfolioProjection } from "@cayfore/engine";
+import { PRODUCT_NAME, pricesUpdatedOn, type PortfolioProjection } from "@cayfore/engine";
 import type ExcelJS from "exceljs";
 import { registerForecastSheet } from "../registry.js";
 import { PERCENT_FORMAT, USD_FORMAT, prepareSheet, safeText, styleHeader, widths, zebra } from "../style.js";
@@ -30,7 +30,7 @@ function buildSummary(workbook: ExcelJS.Workbook, result: PortfolioProjection): 
     ["Pricing catalog", `${result.estimate.catalogVersion} verified ${result.estimate.verifiedOn}`],
     ["Disclaimer", "Not affiliated with Databricks. Estimates only, not a quote."],
   ];
-  sheet.addRow(["Cayfore", "Independent Databricks cost forecast"]);
+  sheet.addRow([PRODUCT_NAME, "Independent Databricks cost forecast"]);
   for (const [label, value] of rows)
     sheet.addRow([safeText(label), typeof value === "string" ? safeText(value) : value]);
   sheet.addRow(["Assumptions", ""]);

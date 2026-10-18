@@ -2,7 +2,7 @@ import { TEAM_PRESETS, type Cloud, type SimplePlan, type TeamPresetId, type Tier
 import { useId, useState, type Dispatch, type SetStateAction } from "react";
 import { money } from "../../format";
 import { Input } from "../ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { OptionSelect } from "../ui/option-select";
 import { SegmentedStrip, SegmentedStripItem } from "../ui/segmented-strip";
 import { CLOUDS, TIERS, Step, describePreset, pressedPreset } from "./plan-widgets";
 
@@ -41,21 +41,14 @@ export function CloudSection({
               ))}
             </SegmentedStrip>
           </div>
-          <label className="grid min-w-0 gap-2 text-sm font-medium">
-            Region
-            <Select value={plan.region} onValueChange={onRegion}>
-              <SelectTrigger aria-label="Region">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {regions.map((region) => (
-                  <SelectItem key={region.id} value={region.id}>
-                    {region.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </label>
+          <OptionSelect
+            className="min-w-0"
+            tone="field"
+            label="Region"
+            value={plan.region}
+            onValueChange={onRegion}
+            options={regions.map((region) => ({ value: region.id, label: region.label }))}
+          />
         </div>
         <p className="text-xs leading-relaxed text-muted-foreground">
           Prices follow the selected region. New plans start in each cloud's reference region.

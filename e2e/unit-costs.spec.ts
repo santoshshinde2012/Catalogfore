@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { chooseOption, expectComboboxValue } from "./combobox";
 import { navigateWorkspace as navigate, selectTheme } from "./header-helpers";
 import { downloadRates as download, openRateTab } from "./rate-helpers";
 import type { UnitCostCatalog } from "@cayfore/engine/unit-costs";
@@ -17,16 +18,16 @@ test("unit-cost navigation, product links, history, and reload preserve the acti
   expect(new URL(page.url()).searchParams.get("campaign")).toBe("team");
   expect(new URL(page.url()).hash).toBe(hash);
   await expect(page.getByRole("link", { name: "Skip to content", exact: true })).toHaveAttribute("href", "#unit-costs");
-  await page.getByRole("combobox", { name: "Product or service", exact: true }).selectOption("jobs_classic");
+  await chooseOption(page, "Product or service", "jobs_classic");
   expect(new URL(page.url()).searchParams.get("product")).toBe("jobs_classic");
   await page.reload();
-  await expect(page.getByRole("combobox", { name: "Product or service", exact: true })).toHaveValue("jobs_classic");
+  await expectComboboxValue(page, "Product or service", "jobs_classic");
   await navigate(page, "Plan");
   await expect(page.getByTestId("year-sentence")).toHaveText(annual);
   expect(new URL(page.url()).hash).toBe(hash);
   await page.goBack();
   await expect(page.locator("#unit-costs")).toBeFocused();
-  await expect(page.getByRole("combobox", { name: "Product or service", exact: true })).toHaveValue("jobs_classic");
+  await expectComboboxValue(page, "Product or service", "jobs_classic");
   await navigate(page, "Product map");
   await page.getByLabel("Search Databricks products", { exact: true }).fill("Jobs cluster");
   await page
@@ -34,7 +35,7 @@ test("unit-cost navigation, product links, history, and reload preserve the acti
     .getByRole("button", { name: "Inspect unit costs", exact: true })
     .click();
   await expect(page.locator("#unit-costs")).toBeFocused();
-  await expect(page.getByRole("combobox", { name: "Product or service", exact: true })).toHaveValue("jobs_classic");
+  await expectComboboxValue(page, "Product or service", "jobs_classic");
   expect(new URL(page.url()).hash).toBe(hash);
 });
 
@@ -51,7 +52,7 @@ test("CSV and JSON downloads retain the same filtered dimensions and complete ca
     `${filtered.rows.length.toLocaleString("en-US")} matching ${filtered.rows.length === 1 ? "row" : "rows"}`,
   );
   await openRateTab(page, "Downloads");
-  await page.getByRole("combobox", { name: "Download scope", exact: true }).selectOption("all");
+  await chooseOption(page, "Download scope", "all");
   const full = JSON.parse(await download(page, "JSON")) as UnitCostCatalog;
   expect(full.products.length).toBeGreaterThan(70);
   expect(full.rows.length).toBeGreaterThan(filtered.rows.length);
@@ -84,7 +85,7 @@ test("a source rate calculates a component cost without changing the forecast", 
 
 test("SQL infrastructure distinguishes its DBU base from the warehouse-hour price", async ({ page }) => {
   await page.goto("./?view=rates&product=sql_classic");
-  await page.getByRole("combobox", { name: "Cost component", exact: true }).selectOption("sql_vm");
+  await chooseOption(page, "Cost component", "sql_vm");
   await directory(page).getByRole("button").filter({ hasText: "$2.64" }).click();
   await expect(details(page).getByText("$2.64", { exact: true })).toBeVisible();
   await expect(details(page).getByText("per warehouse-hour", { exact: true })).toBeVisible();
@@ -96,7 +97,7 @@ test("SQL infrastructure distinguishes its DBU base from the warehouse-hour pric
 
 test("Search storage calculator requests units after the included storage allowance", async ({ page }) => {
   await page.goto("./?view=rates&product=vector_search_standard");
-  await page.getByRole("combobox", { name: "Cost component", exact: true }).selectOption("storage");
+  await chooseOption(page, "Cost component", "storage");
   await expect(details(page)).toContainText("max(0, stored GB − 30 included GB)");
   const quantity = page.getByRole("spinbutton", { name: "Billable quantity (GB-month)", exact: true });
   await expect(quantity).toHaveAccessibleDescription(
@@ -116,7 +117,7 @@ test("unresolved and concept rows remain visible for the selected placement with
   const rows = JSON.parse(await download(page, "JSON")) as UnitCostCatalog;
   expect(rows.rows.length).toBeGreaterThan(0);
   expect(rows.rows.every((row) => row.unitPriceUsd === null)).toBe(true);
-  await page.getByRole("combobox", { name: "Product or service", exact: true }).selectOption("delta_sharing");
+  await chooseOption(page, "Product or service", "delta_sharing");
   await expect(details(page)).toContainText("Rate unavailable");
   await expect(details(page)).toContainText("unresolved, not a free service");
   await expect(details(page).getByRole("spinbutton")).toHaveCount(0);
@@ -125,9 +126,9 @@ test("unresolved and concept rows remain visible for the selected placement with
 test("rate filters, keyboard details, and light/dark layouts fit narrow screens", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 740 });
   await page.goto("./?view=rates");
-  await page.getByRole("combobox", { name: "Cloud", exact: true }).selectOption("azure");
-  await expect(page.getByRole("combobox", { name: "Region", exact: true })).toHaveValue("");
-  await page.getByRole("combobox", { name: "Product or service", exact: true }).selectOption("jobs_classic");
+  await chooseOption(page, "Cloud", "azure");
+  await expectComboboxValue(page, "Region", "");
+  await chooseOption(page, "Product or service", "jobs_classic");
   const first = directory(page).locator("ul > li > button").first();
   await first.focus();
   await first.press("Enter");

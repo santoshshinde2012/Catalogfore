@@ -1,5 +1,6 @@
 import type { UnitCostCatalog } from "@cayfore/engine/unit-costs";
 import { expect, test, type Page } from "@playwright/test";
+import { chooseOption } from "./combobox";
 import { downloadRates, openRateTab } from "./rate-helpers";
 
 const money = (value: number) =>
@@ -35,9 +36,7 @@ test("regional bars, calculation path, and downloads share the same dimensional 
   await target.focus();
   await target.press("Enter");
   await expect(details(page)).toBeFocused();
-  await expect(page.getByRole("combobox", { name: "Region", exact: true }).locator("option:checked")).toHaveText(
-    targetLabel,
-  );
+  await expect(page.getByRole("combobox", { name: "Region", exact: true })).toContainText(targetLabel);
   const after = await currentRows(page);
   const sameConfiguration = after.rows.find(
     (row) =>
@@ -55,14 +54,14 @@ test("regional bars, calculation path, and downloads share the same dimensional 
 
 test("comparison keeps SQL sizes separate and never charts unresolved context as a zero price", async ({ page }) => {
   await page.goto("./?view=rates&product=sql_classic&rateCloud=azure&rateRegion=eastus&rateTier=premium");
-  await page.getByRole("combobox", { name: "Cost component", exact: true }).selectOption("compute");
+  await chooseOption(page, "Cost component", "compute");
   const rows = (await currentRows(page)).rows;
   const selected = rows[0];
   await openRateTab(page, "Compare regions");
   await expect(comparison(page)).toContainText(String(selected.dimensions.size));
   await expect(comparison(page)).toContainText(`USD / ${selected.unit}`);
   await expect(comparison(page).locator('button[aria-pressed="true"]')).toContainText(money(selected.unitPriceUsd!));
-  await page.getByRole("combobox", { name: "Product or service", exact: true }).selectOption("unity_catalog");
+  await chooseOption(page, "Product or service", "unity_catalog");
   await expect(comparison(page)).toContainText("No monetary comparison");
   await expect(comparison(page).locator("ol")).toHaveCount(0);
   await expect(comparison(page).getByRole("status")).toContainText("no resolved monetary quote");

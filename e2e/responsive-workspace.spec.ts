@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { chooseOption, expectComboboxValue } from "./combobox";
 import { openRateTab, showRateRefinements } from "./rate-helpers";
 
 test("primary workspaces are reachable on a narrow screen without opening the menu", async ({ page }) => {
@@ -93,18 +94,18 @@ test("rates workspace preserves calculation and download choices while switching
   const quantity = page.getByRole("spinbutton", { name: "Billable quantity (DBU)", exact: true });
   await quantity.fill("456");
   await showRateRefinements(page);
-  await page.getByRole("combobox", { name: "Evidence basis", exact: true }).selectOption("official");
+  await chooseOption(page, "Evidence basis", "official");
   await openRateTab(page, "Compare regions");
   const compare = page.getByRole("tab", { name: "Compare regions", exact: true });
   await compare.press("ArrowRight");
   await expect(page.getByRole("tab", { name: "Evidence", exact: true })).toHaveAttribute("aria-selected", "true");
   await expect(page.getByRole("region", { name: "Evidence coverage", exact: true })).toBeVisible();
   await openRateTab(page, "Downloads");
-  await page.getByRole("combobox", { name: "Download scope", exact: true }).selectOption("all");
+  await chooseOption(page, "Download scope", "all");
   await openRateTab(page, "Rates & calculator");
   await expect(quantity).toHaveValue("456");
-  await expect(page.getByRole("combobox", { name: "Region", exact: true })).toHaveValue("eastus");
-  await expect(page.getByRole("combobox", { name: "Evidence basis", exact: true })).toHaveValue("official");
+  await expectComboboxValue(page, "Region", "eastus");
+  await expectComboboxValue(page, "Evidence basis", "official");
   await openRateTab(page, "Downloads");
-  await expect(page.getByRole("combobox", { name: "Download scope", exact: true })).toHaveValue("all");
+  await expectComboboxValue(page, "Download scope", "all");
 });

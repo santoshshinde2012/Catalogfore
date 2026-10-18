@@ -7,7 +7,7 @@ import { createServer } from "vite";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const webRoot = path.join(repo, "apps/web");
-const page = "https://santoshshinde2012.github.io/cayfore/";
+const page = "https://santoshshinde2012.github.io/Catalogfore/";
 const dom = new JSDOM('<!doctype html><html><body><div id="root" data-prerender="done"></div></body></html>', {
   url: page,
   pretendToBeVisual: true,
@@ -67,14 +67,14 @@ try {
 
   const sheet = index.match(/<link rel="stylesheet"[^>]*href="([^"]+)"[^>]*>/);
   if (!sheet) throw new Error("Built index.html has no stylesheet");
-  const cssPath = path.join(webRoot, "dist", sheet[1].replace(/^\/cayfore\//, ""));
+  const cssPath = path.join(webRoot, "dist", sheet[1].replace(/^\/Catalogfore\//, ""));
   const css = readFileSync(cssPath, "utf8");
   if (css.includes("</style>")) throw new Error("Stylesheet cannot be inlined");
   index = index.replace(sheet[0], `<style>${css}</style>`);
 
   const boot = readFileSync(path.join(webRoot, "public/theme-boot.js"), "utf8").trim();
   const bootHash = createHash("sha256").update(boot).digest("base64");
-  const bootTag = index.match(/<script src="(?:\.\/|\/cayfore\/|\/)theme-boot\.js"><\/script>/);
+  const bootTag = index.match(/<script src="(?:\.\/|\/Catalogfore\/|\/)theme-boot\.js"><\/script>/);
   if (!bootTag) throw new Error("Built index.html is missing theme-boot.js");
   index = index.replace(bootTag[0], `<script>${boot}</script>`);
   const moduleTag = index.match(/<script type="module" crossorigin src="([^"]+)"><\/script>/);

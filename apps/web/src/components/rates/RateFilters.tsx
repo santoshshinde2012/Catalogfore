@@ -1,8 +1,22 @@
 import type { UnitCostCatalog, UnitCostFilters } from "@cayfore/engine/unit-costs";
 import { Search } from "lucide-react";
 import { Button } from "../ui/button";
+import { AwsMark, AzureMark, GcpMark } from "../ui/cloud-marks";
 import { Input } from "../ui/input";
+import { OptionSelect } from "../ui/option-select";
 import { RateFilterRefinements } from "./RateFilterRefinements";
+
+const clouds = [
+  { value: "", label: "All clouds" },
+  { value: "aws", label: "AWS", leading: <AwsMark /> },
+  { value: "azure", label: "Azure", leading: <AzureMark /> },
+  { value: "gcp", label: "GCP", leading: <GcpMark /> },
+];
+const editions = [
+  { value: "", label: "All editions" },
+  { value: "premium", label: "Premium" },
+  { value: "enterprise", label: "Enterprise" },
+];
 
 export function RateFilters({
   catalog,
@@ -17,97 +31,88 @@ export function RateFilters({
 }) {
   const forCloud = catalog.rows.filter((row) => !filters.cloud || row.cloud === filters.cloud || row.cloud === null);
   const regions = [
-    ...new Map(
-      forCloud.filter((row) => row.region !== null).map((row) => [row.region!, row.regionLabel ?? row.region!]),
-    ).entries(),
-  ].sort((a, b) => a[1].localeCompare(b[1]));
+    { value: "", label: "All regions" },
+    ...[
+      ...new Map(
+        forCloud.filter((row) => row.region !== null).map((row) => [row.region!, row.regionLabel ?? row.region!]),
+      ).entries(),
+    ]
+      .sort((a, b) => a[1].localeCompare(b[1]))
+      .map(([id, name]) => ({ value: id, label: name })),
+  ];
   const productRows = forCloud.filter((row) => !filters.productId || row.productId === filters.productId);
-  const components = [...new Map(productRows.map((row) => [row.componentId, row.componentName])).entries()].sort(
-    (a, b) => a[1].localeCompare(b[1]),
-  );
+  const components = [
+    { value: "", label: "All components" },
+    ...[...new Map(productRows.map((row) => [row.componentId, row.componentName])).entries()]
+      .sort((a, b) => a[1].localeCompare(b[1]))
+      .map(([id, name]) => ({ value: id, label: name })),
+  ];
+  const products = [
+    { value: "", label: "All products and services" },
+    ...catalog.products.map((product) => ({ value: product.id, label: product.name })),
+  ];
   function set(key: keyof UnitCostFilters, value: string) {
     onChange({ ...filters, [key]: value || undefined });
   }
   return (
     <section aria-label="Filter unit costs" className="border-y bg-card/60 px-3 py-3 sm:px-4">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        <div className="col-span-2 min-w-0 sm:col-span-1">
-          <label className="field text-xs" htmlFor="rate-search">
+      <div className="grid grid-cols-2 items-end gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="col-span-2 grid min-w-0 gap-2 sm:col-span-1">
+          <label className="text-xs font-medium text-muted-foreground" htmlFor="rate-search">
             Search rates and services
           </label>
-          <div className="relative mt-2">
+          <div className="relative">
             <Search
-              className="pointer-events-none absolute top-3.5 left-3 size-4 text-muted-foreground sm:top-2.5"
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
               aria-hidden="true"
             />
             <Input
               id="rate-search"
               type="search"
-              placeholder="Service, SKU, model, unit, or source…"
+              placeholder="Service, SKU, or model"
               value={filters.query ?? ""}
               onChange={(event) => set("query", event.target.value)}
               className="pl-9"
             />
           </div>
         </div>
-        <label className="field col-span-2 min-w-0 text-xs sm:col-span-1">
-          Product or service
-          <select
-            value={filters.productId ?? ""}
-            onChange={(event) =>
-              onChange({ ...filters, productId: event.target.value || undefined, componentId: undefined })
-            }
-          >
-            <option value="">All products and services</option>
-            {catalog.products.map((product) => (
-              <option key={product.id} value={product.id}>
-                {product.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="field min-w-0 text-xs">
-          Cloud
-          <select
-            value={filters.cloud ?? ""}
-            onChange={(event) => onChange({ ...filters, cloud: event.target.value || undefined, region: undefined })}
-          >
-            <option value="">All clouds</option>
-            <option value="aws">AWS</option>
-            <option value="azure">Azure</option>
-            <option value="gcp">GCP</option>
-          </select>
-        </label>
-        <label className="field min-w-0 text-xs">
-          Region
-          <select value={filters.region ?? ""} onChange={(event) => set("region", event.target.value)}>
-            <option value="">All regions</option>
-            {regions.map(([id, name]) => (
-              <option key={id} value={id}>
-                {name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="field min-w-0 text-xs">
-          Edition
-          <select value={filters.tier ?? ""} onChange={(event) => set("tier", event.target.value)}>
-            <option value="">All editions</option>
-            <option value="premium">Premium</option>
-            <option value="enterprise">Enterprise</option>
-          </select>
-        </label>
-        <label className="field min-w-0 text-xs">
-          Cost component
-          <select value={filters.componentId ?? ""} onChange={(event) => set("componentId", event.target.value)}>
-            <option value="">All components</option>
-            {components.map(([id, name]) => (
-              <option key={id} value={id}>
-                {name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <OptionSelect
+          className="col-span-2 min-w-0 sm:col-span-1"
+          label="Product or service"
+          value={filters.productId ?? ""}
+          onValueChange={(productId) =>
+            onChange({ ...filters, productId: productId || undefined, componentId: undefined })
+          }
+          options={products}
+        />
+        <OptionSelect
+          className="min-w-0"
+          label="Cloud"
+          value={filters.cloud ?? ""}
+          onValueChange={(cloud) => onChange({ ...filters, cloud: cloud || undefined, region: undefined })}
+          options={clouds}
+        />
+        <OptionSelect
+          className="min-w-0"
+          label="Region"
+          value={filters.region ?? ""}
+          onValueChange={(region) => set("region", region)}
+          options={regions}
+        />
+        <OptionSelect
+          className="min-w-0"
+          label="Edition"
+          value={filters.tier ?? ""}
+          onValueChange={(tier) => set("tier", tier)}
+          options={editions}
+        />
+        <OptionSelect
+          className="min-w-0"
+          label="Cost component"
+          value={filters.componentId ?? ""}
+          onValueChange={(componentId) => set("componentId", componentId)}
+          options={components}
+        />
       </div>
       <div className="mt-2 flex items-start gap-2">
         <RateFilterRefinements catalog={catalog} filters={filters} onChange={onChange} />
