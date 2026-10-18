@@ -35,7 +35,7 @@ Open **Product map** to explore eight Databricks domains, all 70 catalog entries
 
 Open **Unit costs** for the source prices and consumption rules behind each product. **Rates & calculator** opens the working quote immediately; **Compare regions**, **Evidence** and **Downloads** provide focused supporting views. **More filters** reveals the additional evidence and coverage controls. Official price links, publisher names, snapshot dates, and evidence labels appear beside prices. Direct official prices, derived rates, planning estimates, and unresolved conflicts can be filtered separately. Filter by product, cloud, region, edition, component, or evidence status; inspect machines, models, token directions, and other variants; then enter a quantity to calculate a component subtotal. Compare the same configured unit across regions, inspect the source-to-quote calculation path, and view evidence coverage without combining unlike prices. The calculator, visual scales, CSV/JSON and Excel share the engine quote policy. Product map and forecast rows link to the relevant reference costs. [Unit-cost documentation](docs/UNIT-COSTS.md) explains sources, missing prices, assumptions, and pricing conflicts.
 
-**Downloads** previews the catalog as a sortable, paginated table with billing units, evidence and source dates. Inspect an exact row or export all filtered rows or the complete catalog as ordinary CSV or JSON; pagination never limits the file. Run `npm run export:unit-costs` to create both locally. Complete, lossless copies are versioned as [CSV](data/unit-costs.csv.gz) and [JSON](data/unit-costs.json.gz) gzip files. They cover all 70 pricing products and eight platform concepts without treating an unknown rate as free.
+**Downloads** previews the catalog as a sortable, paginated table with billing units, evidence and source dates. Inspect an exact row or export all filtered rows or the complete catalog as ordinary CSV or JSON; pagination never limits the file. Run `npm run export:unit-costs` to create both locally. Complete, lossless copies are versioned as [CSV](data/unit-costs.csv.gz) and [JSON](data/unit-costs.json.gz) gzip files. The bundled USD snapshot is catalog **2026-10-17.3**: 70 pricing products, eight platform concepts, and 29,665 dimensional rows. An unknown rate stays empty rather than free.
 
 ![Browse source unit costs in a spreadsheet-style table before exporting](docs/screenshots/unit-cost-downloads-light.png)
 
@@ -176,7 +176,7 @@ One weekly workflow, Mondays at 06:00 UTC, refreshes AWS and Azure list prices a
 
 ## MCP
 
-`mcp/` speaks stdio and does not log into a workspace. A browser page cannot call the Databricks SQL API. Tools: `list_skus`, `list_products`, `estimate_workload`, `estimate_product`, `forecast`, `compare_scenarios`, `forecast_usage`, and `export_xlsx`. `npm run cayfore -- estimate --xlsx forecast.xlsx` writes the same Excel workbook the page downloads.
+`mcp/` speaks stdio and does not log into a workspace. A browser page cannot call the Databricks SQL API. Tools: `list_skus`, `list_products`, `estimate_workload`, `estimate_product`, `forecast`, `compare_scenarios`, `forecast_usage`, and `export_xlsx`. `npm run catalogfore -- estimate --xlsx forecast.xlsx` writes the same Excel workbook the page downloads.
 
 ```bash
 npm run build
