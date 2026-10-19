@@ -52,6 +52,7 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Changed
 
+- Weekly catalog check on 2026-10-19. Catalog version 2026-10-17.3 -> 2026-10-19.1.
 - Removed boxed header and unit-cost task navigation in favor of plain text and active underlines. Compacted the reference filters and source context to give catalog data more room.
 
 - Fixed literal release-note selection, single-pass RSS entity decoding, bounded share decompression, and additional CSV formula prefixes. Added deterministic property-based fuzz tests, refreshed security-policy accuracy, and enabled trusted scheduled Scorecard publication. Recorded and applied the repository's PR/CI branch-protection baseline; independent review, project-age and badge criteria remain explicit maintainer follow-ups.
