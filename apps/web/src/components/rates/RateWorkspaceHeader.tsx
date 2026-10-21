@@ -39,7 +39,8 @@ export function RateWorkspaceHeader({ catalog, onBack }: { catalog: UnitCostCata
         </p>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Bundled USD snapshot · Reference filters and calculations keep your forecast unchanged.
+        Bundled USD snapshot. Filters leave the forecast unchanged. Add to forecast or Update forecast writes a quantity
+        you choose.
       </p>
     </header>
   );

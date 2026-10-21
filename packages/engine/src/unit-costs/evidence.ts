@@ -1,4 +1,4 @@
-import evidence from "../../../../data/unit-cost-evidence.json";
+import { unitCostEvidence as evidence } from "../catalog/sources/unit-cost-evidence.js";
 import { componentPriceConflicts } from "../rates/component-evidence.js";
 import type { UnitCostRow } from "./types.js";
 import { sourceReference, withEvidenceLevel } from "./provenance.js";

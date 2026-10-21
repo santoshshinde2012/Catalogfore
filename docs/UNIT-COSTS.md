@@ -6,7 +6,7 @@ The inventory covers all **70 current pricing-catalog products and 8 learning-on
 
 ## Explore the workspace
 
-Start in **Rates & calculator**. Search or choose a product, then set its reference cloud, region, edition and component. The selected quote and billable-quantity calculator are beside the matching rows on a wide screen; on a phone, use **View selected rate** and **Back to rates**. These actions leave the forecast unchanged.
+Start in **Rates & calculator**. Search or choose a product, then set its reference cloud, region, edition and component. The selected quote and billable-quantity calculator are beside the matching rows on a wide screen; on a phone, use **View selected rate** and **Back to rates**. Browsing and editing the quantity leave the forecast unchanged. **Use my usage** fills the calculator from a matching workload. **Add to forecast** or **Update forecast** writes that quantity onto a catalog-priced DBU workload; an exported dollar cost is left as exported.
 
 Use **More filters** for domain, pricing coverage and evidence basis. Active refinements remain counted when collapsed. **Compare regions**, **Evidence** and **Downloads** open the supporting tools without replacing your chosen placement. Calculator input and download scope survive task switches. Keyboard arrow keys move between the workspace tabs.
 
@@ -24,8 +24,8 @@ CSV and JSON retain all 40 canonical fields, including stable IDs, normalized pe
 
 ## Files and commands
 
-- [unit-costs.json.gz](../data/unit-costs.json.gz): losslessly compressed JSON inventory with component, placement, dimension, price, and provenance fields.
-- [unit-costs.csv.gz](../data/unit-costs.csv.gz): the same inventory as a losslessly compressed flat CSV table for spreadsheets and joins.
+- [unit-costs.json.gz](../data/generated/unit-costs.json.gz): losslessly compressed JSON inventory with component, placement, dimension, price, and provenance fields.
+- [unit-costs.csv.gz](../data/generated/unit-costs.csv.gz): the same inventory as a losslessly compressed flat CSV table for spreadsheets and joins.
 - [unit-cost-evidence.json](../data/unit-cost-evidence.json): maintained source registry, source scopes, review dates, and known conflicts.
 - [RESEARCH.md](RESEARCH.md): the existing calculator's detailed pricing assumptions.
 
@@ -48,7 +48,7 @@ npm run cayfore -- rates --format csv --product jobs_classic --cloud azure --reg
 
 Generation reads local catalog inputs; it does not fetch live prices or use a customer's account. Source review dates describe what was checked, while stored rate dates describe the underlying snapshot. Rebuilding a file does not make its rates newly verified. Cloud-price refreshes and manually researched consumption changes remain separate maintenance actions.
 
-`export:unit-costs` writes ordinary `data/unit-costs.csv` and `data/unit-costs.json` files for local use, plus the versioned `.gz` copies. The expanded grid repeats evidence across many placement and variant combinations, so the repository stores compressed copies to keep updates small. Decompress either copy with a standard archive tool or `gzip -dk data/unit-costs.csv.gz` (use the JSON filename for JSON). The website and CLI download ordinary CSV/JSON without requiring decompression. CI expands the committed copies and compares their complete contents against the current builder.
+`export:unit-costs` writes ordinary `data/generated/unit-costs.csv` and `data/generated/unit-costs.json` files for local use, plus the versioned `.gz` copies. The expanded grid repeats evidence across many placement and variant combinations, so the repository stores compressed copies to keep updates small. Decompress either copy with a standard archive tool or `gzip -dk data/generated/unit-costs.csv.gz` (use the JSON filename for JSON). The website and CLI download ordinary CSV/JSON without requiring decompression. CI expands the committed copies and compares their complete contents against the current builder.
 
 ## Source of truth and evidence levels
 

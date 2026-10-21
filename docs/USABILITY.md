@@ -16,7 +16,7 @@ Starting spend retains the amount entered. A separate modeled baseline explains 
 
 The import review keeps its primary action visible while the billing details scroll. Budget, scenario, timeline, and commitment panels explain their empty states and display action feedback. Layout and accessibility checks cover 320px, 390px, and 1440px in light and dark themes.
 
-The Unit costs Downloads tab previews the canonical inventory in a sortable table. Filtered or complete scope applies to both the preview and CSV/JSON, while paging only limits visible rows. Billing quantities, source dates and evidence stay beside each price; Inspect opens the exact row and its calculator. On phones, the table scrolls inside its named keyboard-focusable region. Reference filters and these calculations leave the saved forecast unchanged.
+The Unit costs Downloads tab previews the canonical inventory in a sortable table. Filtered or complete scope applies to both the preview and CSV/JSON, while paging only limits visible rows. Billing quantities, source dates and evidence stay beside each price; Inspect opens the exact row and its calculator. On phones, the table scrolls inside its named keyboard-focusable region. Reference filters leave the saved forecast unchanged. The calculator can fill from a matching usage quantity and, when you choose it, add or update that quantity on the forecast.
 
 ## Evaluating — what does a medium team cost on AWS?
 

@@ -12,7 +12,7 @@ import {
 
 const root = new URL("../", import.meta.url);
 const catalogPath = new URL("data/product-catalog.json", root);
-const statePath = new URL("data/catalog-watch-state.json", root);
+const statePath = new URL("data/generated/catalog-watch-state.json", root);
 const CHANGELOG_MARKER = "### Changed\n\n";
 
 export async function runWeeklyCatalog({ apply, offline, ports }) {

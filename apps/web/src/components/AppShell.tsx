@@ -138,6 +138,18 @@ export function AppShell({ session }: { session: SimpleSession }) {
                 onProduct={(id) => navigate("rates", id, ratePlacement)}
                 portfolio={session.portfolio}
                 onBack={() => showPlanner("plan-inputs")}
+                onApplyUsage={(row, quantity) => {
+                  if (!session.applyUnitCost(row, quantity)) {
+                    toast("Quantity kept in the calculator", {
+                      description: "An exported cost stays on the forecast. Only a catalog DBU quantity can be added.",
+                    });
+                    return;
+                  }
+                  toast("Forecast updated", {
+                    description: `${row.productName} now uses this quantity. Plan discounts still apply.`,
+                    action: { label: "View forecast", onClick: () => showPlanner("forecast") },
+                  });
+                }}
               />
             </Suspense>
           )}

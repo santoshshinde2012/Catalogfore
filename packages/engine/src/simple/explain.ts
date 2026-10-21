@@ -1,7 +1,7 @@
 import { pricesUpdatedOn, regionInfo } from "../catalog.js";
+import { coverageAssumption } from "../catalog/sources/coverage-summary.js";
 import type { UncertaintyBand } from "../recommend.js";
 import type { Cloud, Estimate } from "../types.js";
-import coverageSummary from "../../../../data/coverage-summary.json";
 import { normalizeMix } from "./mix.js";
 import type { SimplePlan } from "./project.js";
 import { regionFor } from "./shape.js";
@@ -61,7 +61,7 @@ export function explain(plan: SimplePlan, result: Estimate, band: UncertaintyBan
     lines.push("Azure publishes one plan, so Enterprise uses the same list as Premium.");
   }
   lines.push(`Prices updated ${pricesUpdatedOn}.`);
-  lines.push(coverageSummary.assumption);
+  lines.push(coverageAssumption);
   lines.push(
     "Estimates only. A private contract, a promotion, or support charges will differ. The Lakehouse Real-Time promotion is not applied.",
   );

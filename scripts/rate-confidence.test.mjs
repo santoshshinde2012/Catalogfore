@@ -41,7 +41,7 @@ test("stored confidence matches the catalog and the bands sum", async () => {
     assert.equal(report.products[product.id].score, product.confidenceScore);
     assert.equal(report.products[product.id].expected, product.confidenceScore);
   }
-  const stored = JSON.parse(await readFile(new URL("../data/rate-confidence.json", import.meta.url), "utf8"));
+  const stored = JSON.parse(await readFile(new URL("../data/generated/rate-confidence.json", import.meta.url), "utf8"));
   assert.equal(stored.version, report.version);
   assert.equal(stored.skuRatesVersion, report.skuRatesVersion);
   assert.equal(stored.productCatalogVersion, report.productCatalogVersion);

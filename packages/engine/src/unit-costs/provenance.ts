@@ -1,4 +1,4 @@
-import evidence from "../../../../data/unit-cost-evidence.json";
+import { unitCostEvidence as evidence } from "../catalog/sources/unit-cost-evidence.js";
 import { PRODUCT_NAME } from "../product-name.js";
 import type { SourceAuthority, UnitCostRow, UnitCostSource } from "./types.js";
 

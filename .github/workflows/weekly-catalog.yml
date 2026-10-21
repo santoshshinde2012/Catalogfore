@@ -56,15 +56,15 @@ jobs:
             data/sources/databricks-calculator-aws.json.gz
             data/sources/databricks-calculator-gcp.json.gz
             data/sources/databricks-price-cards.json.gz
-            data/rate-confidence.json
-            data/pricing-probe.json
-            data/catalog-watch-report.md
-            data/catalog-watch-state.json
-            data/coverage-summary.json
+            data/generated/rate-confidence.json
+            data/generated/pricing-probe.json
+            data/generated/catalog-watch-report.md
+            data/generated/catalog-watch-state.json
+            data/generated/coverage-summary.json
             data/product-catalog.json
             data/component-price-conflicts.json
-            data/unit-costs.json.gz
-            data/unit-costs.csv.gz
+            data/generated/unit-costs.json.gz
+            data/generated/unit-costs.csv.gz
             data/weekly-summary.md
             docs/COVERAGE.md
             docs/PRODUCTS.md

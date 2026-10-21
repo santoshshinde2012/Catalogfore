@@ -13,7 +13,7 @@ import {
   type SkuId,
   type Tier,
 } from "@cayfore/engine";
-import confidenceFile from "../../../data/rate-confidence.json";
+import { rateConfidenceScore } from "@cayfore/engine/rate-confidence";
 
 export interface ListedRateDetails {
   price: number | "";
@@ -25,10 +25,6 @@ export interface ListedRateDetails {
   band: string;
   basis: string;
 }
-
-const scores = new Map(
-  confidenceFile.cells.map((cell) => [`${cell.cloud}|${cell.region}|${cell.tier}|${cell.sku}`, cell]),
-);
 
 /** Describe the DBU price actually used by this workload, before portfolio discounts. */
 export function listedRateDetails(result: PortfolioProjection, line: LineItem): ListedRateDetails {
@@ -117,13 +113,13 @@ export function listedRateDetails(result: PortfolioProjection, line: LineItem): 
     );
   if (!resolved || resolved.usdPerDbu === null) return unavailable(resolved?.basis ?? "No catalog quote is available.");
   const sku = line.sku as SkuId;
-  const score = scores.get(`${cloud}|${region.id}|${tier}|${sku}`);
+  const score = rateConfidenceScore(cloud, region.id, tier, sku);
   const prefix = importedCatalogEstimate ? "Catalog estimate for imported DBU usage; export supplied no price. " : "";
   return {
     ...details,
     price: resolved.usdPerDbu,
     source: resolved.sources.find((reference) => reference.role === "price")?.url ?? "",
-    confidence: score?.score ?? "",
+    confidence: score ?? "",
     band: resolved.confidence,
     basis: prefix + resolved.basis,
   };

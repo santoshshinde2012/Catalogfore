@@ -428,7 +428,7 @@ The pipeline, the files, and how to run it are in [DATA-PIPELINE.md](DATA-PIPELI
 
 ### Databricks does not publish a price JSON
 
-The pricing site is a client bundle. On 2026-10-16 the refresh fetched `https://www.databricks.com/en-pricing-assets/page-data/app-data.json` (50 bytes, a webpack hash, no rates) and `https://www.databricks.com/page-data/product/pricing/page-data.json` (404). The result is `data/pricing-probe.json`, `foundPublicJson: false`. The [website terms of use](https://www.databricks.com/legal/terms-of-use) prohibit robots, scrapers, and any interface Databricks does not provide. The refresh does not download the bundle. AWS and GCP $/DBU stay on the cited table in section 3. Azure $/DBU now comes from Retail Prices, below.
+The pricing site is a client bundle. On 2026-10-16 the refresh fetched `https://www.databricks.com/en-pricing-assets/page-data/app-data.json` (50 bytes, a webpack hash, no rates) and `https://www.databricks.com/page-data/product/pricing/page-data.json` (404). The result is `data/generated/pricing-probe.json`, `foundPublicJson: false`. The [website terms of use](https://www.databricks.com/legal/terms-of-use) prohibit robots, scrapers, and any interface Databricks does not provide. The refresh does not download the bundle. AWS and GCP $/DBU stay on the cited table in section 3. Azure $/DBU now comes from Retail Prices, below.
 
 ### Azure DBU meters are regional list rates
 
@@ -548,7 +548,7 @@ This pass searched the per-cloud docs, the product pricing subpages, the serverl
 
 Products: 17 measured, 36 cited, 5 secondary, 12 unpublished.
 
-SKU cells (`data/rate-confidence.json`, 17 SKUs × 61 regions × 2 tiers = 2,074): **1,060 measured, 74 secondary, 940 proxy**. The measured cells are Azure meters on both tiers (Enterprise uses the Premium meter). The 74 secondary cells are the AWS and GCP reference regions, plus the three Azure East US SKUs that still have no meter (`managed_services`, `lakeflow_connect`, `ai_search`). Everything else is the proxy. No public AWS or GCP price file replaced it. The GCP Cloud Billing catalog does not list Databricks SKUs without a billing account. OWOX (October 2026) matches the curated US East table already in section 3, so those dollars did not move.
+SKU cells (`data/generated/rate-confidence.json`, 17 SKUs × 61 regions × 2 tiers = 2,074): **1,060 measured, 74 secondary, 940 proxy**. The measured cells are Azure meters on both tiers (Enterprise uses the Premium meter). The 74 secondary cells are the AWS and GCP reference regions, plus the three Azure East US SKUs that still have no meter (`managed_services`, `lakeflow_connect`, `ai_search`). Everything else is the proxy. No public AWS or GCP price file replaced it. The GCP Cloud Billing catalog does not list Databricks SKUs without a billing account. OWOX (October 2026) matches the curated US East table already in section 3, so those dollars did not move.
 
 ### Zerobus, the one rate that changed
 
@@ -600,16 +600,16 @@ Calendar gaps and zero periods retain their meaning when fitting history. Holdou
 
 ## 20. Price refresh on 2026-10-17
 
-`node scripts/refresh-prices.mjs` re-read Azure Retail Prices for all 39 regions on the rate card and the AWS EC2 offer files for all 16 regions. `GCP_BILLING_API_KEY` is not set, so GCP virtual-machine prices stayed seeds. The two Databricks price-JSON probes still returned no rates (`data/pricing-probe.json`, `foundPublicJson: false`).
+`node scripts/refresh-prices.mjs` re-read Azure Retail Prices for all 39 regions on the rate card and the AWS EC2 offer files for all 16 regions. `GCP_BILLING_API_KEY` is not set, so GCP virtual-machine prices stayed seeds. The two Databricks price-JSON probes still returned no rates (`data/generated/pricing-probe.json`, `foundPublicJson: false`).
 
-| File                         | Before             | After              | Dollar rates                                              |
-| ---------------------------- | ------------------ | ------------------ | --------------------------------------------------------- |
-| `data/product-catalog.json`  | `2026-10-16.5`     | `2026-10-17.1`     | No product added or removed. 70 rows.                     |
-| `data/sku-rates.json`        | `2026-10-16.1`     | `2026-10-17.1`     | $/DBU table unchanged. The version is the re-check date.  |
-| `data/instances.json`        | `2026-10-15.1`     | `2026-10-17.1`     | DBU counts unchanged. The refresh does not download them. |
-| `data/cloud-vm-prices.json`  | `2026-10-16.2`     | `2026-10-17.2`     | 383 rows. On-demand and spot hourly changes: 0.           |
-| `data/azure-dbu-meters.json` | `2026-10-16.2`     | `2026-10-17.2`     | 530 rows. `$/DBU` changes: 0.                             |
-| `data/pricing-probe.json`    | checked 2026-10-16 | checked 2026-10-17 | Still no public rate JSON.                                |
+| File                                | Before             | After              | Dollar rates                                              |
+| ----------------------------------- | ------------------ | ------------------ | --------------------------------------------------------- |
+| `data/product-catalog.json`         | `2026-10-16.5`     | `2026-10-17.1`     | No product added or removed. 70 rows.                     |
+| `data/sku-rates.json`               | `2026-10-16.1`     | `2026-10-17.1`     | $/DBU table unchanged. The version is the re-check date.  |
+| `data/instances.json`               | `2026-10-15.1`     | `2026-10-17.1`     | DBU counts unchanged. The refresh does not download them. |
+| `data/cloud-vm-prices.json`         | `2026-10-16.2`     | `2026-10-17.2`     | 383 rows. On-demand and spot hourly changes: 0.           |
+| `data/azure-dbu-meters.json`        | `2026-10-16.2`     | `2026-10-17.2`     | 530 rows. `$/DBU` changes: 0.                             |
+| `data/generated/pricing-probe.json` | checked 2026-10-16 | checked 2026-10-17 | Still no public rate JSON.                                |
 
 East US meters that the catalog cites outside the mapped SKU table were read again from the Retail Prices API and did not move: Jobs Light Premium $0.22 and Standard $0.07, Standard jobs $0.15, Standard all-purpose $0.40, Standard SQL $0.22, Data Processed $0.02/GB, launch charge $0.07, managed storage $0.026 per DSU, Clean Rooms $50 per collaborator-day, compliance $0.10 and mission critical $0.15 per DBU, and Premium Database Serverless $0.26 per DBU-hour. No East US meter name contained “performance”.
 

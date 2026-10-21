@@ -2,6 +2,8 @@ import type { Portfolio } from "@cayfore/engine";
 import {
   buildUnitCostCatalog,
   filterUnitCosts,
+  planQuantityAction,
+  planQuantityForUnitCost,
   type UnitCostFilters,
   type UnitCostRow,
 } from "@cayfore/engine/unit-costs";
@@ -27,12 +29,14 @@ export function UnitCostsPage({
   productId,
   onProduct,
   onBack,
+  onApplyUsage,
   placement,
 }: {
   portfolio: Portfolio;
   productId: string;
   onProduct: (id: string) => void;
   onBack: () => void;
+  onApplyUsage: (row: UnitCostRow, quantity: number) => void;
   placement?: RatePlacement;
 }) {
   const [filters, setFilters] = useState<UnitCostFilters>(() => ({
@@ -135,7 +139,14 @@ export function UnitCostsPage({
                 onSelected={() => selected && select(selected.id)}
               />
               {selected && (
-                <RateDetails key={selected.id} row={selected} onResults={() => navigateToSection("rate-directory")} />
+                <RateDetails
+                  key={selected.id}
+                  row={selected}
+                  usage={planQuantityForUnitCost(portfolio, selected)}
+                  action={planQuantityAction(portfolio, selected)}
+                  onApply={(quantity) => onApplyUsage(selected, quantity)}
+                  onResults={() => navigateToSection("rate-directory")}
+                />
               )}
             </div>
           </TabsContent>

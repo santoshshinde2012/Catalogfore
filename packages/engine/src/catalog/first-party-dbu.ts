@@ -1,14 +1,10 @@
-import azureMetersJson from "../../../../data/azure-dbu-meters.json";
-import { referenceRegion } from "../../../../data/cloud-vm-prices.json";
-import {
-  rates as publishedDbuRates,
-  sources as publishedDbuSources,
-  issues as publishedDbuIssues,
-} from "../../../../data/databricks-dbu-rates.json";
+import { azureDbuMeters } from "./sources/azure-meters.js";
+import { publishedDbuIssues, publishedDbuRates, publishedDbuSources } from "./sources/published-dbu.js";
+import { referenceRegion } from "./sources/vm-prices.js";
 import type { Cloud, SkuId, Tier } from "../types.js";
-import type { AzureDbuMeter, DbuRateObservation, DbuRateConflict, PublishedRateIssue } from "./dbu-rate-types.js";
+import type { DbuRateObservation, DbuRateConflict, PublishedRateIssue } from "./dbu-rate-types.js";
 
-export const azureDbuMeters = azureMetersJson.meters as AzureDbuMeter[];
+export { azureDbuMeters };
 const azureRateMap = new Map(azureDbuMeters.map((row) => [`${row.region}:${row.sku}`, row]));
 const publishedRateMap = new Map(
   publishedDbuRates.map((row) => [`${row.cloud}:${row.region ?? "_"}:${row.tier}:${row.sku}`, row]),

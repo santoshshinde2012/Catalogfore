@@ -4,17 +4,18 @@ Runtime pricing is a deterministic snapshot. Network retrieval lives in scripts;
 
 ## Source files and precedence
 
-| Input                                 | Role                                                                                                                       |
-| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `data/azure-dbu-meters.json`          | Exact Premium Azure DBU meters by region; the engine's Azure Enterprise alias uses the same meters.                        |
-| `data/databricks-dbu-rates.json`      | Validated first-party Databricks USD/DBU observations, exact locators, source metadata, exclusions and quarantined issues. |
-| `data/sources/*.json.gz`              | Exact original Databricks price-card/calculator responses, with SHA-256 fingerprints recorded in the normalized snapshot.  |
-| `data/sku-rates.json`                 | Legacy reference bases, regional planning factors and explicit consumption/storage assumptions.                            |
-| `data/cloud-vm-prices.json`           | Separate cloud infrastructure observations and seeded or advisor-derived estimates.                                        |
-| `data/instances.json`                 | Curated instance consumption ratings; dollar-price refreshes do not overwrite them.                                        |
-| `data/component-price-conflicts.json` | Shared component exclusions applied by forecasting and the unit inventory.                                                 |
-| `data/unit-cost-evidence.json`        | Reviewed source scopes, conditions and known gaps.                                                                         |
-| `data/unit-costs.{csv,json}.gz`       | Complete derived inventory; expanded ordinary files are generated locally and downloaded by the UI.                        |
+| Input                                     | Role                                                                                                                       |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `data/azure-dbu-meters.json`              | Exact Premium Azure DBU meters by region; the engine's Azure Enterprise alias uses the same meters.                        |
+| `data/databricks-dbu-rates.json`          | Validated first-party Databricks USD/DBU observations, exact locators, source metadata, exclusions and quarantined issues. |
+| `data/sources/*.json.gz`                  | Exact original Databricks price-card/calculator responses, with SHA-256 fingerprints recorded in the normalized snapshot.  |
+| `data/sku-rates.json`                     | Legacy reference bases, regional planning factors and explicit consumption/storage assumptions.                            |
+| `data/cloud-vm-prices.json`               | Separate cloud infrastructure observations and seeded or advisor-derived estimates.                                        |
+| `data/instances.json`                     | Curated instance consumption ratings; dollar-price refreshes do not overwrite them.                                        |
+| `data/component-price-conflicts.json`     | Shared component exclusions applied by forecasting and the unit inventory.                                                 |
+| `data/unit-cost-evidence.json`            | Reviewed source scopes, conditions and known gaps.                                                                         |
+| `data/generated/unit-costs.{csv,json}.gz` | Derived inventory. Expanded ordinary files are generated locally and are not committed.                                    |
+| `data/generated/`                         | Rebuilt reports: coverage, confidence, catalog-watch state, the pricing probe, and the unit-cost artifacts.                |
 
 The injectable `resolveDbuRate` policy, supplied by `catalog.ts`, prefers a matching exact first-party regional observation. An unscoped or reference-region base can support a labeled planning fallback. Missing evidence never becomes an official price merely because an explanatory vendor URL is attached. Known same-offering first-party disagreements withhold the qualified quote and produce an unresolved forecast component. Imported observed costs and supplied contract rates retain their separate provenance.
 

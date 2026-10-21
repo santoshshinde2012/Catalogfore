@@ -13,7 +13,8 @@
     ".": "./src/index.ts",
     "./product-name": "./src/product-name.ts",
     "./products": "./src/products.ts",
-    "./unit-costs": "./src/unit-costs/index.ts"
+    "./unit-costs": "./src/unit-costs/index.ts",
+    "./rate-confidence": "./src/catalog/sources/rate-confidence.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

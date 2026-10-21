@@ -89,7 +89,10 @@ export async function buildRateConfidence() {
 
 export async function writeRateConfidence() {
   const report = await buildRateConfidence();
-  await writeFile(new URL("../data/rate-confidence.json", import.meta.url), JSON.stringify(report, null, 2) + "\n");
+  await writeFile(
+    new URL("../data/generated/rate-confidence.json", import.meta.url),
+    JSON.stringify(report, null, 2) + "\n",
+  );
   return report;
 }
 

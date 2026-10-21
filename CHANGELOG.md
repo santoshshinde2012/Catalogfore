@@ -27,7 +27,7 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 - Shared typed Databricks and FOCUS cost imports with preview, closed-month defaults, explicit partial periods, effective-list pricing, signed corrections, duplicate detection, USD validation, and local attribution.
 - Runtime price status and source context, saved price-book references, strict saved-file validation, and financial workflow regressions across engine, CLI, MCP, and desktop/mobile browsers.
 
-- A confidence score on every product and on every cloud, region, tier, and SKU cell (`data/rate-confidence.json`). Azure meters score as measured. The US East card scores as secondary. Other AWS and GCP regions stay on the Lakehouse Real-Time proxy.
+- A confidence score on every product and on every cloud, region, tier, and SKU cell (`data/generated/rate-confidence.json`). Azure meters score as measured. The US East card scores as secondary. Other AWS and GCP regions stay on the Lakehouse Real-Time proxy.
 - Zerobus Ingest at the captured official US East list: $0.050/GB on AWS Premium and $0.064/GB on AWS Enterprise and Azure. The example is 100 GB. GCP remains unresolved. The undated launch promotion is not applied.
 - Layer checks (`dependency-cruiser`), an engine coverage threshold, CodeQL, Dependabot, CODEOWNERS, pinned GitHub Action SHAs, and a semver release workflow that reads CHANGELOG.md.
 - A versioned product catalog (`data/product-catalog.json`, `@cayfore/catalog`) covering Databricks products as of 2026-10-16. A row with a published rate or a documented underlying SKU is priced. A row with nothing billable stays at $0 and says so.
@@ -53,6 +53,7 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 ### Changed
 
 - Weekly catalog check on 2026-10-19. Catalog version 2026-10-17.3 -> 2026-10-19.1.
+- Each price file now has one engine loader under `packages/engine/src/catalog/sources`. Excel reads cell confidence through `@cayfore/engine/rate-confidence`. Rebuilt reports and unit-cost artifacts live in `data/generated/`, apart from the catalogs that are edited by hand.
 - Removed boxed header and unit-cost task navigation in favor of plain text and active underlines. Compacted the reference filters and source context to give catalog data more room.
 
 - Fixed literal release-note selection, single-pass RSS entity decoding, bounded share decompression, and additional CSV formula prefixes. Added deterministic property-based fuzz tests, refreshed security-policy accuracy, and enabled trusted scheduled Scorecard publication. Recorded and applied the repository's PR/CI branch-protection baseline; independent review, project-age and badge criteria remain explicit maintainer follow-ups.

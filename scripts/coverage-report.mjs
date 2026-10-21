@@ -144,7 +144,7 @@ export async function writeCoverageReport() {
     gcpRegions: report.gcpRegions,
     officialRegionalCells: report.officialRegionalCells,
   };
-  await writeFile(new URL("data/coverage-summary.json", root), JSON.stringify(summary, null, 2) + "\n");
+  await writeFile(new URL("data/generated/coverage-summary.json", root), JSON.stringify(summary, null, 2) + "\n");
   await writeFile(new URL("docs/COVERAGE.md", root), renderCoverageMarkdown(report));
   await writeProductsDoc();
   const prettier = fileURLToPath(new URL("../node_modules/.bin/prettier", import.meta.url));

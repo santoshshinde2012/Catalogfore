@@ -7,7 +7,9 @@ test("coverage counts priced products and azure meter cells", async () => {
   const catalog = JSON.parse(await readFile(new URL("../data/product-catalog.json", import.meta.url), "utf8"));
   const sku = JSON.parse(await readFile(new URL("../data/sku-rates.json", import.meta.url), "utf8"));
   const meters = JSON.parse(await readFile(new URL("../data/azure-dbu-meters.json", import.meta.url), "utf8"));
-  const summary = JSON.parse(await readFile(new URL("../data/coverage-summary.json", import.meta.url), "utf8"));
+  const summary = JSON.parse(
+    await readFile(new URL("../data/generated/coverage-summary.json", import.meta.url), "utf8"),
+  );
   const published = JSON.parse(await readFile(new URL("../data/databricks-dbu-rates.json", import.meta.url), "utf8"));
   const report = buildCoverage(catalog, sku, meters, published);
   assert.equal(report.products, catalog.products.length);

@@ -1,4 +1,4 @@
-import type { UnitCostRow } from "@cayfore/engine/unit-costs";
+import type { PlanQuantity, UnitCostRow } from "@cayfore/engine/unit-costs";
 import { ArrowLeft, ReceiptText } from "lucide-react";
 import { Button } from "../ui/button";
 import { RateBuildUp } from "./RateBuildUp";
@@ -15,7 +15,19 @@ import {
   variantLabel,
 } from "./rate-presentation";
 
-export function RateDetails({ row, onResults }: { row: UnitCostRow; onResults: () => void }) {
+export function RateDetails({
+  row,
+  onResults,
+  usage,
+  action,
+  onApply,
+}: {
+  row: UnitCostRow;
+  onResults: () => void;
+  usage?: PlanQuantity | null;
+  action?: "update" | "add" | null;
+  onApply?: (quantity: number) => void;
+}) {
   return (
     <section
       id="rate-details"
@@ -57,7 +69,7 @@ export function RateDetails({ row, onResults }: { row: UnitCostRow; onResults: (
       {row.status === "unpriced" && (
         <p className="mt-3 text-sm font-medium text-destructive">A missing price is unresolved, not a free service.</p>
       )}
-      <RateCalculator row={row} />
+      <RateCalculator row={row} usage={usage} action={action} onApply={onApply} />
       <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{row.evidenceSummary}</p>
       <RateBuildUp row={row} />
       <div className="mt-5">

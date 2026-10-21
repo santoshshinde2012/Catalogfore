@@ -7,6 +7,7 @@ import {
   type RecommendationId,
 } from "@cayfore/engine";
 import { productById, workloadsForProduct } from "@cayfore/engine/products";
+import { applyPlanQuantity, type UnitCostRow } from "@cayfore/engine/unit-costs";
 import { toast } from "sonner";
 import { planFromPortfolio } from "./forecast-session";
 import type { SessionControls } from "./session-controls";
@@ -68,6 +69,22 @@ export function sessionActions(controls: SessionControls) {
       setSelectedId(added[0]?.id ?? null);
       controls.setNotice(
         `Added ${product.menuLabel}. Review the default usage and selected-cloud rate coverage before relying on the estimate.`,
+      );
+      return true;
+    },
+    applyUnitCost: (row: UnitCostRow, quantity: number) => {
+      const update = applyPlanQuantity(portfolio, row, quantity);
+      if (!update) {
+        controls.setNotice(
+          "This quantity stays in the calculator. The forecast only accepts a catalog DBU workload or an adjustable matching workload.",
+        );
+        return false;
+      }
+      editPortfolio(update.portfolio);
+      setUndo(portfolio);
+      setSelectedId(update.selectedId);
+      controls.setNotice(
+        `Updated ${row.productName} to ${quantity.toLocaleString("en-US")} ${row.unit}. The year uses this quantity and your plan discounts.`,
       );
       return true;
     },

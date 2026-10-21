@@ -1,10 +1,21 @@
-import { calculateUnitCost, type UnitCostRow } from "@cayfore/engine/unit-costs";
+import { calculateUnitCost, type PlanQuantity, type UnitCostRow } from "@cayfore/engine/unit-costs";
 import { Calculator } from "lucide-react";
 import { useState } from "react";
+import { Button } from "../ui/button";
 import { evidenceLabels, unitMoney } from "./rate-presentation";
 
-export function RateCalculator({ row }: { row: UnitCostRow }) {
-  const [quantity, setQuantity] = useState("100");
+export function RateCalculator({
+  row,
+  usage,
+  action,
+  onApply,
+}: {
+  row: UnitCostRow;
+  usage?: PlanQuantity | null;
+  action?: "update" | "add" | null;
+  onApply?: (quantity: number) => void;
+}) {
+  const [quantity, setQuantity] = useState(() => (usage ? String(usage.quantity) : "100"));
   const amount = Number(quantity);
   const calculation = calculateUnitCost(row, quantity.trim() === "" ? Number.NaN : amount);
   const usable = calculation.status !== "unavailable";
@@ -52,10 +63,19 @@ export function RateCalculator({ row }: { row: UnitCostRow }) {
               ? `${amount.toLocaleString("en-US", { maximumFractionDigits: 10 })} × ${unitMoney(calculation.unitRateUsd!)} = ${unitMoney(total)}`
               : calculation.reason}
           </p>
-          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-            This component only, before contract discounts, add-ons, taxes, and other service charges. Your forecast
-            stays unchanged.
-          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {usage && (
+              <Button type="button" variant="outline" onClick={() => setQuantity(String(usage.quantity))}>
+                Use my usage ({usage.quantity.toLocaleString("en-US")} {usage.unit})
+              </Button>
+            )}
+            {onApply && action && (
+              <Button type="button" onClick={() => onApply(amount)} disabled={!valid}>
+                {action === "update" ? "Update forecast" : "Add to forecast"}
+              </Button>
+            )}
+          </div>
+          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{calculatorNote(usage, action)}</p>
         </>
       ) : (
         <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
@@ -65,4 +85,14 @@ export function RateCalculator({ row }: { row: UnitCostRow }) {
       )}
     </section>
   );
+}
+
+function calculatorNote(usage: PlanQuantity | null | undefined, action: "update" | "add" | null | undefined): string {
+  if (action === "update")
+    return "The subtotal is this component before plan discounts. Update forecast writes this quantity onto the matching workload.";
+  if (action === "add")
+    return "The subtotal is this component before plan discounts. Add to forecast creates a catalog-priced workload for this DBU quantity.";
+  if (usage)
+    return "This quantity is already in your usage. The forecast keeps that exported cost instead of replacing it with this subtotal.";
+  return "This component only, before contract discounts, add-ons, taxes, and other service charges. The subtotal does not change the forecast until you add it.";
 }
