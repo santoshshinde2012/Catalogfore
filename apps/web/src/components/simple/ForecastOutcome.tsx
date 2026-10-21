@@ -47,8 +47,8 @@ export function ResultsPanel({
   const startMonth = points[0]?.period ?? estimate.verifiedOn.slice(0, 7);
   const endMonth = points[11]?.period ?? periodAt(startMonth, 11);
   return (
-    <div id="forecast" tabIndex={-1} aria-busy={busy} className="grid gap-6">
-      <Rise className="grid gap-4">
+    <div id="forecast" tabIndex={-1} aria-busy={busy} className="grid gap-3">
+      <Rise className="grid gap-2">
         <div>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -69,13 +69,13 @@ export function ResultsPanel({
               <ExportBar portfolio={portfolio} estimate={estimate} points={points} forecastResult={projection} />
             </div>
           </div>
-          <p className="mt-4">
+          <p className="mt-3">
             <span className="sr-only" data-testid="year-sentence" aria-live="polite">
               {sentence}
             </span>
             <span
               aria-hidden="true"
-              className="block break-words text-4xl font-semibold tracking-tight tabular-nums min-[390px]:text-5xl sm:text-6xl"
+              className="block text-4xl font-semibold tracking-tight break-words tabular-nums 2xl:text-5xl"
               data-testid="year-total"
             >
               {money(animated, 0)}
@@ -103,22 +103,13 @@ export function ResultsPanel({
             </p>
           )}
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Tile label="First month" value={money(animatedFirst, 0)} />
-          <Tile label="Month 12" value={money(animatedLast, 0)} />
+        <div className="grid grid-cols-2 gap-2">
+          <Tile label="First month" value={money(animatedFirst, 2)} testId="first-month" />
+          <Tile label="Month 12" value={money(animatedLast, 2)} testId="month-twelve" />
         </div>
         <p className="text-sm text-muted-foreground" data-testid="bill-split">
           {split}
         </p>
-        <Button
-          type="button"
-          variant="outline"
-          className="justify-self-start"
-          onClick={() => navigateToSection("budget-planning")}
-        >
-          Budget and scenarios
-        </Button>
-        {comparison && <ScenarioComparison current={projection} comparison={comparison} />}
       </Rise>
       {portfolio.workloads.length === 0 && (
         <div className="rounded-xl border border-dashed bg-muted/30 p-5 text-sm">
@@ -132,6 +123,12 @@ export function ResultsPanel({
         </div>
       )}
       <ForecastViews projection={projection} comparison={comparison} />
+      <div className="flex flex-wrap items-center gap-2">
+        <Button type="button" variant="outline" onClick={() => navigateToSection("budget-planning")}>
+          Budget and scenarios
+        </Button>
+      </div>
+      {comparison && <ScenarioComparison current={projection} comparison={comparison} />}
       <PriceDisclosure
         estimate={estimate}
         portfolio={portfolio}
@@ -160,11 +157,13 @@ export function ResultsPanel({
   );
 }
 
-function Tile({ label, value }: { label: string; value: string }) {
+function Tile({ label, value, testId }: { label: string; value: string; testId?: string }) {
   return (
     <div className="min-w-0 rounded-lg border bg-background px-3 py-2">
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="mt-1 break-words text-sm font-semibold tabular-nums">{value}</p>
+      <p className="mt-0.5 break-words text-sm font-semibold tabular-nums" data-testid={testId}>
+        {value}
+      </p>
     </div>
   );
 }

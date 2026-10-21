@@ -108,7 +108,7 @@ function MenuGroupLabel({ children, separated = false }: { children: string; sep
   return (
     <div className={separated ? "mx-2 mt-1 border-t pt-2" : "mx-2 pt-1"}>
       <p
-        className="px-1 pt-1 pb-1.5 text-[10px] font-semibold tracking-[0.12em] text-muted-foreground uppercase"
+        className="px-1 pt-1 pb-1.5 text-xs font-semibold tracking-[0.08em] text-muted-foreground uppercase"
         aria-hidden="true"
       >
         {children}

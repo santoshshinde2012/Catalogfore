@@ -30,7 +30,7 @@ Cloud and tier, a starting monthly amount or a team size, a mix of pipelines, da
 | Mix            | 45% pipelines, 40% dashboards, 15% models        |
 | Growth         | 3% a month, with an optional commitment discount |
 
-With the bundled rates, that default estimates **about $170,258 per year**, with a planning range of **$144,719–$204,309** (15% below to 20% above the estimate). First month **$11,997**. **29%** of the first-month bill is cloud machines. The sources for the presets and the rates are in [docs/RESEARCH.md](docs/RESEARCH.md).
+With the bundled rates, that default estimates **about $170,258 per year**, with a planning range of **$144,719–$204,309** (15% below to 20% above the estimate). The exact year is **$170,257.52**. First month **$11,996.70**. **29%** of the first-month bill is cloud machines. The sources for the presets and the rates are in [docs/RESEARCH.md](docs/RESEARCH.md).
 
 Usage import and Advanced are available at the top of Plan inputs. The forecast remains visible while editing on desktop, and a persistent shortcut shows the annual total on mobile. A usage CSV opens a review of its baseline month, prices, and gaps before replacing the estimate. Databricks billing and recognized FOCUS files are supported. Imported monetary costs stay observed costs; the app does not invent a separate VM bill. See [usage import](docs/USAGE-IMPORT.md).
 

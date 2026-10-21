@@ -21,7 +21,7 @@ export function CloudSection({
 }) {
   return (
     <>
-      <Step n="1" title="Cloud">
+      <Step id="plan-cloud" n="1" title="Cloud">
         <SegmentedStrip label="Cloud" value={plan.cloud} onValueChange={(value) => value && onCloud(value as Cloud)}>
           {CLOUDS.map((cloud) => (
             <SegmentedStripItem key={cloud.id} value={cloud.id}>
@@ -33,7 +33,7 @@ export function CloudSection({
         <div className="grid min-w-0 items-start gap-4 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
           <div className="grid min-w-0 gap-2">
             <p className="text-sm font-medium">Edition</p>
-            <SegmentedStrip label="Tier" value={plan.tier} onValueChange={(value) => value && onTier(value as Tier)}>
+            <SegmentedStrip label="Edition" value={plan.tier} onValueChange={(value) => value && onTier(value as Tier)}>
               {TIERS.map((tier) => (
                 <SegmentedStripItem key={tier.id} value={tier.id}>
                   {tier.label}
@@ -87,7 +87,7 @@ export function SpendSection({
   }
   return (
     <>
-      <Step n="2" title="Starting point" disabled={usageLocked}>
+      <Step id="plan-spend" n="2" title="Starting spend" disabled={usageLocked}>
         <label className="grid gap-2 text-sm font-medium">
           Starting monthly spend
           <span className="relative block font-normal">

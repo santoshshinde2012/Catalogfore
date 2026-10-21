@@ -18,7 +18,7 @@ export function RateWorkspaceTabs() {
         <TabsPrimitive.Trigger
           key={value}
           value={value}
-          className="relative inline-flex min-h-11 items-center justify-center gap-2 border-b-2 border-transparent px-1 py-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground data-[state=active]:border-lava data-[state=active]:text-foreground sm:justify-start sm:text-sm"
+          className="relative inline-flex min-h-11 items-center justify-center gap-1.5 border-b-2 border-transparent px-1 py-2 text-center text-xs leading-tight font-medium whitespace-normal text-balance text-muted-foreground transition-colors hover:text-foreground data-[state=active]:border-lava data-[state=active]:text-foreground sm:justify-start sm:py-3 sm:text-left sm:text-sm"
         >
           <Icon className="size-3.5 shrink-0" aria-hidden="true" />
           {label}

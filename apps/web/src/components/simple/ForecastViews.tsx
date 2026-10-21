@@ -83,7 +83,7 @@ export function ForecastViews({
           </TabsTrigger>
         </InfoTooltip>
       </TabsList>
-      <TabsContent value="chart">
+      <TabsContent value="chart" className="mt-2">
         <ChartHeading title="Monthly spend" startMonth={startMonth} />
         <Suspense fallback={<ChartLoading />}>
           <Chart {...series} label="Imported spend and monthly forecast with a planning range" />
@@ -158,7 +158,7 @@ export function ForecastViews({
 
 function ChartHeading({ title, startMonth }: { title: string; startMonth: string }) {
   return (
-    <div className="mb-2 flex flex-wrap items-baseline justify-between gap-1 text-xs text-muted-foreground">
+    <div className="mb-1 flex flex-wrap items-baseline justify-between gap-1 text-xs text-muted-foreground">
       <h3 className="text-sm font-semibold text-foreground">{title}</h3>
       <p>
         {periodLabel(startMonth)}–{periodLabel(periodAt(startMonth, 11))} · USD

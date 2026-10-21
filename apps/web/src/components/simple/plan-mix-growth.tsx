@@ -16,7 +16,7 @@ export function MixSection({
 }) {
   return (
     <>
-      <Step n="3" title="Mix" disabled={usageLocked}>
+      <Step id="plan-mix" n="3" title="Mix" disabled={usageLocked}>
         {MIX_FIELDS.map((field) => (
           <div key={field.key} className="grid gap-2">
             <div className="flex items-center justify-between text-sm font-medium">
@@ -70,7 +70,7 @@ export function GrowthSection({
   }
   return (
     <>
-      <Step n={step} title="Growth">
+      <Step id="plan-growth" n={step} title="Monthly growth">
         <SegmentedStrip
           label="Monthly growth"
           value={growthValue(plan.monthlyGrowth)}
@@ -132,9 +132,9 @@ export function GrowthSection({
             {growthError}
           </p>
         )}
-        <div className="grid gap-2">
+        <div className="grid gap-2 border-t pt-3">
           <div className="flex items-center justify-between text-sm font-medium">
-            <span>Commitment discount</span>
+            <span>Optional commitment discount</span>
             <span className="tabular-nums">{Math.round(plan.commitDiscount * 100)}%</span>
           </div>
           <Slider

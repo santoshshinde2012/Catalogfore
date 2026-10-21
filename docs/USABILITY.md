@@ -27,7 +27,7 @@ Scenario differences identify unresolved charges in either the current plan or t
 Land on the page. Medium is selected: 45% pipelines, 40% dashboards, 15% models, about $12,000 a month before a discount. AWS, Premium, US East (N. Virginia). Growth is 3% a month, so the chart rises.
 
 - Annual estimate: **$170,258**, with a planning range of **$144,719–$204,309**.
-- First month: **$11,997**. The three dollars are rounding on the priced lines. Month 12 is higher because each month is 3% above the one before.
+- First month: **$11,996.70** on the month tiles. The year total rounds to the nearest dollar, so it reads about **$170,258**. Month 12 is higher because each month is 3% above the one before.
 - **29% of the first-month bill is cloud machines.** That share is the classic-job portion. Dashboards are serverless, and models are token usage, so they do not add a machine line.
 - The shaded band is 15% under to 20% over, because no usage file has been loaded. Chart is the default view. Months lists all 12 months.
 

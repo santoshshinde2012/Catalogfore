@@ -15,7 +15,7 @@ export function RateTableRow({ row, onInspect }: { row: UnitCostRow; onInspect?:
   const variant = variantLabel(row);
   return (
     <tr data-row-id={row.id} className="group text-xs leading-relaxed hover:bg-muted/35">
-      <th scope="row" className={`${cell} text-left font-normal`}>
+      <th scope="row" className={`${cell} sticky left-0 z-10 bg-card text-left font-normal group-hover:bg-muted`}>
         {onInspect ? (
           <button
             type="button"
@@ -62,13 +62,13 @@ export function RateTableRow({ row, onInspect }: { row: UnitCostRow; onInspect?:
             >
               {source.publisher}
               <ExternalLink className="size-3 shrink-0" aria-hidden="true" />
-              <span className="text-[10px] font-normal text-muted-foreground">{sourceRoles[source.role]}</span>
+              <span className="text-xs font-normal text-muted-foreground">{sourceRoles[source.role]}</span>
               <span className="sr-only"> — {source.title} (opens in a new tab)</span>
             </a>
-            <span className="block text-[11px] text-muted-foreground">
+            <span className="block text-xs text-muted-foreground">
               {source.observedOn ? `Observed ${source.observedOn}` : "No price observation"}
             </span>
-            <span className="block text-[11px] text-muted-foreground">
+            <span className="block text-xs text-muted-foreground">
               {source.reviewedOn ? `Reviewed ${source.reviewedOn}` : "Review not recorded"}
             </span>
           </>

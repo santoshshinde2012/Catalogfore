@@ -19,7 +19,7 @@ export function MonthTable({ months, startMonth }: { months: SimpleMonth[]; star
         </caption>
         <thead>
           <tr className="text-left text-xs text-muted-foreground">
-            <th scope="col" className="py-2 pr-3 font-medium">
+            <th scope="col" className="sticky left-0 bg-card py-2 pr-3 font-medium">
               Month
             </th>
             <th scope="col" className="py-2 pr-3 text-right font-medium">
@@ -36,7 +36,7 @@ export function MonthTable({ months, startMonth }: { months: SimpleMonth[]; star
         <tbody>
           {months.map((month) => (
             <tr key={month.month} className="border-t">
-              <th scope="row" className="whitespace-nowrap py-3 pr-3 text-left font-medium">
+              <th scope="row" className="sticky left-0 bg-card py-3 pr-3 text-left font-medium whitespace-nowrap">
                 {startMonth ? periodLabel(periodAt(startMonth, month.month - 1)) : month.month}
               </th>
               <td className="py-2 pr-3 text-right text-muted-foreground">{money(month.low, 2)}</td>

@@ -14,7 +14,7 @@ export function CompositionChart({
 }) {
   return (
     <div
-      className="h-72 w-full min-w-0"
+      className="h-60 w-full min-w-0 lg:h-48"
       role="group"
       aria-label={`Monthly forecast split into ${serviceLabel}, cloud machines, and add-ons`}
     >
@@ -22,23 +22,23 @@ export function CompositionChart({
         <BarChart
           stackOffset="sign"
           data={compositionRows(points, startMonth)}
-          margin={{ top: 12, right: 8, left: 0, bottom: 0 }}
+          margin={{ top: 8, right: 4, left: 0, bottom: 0 }}
           accessibilityLayer
         >
-          <CartesianGrid vertical={false} stroke="var(--border)" />
+          <CartesianGrid vertical={false} stroke="var(--chart-grid)" />
           <XAxis
             dataKey="label"
             tickLine={false}
             axisLine={false}
             minTickGap={24}
-            tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
+            tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
           />
           <YAxis
-            width={58}
+            width={52}
             tickFormatter={axisMoney}
             tickLine={false}
             axisLine={false}
-            tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
+            tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
           />
           <Tooltip content={<ChartTooltip serviceLabel={serviceLabel} />} />
           <Bar

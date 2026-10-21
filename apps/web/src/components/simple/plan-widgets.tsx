@@ -4,18 +4,20 @@ import { TEAM_PRESETS } from "@cayfore/engine";
 import { AwsMark, AzureMark, GcpMark } from "../ui/cloud-marks";
 
 export function Step({
+  id,
   n,
   title,
   disabled,
   children,
 }: {
+  id?: string;
   n: string;
   title: string;
   disabled?: boolean;
   children: ReactNode;
 }) {
   return (
-    <fieldset className="grid min-w-0 gap-4" disabled={disabled}>
+    <fieldset id={id} className="grid min-w-0 scroll-mt-28 gap-3" disabled={disabled}>
       <legend className="mb-1 flex items-center gap-2 text-sm font-semibold">
         <span className="flex size-6 items-center justify-center rounded-full bg-foreground text-xs text-background">
           {n}

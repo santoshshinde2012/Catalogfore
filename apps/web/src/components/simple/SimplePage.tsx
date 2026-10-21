@@ -41,16 +41,16 @@ export function SimplePage({
     [session.comparison],
   );
   return (
-    <article className="mx-auto w-full max-w-7xl px-4 pt-6 pb-10 sm:px-6 lg:pt-8 lg:pb-16">
+    <article className="mx-auto w-full max-w-7xl px-4 pt-4 pb-10 sm:px-6 lg:pt-5 lg:pb-16">
       <header className="max-w-3xl">
-        <p className="mb-2 text-xs font-semibold tracking-[0.14em] text-muted-foreground uppercase">
+        <p className="mb-1.5 text-xs font-semibold tracking-[0.14em] text-muted-foreground uppercase">
           Databricks cost planner
         </p>
-        <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
           What does the next year cost?
         </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground text-pretty sm:text-base">
-          Estimate a new workload or plan from your usage. Compare changes, check a budget, and share the assumptions.
+        <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted-foreground text-pretty">
+          Set cloud, starting spend, workload mix, and monthly growth. The year updates as you go.
         </p>
       </header>
       {session.canUndo && (
@@ -59,17 +59,24 @@ export function SimplePage({
         </Button>
       )}
 
-      <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
-        <Card id="plan-inputs" tabIndex={-1} aria-labelledby="inputs-heading" className="min-w-0 p-5 shadow-sm sm:p-6">
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-2 border-b pb-4">
-            <h2 id="inputs-heading" className="text-lg font-semibold">
-              Plan inputs
-            </h2>
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+        <Card id="plan-inputs" tabIndex={-1} aria-labelledby="inputs-heading" className="min-w-0 p-4 shadow-sm sm:p-5">
+          <div className="mb-3 flex flex-wrap items-start justify-between gap-2 border-b pb-3">
+            <div className="min-w-0">
+              <h2 id="inputs-heading" className="text-lg font-semibold">
+                Plan inputs
+              </h2>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                {session.usingUsage || session.usingDetail
+                  ? "Cloud sets defaults for new products. Growth still applies to this baseline."
+                  : "1 Cloud · 2 Starting spend · 3 Mix · 4 Monthly growth"}
+              </p>
+            </div>
             <span className="rounded-full border bg-muted/50 px-2.5 py-1 text-xs text-muted-foreground">
               {session.usingUsage ? "Imported baseline" : session.usingDetail ? "By product" : "Quick estimate"}
             </span>
           </div>
-          <div className="mb-6 grid gap-2 rounded-xl border bg-muted/15 p-2">
+          <div className="plan-start mb-3 grid grid-cols-2 gap-1.5 rounded-xl border bg-muted/15 p-1.5">
             <UsagePanel
               busy={session.usageBusy}
               error={session.usageError}
@@ -123,7 +130,7 @@ export function SimplePage({
             role="region"
             aria-label="Forecast results"
             tabIndex={0}
-            className="p-5 shadow-[0_1px_2px_rgb(11_32_38/0.04),0_12px_32px_rgb(11_32_38/0.06)] sm:p-6 lg:max-h-[calc(100svh-var(--workspace-header-height)-2rem)] lg:overflow-y-auto lg:overscroll-contain"
+            className="p-4 shadow-[0_1px_2px_rgb(11_32_38/0.04),0_12px_32px_rgb(11_32_38/0.06)] sm:p-5 lg:max-h-[calc(100svh-var(--workspace-header-height)-2rem)] lg:overflow-y-auto lg:overscroll-contain"
           >
             <ResultsPanel
               projection={session.forecastResult}

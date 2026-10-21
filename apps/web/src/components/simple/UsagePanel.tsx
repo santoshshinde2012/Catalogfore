@@ -17,10 +17,10 @@ export function UsagePanel({
   onHistorySample: () => void;
 }) {
   return (
-    <Collapsible className="rounded-lg border bg-muted/30">
+    <Collapsible className="contents">
       <CollapsibleTrigger
         data-usage-import-return
-        className="group flex min-h-12 w-full items-center justify-between gap-3 rounded-lg px-3 py-3 text-left text-sm font-medium hover:bg-muted"
+        className="group order-1 flex min-h-11 min-w-0 items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-left text-sm font-medium whitespace-normal hover:bg-muted"
       >
         <span className="flex items-center gap-2.5">
           <FileSpreadsheet className="size-4 text-muted-foreground" aria-hidden="true" />
@@ -28,7 +28,7 @@ export function UsagePanel({
         </span>
         <ChevronDown className="size-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
       </CollapsibleTrigger>
-      <CollapsibleContent className="px-3 pb-4">
+      <CollapsibleContent className="plan-usage-panel order-3 col-span-2 px-2.5 pt-2 pb-3">
         <p className="text-sm leading-relaxed text-muted-foreground">
           Start from a Databricks billing or FOCUS CSV. You’ll review the month, known costs, and pricing gaps before
           applying anything.

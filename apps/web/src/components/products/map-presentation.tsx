@@ -48,7 +48,7 @@ export function CoverageBadge({ entry }: { entry: ProductMapEntry }) {
   return (
     <span
       className={cn(
-        "inline-flex rounded-md border px-2 py-0.5 text-[10px] font-medium",
+        "inline-flex rounded-md border px-2 py-0.5 text-xs font-medium",
         entry.product?.listPrice === "unpublished"
           ? "border-amber-500/25 bg-amber-500/10 text-amber-900 dark:text-amber-200"
           : "border-border bg-muted/50 text-muted-foreground",

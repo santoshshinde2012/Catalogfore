@@ -44,7 +44,11 @@ export function AdvancedBuilder({
       }}
     >
       <SheetTrigger asChild>
-        <Button type="button" variant="ghost" className="h-auto w-full justify-between px-2 py-2 font-medium">
+        <Button
+          type="button"
+          variant="ghost"
+          className="order-2 h-auto min-h-11 w-full min-w-0 justify-between px-2.5 py-2 font-medium whitespace-normal"
+        >
           Advanced
           <ChevronRight className="size-4 text-muted-foreground" />
         </Button>
