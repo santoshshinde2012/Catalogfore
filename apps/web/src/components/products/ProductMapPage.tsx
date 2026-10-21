@@ -1,7 +1,8 @@
 import { filterMapEntries, productMap, type ProductMapEntry } from "@cayfore/catalog/map";
 import { ArrowLeft, BookOpen, Network } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, type RefObject } from "react";
 import { navigateToSection } from "../../lib/page-navigation";
+import { useWorkspaceDraft } from "../../hooks/workspace-draft";
 import { Button } from "../ui/button";
 import { DomainOverview } from "./DomainOverview";
 import { LearningJourneys } from "./LearningJourneys";
@@ -13,20 +14,33 @@ function sortEntries(a: ProductMapEntry, b: ProductMapEntry): number {
   return Number(Boolean(a.product)) - Number(Boolean(b.product)) || a.name.localeCompare(b.name);
 }
 
+export interface ProductMapDraft {
+  query: string;
+  domainId: string;
+  kind: string;
+  selectedId: string;
+  limit: number;
+}
+
 export function ProductMapPage({
   onAddProduct,
   onInspectCosts,
   onBack,
+  cache,
 }: {
   onAddProduct: (id: string) => void;
   onInspectCosts: (id: string) => void;
   onBack: () => void;
+  cache: RefObject<ProductMapDraft | undefined>;
 }) {
-  const [query, setQuery] = useState("");
-  const [domainId, setDomainId] = useState("");
-  const [kind, setKind] = useState("");
-  const [selectedId, setSelectedId] = useState("");
-  const [limit, setLimit] = useState(12);
+  const [{ query, domainId, kind, selectedId, limit }, setDraft] = useWorkspaceDraft(cache, () => ({
+    query: "",
+    domainId: "",
+    kind: "",
+    selectedId: "",
+    limit: 12,
+  }));
+  const patch = (next: Partial<ProductMapDraft>) => setDraft((previous) => ({ ...previous, ...next }));
   const entries = useMemo(
     () =>
       filterMapEntries({
@@ -41,19 +55,16 @@ export function ProductMapPage({
     navigateToSection("product-map");
   }, []);
   function clear() {
-    setQuery("");
-    setDomainId("");
-    setKind("");
-    setLimit(12);
+    patch({ query: "", domainId: "", kind: "", limit: 12 });
   }
   function select(id: string) {
-    setSelectedId(id);
+    patch({ selectedId: id });
     requestAnimationFrame(() => navigateToSection("product-details"));
   }
   function explore(id: string) {
     clear();
     const all = [...productMap.entries].sort(sortEntries);
-    setLimit(Math.max(12, all.findIndex((entry) => entry.id === id) + 1));
+    patch({ limit: Math.max(12, all.findIndex((entry) => entry.id === id) + 1) });
     select(id);
   }
   return (
@@ -101,24 +112,20 @@ export function ProductMapPage({
           kind={kind}
           hasFilters={Boolean(query || domainId || kind)}
           onQuery={(value) => {
-            setQuery(value);
-            setLimit(12);
+            patch({ query: value, limit: 12 });
           }}
           onDomain={(value) => {
-            setDomainId(value);
-            setLimit(12);
+            patch({ domainId: value, limit: 12 });
           }}
           onKind={(value) => {
-            setKind(value);
-            setLimit(12);
+            patch({ kind: value, limit: 12 });
           }}
           onClear={clear}
         />
         <DomainOverview
           selected={domainId}
           onSelect={(id) => {
-            setDomainId(id);
-            setLimit(12);
+            patch({ domainId: id, limit: 12 });
           }}
         />
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
@@ -128,7 +135,7 @@ export function ProductMapPage({
             limit={limit}
             hasFilters={Boolean(query || domainId || kind)}
             onSelect={select}
-            onMore={() => setLimit((value) => value + 12)}
+            onMore={() => patch({ limit: limit + 12 })}
             onClear={clear}
           />
           {selected && (

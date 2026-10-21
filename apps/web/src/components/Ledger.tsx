@@ -1,4 +1,11 @@
-import { defaultInstanceId, skuCatalog, type Estimate, type Portfolio, type Workload } from "@cayfore/engine";
+import {
+  defaultInstanceId,
+  findInstance,
+  skuCatalog,
+  type Estimate,
+  type Portfolio,
+  type Workload,
+} from "@cayfore/engine";
 import { forecastProducts, productById, workloadsForProduct } from "@cayfore/engine/products";
 import { useRef } from "react";
 import { money } from "../format";
@@ -38,7 +45,9 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
 
   function add(productId: string) {
     const added = workloadsForProduct(productId).map((workload) =>
-      workload.kind === "cluster" ? { ...workload, instanceId: defaultInstanceId(portfolio.cloud) } : workload,
+      workload.kind === "cluster" && !findInstance(portfolio.cloud, workload.instanceId)
+        ? { ...workload, instanceId: defaultInstanceId(portfolio.cloud) }
+        : workload,
     );
     onPortfolio({ ...portfolio, workloads: [...portfolio.workloads, ...added] });
     onSelect(added[0]?.id ?? null);

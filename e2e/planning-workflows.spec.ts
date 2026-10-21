@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { chooseOption, chooseOptionByName } from "./combobox";
-import { savedDownload } from "./forecast-helpers";
+import { savedDownload, uploadUsage } from "./forecast-helpers";
 
 test("named budget scenarios save, compare, duplicate, and reopen after reload", async ({ page }) => {
   await page.goto("./");
@@ -61,4 +61,81 @@ test("a partial-only usage file stays reviewable until its month is explicitly c
   await expect(page.getByRole("button", { name: "Use this baseline" })).toBeEnabled();
   await page.getByRole("button", { name: "Use this baseline" }).click();
   expect((await savedDownload(page)).portfolio.usage?.selectedMonth).toBe(month);
+});
+
+test("calendar and dated changes preserve quick inputs and undo only the last change", async ({ page }) => {
+  await page.goto("./");
+  await page.getByLabel("Forecast start month", { exact: true }).fill("2027-01");
+  const spend = page.getByRole("textbox", { name: "Starting monthly spend" });
+  await expect(spend).toBeVisible();
+  await page.getByText("Plan launches and usage changes", { exact: true }).click();
+  await page.getByRole("textbox", { name: "Change name" }).fill("Quarterly expansion");
+  await page.getByLabel("Effective month", { exact: true }).fill("2027-03");
+  await page.getByRole("button", { name: "Add planned change", exact: true }).click();
+  await expect(spend).toBeVisible();
+  await spend.fill("6000");
+  await spend.press("Enter");
+  const changed = await savedDownload(page);
+  expect(changed.portfolio.events).toHaveLength(1);
+  expect(changed.portfolio.forecast.startMonth).toBe("2027-01");
+  await page.getByRole("button", { name: "Undo last change", exact: true }).click();
+  await expect(spend).toHaveValue("12000");
+  const undone = await savedDownload(page);
+  expect(undone.portfolio.events).toEqual(changed.portfolio.events);
+  expect(undone.portfolio.forecast.startMonth).toBe("2027-01");
+});
+
+test("budget and cloud discount drafts validate before changing the forecast", async ({ page }) => {
+  await page.goto("./");
+  const budget = page.getByRole("spinbutton", { name: "Annual budget", exact: true });
+  await budget.fill("200000");
+  await budget.press("Enter");
+  const before = await savedDownload(page);
+  await budget.fill("-1");
+  await budget.press("Enter");
+  await expect(budget).toHaveValue("-1");
+  await expect(budget).toHaveAttribute("aria-invalid", "true");
+  expect((await savedDownload(page)).portfolio.budgetAnnual).toBe(200000);
+
+  await budget.fill("");
+  await budget.pressSequentially("1e");
+  await budget.press("Enter");
+  await expect(budget).toHaveAttribute("aria-invalid", "true");
+  expect((await savedDownload(page)).portfolio.budgetAnnual).toBe(200000);
+
+  await budget.fill("");
+  await budget.press("Enter");
+  expect((await savedDownload(page)).portfolio.budgetAnnual).toBeUndefined();
+
+  const discount = page.getByRole("spinbutton", { name: "Cloud machine discount", exact: true });
+  await discount.fill("12.5");
+  await discount.press("Enter");
+  await expect(discount).toHaveValue("12.5");
+  const discounted = await savedDownload(page);
+  expect(discounted.portfolio.commitment.cloudDiscount).toBe(0.125);
+  expect(discounted.annual).toBeLessThan(before.annual);
+  await discount.fill("");
+  await discount.press("Enter");
+  await expect(discount).toHaveAttribute("aria-invalid", "true");
+  await expect(page.getByRole("alert")).toContainText("Enter a cloud machine discount from 0% to 95%.");
+  expect((await savedDownload(page)).annual).toBe(discounted.annual);
+  await discount.fill("96");
+  await discount.press("Enter");
+  await expect(discount).toHaveValue("96");
+  expect((await savedDownload(page)).portfolio.commitment.cloudDiscount).toBe(0.125);
+});
+
+test("unpriced usage does not claim confirmed budget headroom", async ({ page }) => {
+  await page.goto("./");
+  await uploadUsage(
+    page,
+    "usage_date,sku_name,usage_quantity,usage_unit,cloud\n2026-09-01,UNPUBLISHED_SERVICE,100,DBU,AWS",
+  );
+  await page.getByRole("button", { name: "Use this baseline" }).click();
+  const budget = page.getByRole("spinbutton", { name: "Annual budget", exact: true });
+  await budget.fill("200000");
+  await budget.press("Enter");
+  await expect(page.getByTestId("budget-variance")).toContainText("Budget headroom is not yet confirmed");
+  await expect(page.getByTestId("budget-variance")).toContainText("Unresolved prices are excluded");
+  await expect(page.getByTestId("budget-variance")).not.toContainText("under the annual budget");
 });

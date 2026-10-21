@@ -6,7 +6,16 @@ A browser-local Databricks budget and scenario planner, with a 12-month cost for
 [![Node 22.13+](https://img.shields.io/badge/node-22.13%2B-111111)](package.json)
 [![Live site](https://img.shields.io/badge/live-GitHub%20Pages-111111)](https://santoshshinde2012.github.io/Catalogfore/)
 
-Catalogfore is the interface. This repository is the forecast. It is an estimate, not a quote, and it is not affiliated with Databricks. The calculation stays in the browser. See [docs/PRIVACY.md](docs/PRIVACY.md).
+Plan Databricks spending, compare scenarios, and inspect the prices behind an estimate. No account is required. Calculations and usage-file imports stay in your browser. Catalogfore is independent of Databricks and produces estimates, not quotes. See [privacy details](docs/PRIVACY.md).
+
+## Try the planner
+
+1. Open the [live app](https://santoshshinde2012.github.io/Catalogfore/) and choose your cloud, tier, and region in **Plan**.
+2. Set a starting monthly spend or team size, workload mix, and monthly growth. If you already have billing data, choose **Use my real usage**, review the CSV, then choose **Use this baseline**.
+3. Review the 12-month total, planning range, and monthly costs. Check any unresolved prices before using the known subtotal as a budget. Add an annual budget or dated usage changes when needed.
+4. Save a named scenario before trying another option, then choose it under **Compare current plan with**. Use **Copy link** to share the current plan, or **Export → JSON** to keep a file you can reopen with **Menu → Open forecast**.
+
+Named scenarios stay in this browser; they do not sync across devices. **Undo scenario deletion** restores the most recently deleted scenario while a slot is available. If browser storage fails, the scenarios panel explains that saves are available only for this session. The current plan also stays in the address fragment, so reloading the same URL restores it. Links include costs, workload names, assumptions, and monthly usage summaries; anyone with the link can read them. Ownership labels are omitted from links but can remain in saved scenarios and JSON downloads. See [privacy details](docs/PRIVACY.md) before sharing imported data.
 
 ![Catalogfore on a wide screen: quick inputs and a year total with a planning range](docs/screenshots/forecast-light.png)
 
@@ -21,13 +30,13 @@ Cloud and tier, a starting monthly amount or a team size, a mix of pipelines, da
 | Mix            | 45% pipelines, 40% dashboards, 15% models        |
 | Growth         | 3% a month, with an optional commitment discount |
 
-That default estimates **about $170,258 per year, with a ±20% planning range**. First month **$11,997**. **29%** of the bill is cloud machines. The sources for the presets and the rates are in [docs/RESEARCH.md](docs/RESEARCH.md).
+With the bundled rates, that default estimates **about $170,258 per year**, with a planning range of **$144,719–$204,309** (15% below to 20% above the estimate). First month **$11,997**. **29%** of the first-month bill is cloud machines. The sources for the presets and the rates are in [docs/RESEARCH.md](docs/RESEARCH.md).
 
 Usage import and Advanced are available at the top of Plan inputs. The forecast remains visible while editing on desktop, and a persistent shortcut shows the annual total on mobile. A usage CSV opens a review of its baseline month, prices, and gaps before replacing the estimate. Databricks billing and recognized FOCUS files are supported. Imported monetary costs stay observed costs; the app does not invent a separate VM bill. See [usage import](docs/USAGE-IMPORT.md).
 
 The header keeps **Plan**, **Product map** and **Unit costs** directly accessible through plain text navigation with active underlines. One **Menu** groups forecast navigation, Advanced, explanatory help, file actions, appearance and GitHub. To continue a saved JSON forecast, choose **Menu → Open forecast**.
 
-Set an annual budget, save named scenarios, and plan dated launches or retirements. Charts show observed spend, future estimates, budget variance, scenario comparisons, and monthly cost components. Advanced opens the per-workload editor. Growth and pricing controls preserve those workloads.
+Choose **Budget and scenarios** from the forecast to set an annual budget, save named scenarios, and plan dated launches or retirements. Budget, start-date, and timeline edits preserve the quick inputs. Charts show observed spend, future estimates, budget variance, scenario comparisons, and monthly cost components. Advanced opens the per-workload editor. Growth and pricing controls preserve those workloads.
 
 Open **Product map** to explore eight Databricks domains, all 70 catalog entries, and eight platform concepts. Search current names or older aliases, filter by domain, expand example architectures, and inspect roles, relationships, billing context, and official sources. Supported products can be added to the current forecast with Undo. [Product map research and maintenance](docs/PRODUCT-MAP.md) explains the taxonomy and pricing boundaries.
 
@@ -37,7 +46,10 @@ Open **Unit costs** for the source prices and consumption rules behind each prod
 
 The calculator previews the change to your first-month and 12-month forecast before you apply a supported monthly quantity. **Add to forecast** and **Update forecast** preserve existing workloads and planning settings; **View forecast** and **Undo change** remain available after applying. Imported dollar costs and products driven by schedules or other inputs explain why their quantities must be edited elsewhere.
 
-**Downloads** previews the catalog as a sortable, paginated table with billing units, evidence and source dates. Inspect an exact row or export all filtered rows or the complete catalog as ordinary CSV or JSON; pagination never limits the file. Run `npm run export:unit-costs` to create both locally. Complete, lossless copies are versioned as [CSV](data/generated/unit-costs.csv.gz) and [JSON](data/generated/unit-costs.json.gz) gzip files. The bundled USD snapshot is catalog **2026-10-19.1**: 70 pricing products, eight platform concepts, and 29,665 dimensional rows. An unknown rate stays empty rather than free.
+**Downloads** previews the catalog as a sortable, paginated table with billing units, evidence and source dates. Inspect an exact row or export all filtered rows or the complete catalog as ordinary CSV or JSON; pagination never limits the file. Run `npm run export:unit-costs` to create both locally. Complete, lossless copies are versioned as [CSV](data/generated/unit-costs.csv.gz) and [JSON](data/generated/unit-costs.json.gz) gzip files. The bundled USD snapshot is product catalog **2026-10-19.1**: 70 pricing products, eight platform concepts, and 29,665 dimensional rows. The forecast price book is **2026-10-17.3**; individual price sources have their own observation dates. These version identifiers describe the bundled data, not a live quote. An unknown rate stays empty rather than free.
+
+<details>
+<summary>Unit-cost and usage-import screenshots</summary>
 
 ![Browse source unit costs in a spreadsheet-style table before exporting](docs/screenshots/unit-cost-downloads-light.png)
 
@@ -49,7 +61,12 @@ The calculator previews the change to your first-month and 12-month forecast bef
 
 ![Imported spend and forecast against a budget, using the bundled historical demonstration CSV](docs/screenshots/usage-forecast.png)
 
-Forecast CSV, JSON, PDF, and shared plans use the same forecast result. Unpriced charges are identified as unresolved; the total is a known subtotal when costs are missing. The range represents planning assumptions, not a calibrated probability interval.
+</details>
+
+Forecast XLSX, CSV, JSON, and PDF exports use the same forecast result. JSON includes the editable plan; CSV, XLSX, and PDF are reports. Shared links carry plan inputs and recalculate with the pricing data loaded by the app, so a later catalog update can change the result. Unpriced charges are identified as unresolved; the total is a known subtotal when costs are missing. The range represents planning assumptions, not a calibrated probability interval.
+
+<details>
+<summary>Dark theme and mobile screenshots</summary>
 
 ![The same forecast in dark mode](docs/screenshots/forecast-dark.png)
 
@@ -57,29 +74,34 @@ Forecast CSV, JSON, PDF, and shared plans use the same forecast result. Unpriced
 
 ![The same narrow screen in dark mode](docs/screenshots/mobile-dark.png)
 
-## Run
+</details>
+
+## Run locally
+
+Use Node 22.13+ within Node 22, or Node 24+, before installing dependencies. If you use nvm, run `nvm install` and `nvm use` in this repository to select the version in `.nvmrc`.
+
+From the repository root:
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-Open http://localhost:5173/Catalogfore/
-
-Use Node 22.13+ within Node 22, or Node 24+. Run `nvm use` to select Node 22 from `.nvmrc`.
+Open http://localhost:5173/Catalogfore/. To inspect the production build, run `npm run build` followed by `npm run preview` and open the address printed by Vite.
 
 ```bash
-npm test          # engine unit tests and the price-file parser
+npm test          # engine and app unit tests, coverage, and script tests
 npm run lint
 npm run typecheck
 npm run check:sources # replay official price captures and validate accepted rates
 npm run check:unit-costs # committed CSV/JSON still match their source inputs
 npm run build
 npm run test:mcp  # stdio MCP smoke test
+npx playwright install chromium # first-time browser setup
 npm run test:e2e  # Playwright, desktop and mobile, including axe
 ```
 
-The core JavaScript is about 290 KB gzipped, including the separately cached price catalog. Charts, the product map and its metadata, PDF, and Excel export load in separate chunks. CSS is about 11 KB gzipped, before the font files.
+The production build reports each asset’s size and gzip estimate. Charts, the Product map and Unit costs screens, the Advanced editor, PDF, and Excel export load in separate chunks. Catalog data is split into separately cached chunks; some metadata is also needed by the initial forecast. Fonts are served with the app.
 
 ## Architecture
 

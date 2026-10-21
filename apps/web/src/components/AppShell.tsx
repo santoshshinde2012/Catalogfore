@@ -1,7 +1,13 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { navigateToSection } from "../lib/page-navigation";
 import { readAppView, useAppView, type RatePlacement } from "../hooks/useAppView";
+import {
+  ratePlacement as placementForFilters,
+  referenceRateFilters,
+  type RateWorkspaceDraft,
+} from "../hooks/useRateWorkspace";
+import type { ProductMapDraft } from "./products/ProductMapPage";
 import type { SimpleSession } from "../hooks/useSimpleForecast";
 import { AppFooter } from "./AppFooter";
 import { AppHeader } from "./AppHeader";
@@ -18,6 +24,8 @@ export function AppShell({ session }: { session: SimpleSession }) {
   const [howOpen, setHowOpen] = useState(false);
   const [advancedAsk, setAdvancedAsk] = useState(0);
   const { view, rateProductId, ratePlacement, navigate } = useAppView();
+  const productDraft = useRef<ProductMapDraft | undefined>(undefined);
+  const rateDraft = useRef<RateWorkspaceDraft | undefined>(undefined);
   const productsOpen = view === "products";
   const ratesOpen = view === "rates";
   const contentId = productsOpen ? "product-map" : ratesOpen ? "unit-costs" : "forecast";
@@ -52,9 +60,22 @@ export function AppShell({ session }: { session: SimpleSession }) {
     navigate("products");
     requestAnimationFrame(() => navigateToSection("product-map"));
   }
-  function showRates(productId = "", placement: RatePlacement = {}) {
+  function showRates(productId?: string, placement: RatePlacement = {}) {
     setAdvancedAsk(0);
-    navigate("rates", productId, placement);
+    if (productId !== undefined) {
+      if (rateDraft.current)
+        rateDraft.current = {
+          ...rateDraft.current,
+          filters: referenceRateFilters(session.portfolio, productId, placement),
+          selectedId: "",
+          panel: "rates",
+          limit: 12,
+        };
+      navigate("rates", productId, placement);
+    } else {
+      const filters = rateDraft.current?.filters;
+      navigate("rates", filters?.productId ?? "", filters ? placementForFilters(filters) : {});
+    }
     requestAnimationFrame(() => navigateToSection("unit-costs"));
   }
   function addProduct(id: string) {
@@ -118,6 +139,7 @@ export function AppShell({ session }: { session: SimpleSession }) {
               }
             >
               <ProductMapPage
+                cache={productDraft}
                 onAddProduct={addProduct}
                 onInspectCosts={showRates}
                 onBack={() => showPlanner("plan-inputs")}
@@ -135,7 +157,8 @@ export function AppShell({ session }: { session: SimpleSession }) {
               <UnitCostsPage
                 productId={rateProductId}
                 placement={ratePlacement}
-                onProduct={(id) => navigate("rates", id, ratePlacement)}
+                cache={rateDraft}
+                onScope={(filters) => navigate("rates", filters.productId ?? "", placementForFilters(filters), true)}
                 portfolio={session.portfolio}
                 onBack={() => showPlanner("plan-inputs")}
                 onViewForecast={() => showPlanner("forecast")}

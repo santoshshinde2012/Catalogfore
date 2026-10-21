@@ -8,7 +8,9 @@ const FIRST_MONTH_ROW = 2;
 
 test("the Excel workbook matches the on-screen forecast", async ({ page }) => {
   await page.goto("./");
-  await expect(page.getByTestId("year-sentence")).toContainText(/About \$170,258 per year, ±20%/);
+  await expect(page.getByTestId("year-sentence")).toContainText(
+    /About \$170,258 per year\. Planning range \$144,719 to \$204,309/,
+  );
   const saved = await savedDownload(page);
   expect(saved.annual).toBeCloseTo(170257.52, 2);
 
@@ -30,5 +32,7 @@ test("the Excel workbook matches the on-screen forecast", async ({ page }) => {
   expect(summary.getCell("B9").value).toEqual({ formula: "'Monthly forecast'!C14" });
   const catalog = JSON.parse(await readFile(new URL("../data/product-catalog.json", import.meta.url), "utf8"));
   expect(summary.getCell("B12").value).toBe(catalog.version);
-  await expect(page.getByTestId("year-sentence")).toContainText(/About \$170,258 per year, ±20%/);
+  await expect(page.getByTestId("year-sentence")).toContainText(
+    /About \$170,258 per year\. Planning range \$144,719 to \$204,309/,
+  );
 });

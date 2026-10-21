@@ -53,6 +53,14 @@ it("keeps product rate links in browser history without replacing the active for
     expect(window.location.hash).toBe("#plan=encoded");
     expect(current?.rateProductId).toBe("");
     expect(current?.ratePlacement).toEqual({});
+    act(() => current?.navigate("rates", "jobs_serverless", { cloud: "azure", region: "eastus", tier: "enterprise" }));
+    const entries = history.length;
+    act(() => current?.navigate("rates", "", { cloud: null, region: null, tier: null }, true));
+    expect(history.length).toBe(entries);
+    expect(window.location.search).toBe("?campaign=team&view=rates&rateCloud=all&rateRegion=all&rateTier=all");
+    act(() => window.dispatchEvent(new PopStateEvent("popstate")));
+    expect(current?.ratePlacement).toEqual({ cloud: null, region: null, tier: null });
+    expect(window.location.hash).toBe("#plan=encoded");
   } finally {
     act(() => root.unmount());
   }

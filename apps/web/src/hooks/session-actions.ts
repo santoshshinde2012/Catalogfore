@@ -1,6 +1,7 @@
 import {
   applyRecommendation,
   defaultInstanceId,
+  findInstance,
   detachSimple,
   normalizePortfolio,
   type Portfolio,
@@ -68,7 +69,9 @@ export function sessionActions(controls: SessionControls) {
         return false;
       }
       const added = workloadsForProduct(id).map((workload) =>
-        workload.kind === "cluster" ? { ...workload, instanceId: defaultInstanceId(portfolio.cloud) } : workload,
+        workload.kind === "cluster" && !findInstance(portfolio.cloud, workload.instanceId)
+          ? { ...workload, instanceId: defaultInstanceId(portfolio.cloud) }
+          : workload,
       );
       editPortfolio({ ...portfolio, workloads: [...portfolio.workloads, ...added] });
       setUndo(portfolio);

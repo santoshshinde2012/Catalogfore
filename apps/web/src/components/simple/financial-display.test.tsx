@@ -6,7 +6,15 @@ import { yearCopy } from "./ForecastOutcome";
 
 describe("signed billing display", () => {
   it("does not turn an imported net credit into a zero-dollar explanation", () => {
-    expect(yearCopy(-120, 6, 0).sentence).toContain("-$120");
+    expect(yearCopy(-120, 0, { low: -130, high: -110 }).sentence).toContain("-$120");
+  });
+
+  it("announces the actual asymmetric range and qualifies unresolved annual costs", () => {
+    const range = { low: 85, high: 120 };
+    expect(yearCopy(100, 0, range).sentence).toBe("About $100 per year. Planning range $85 to $120.");
+    expect(yearCopy(100, 0, range, true).sentence).toContain(
+      "Known annual subtotal $100; unresolved charges are excluded.",
+    );
   });
 
   it("lists negative credits while limiting the donut to positive charges", () => {

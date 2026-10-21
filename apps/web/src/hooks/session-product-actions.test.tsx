@@ -72,6 +72,11 @@ it("uses the active cloud's machine defaults when adding classic compute", () =>
   expect(session.usingDetail).toBe(true);
 });
 
+it("preserves a product's supported machine default when adding it on the same cloud", () => {
+  act(() => session.addProduct("dlt_pro"));
+  expect(session.portfolio.workloads.at(-1)).toMatchObject({ kind: "cluster", instanceId: "i3.xlarge" });
+});
+
 it("leaves the plan and share fragment intact for learning-only or unpriced entries", () => {
   const baseline = structuredClone(session.portfolio);
   const hash = location.hash;

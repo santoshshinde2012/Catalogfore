@@ -26,7 +26,7 @@ test("quick inputs retain the requested amount and commit with Enter", async ({ 
   await spend.fill("0");
   await spend.press("Enter");
   await expect(spend).toHaveAttribute("aria-invalid", "false");
-  await expect(sentence).toHaveText("About $0 per year.");
+  await expect(sentence).toHaveText("About $0 per year. Planning range $0 to $0.");
 });
 
 test("custom monthly growth explains invalid drafts and supports negative growth", async ({ page }) => {

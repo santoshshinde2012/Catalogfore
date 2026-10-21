@@ -5,7 +5,7 @@ import { uploadUsage } from "./forecast-helpers";
 test("cloud, tier, region, spend, and growth each move the year", async ({ page }) => {
   await page.goto("./");
   const sentence = page.getByTestId("year-sentence");
-  await expect(sentence).toContainText(/About \$170,258 per year, ±20%/);
+  await expect(sentence).toContainText(/About \$170,258 per year\. Planning range \$144,719 to \$204,309/);
   const initial = await sentence.innerText();
 
   await page.getByRole("combobox", { name: "Region" }).click();

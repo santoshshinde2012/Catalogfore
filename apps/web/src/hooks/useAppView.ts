@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import type { Portfolio } from "@cayfore/engine";
 
 export type AppView = "planner" | "products" | "rates";
-export type RatePlacement = Partial<Pick<Portfolio, "cloud" | "region" | "tier">>;
+/** null is an explicit All choice; omitted dimensions use the plan's placement. */
+export type RatePlacement = { [K in "cloud" | "region" | "tier"]?: Portfolio[K] | null };
 
 export function readAppView(): AppView {
   if (typeof window === "undefined") return "planner";
@@ -21,9 +22,9 @@ function readRatePlacement(): RatePlacement {
   const cloud = query.get("rateCloud");
   const tier = query.get("rateTier");
   return {
-    ...(cloud === "aws" || cloud === "azure" || cloud === "gcp" ? { cloud } : {}),
-    ...(tier === "premium" || tier === "enterprise" ? { tier } : {}),
-    ...(query.get("rateRegion") ? { region: query.get("rateRegion")! } : {}),
+    ...(cloud === "all" ? { cloud: null } : cloud === "aws" || cloud === "azure" || cloud === "gcp" ? { cloud } : {}),
+    ...(tier === "all" ? { tier: null } : tier === "premium" || tier === "enterprise" ? { tier } : {}),
+    ...(query.get("rateRegion") ? { region: query.get("rateRegion") === "all" ? null : query.get("rateRegion")! } : {}),
   };
 }
 
@@ -43,7 +44,7 @@ export function useAppView() {
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
-  const navigate = useCallback((next: AppView, productId = "", placement: RatePlacement = {}) => {
+  const navigate = useCallback((next: AppView, productId = "", placement: RatePlacement = {}, replace = false) => {
     const url = new URL(window.location.href);
     if (next !== "planner") url.searchParams.set("view", next);
     else url.searchParams.delete("view");
@@ -54,10 +55,13 @@ export function useAppView() {
       rateRegion: placement.region,
       rateTier: placement.tier,
     })) {
-      if (next === "rates" && value) url.searchParams.set(key, value);
+      if (next === "rates" && value !== undefined) url.searchParams.set(key, value === null ? "all" : value);
       else url.searchParams.delete(key);
     }
-    if (url.href !== window.location.href) window.history.pushState(null, "", url);
+    if (url.href !== window.location.href) {
+      if (replace) window.history.replaceState(window.history.state, "", url);
+      else window.history.pushState(null, "", url);
+    }
     setView(next);
     setRateProductId(next === "rates" ? productId : "");
     setRatePlacement(next === "rates" ? placement : {});

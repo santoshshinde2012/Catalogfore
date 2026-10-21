@@ -28,11 +28,15 @@ export function RateDetails({
   onResults,
   portfolio,
   onApply,
+  quantity,
+  onQuantity,
 }: {
   row: UnitCostRow;
   onResults: () => void;
   portfolio: Portfolio;
   onApply?: (quantity: number) => void;
+  quantity?: string;
+  onQuantity: (quantity: string) => void;
 }) {
   const preview = useCallback((quantity: number) => previewPlanQuantity(portfolio, row, quantity), [portfolio, row]);
   return (
@@ -78,6 +82,8 @@ export function RateDetails({
       )}
       <RateCalculator
         row={row}
+        quantity={quantity}
+        onQuantity={onQuantity}
         usage={planQuantityForUnitCost(portfolio, row)}
         action={planQuantityAction(portfolio, row)}
         onApply={onApply}

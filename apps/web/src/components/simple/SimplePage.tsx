@@ -98,6 +98,7 @@ export function SimplePage({
           )}
           <PlanForm
             plan={session.plan}
+            source={session.portfolio}
             listMonthly={session.listMonthly}
             usageLocked={session.usingUsage}
             detailLocked={session.usingDetail}
@@ -160,7 +161,7 @@ export function SimplePage({
         />
       )}
 
-      <MobileForecastBar annual={session.annual} incomplete={session.estimate.coverage?.complete === false} />
+      <MobileForecastBar annual={session.annual} incomplete={session.forecastResult.hasUnpriced} />
     </article>
   );
 }

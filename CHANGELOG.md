@@ -54,6 +54,12 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Changed
 
+- README setup and planning examples now explain supported Node versions, portable JSON backups, browser-only scenarios, catalog versions, and the actual asymmetric planning range.
+- Product map and Unit costs retain browsing filters, selections, tabs, and quantity drafts when switching workspaces. Rate placement filters stay in the URL, and forecast previews appear before the apply action.
+- Budget and discount drafts validate before changing a forecast. Budget, discount, spend, and growth fields follow the active plan after loading, resetting, or undoing changes. Calendar and timeline edits preserve quick inputs; Undo restores the latest change. Saved-scenario deletion can be undone, with a nearby warning when browser storage cannot persist a save.
+- Forecast and budget summaries identify unresolved charges across the entire forecast, and annual copy states the actual low-to-high planning range. A shortcut opens budget and scenario controls directly from the results.
+- Adding a product preserves its template machine when supported by the active cloud, keeping Advanced and Product map results consistent with the documented examples.
+
 - Weekly catalog check on 2026-10-19. Catalog version 2026-10-17.3 -> 2026-10-19.1.
 - Weekly report generation runs after the catalog version changes so the product inventory and generated reports describe the same snapshot. Refresh-sensitive tests compare against source observations instead of a fixed capture date.
 - Each price file now has one engine loader under `packages/engine/src/catalog/sources`. Excel reads cell confidence through `@cayfore/engine/rate-confidence`. Rebuilt reports and unit-cost artifacts live in `data/generated/`, apart from the catalogs that are edited by hand.

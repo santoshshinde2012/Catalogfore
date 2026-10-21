@@ -7,9 +7,10 @@ import {
   type UnitCostRow,
 } from "@cayfore/engine/unit-costs";
 import { ArrowDown } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type RefObject } from "react";
 import { navigateToSection } from "../../lib/page-navigation";
 import type { RatePlacement } from "../../hooks/useAppView";
+import { useRateWorkspace, type RateWorkspaceDraft } from "../../hooks/useRateWorkspace";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent } from "../ui/tabs";
 import { RateComparison } from "./RateComparison";
@@ -27,48 +28,33 @@ const catalog = buildUnitCostCatalog();
 export function UnitCostsPage({
   portfolio,
   productId,
-  onProduct,
+  onScope,
   onBack,
   onApplyUsage,
   onViewForecast,
   onUndo,
   canUndo,
   placement,
+  cache,
 }: {
   portfolio: Portfolio;
   productId: string;
-  onProduct: (id: string) => void;
+  onScope: (filters: UnitCostFilters) => void;
   onBack: () => void;
   onApplyUsage: (row: UnitCostRow, quantity: number) => boolean;
   onViewForecast: () => void;
   onUndo: () => void;
   canUndo: boolean;
   placement?: RatePlacement;
+  cache: RefObject<RateWorkspaceDraft | undefined>;
 }) {
-  const [filters, setFilters] = useState<UnitCostFilters>(() => ({
-    productId: productId || undefined,
-    cloud: placement?.cloud ?? portfolio.cloud,
-    region: placement?.region ?? portfolio.region,
-    tier: placement?.tier ?? portfolio.tier,
-  }));
-  const [selectedId, setSelectedId] = useState("");
-  const [limit, setLimit] = useState(12);
-  const [panel, setPanel] = useState("rates");
+  const { draft, setDraft, change } = useRateWorkspace({ cache, portfolio, productId, placement, onScope });
+  const { filters, selectedId, limit, panel, quantities } = draft;
+  const patch = (next: Partial<RateWorkspaceDraft>) => setDraft((previous) => ({ ...previous, ...next }));
   const [changeNotice, setChangeNotice] = useState("");
   useEffect(() => {
     navigateToSection("unit-costs");
   }, []);
-  useEffect(() => {
-    setFilters((previous) => ({ ...previous, productId: productId || undefined, componentId: undefined }));
-    setLimit(12);
-  }, [productId]);
-  const cloud = placement?.cloud ?? portfolio.cloud;
-  const region = placement?.region ?? portfolio.region;
-  const tier = placement?.tier ?? portfolio.tier;
-  useEffect(() => {
-    setFilters((previous) => ({ ...previous, cloud, region, tier }));
-    setLimit(12);
-  }, [cloud, region, tier]);
   const rows = useMemo(() => filterUnitCosts(catalog.rows, filters), [filters]);
   const selected = rows.find((row) => row.id === selectedId) ?? rows[0];
   function apply(row: UnitCostRow, quantity: number) {
@@ -79,29 +65,21 @@ export function UnitCostsPage({
       );
   }
   const productKnown = !productId || catalog.products.some((product) => product.id === productId);
-  function change(next: UnitCostFilters) {
-    setFilters(next);
-    setLimit(12);
-    if ((next.productId ?? "") !== productId) onProduct(next.productId ?? "");
-  }
   function clear() {
     change({});
   }
   function select(id: string) {
-    setPanel("rates");
-    setSelectedId(id);
+    patch({ panel: "rates", selectedId: id });
     requestAnimationFrame(() => navigateToSection("rate-details"));
   }
   function selectRegion(row: UnitCostRow) {
-    setPanel("rates");
-    setSelectedId(row.id);
-    setFilters((previous) => {
-      const next = { ...previous, region: row.region ?? undefined };
-      return filterUnitCosts([row], next).length > 0
+    patch({ panel: "rates", selectedId: row.id });
+    const next = { ...filters, region: row.region ?? undefined };
+    change(
+      filterUnitCosts([row], next).length > 0
         ? next
-        : { ...next, query: undefined, status: undefined, evidenceLevel: undefined };
-    });
-    setLimit(12);
+        : { ...next, query: undefined, status: undefined, evidenceLevel: undefined },
+    );
     requestAnimationFrame(() => navigateToSection("rate-details"));
   }
   function inspect(row: UnitCostRow) {
@@ -142,7 +120,7 @@ export function UnitCostsPage({
           />
         )}
         <RateFilters catalog={catalog} filters={filters} onChange={change} onClear={clear} />
-        <Tabs value={panel} onValueChange={setPanel} className="min-w-0">
+        <Tabs value={panel} onValueChange={(panel) => patch({ panel })} className="min-w-0">
           <RateWorkspaceTabs />
           <TabsContent value="rates" forceMount className="mt-4 data-[state=inactive]:hidden">
             {selected && (
@@ -159,7 +137,7 @@ export function UnitCostsPage({
                 selectedId={selected?.id}
                 limit={limit}
                 onSelect={select}
-                onMore={() => setLimit((value) => value + 12)}
+                onMore={() => patch({ limit: limit + 12 })}
                 onClear={clear}
                 onSelected={() => selected && select(selected.id)}
               />
@@ -168,6 +146,13 @@ export function UnitCostsPage({
                   key={selected.id}
                   row={selected}
                   portfolio={portfolio}
+                  quantity={quantities[selected.id]}
+                  onQuantity={(quantity) =>
+                    setDraft((previous) => ({
+                      ...previous,
+                      quantities: { ...previous.quantities, [selected.id]: quantity },
+                    }))
+                  }
                   onApply={(quantity) => apply(selected, quantity)}
                   onResults={() => navigateToSection("rate-directory")}
                 />

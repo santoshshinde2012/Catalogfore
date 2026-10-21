@@ -10,10 +10,13 @@ import {
   planForSpend,
   projectSimple,
   withRates,
+  type PlanningEvent,
   type Portfolio,
   type SimplePlan,
 } from "@cayfore/engine";
 import type { SessionControls } from "./session-controls";
+import { planFromPortfolio } from "./forecast-session";
+import { planStartingIn } from "../lib/forecast-start";
 
 /** Global assumptions change the active portfolio; only basket controls rebuild workloads. */
 export function planActions(controls: SessionControls) {
@@ -27,21 +30,37 @@ export function planActions(controls: SessionControls) {
       nextPortfolio.commitment.cloudDiscount = portfolio.commitment.cloudDiscount;
       nextPortfolio.forecast = { ...portfolio.forecast, annualGrowth: nextPortfolio.forecast.annualGrowth };
     }
+    const normalized = normalizePortfolio(nextPortfolio);
+    setUsageError("");
+    if (JSON.stringify(normalized) === JSON.stringify(normalizePortfolio(portfolio))) {
+      if (reset) {
+        setPlan(next);
+        setOverride(normalized);
+      }
+      return;
+    }
     setUndo(portfolio);
     setPlan(next);
-    setOverride(normalizePortfolio(nextPortfolio));
-    setUsageError("");
+    setOverride(normalized);
   }
   function patch(next: Portfolio) {
-    setOverride(normalizePortfolio(next));
-    setPlan((current) => ({
-      ...current,
-      cloud: next.cloud,
-      region: next.region,
-      tier: next.tier,
-      commitDiscount: next.commitment.dbuDiscount,
-      monthlyGrowth: Math.pow(1 + next.forecast.annualGrowth, 1 / 12) - 1,
-    }));
+    const normalized = normalizePortfolio(next);
+    if (JSON.stringify(normalized) === JSON.stringify(normalizePortfolio(portfolio))) return false;
+    setUndo(portfolio);
+    setOverride(normalized);
+    const simple = planFromPortfolio(normalized);
+    setPlan(
+      (current) =>
+        simple ?? {
+          ...current,
+          cloud: normalized.cloud,
+          region: normalized.region,
+          tier: normalized.tier,
+          commitDiscount: normalized.commitment.dbuDiscount,
+          monthlyGrowth: Math.pow(1 + normalized.forecast.annualGrowth, 1 / 12) - 1,
+        },
+    );
+    return true;
   }
   function placement(next: Pick<Portfolio, "cloud" | "region" | "tier">) {
     if (portfolio.simple) {
@@ -89,7 +108,7 @@ export function planActions(controls: SessionControls) {
         next.simple = { ...next.simple, monthlyGrowth };
         delete next.simple.usageForecast;
       }
-      patch(next);
+      if (!patch(next)) return;
       setPlan((current) => {
         const updated = { ...current, monthlyGrowth };
         delete updated.usageForecast;
@@ -114,6 +133,13 @@ export function planActions(controls: SessionControls) {
         ...portfolio,
         budgetAnnual: amount != null && Number.isFinite(amount) && amount >= 0 ? amount : undefined,
       }),
+    setForecastStart: (month: string) => {
+      if (!/^(19|20|21)\d{2}-(0[1-9]|1[0-2])$/.test(month) || portfolio.forecast.startMonth === month) return false;
+      const updated = planStartingIn(portfolio, month);
+      patch(updated.portfolio);
+      return updated.resetLegacyFit;
+    },
+    setEvents: (events: PlanningEvent[]) => patch({ ...portfolio, events }),
     reset: () => replacePlan(defaultPlan(), true),
     resetToQuick: () =>
       replacePlan(planForSpend({ ...plan, usageDbu: undefined, usageForecast: undefined }, plan.monthlySpend)),

@@ -11,9 +11,8 @@ import { PriceDisclosure } from "./PriceDisclosure";
 import { periodAt, periodLabel } from "../../lib/chart-data";
 import { InfoTooltip } from "../ui/tooltip";
 
-export function yearCopy(annual: number, spreadPercent: number, cloudShare: number) {
-  const sentence =
-    annual !== 0 ? `About ${money(annual, 0)} per year, ±${spreadPercent}%.` : `About ${money(0, 0)} per year.`;
+export function yearCopy(annual: number, cloudShare: number, range: { low: number; high: number }, incomplete = false) {
+  const sentence = `${incomplete ? `Known annual subtotal ${money(annual, 0)}; unresolved charges are excluded.` : `About ${money(annual, 0)} per year.`} Planning range ${money(range.low, 0)} to ${money(range.high, 0)}.`;
   const split =
     cloudShare <= 0.005
       ? "This plan has no separate machine charge."
@@ -38,12 +37,12 @@ export function ResultsPanel({
   onReprice?: () => void;
   onReferenceCosts?: (productId: string, placement: RatePlacement) => void;
 }) {
-  const { annual, spreadPercent, cloudShare, months, portfolio, estimate, points, band } = projection;
-  const { sentence, split } = yearCopy(annual, spreadPercent, cloudShare);
+  const { annual, cloudShare, months, portfolio, estimate, points, band } = projection;
+  const subtotal = projection.hasUnpriced;
+  const { sentence, split } = yearCopy(annual, cloudShare, band, subtotal);
   const animated = useAnimatedNumber(annual);
   const animatedFirst = useAnimatedNumber(months[0]?.expected ?? 0);
   const animatedLast = useAnimatedNumber(months[11]?.expected ?? 0);
-  const subtotal = estimate.coverage?.complete === false;
   const startMonth = points[0]?.period ?? estimate.verifiedOn.slice(0, 7);
   const endMonth = points[11]?.period ?? periodAt(startMonth, 11);
   return (
@@ -110,6 +109,14 @@ export function ResultsPanel({
         <p className="text-sm text-muted-foreground" data-testid="bill-split">
           {split}
         </p>
+        <Button
+          type="button"
+          variant="outline"
+          className="justify-self-start"
+          onClick={() => navigateToSection("budget-planning")}
+        >
+          Budget and scenarios
+        </Button>
         {comparison && (
           <p className="rounded-lg border border-primary/25 bg-primary/5 p-3 text-sm" data-testid="scenario-delta">
             {Math.abs(annual - comparison.projection.annual) < 0.01
