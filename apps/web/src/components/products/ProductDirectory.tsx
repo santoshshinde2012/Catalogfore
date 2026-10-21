@@ -1,5 +1,6 @@
 import { domainById, type ProductMapEntry } from "@cayfore/catalog/map";
 import { ArrowUpRight, Check, SearchX } from "lucide-react";
+import { useRef } from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { CoverageBadge, DomainIcon, domainColor } from "./map-presentation";
@@ -21,6 +22,11 @@ export function ProductDirectory({
   onMore: () => void;
   onClear: () => void;
 }) {
+  const list = useRef<HTMLUListElement>(null);
+  function showMore() {
+    onMore();
+    requestAnimationFrame(() => list.current?.children[limit]?.querySelector("button")?.focus());
+  }
   return (
     <section aria-label="Product directory" id="product-directory" tabIndex={-1} className="min-w-0">
       <div className="mb-4 flex items-start justify-between gap-3">
@@ -48,7 +54,10 @@ export function ProductDirectory({
         </div>
       ) : (
         <>
-          <ul className="grid gap-2.5 lg:max-h-[min(44rem,calc(100svh-var(--workspace-header-height)-8rem))] lg:overflow-y-auto lg:overscroll-contain lg:pr-2">
+          <ul
+            ref={list}
+            className="grid gap-2.5 lg:max-h-[min(44rem,calc(100svh-var(--workspace-header-height)-8rem))] lg:overflow-y-auto lg:overscroll-contain lg:pr-2"
+          >
             {entries.slice(0, limit).map((entry) => (
               <li key={entry.id}>
                 <button
@@ -91,7 +100,7 @@ export function ProductDirectory({
             ))}
           </ul>
           {entries.length > limit && (
-            <Button type="button" variant="outline" className="mt-4 min-h-11 w-full" onClick={onMore}>
+            <Button type="button" variant="outline" className="mt-4 min-h-11 w-full" onClick={showMore}>
               Show {Math.min(12, entries.length - limit)} more entries
               <span className="text-muted-foreground">({entries.length - limit} remaining)</span>
             </Button>

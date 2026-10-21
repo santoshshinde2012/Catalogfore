@@ -36,6 +36,8 @@ export function useAppView() {
 
   useEffect(() => {
     const onPopState = () => {
+      // Commit the focused draft before changing views unmounts its editor.
+      if (document.activeElement instanceof HTMLInputElement) document.activeElement.blur();
       setView(readAppView());
       setRateProductId(readRateProductId());
       setRatePlacement(readRatePlacement());

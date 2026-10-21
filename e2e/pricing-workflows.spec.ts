@@ -17,6 +17,7 @@ test("an explicit contract rate keeps its source and dollars through save and re
   await page.getByRole("button", { name: "Advanced", exact: true }).last().click();
   await page.getByText("Contract rate override", { exact: true }).click();
   await page.getByRole("spinbutton", { name: "USD per DBU", exact: true }).fill("0.123");
+  await page.getByRole("spinbutton", { name: "USD per DBU", exact: true }).press("Enter");
   await page.getByRole("textbox", { name: "Rate source", exact: true }).fill("Procurement quote October 2026");
   await page.keyboard.press("Escape");
   const saved = await savedDownload(page);

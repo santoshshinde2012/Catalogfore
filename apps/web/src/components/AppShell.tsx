@@ -11,6 +11,7 @@ import type { ProductMapDraft } from "./products/ProductMapPage";
 import type { SimpleSession } from "../hooks/useSimpleForecast";
 import { AppFooter } from "./AppFooter";
 import { AppHeader } from "./AppHeader";
+import { WorkspaceBoundary } from "./WorkspaceBoundary";
 import { SimplePage } from "./simple/SimplePage";
 import { Toaster } from "./ui/sonner";
 import { TooltipProvider } from "./ui/tooltip";
@@ -117,69 +118,71 @@ export function AppShell({ session }: { session: SimpleSession }) {
           onNew={() => {
             session.reset();
             showPlanner("plan-inputs");
-            toast("Started a new forecast", { description: "Use Undo last change to restore your previous plan." });
+            toast("Started a new forecast", { description: "Adjust the inputs to start a new estimate." });
           }}
         />
         <main>
-          {view === "planner" && (
-            <SimplePage
-              session={session}
-              howOpen={howOpen}
-              onHowOpen={setHowOpen}
-              advancedAsk={advancedAsk}
-              onReferenceCosts={showRates}
-            />
-          )}
-          {productsOpen && (
-            <Suspense
-              fallback={
-                <p className="mx-auto max-w-7xl px-6 py-16 text-muted-foreground" role="status">
-                  Loading the product map…
-                </p>
-              }
-            >
-              <ProductMapPage
-                cache={productDraft}
-                onAddProduct={addProduct}
-                onInspectCosts={showRates}
-                onBack={() => showPlanner("plan-inputs")}
+          <WorkspaceBoundary key={view} onPlan={() => showPlanner("plan-inputs")}>
+            {view === "planner" && (
+              <SimplePage
+                session={session}
+                howOpen={howOpen}
+                onHowOpen={setHowOpen}
+                advancedAsk={advancedAsk}
+                onReferenceCosts={showRates}
               />
-            </Suspense>
-          )}
-          {ratesOpen && (
-            <Suspense
-              fallback={
-                <p className="mx-auto max-w-7xl px-6 py-16 text-muted-foreground" role="status">
-                  Loading unit costs…
-                </p>
-              }
-            >
-              <UnitCostsPage
-                productId={rateProductId}
-                placement={ratePlacement}
-                cache={rateDraft}
-                onScope={(filters) => navigate("rates", filters.productId ?? "", placementForFilters(filters), true)}
-                portfolio={session.portfolio}
-                onBack={() => showPlanner("plan-inputs")}
-                onViewForecast={() => showPlanner("forecast")}
-                canUndo={session.canUndo}
-                onUndo={session.undoRemove}
-                onApplyUsage={(row, quantity) => {
-                  if (!session.applyUnitCost(row, quantity)) {
-                    toast("Quantity kept in the calculator", {
-                      description: "Review the quantity and pricing requirements shown beside the calculator.",
+            )}
+            {productsOpen && (
+              <Suspense
+                fallback={
+                  <p className="mx-auto max-w-7xl px-6 py-16 text-muted-foreground" role="status">
+                    Loading the product map…
+                  </p>
+                }
+              >
+                <ProductMapPage
+                  cache={productDraft}
+                  onAddProduct={addProduct}
+                  onInspectCosts={showRates}
+                  onBack={() => showPlanner("plan-inputs")}
+                />
+              </Suspense>
+            )}
+            {ratesOpen && (
+              <Suspense
+                fallback={
+                  <p className="mx-auto max-w-7xl px-6 py-16 text-muted-foreground" role="status">
+                    Loading unit costs…
+                  </p>
+                }
+              >
+                <UnitCostsPage
+                  productId={rateProductId}
+                  placement={ratePlacement}
+                  cache={rateDraft}
+                  onScope={(filters) => navigate("rates", filters.productId ?? "", placementForFilters(filters), true)}
+                  portfolio={session.portfolio}
+                  onBack={() => showPlanner("plan-inputs")}
+                  onViewForecast={() => showPlanner("forecast")}
+                  canUndo={session.canUndo}
+                  onUndo={session.undoRemove}
+                  onApplyUsage={(row, quantity) => {
+                    if (!session.applyUnitCost(row, quantity)) {
+                      toast("Quantity kept in the calculator", {
+                        description: "Review the quantity and pricing requirements shown beside the calculator.",
+                      });
+                      return false;
+                    }
+                    toast("Forecast updated", {
+                      description: `${row.productName} now uses this quantity. Plan discounts still apply.`,
+                      action: { label: "View forecast", onClick: () => showPlanner("forecast") },
                     });
-                    return false;
-                  }
-                  toast("Forecast updated", {
-                    description: `${row.productName} now uses this quantity. Plan discounts still apply.`,
-                    action: { label: "View forecast", onClick: () => showPlanner("forecast") },
-                  });
-                  return true;
-                }}
-              />
-            </Suspense>
-          )}
+                    return true;
+                  }}
+                />
+              </Suspense>
+            )}
+          </WorkspaceBoundary>
         </main>
         <AppFooter
           onForecast={() => showPlanner("forecast")}

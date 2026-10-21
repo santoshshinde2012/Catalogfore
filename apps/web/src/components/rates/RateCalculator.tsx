@@ -6,7 +6,7 @@ import {
   type UnitCostRow,
 } from "@cayfore/engine/unit-costs";
 import { Calculator } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { evidenceLabels, unitMoney } from "./rate-presentation";
@@ -21,6 +21,7 @@ export function RateCalculator({
   unavailableReason,
   quantity: draftQuantity,
   onQuantity,
+  feedback,
 }: {
   row: UnitCostRow;
   usage?: PlanQuantity | null;
@@ -30,6 +31,7 @@ export function RateCalculator({
   unavailableReason?: string | null;
   quantity?: string;
   onQuantity: (quantity: string) => void;
+  feedback?: ReactNode;
 }) {
   const quantity = draftQuantity ?? (usage ? String(usage.quantity) : "100");
   const amount = Number(quantity);
@@ -106,6 +108,7 @@ export function RateCalculator({
               </Button>
             )}
           </div>
+          {feedback && <div className="mt-3">{feedback}</div>}
           <p id="rate-plan-help" className="mt-2 text-xs leading-relaxed text-muted-foreground">
             {action && valid && !applyValid
               ? `Forecast quantities must be between 0 and ${MAX_PLAN_QUANTITY.toLocaleString("en-US")} per month. The component calculation above is for reference only.`
@@ -121,6 +124,7 @@ export function RateCalculator({
           price.
         </p>
       )}
+      {!usable && feedback && <div className="mt-3">{feedback}</div>}
     </section>
   );
 }

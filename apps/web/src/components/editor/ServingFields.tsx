@@ -1,7 +1,8 @@
+import { DraftNumberInput } from "./DraftInput";
 import { skuCatalog, PROVISIONED_MODEL_UNITS_PER_BLOCK } from "@cayfore/engine";
 import { useId } from "react";
 import { OptionSelect } from "../ui/option-select";
-import { type KindProps, numberOr, ScheduleFields } from "./fields";
+import { type KindProps, ScheduleFields } from "./fields";
 
 export function ServingFields({ workload, onChange }: KindProps) {
   if (workload.kind !== "model_serving") return null;
@@ -21,12 +22,13 @@ export function ServingFields({ workload, onChange }: KindProps) {
       {workload.mode === "cpu" ? (
         <label className="field">
           Average concurrent requests
-          <input
-            type="number"
+          <DraftNumberInput
+            label="Average concurrent requests"
+            max={10000}
             min={0}
             step={1}
             value={workload.concurrency}
-            onChange={(event) => onChange({ ...workload, concurrency: numberOr(event.target.value, 0) })}
+            onCommit={(value) => onChange({ ...workload, concurrency: value })}
           />
         </label>
       ) : (
@@ -44,12 +46,13 @@ export function ServingFields({ workload, onChange }: KindProps) {
           />
           <label className="field">
             Replicas
-            <input
-              type="number"
+            <DraftNumberInput
+              label="Replicas"
+              max={100}
               min={0}
               step={1}
               value={workload.replicas}
-              onChange={(event) => onChange({ ...workload, replicas: numberOr(event.target.value, 0) })}
+              onCommit={(value) => onChange({ ...workload, replicas: value })}
             />
           </label>
         </>
@@ -74,34 +77,37 @@ export function FoundationFields({ workload, onChange }: KindProps) {
       <div className="grid-2">
         <label className="field">
           Input tokens / month
-          <input
-            type="number"
+          <DraftNumberInput
+            label="Input tokens / month"
+            max={1e15}
             min={0}
             step={100000}
             value={workload.inputTokensPerMonth}
-            onChange={(event) => onChange({ ...workload, inputTokensPerMonth: numberOr(event.target.value, 0) })}
+            onCommit={(value) => onChange({ ...workload, inputTokensPerMonth: value })}
           />
         </label>
         <label className="field">
           Output tokens / month
-          <input
-            type="number"
+          <DraftNumberInput
+            label="Output tokens / month"
+            max={1e15}
             min={0}
             step={100000}
             value={workload.outputTokensPerMonth}
-            onChange={(event) => onChange({ ...workload, outputTokensPerMonth: numberOr(event.target.value, 0) })}
+            onCommit={(value) => onChange({ ...workload, outputTokensPerMonth: value })}
           />
         </label>
       </div>
       <label className="field">
         Provisioned {PROVISIONED_MODEL_UNITS_PER_BLOCK}-model-unit block-hours / month
-        <input
-          type="number"
+        <DraftNumberInput
+          label={`Provisioned ${PROVISIONED_MODEL_UNITS_PER_BLOCK}-model-unit block-hours / month`}
+          max={1000}
           min={0}
           step={1}
           aria-describedby={capacityHintId}
           value={workload.provisionedHoursPerMonth}
-          onChange={(event) => onChange({ ...workload, provisionedHoursPerMonth: numberOr(event.target.value, 0) })}
+          onCommit={(value) => onChange({ ...workload, provisionedHoursPerMonth: value })}
         />
       </label>
       <p id={capacityHintId} className="text-xs leading-relaxed text-muted-foreground">

@@ -1,12 +1,12 @@
 import { unitCostCsv, unitCostJson, type UnitCostCatalog, type UnitCostRow } from "@cayfore/engine/unit-costs";
 import { Braces, FileSpreadsheet, LoaderCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { APP_NAME } from "../../site";
 import { Button } from "../ui/button";
 import { OptionSelect } from "../ui/option-select";
 import { InfoTooltip } from "../ui/tooltip";
 import { RateDataPreview } from "./RateDataPreview";
-import { useRateDataTable } from "./useRateDataTable";
+import { useRateDataTable, type RateDownloadDraft } from "./useRateDataTable";
 
 const formats = [
   { id: "csv", label: "CSV", icon: FileSpreadsheet, hint: "Spreadsheet of the selected rows" },
@@ -17,15 +17,26 @@ export function RateDownloads({
   catalog,
   rows,
   onInspect,
+  draft,
+  onDraft,
+  filterKey,
 }: {
   catalog: UnitCostCatalog;
   rows: UnitCostRow[];
   onInspect?: (row: UnitCostRow) => void;
+  draft: RateDownloadDraft;
+  onDraft: Dispatch<SetStateAction<RateDownloadDraft>>;
+  filterKey: string;
 }) {
-  const [scope, setScope] = useState("filtered");
+  const { scope } = draft;
   const [error, setError] = useState("");
   const [busy, setBusy] = useState("");
-  const table = useRateDataTable(scope === "all" ? catalog.rows : rows);
+  const table = useRateDataTable(
+    scope === "all" ? catalog.rows : rows,
+    draft,
+    onDraft,
+    scope === "all" ? "all" : filterKey,
+  );
   const count = (value: number) => value.toLocaleString("en-US");
   async function download(format: "csv" | "json") {
     const selected = table.orderedRows;
@@ -67,7 +78,9 @@ export function RateDownloads({
             label="Download scope"
             value={scope}
             disabled={Boolean(busy)}
-            onValueChange={setScope}
+            onValueChange={(value) =>
+              onDraft((current) => ({ ...current, scope: value === "all" ? "all" : "filtered", page: 0 }))
+            }
             options={[
               { value: "filtered", label: `Filtered rows (${count(rows.length)})` },
               { value: "all", label: `Complete catalog (${count(catalog.rows.length)})` },

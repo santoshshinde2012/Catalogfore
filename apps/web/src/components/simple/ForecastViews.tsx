@@ -26,7 +26,7 @@ export function ForecastViews({
     history: portfolio.usage?.observedUnit === "usd" ? portfolio.usage.observedMonths : undefined,
     comparison: comparison
       ? {
-          name: comparison.name,
+          name: `${comparison.name}${comparison.projection.hasUnpriced ? " (known subtotal)" : ""}`,
           months: comparison.projection.months,
           startMonth: comparison.projection.points[0]?.period ?? startMonth,
         }

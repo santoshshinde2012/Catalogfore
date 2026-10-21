@@ -9,9 +9,11 @@ import { InfoTooltip } from "./ui/tooltip";
 export function LedgerMenu({
   onAdd,
   onUsageFile,
+  usageBusy = false,
 }: {
   onAdd: (productId: string) => void;
   onUsageFile: (file: File) => void;
+  usageBusy?: boolean;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [category, setCategory] = useState("all");
@@ -57,6 +59,7 @@ export function LedgerMenu({
         className="sr-only"
         tabIndex={-1}
         aria-label="Usage CSV"
+        disabled={usageBusy}
         onChange={(event) => {
           const file = event.target.files?.[0];
           event.target.value = "";
@@ -68,9 +71,16 @@ export function LedgerMenu({
         description="Import a usage CSV to build a forecast from your Databricks activity."
         side="top"
       >
-        <Button type="button" size="sm" variant="outline" onClick={() => fileRef.current?.click()}>
+        <Button
+          data-usage-import-return
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={() => fileRef.current?.click()}
+          disabled={usageBusy}
+        >
           <FileUp aria-hidden="true" />
-          From a usage file
+          {usageBusy ? "Reading CSV…" : "From a usage file"}
         </Button>
       </InfoTooltip>
       <InfoTooltip

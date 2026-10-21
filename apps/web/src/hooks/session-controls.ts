@@ -6,6 +6,7 @@ export interface SessionControls {
   portfolio: Portfolio;
   override: Portfolio | null;
   undo: Portfolio | null;
+  loadRequest: { current: number };
   setPlan: (plan: SimplePlan | ((current: SimplePlan) => SimplePlan)) => void;
   setOverride: (portfolio: Portfolio | null) => void;
   setUndo: (portfolio: Portfolio | null) => void;

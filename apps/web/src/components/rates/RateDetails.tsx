@@ -6,7 +6,7 @@ import {
   previewPlanQuantity,
   type UnitCostRow,
 } from "@cayfore/engine/unit-costs";
-import { useCallback } from "react";
+import { useCallback, type ReactNode } from "react";
 import { ArrowLeft, ReceiptText } from "lucide-react";
 import { Button } from "../ui/button";
 import { RateBuildUp } from "./RateBuildUp";
@@ -30,6 +30,7 @@ export function RateDetails({
   onApply,
   quantity,
   onQuantity,
+  feedback,
 }: {
   row: UnitCostRow;
   onResults: () => void;
@@ -37,6 +38,7 @@ export function RateDetails({
   onApply?: (quantity: number) => void;
   quantity?: string;
   onQuantity: (quantity: string) => void;
+  feedback?: ReactNode;
 }) {
   const preview = useCallback((quantity: number) => previewPlanQuantity(portfolio, row, quantity), [portfolio, row]);
   return (
@@ -84,6 +86,7 @@ export function RateDetails({
         row={row}
         quantity={quantity}
         onQuantity={onQuantity}
+        feedback={feedback}
         usage={planQuantityForUnitCost(portfolio, row)}
         action={planQuantityAction(portfolio, row)}
         onApply={onApply}

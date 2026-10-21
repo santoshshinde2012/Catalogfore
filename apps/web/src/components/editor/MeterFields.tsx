@@ -1,6 +1,7 @@
+import { DraftNumberInput } from "./DraftInput";
 import { skuCatalog } from "@cayfore/engine";
 import { OptionSelect } from "../ui/option-select";
-import { type KindProps, numberOr, ScheduleFields } from "./fields";
+import { type KindProps, ScheduleFields } from "./fields";
 
 export function SearchFields({ workload, onChange }: KindProps) {
   if (workload.kind !== "ai_search") return null;
@@ -20,22 +21,24 @@ export function SearchFields({ workload, onChange }: KindProps) {
       <div className="grid-2">
         <label className="field">
           Units
-          <input
-            type="number"
+          <DraftNumberInput
+            label="Units"
+            max={1000}
             min={0}
             step={1}
             value={workload.units}
-            onChange={(event) => onChange({ ...workload, units: numberOr(event.target.value, 0) })}
+            onCommit={(value) => onChange({ ...workload, units: value })}
           />
         </label>
         <label className="field">
           Storage GB
-          <input
-            type="number"
+          <DraftNumberInput
+            label="Storage GB"
+            max={1e9}
             min={0}
             step={1}
             value={workload.storageGb}
-            onChange={(event) => onChange({ ...workload, storageGb: numberOr(event.target.value, 0) })}
+            onCommit={(value) => onChange({ ...workload, storageGb: value })}
           />
         </label>
       </div>
@@ -71,22 +74,24 @@ export function LakebaseFields({ workload, onChange }: KindProps) {
       <div className="grid-2">
         <label className="field">
           Average CU
-          <input
-            type="number"
+          <DraftNumberInput
+            label="Average CU"
+            max={10000}
             min={0}
             step={0.5}
             value={workload.cu}
-            onChange={(event) => onChange({ ...workload, cu: numberOr(event.target.value, 0) })}
+            onCommit={(value) => onChange({ ...workload, cu: value })}
           />
         </label>
         <label className="field">
           Storage GB
-          <input
-            type="number"
+          <DraftNumberInput
+            label="Storage GB"
+            max={1e9}
             min={0}
             step={1}
             value={workload.storageGb}
-            onChange={(event) => onChange({ ...workload, storageGb: numberOr(event.target.value, 0) })}
+            onCommit={(value) => onChange({ ...workload, storageGb: value })}
           />
         </label>
       </div>
@@ -102,12 +107,12 @@ export function StorageFields({ workload, onChange }: KindProps) {
     <div className="mt-3 grid gap-3">
       <label className="field">
         GB-month
-        <input
-          type="number"
+        <DraftNumberInput
+          label="GB-month"
           min={0}
           step={10}
           value={workload.gbMonth}
-          onChange={(event) => onChange({ ...workload, gbMonth: numberOr(event.target.value, 0) })}
+          onCommit={(value) => onChange({ ...workload, gbMonth: value })}
         />
       </label>
       <label className="checkline">
@@ -129,26 +134,25 @@ export function EgressFields({ workload, portfolio, onChange }: KindProps) {
     <div className="mt-3 grid-2">
       <label className="field">
         GB / month
-        <input
-          type="number"
+        <DraftNumberInput
+          label="GB / month"
           min={0}
           step={10}
           value={workload.gbMonth}
-          onChange={(event) => onChange({ ...workload, gbMonth: numberOr(event.target.value, 0) })}
+          onCommit={(value) => onChange({ ...workload, gbMonth: value })}
         />
       </label>
       <label className="field">
         $ / GB
-        <input
-          type="number"
+        <DraftNumberInput
+          label="$ / GB"
+          max={10}
           min={0}
           step={0.01}
-          value={workload.pricePerGb ?? ""}
+          value={workload.pricePerGb}
           placeholder={String(skuCatalog.defaultEgressPerGb[cloud])}
-          onChange={(event) => {
-            const raw = event.target.value;
-            onChange({ ...workload, pricePerGb: raw === "" ? undefined : numberOr(raw, 0) });
-          }}
+          onCommit={(pricePerGb) => onChange({ ...workload, pricePerGb })}
+          onClear={() => onChange({ ...workload, pricePerGb: undefined })}
         />
       </label>
     </div>
@@ -176,12 +180,12 @@ export function DbuMeterFields({ workload, onChange }: KindProps) {
       />
       <label className="field">
         DBU / month
-        <input
-          type="number"
+        <DraftNumberInput
+          label="DBU / month"
           min={0}
           step={10}
           value={workload.dbuPerMonth}
-          onChange={(event) => onChange({ ...workload, dbuPerMonth: numberOr(event.target.value, 0) })}
+          onCommit={(value) => onChange({ ...workload, dbuPerMonth: value })}
         />
       </label>
       <p className="hint" style={{ gridColumn: "1 / -1" }}>

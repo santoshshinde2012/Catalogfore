@@ -59,14 +59,17 @@ export function UnitCostsPage({
   const selected = rows.find((row) => row.id === selectedId) ?? rows[0];
   function apply(row: UnitCostRow, quantity: number) {
     const action = planQuantityAction(portfolio, row);
-    if (onApplyUsage(row, quantity))
+    if (onApplyUsage(row, quantity)) {
       setChangeNotice(
         `${action === "add" ? "Added" : "Updated"} ${row.productName}: ${quantity.toLocaleString("en-US")} ${row.unit} per baseline month.`,
       );
+      requestAnimationFrame(() => document.getElementById("rate-plan-feedback")?.focus());
+    }
   }
   const productKnown = !productId || catalog.products.some((product) => product.id === productId);
   function clear() {
     change({});
+    document.getElementById("rate-search")?.focus();
   }
   function select(id: string) {
     patch({ panel: "rates", selectedId: id });
@@ -91,6 +94,18 @@ export function UnitCostsPage({
     });
     select(row.id);
   }
+  const feedback = changeNotice && (
+    <RatePlanFeedback
+      notice={changeNotice}
+      canUndo={canUndo}
+      onView={onViewForecast}
+      onUndo={() => {
+        onUndo();
+        setChangeNotice("Change undone. Your previous forecast is restored.");
+        requestAnimationFrame(() => document.getElementById("rate-plan-feedback")?.focus());
+      }}
+    />
+  );
   return (
     <article className="mx-auto w-full max-w-7xl px-4 pt-4 pb-12 sm:px-6 sm:pt-6 lg:pb-16">
       <RateWorkspaceHeader catalog={catalog} onBack={onBack} />
@@ -108,17 +123,7 @@ export function UnitCostsPage({
             This product link is not in the installed catalog. Reset the filters to explore available services.
           </p>
         )}
-        {changeNotice && (
-          <RatePlanFeedback
-            notice={changeNotice}
-            canUndo={canUndo}
-            onView={onViewForecast}
-            onUndo={() => {
-              onUndo();
-              setChangeNotice("Change undone. Your previous forecast is restored.");
-            }}
-          />
-        )}
+        {(panel !== "rates" || !selected) && feedback}
         <RateFilters catalog={catalog} filters={filters} onChange={change} onClear={clear} />
         <Tabs value={panel} onValueChange={(panel) => patch({ panel })} className="min-w-0">
           <RateWorkspaceTabs />
@@ -145,6 +150,7 @@ export function UnitCostsPage({
                 <RateDetails
                   key={selected.id}
                   row={selected}
+                  feedback={panel === "rates" ? feedback : null}
                   portfolio={portfolio}
                   quantity={quantities[selected.id]}
                   onQuantity={(quantity) =>
@@ -172,7 +178,19 @@ export function UnitCostsPage({
             <RateEvidenceOverview rows={rows} />
           </TabsContent>
           <TabsContent value="downloads" forceMount className="mt-4 data-[state=inactive]:hidden">
-            <RateDownloads catalog={catalog} rows={rows} onInspect={inspect} />
+            <RateDownloads
+              catalog={catalog}
+              rows={rows}
+              onInspect={inspect}
+              draft={draft.downloads}
+              filterKey={JSON.stringify(filters)}
+              onDraft={(update) =>
+                setDraft((previous) => ({
+                  ...previous,
+                  downloads: typeof update === "function" ? update(previous.downloads) : update,
+                }))
+              }
+            />
           </TabsContent>
         </Tabs>
         <RateCatalogNotes catalog={catalog} />

@@ -81,11 +81,14 @@ export function SimplePage({
               ask={advancedAsk}
               portfolio={session.portfolio}
               estimate={session.estimate}
+              hasUnpriced={session.forecastResult.hasUnpriced}
               selectedId={session.selectedId}
               onPortfolio={session.editPortfolio}
               onSelect={session.selectWorkload}
               onRemove={session.removeWorkload}
               onUsageFile={session.loadUsageFile}
+              usageError={session.usageError}
+              usageBusy={session.usageBusy}
             />
           </div>
           {session.usingDetail && (

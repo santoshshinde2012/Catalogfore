@@ -13,6 +13,8 @@ export function RatePlanFeedback({
 }) {
   return (
     <section
+      id="rate-plan-feedback"
+      tabIndex={-1}
       aria-label="Forecast change"
       className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/25 bg-primary/5 p-3"
     >

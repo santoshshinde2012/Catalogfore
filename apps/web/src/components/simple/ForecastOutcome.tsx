@@ -10,13 +10,14 @@ import { ForecastViews } from "./ForecastViews";
 import { PriceDisclosure } from "./PriceDisclosure";
 import { periodAt, periodLabel } from "../../lib/chart-data";
 import { InfoTooltip } from "../ui/tooltip";
+import { ScenarioComparison } from "./ScenarioComparison";
 
 export function yearCopy(annual: number, cloudShare: number, range: { low: number; high: number }, incomplete = false) {
   const sentence = `${incomplete ? `Known annual subtotal ${money(annual, 0)}; unresolved charges are excluded.` : `About ${money(annual, 0)} per year.`} Planning range ${money(range.low, 0)} to ${money(range.high, 0)}.`;
   const split =
     cloudShare <= 0.005
-      ? "This plan has no separate machine charge."
-      : `${Math.round(cloudShare * 100)}% of the bill is cloud machines.`;
+      ? "The first month has no separate machine charge."
+      : `${Math.round(cloudShare * 100)}% of the first-month bill is cloud machines.`;
   return { sentence, split };
 }
 
@@ -117,15 +118,7 @@ export function ResultsPanel({
         >
           Budget and scenarios
         </Button>
-        {comparison && (
-          <p className="rounded-lg border border-primary/25 bg-primary/5 p-3 text-sm" data-testid="scenario-delta">
-            {Math.abs(annual - comparison.projection.annual) < 0.01
-              ? `Same forecast total as ${comparison.name} over each plan’s first 12 months.`
-              : `${money(Math.abs(annual - comparison.projection.annual), 0)} ${annual > comparison.projection.annual ? "more" : "less"} than ${comparison.name} over each plan’s first 12 months.`}
-            {points[0]?.period !== comparison.projection.points[0]?.period &&
-              " These plans start in different months; chart comparisons align calendar dates."}
-          </p>
-        )}
+        {comparison && <ScenarioComparison current={projection} comparison={comparison} />}
       </Rise>
       {portfolio.workloads.length === 0 && (
         <div className="rounded-xl border border-dashed bg-muted/30 p-5 text-sm">

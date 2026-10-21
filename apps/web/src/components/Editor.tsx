@@ -1,11 +1,13 @@
 import { productById, recomputeProduct } from "@cayfore/engine/products";
-import { listRegions, type Cloud, type Portfolio, type Tier, type Workload } from "@cayfore/engine";
+import { type Portfolio, type Workload } from "@cayfore/engine";
 import { useEffect, useRef } from "react";
 import { SchemaFields } from "./editor/SchemaFields";
 import { MeteredPricingFields } from "./editor/MeteredPricingFields";
 import { workloadEditors } from "./editor/registry";
 import { Button } from "./ui/button";
 import { OptionSelect } from "./ui/option-select";
+import { DraftTextInput, EditorDraftSource } from "./editor/DraftInput";
+import { PlacementFields } from "./editor/PlacementFields";
 
 interface EditorProps {
   workload: Workload;
@@ -26,7 +28,6 @@ export function Editor({ workload, portfolio, onChange, onDuplicate, onRemove, o
     });
     return () => cancelAnimationFrame(frame);
   }, [workload.id]);
-  const cloud = workload.cloud ?? portfolio.cloud;
   const product = workload.productId ? productById(workload.productId) : undefined;
   const part = product?.parts?.find((item) => item.id === workload.partId);
   const editor = part?.editor ?? product?.editor;
@@ -38,90 +39,54 @@ export function Editor({ workload, portfolio, onChange, onDuplicate, onRemove, o
     onChange(imported ? next : recomputeProduct(next));
   }
   return (
-    <div
-      ref={editorRef}
-      className="mt-2 min-w-0 scroll-mt-4 rounded-lg border p-4"
-      role="group"
-      aria-label={`Edit ${workload.name}`}
-    >
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <strong className="text-sm">Edit workload</strong>
-        <span className="flex flex-wrap gap-1">
-          <Button type="button" variant="ghost" size="sm" className="min-h-11 sm:min-h-8" onClick={onDuplicate}>
-            Duplicate
-          </Button>
-          <Button type="button" variant="ghost" size="sm" className="min-h-11 sm:min-h-8" onClick={onClose}>
-            Close
-          </Button>
-          <Button type="button" variant="destructive" size="sm" className="min-h-11 sm:min-h-8" onClick={onRemove}>
-            Remove
-          </Button>
-        </span>
-      </div>
-      <div className="grid-2">
-        <label className="field">
-          Name
-          <input
-            ref={nameRef}
-            value={workload.name}
-            maxLength={80}
-            onChange={(event) => change({ ...workload, name: event.target.value })}
-          />
-        </label>
-        <SkuSelect workload={workload} onChange={change} />
-      </div>
-      {imported ? (
-        <MeteredPricingFields workload={workload} portfolio={portfolio} onChange={change} />
-      ) : schema && product ? (
-        <SchemaFields workload={workload} fields={fields} onChange={change} />
-      ) : (
-        <Fields workload={workload} portfolio={portfolio} onChange={change} />
-      )}
-      {!schema && !imported && workload.kind === "metered" && (
-        <MeteredPricingFields workload={workload} portfolio={portfolio} onChange={change} />
-      )}
-      {product && <p className="hint mt-3">{product.note}</p>}
-      <details className="mt-3">
-        <summary>Run this workload somewhere else</summary>
-        <div className="mt-2 grid-3">
-          <OptionSelect
-            tone="field"
-            label="Cloud"
-            value={workload.cloud ?? ""}
-            searchable={false}
-            onValueChange={(cloud) => change({ ...workload, cloud: (cloud || undefined) as Cloud | undefined })}
-            options={[
-              { value: "", label: "Same as portfolio" },
-              { value: "aws", label: "AWS" },
-              { value: "azure", label: "Azure" },
-              { value: "gcp", label: "GCP" },
-            ]}
-          />
-          <OptionSelect
-            tone="field"
-            label="Region"
-            value={workload.region ?? ""}
-            onValueChange={(region) => change({ ...workload, region: region || undefined })}
-            options={[
-              { value: "", label: "Same as portfolio" },
-              ...listRegions(cloud).map((region) => ({ value: region.id, label: region.label })),
-            ]}
-          />
-          <OptionSelect
-            tone="field"
-            label="Tier"
-            value={workload.tier ?? ""}
-            searchable={false}
-            onValueChange={(tier) => change({ ...workload, tier: (tier || undefined) as Tier | undefined })}
-            options={[
-              { value: "", label: "Same as portfolio" },
-              { value: "premium", label: "Premium" },
-              { value: "enterprise", label: "Enterprise" },
-            ]}
-          />
+    <EditorDraftSource.Provider value={workload}>
+      <div
+        ref={editorRef}
+        className="mt-2 min-w-0 scroll-mt-4 rounded-lg border p-4"
+        role="group"
+        aria-label={`Edit ${workload.name}`}
+      >
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <strong className="text-sm">Edit workload</strong>
+          <span className="flex flex-wrap gap-1">
+            <Button type="button" variant="ghost" size="sm" className="min-h-11 sm:min-h-8" onClick={onDuplicate}>
+              Duplicate
+            </Button>
+            <Button type="button" variant="ghost" size="sm" className="min-h-11 sm:min-h-8" onClick={onClose}>
+              Close
+            </Button>
+            <Button type="button" variant="destructive" size="sm" className="min-h-11 sm:min-h-8" onClick={onRemove}>
+              Remove
+            </Button>
+          </span>
         </div>
-      </details>
-    </div>
+        <div className="grid-2">
+          <label className="field">
+            Name
+            <DraftTextInput
+              label="Name"
+              ref={nameRef}
+              value={workload.name}
+              maxLength={80}
+              onCommit={(name) => change({ ...workload, name })}
+            />
+          </label>
+          <SkuSelect workload={workload} onChange={change} />
+        </div>
+        {imported ? (
+          <MeteredPricingFields workload={workload} portfolio={portfolio} onChange={change} />
+        ) : schema && product ? (
+          <SchemaFields workload={workload} fields={fields} onChange={change} />
+        ) : (
+          <Fields workload={workload} portfolio={portfolio} onChange={change} />
+        )}
+        {!schema && !imported && workload.kind === "metered" && (
+          <MeteredPricingFields workload={workload} portfolio={portfolio} onChange={change} />
+        )}
+        {product && <p className="hint mt-3">{product.note}</p>}
+        <PlacementFields key={workload.id} workload={workload} portfolio={portfolio} onChange={change} />
+      </div>
+    </EditorDraftSource.Provider>
   );
 }
 

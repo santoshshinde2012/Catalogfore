@@ -1,6 +1,6 @@
 import type { Workload } from "@cayfore/engine";
 import { OptionSelect } from "../ui/option-select";
-import { numberOr } from "./fields";
+import { DraftNumberInput } from "./DraftInput";
 
 interface ProductField {
   path: string;
@@ -44,15 +44,13 @@ export function SchemaFields({
                 onChange={(event) => onChange(writePath(workload, field.path, event.target.checked))}
               />
             ) : (
-              <input
-                type="number"
+              <DraftNumberInput
+                label={field.label}
                 min={field.min}
-                max={field.max}
+                max={field.max ?? (/^(fixedUsdByCloud|rateByCloud|rateByPlacement)\./.test(field.path) ? 1e6 : 1e12)}
                 step={field.step}
-                value={Number(readPath(workload, field.path) ?? 0)}
-                onChange={(event) =>
-                  onChange(writePath(workload, field.path, numberOr(event.target.value, Number(field.min ?? 0))))
-                }
+                value={readPath(workload, field.path) == null ? undefined : Number(readPath(workload, field.path))}
+                onCommit={(value) => onChange(writePath(workload, field.path, value))}
               />
             )}
           </label>

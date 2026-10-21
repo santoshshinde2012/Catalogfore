@@ -3,6 +3,7 @@ import type { UnitCostFilters } from "@cayfore/engine/unit-costs";
 import { useEffect, type RefObject } from "react";
 import type { RatePlacement } from "./useAppView";
 import { useWorkspaceDraft } from "./workspace-draft";
+import type { RateDownloadDraft } from "../components/rates/useRateDataTable";
 
 export interface RateWorkspaceDraft {
   filters: UnitCostFilters;
@@ -10,6 +11,7 @@ export interface RateWorkspaceDraft {
   limit: number;
   panel: string;
   quantities: Record<string, string>;
+  downloads: RateDownloadDraft;
 }
 
 export function ratePlacement(filters: UnitCostFilters): RatePlacement {
@@ -57,6 +59,7 @@ export function useRateWorkspace({
     limit: 12,
     panel: "rates",
     quantities: {},
+    downloads: { scope: "filtered", sort: null, page: 0, pageSize: 25 },
   }));
   const routeKey = scopeKey(route);
   // Record inferred placement before the plan can change on another workspace.

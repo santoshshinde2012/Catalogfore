@@ -20,20 +20,17 @@ export function ExportBar({
 }) {
   const [busy, setBusy] = useState("");
   const [downloadError, setDownloadError] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
   const busyLabel = forecastExporters.find((exporter) => exporter.id === busy)?.busyLabel;
 
   async function run(exporter: ForecastDownload) {
     if (busy) return;
-    if (!exporter.failure) {
-      await exporter.write(portfolio, estimate, points, forecastResult);
-      return;
-    }
     setBusy(exporter.id);
     setDownloadError("");
     try {
       await exporter.write(portfolio, estimate, points, forecastResult);
     } catch {
-      setDownloadError(exporter.failure);
+      setDownloadError(exporter.failure ?? `The ${exporter.menuLabel} file did not download. Try again.`);
     } finally {
       setBusy("");
     }
@@ -41,14 +38,26 @@ export function ExportBar({
 
   return (
     <>
-      <DropdownMenu modal={false}>
+      <DropdownMenu
+        modal={false}
+        open={menuOpen}
+        onOpenChange={(open) => {
+          if (!busy || !open) setMenuOpen(open);
+        }}
+      >
         <InfoTooltip
           label="Download your forecast"
           description="Export an Excel workbook, CSV spreadsheet, JSON data, or a PDF report. Choose JSON to save a forecast you can reopen."
           align="end"
         >
           <DropdownMenuTrigger asChild>
-            <Button type="button" variant="outline" disabled={Boolean(busy)} aria-busy={Boolean(busy)}>
+            <Button
+              type="button"
+              variant="outline"
+              aria-disabled={Boolean(busy)}
+              aria-busy={Boolean(busy)}
+              className={busy ? "cursor-wait opacity-50" : undefined}
+            >
               {busy ? <LoaderCircle className="animate-spin" aria-hidden="true" /> : <Download aria-hidden="true" />}
               {busyLabel ?? "Export"}
               <ChevronDown aria-hidden="true" />

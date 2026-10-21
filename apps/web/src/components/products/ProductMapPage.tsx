@@ -56,6 +56,7 @@ export function ProductMapPage({
   }, []);
   function clear() {
     patch({ query: "", domainId: "", kind: "", limit: 12 });
+    document.getElementById("product-search")?.focus();
   }
   function select(id: string) {
     patch({ selectedId: id });

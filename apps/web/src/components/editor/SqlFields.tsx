@@ -1,6 +1,7 @@
 import { SQL_SIZES, skuCatalog, sqlSizeLabel } from "@cayfore/engine";
 import { OptionSelect } from "../ui/option-select";
-import { type KindProps, numberOr, ScaleFields, ScheduleFields } from "./fields";
+import { type KindProps, ScaleFields, ScheduleFields } from "./fields";
+import { DraftNumberInput } from "./DraftInput";
 
 export function SqlFields({ workload, onChange }: KindProps) {
   if (workload.kind !== "sql") return null;
@@ -22,16 +23,15 @@ export function SqlFields({ workload, onChange }: KindProps) {
       {workload.edition !== "serverless" && (
         <label className="field">
           VM $ per DBU-hour (blank uses {skuCatalog.sqlVmDollarsPerDbuHour})
-          <input
-            type="number"
+          <DraftNumberInput
+            label={`VM $ per DBU-hour (blank uses ${skuCatalog.sqlVmDollarsPerDbuHour})`}
             min={0}
+            max={100}
             step={0.01}
-            value={workload.vmPerDbuHour ?? ""}
+            value={workload.vmPerDbuHour}
             placeholder={String(skuCatalog.sqlVmDollarsPerDbuHour)}
-            onChange={(event) => {
-              const raw = event.target.value;
-              onChange({ ...workload, vmPerDbuHour: raw === "" ? undefined : numberOr(raw, 0) });
-            }}
+            onCommit={(vmPerDbuHour) => onChange({ ...workload, vmPerDbuHour })}
+            onClear={() => onChange({ ...workload, vmPerDbuHour: undefined })}
           />
         </label>
       )}

@@ -140,7 +140,12 @@ export function planActions(controls: SessionControls) {
       return updated.resetLegacyFit;
     },
     setEvents: (events: PlanningEvent[]) => patch({ ...portfolio, events }),
-    reset: () => replacePlan(defaultPlan(), true),
+    reset: () => {
+      controls.loadRequest.current += 1;
+      controls.setUsageBusy(false);
+      controls.setUsagePreview(null);
+      replacePlan(defaultPlan(), true);
+    },
     resetToQuick: () =>
       replacePlan(planForSpend({ ...plan, usageDbu: undefined, usageForecast: undefined }, plan.monthlySpend)),
     clearUsage: () =>

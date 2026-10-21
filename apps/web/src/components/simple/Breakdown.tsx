@@ -47,19 +47,19 @@ export function Breakdown({
   }, []);
 
   return (
-    <div className="grid gap-4 sm:grid-cols-[9rem_minmax(0,1fr)] sm:items-center">
+    <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-[9rem_minmax(0,1fr)] sm:items-center">
       <div className="h-36" role="img" aria-label={summary || "No workload split yet"}>
         {PieView && positiveWorkloads.length > 0 ? <PieView workloads={positiveWorkloads} /> : null}
       </div>
-      <div className="grid gap-3">
-        <ul className="grid gap-1.5 text-sm">
+      <div className="grid min-w-0 grid-cols-1 gap-3">
+        <ul className="grid min-w-0 grid-cols-1 gap-1.5 text-sm">
           {workloads.map((row) => (
             <li key={row.id} className="flex items-center justify-between gap-3">
-              <span className="flex items-center gap-2">
-                <span className="size-2 rounded-full" style={{ background: row.fill }} />
-                {row.name}
+              <span className="flex min-w-0 items-center gap-2">
+                <span className="size-2 shrink-0 rounded-full" style={{ background: row.fill }} />
+                <span className="min-w-0 break-words">{row.name}</span>
               </span>
-              <span className="tabular-nums text-muted-foreground">{money(row.value, 0)}</span>
+              <span className="shrink-0 tabular-nums text-muted-foreground">{money(row.value, 0)}</span>
             </li>
           ))}
         </ul>
