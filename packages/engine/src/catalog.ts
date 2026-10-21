@@ -6,11 +6,13 @@ export {
   azureDbuMeters,
 } from "./catalog/first-party-dbu.js";
 export type { AzureDbuMeter, DbuRateObservation, DbuRateConflict } from "./catalog/dbu-rate-types.js";
-import azureMetersJson from "../../../data/azure-dbu-meters.json";
-import skuRatesJson from "../../../data/sku-rates.json";
-import instancesJson from "../../../data/instances.json";
-import vmPricesJson from "../../../data/cloud-vm-prices.json";
+import { azureMetersUpdatedOn } from "./catalog/sources/azure-meters.js";
+import { instanceRows } from "./catalog/sources/instances.js";
+import { skuRatesDocument } from "./catalog/sources/sku-rates.js";
+import { referenceRegion, vmPriceRows, vmPricesUpdatedOn } from "./catalog/sources/vm-prices.js";
 import type { Cloud, SkuId, SqlSize, Tier } from "./types.js";
+
+export { referenceRegion };
 
 export interface RegionInfo {
   cloud: Cloud;
@@ -79,11 +81,10 @@ export interface SkuCatalog {
   includesCompute: Record<SkuId, boolean>;
 }
 
-export const skuCatalog = skuRatesJson as SkuCatalog;
-export const instances = instancesJson.instances as InstanceInfo[];
-export const vmPrices = vmPricesJson.prices as VmPrice[];
-export const referenceRegion = vmPricesJson.referenceRegion as Record<Cloud, string>;
-export const pricesUpdatedOn = [vmPricesJson.updatedOn, azureMetersJson.updatedOn, skuCatalog.verifiedOn]
+export const skuCatalog = skuRatesDocument as SkuCatalog;
+export const instances = instanceRows as InstanceInfo[];
+export const vmPrices = vmPriceRows as VmPrice[];
+export const pricesUpdatedOn = [vmPricesUpdatedOn, azureMetersUpdatedOn, skuCatalog.verifiedOn]
   .filter((value) => typeof value === "string")
   .sort()
   .at(-1) as string;

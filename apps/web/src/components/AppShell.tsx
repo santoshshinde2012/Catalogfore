@@ -138,6 +138,22 @@ export function AppShell({ session }: { session: SimpleSession }) {
                 onProduct={(id) => navigate("rates", id, ratePlacement)}
                 portfolio={session.portfolio}
                 onBack={() => showPlanner("plan-inputs")}
+                onViewForecast={() => showPlanner("forecast")}
+                canUndo={session.canUndo}
+                onUndo={session.undoRemove}
+                onApplyUsage={(row, quantity) => {
+                  if (!session.applyUnitCost(row, quantity)) {
+                    toast("Quantity kept in the calculator", {
+                      description: "Review the quantity and pricing requirements shown beside the calculator.",
+                    });
+                    return false;
+                  }
+                  toast("Forecast updated", {
+                    description: `${row.productName} now uses this quantity. Plan discounts still apply.`,
+                    action: { label: "View forecast", onClick: () => showPlanner("forecast") },
+                  });
+                  return true;
+                }}
               />
             </Suspense>
           )}

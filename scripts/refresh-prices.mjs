@@ -141,7 +141,7 @@ async function main() {
   }
   await writeFile(path.join(root, "data/cloud-vm-prices.json"), `${JSON.stringify(prices, null, 2)}\n`);
   await writeFile(path.join(root, "data/azure-dbu-meters.json"), `${JSON.stringify(azureFile, null, 2)}\n`);
-  await writeFile(path.join(root, "data/pricing-probe.json"), `${JSON.stringify(probe, null, 2)}\n`);
+  await writeFile(path.join(root, "data/generated/pricing-probe.json"), `${JSON.stringify(probe, null, 2)}\n`);
   console.log(summary.join("\n"));
 }
 

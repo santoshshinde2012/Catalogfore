@@ -44,6 +44,7 @@ export interface SimpleProjection {
   listMonthly: number;
   cloudShare: number;
   assumptions: string[];
+  hasUnpriced: boolean;
 }
 
 /** Turn four inputs into a priced year. The basket is already chosen. This function does not pick a SKU rate. */
@@ -86,6 +87,7 @@ export function projectSimple(
     listMonthly: rolled.listMonthly,
     cloudShare: rolled.cloudShare,
     assumptions: explain(stored, result, band),
+    hasUnpriced: rolled.hasUnpriced,
   };
 }
 

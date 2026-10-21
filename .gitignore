@@ -15,3 +15,5 @@ research/
 # Expanded unit-cost exports are generated locally; lossless compressed copies are versioned.
 /data/unit-costs.json
 /data/unit-costs.csv
+/data/generated/unit-costs.json
+/data/generated/unit-costs.csv

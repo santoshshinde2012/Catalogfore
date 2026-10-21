@@ -15,7 +15,7 @@ const artifacts = [
 ];
 let stale = false;
 for (const { name, content } of artifacts) {
-  const path = new URL(`../data/${name}.gz`, import.meta.url);
+  const path = new URL(`../data/generated/${name}.gz`, import.meta.url);
   if (args.includes("--check")) {
     const stored = await readFile(path)
       .then((bytes) => gunzipSync(bytes).toString("utf8"))
@@ -25,7 +25,7 @@ for (const { name, content } of artifacts) {
       stale = true;
     }
   } else {
-    await writeFile(new URL(`../data/${name}`, import.meta.url), content);
+    await writeFile(new URL(`../data/generated/${name}`, import.meta.url), content);
     await writeFile(path, gzipSync(content, { level: 9 }));
   }
 }

@@ -29,7 +29,7 @@ Playwright downloads Chromium on first run: `npx playwright install chromium`.
 
 ## Pricing data
 
-Primary DBU observations live in `data/azure-dbu-meters.json` and `data/databricks-dbu-rates.json`; the shared engine resolver gives validated exact observations precedence. `npm run refresh:databricks` fetches fixed first-party price-card/calculator endpoints, retains raw compressed responses, and records accepted rows and exclusions. `npm run check:sources` replays those captures. Review currency, unit, cloud, edition, region, source locator, observation date and conflicting values before publishing a change. Keep source review dates separate from price observation and tariff effective dates. Rebuild the unit-cost artifacts and confidence/coverage reports after changes.
+Primary DBU observations live in `data/azure-dbu-meters.json` and `data/databricks-dbu-rates.json`; the shared engine resolver gives validated exact observations precedence. `npm run refresh:databricks` fetches fixed first-party price-card/calculator endpoints, retains raw compressed responses, and records accepted rows and exclusions. `npm run check:sources` replays those captures. Review currency, unit, cloud, edition, region, source locator, observation date and conflicting values before publishing a change. Keep source review dates separate from price observation and tariff effective dates. Rebuild the unit-cost artifacts and confidence/coverage reports after changes. Those outputs are written to `data/generated/` and are not edited by hand.
 
 Legacy fallback DBU list rates live in `data/sku-rates.json`. Change one only with a source and a date in `docs/RESEARCH.md`, then bump `version` and `verifiedOn`. Do not silently rewrite list rates from a scraper.
 

@@ -68,6 +68,7 @@ export default defineConfig(() => {
             const normalized = id.replaceAll("\\", "/");
             if (normalized.endsWith("/data/product-map.json")) return "product-map-data";
             if (normalized.endsWith("/data/unit-cost-evidence.json")) return "unit-cost-data";
+            // Keep the cell-score table with the Excel chunk that imports it.
             if (normalized.endsWith("/rate-confidence.json")) return;
             const catalogDirectory = `${path.resolve(__dirname, "../../data").replaceAll("\\", "/")}/`;
             if (normalized.startsWith(catalogDirectory) && normalized.endsWith(".json")) return "pricing-catalog";
@@ -80,6 +81,10 @@ export default defineConfig(() => {
         "@": path.resolve(__dirname, "src"),
         "@cayfore/engine/products": path.resolve(__dirname, "../../packages/engine/src/products.ts"),
         "@cayfore/engine/unit-costs": path.resolve(__dirname, "../../packages/engine/src/unit-costs/index.ts"),
+        "@cayfore/engine/rate-confidence": path.resolve(
+          __dirname,
+          "../../packages/engine/src/catalog/sources/rate-confidence.ts",
+        ),
         "@cayfore/engine": path.resolve(__dirname, "../../packages/engine/src/index.ts"),
       },
     },

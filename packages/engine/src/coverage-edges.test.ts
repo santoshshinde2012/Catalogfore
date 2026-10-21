@@ -1,4 +1,5 @@
 import { compressToEncodedURIComponent } from "lz-string";
+import { productCatalog } from "@cayfore/catalog";
 import { describe, expect, it } from "vitest";
 import { defaultInstanceId, findInstance, listInstances, regionInfo, sqlSizeLabel, vmHourly } from "./catalog.js";
 import { parseCsv } from "./csv.js";
@@ -233,7 +234,7 @@ describe("products, usage, tips, and explanations", () => {
     );
     expect(priced.workloads.some((workload) => workload.kind === "metered" && workload.dbuPerMonth === 10)).toBe(true);
     expect(priced.warnings.some((warning) => warning.includes("GB"))).toBe(true);
-    expect(productCatalogMeta().version).toMatch(/^2026-10-17/);
+    expect(productCatalogMeta().version).toBe(productCatalog.version);
     expect(productCategories().length).toBeGreaterThan(0);
     expect(() => workloadForProduct("not-a-product")).toThrow(/Unknown product/);
     expect(usageImporters.map((importer) => importer.id)).toEqual(["dbu-mix", "products"]);

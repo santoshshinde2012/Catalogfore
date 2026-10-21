@@ -3,8 +3,8 @@ import { writeCoverageReport } from "./coverage-report.mjs";
 import { assertAllowedUrl, fetchAllowed } from "./https-allowlist.mjs";
 import { renderWatchReport } from "./watch-report.mjs";
 
-const STATE_PATH = new URL("../data/catalog-watch-state.json", import.meta.url);
-const REPORT_PATH = new URL("../data/catalog-watch-report.md", import.meta.url);
+const STATE_PATH = new URL("../data/generated/catalog-watch-state.json", import.meta.url);
+const REPORT_PATH = new URL("../data/generated/catalog-watch-report.md", import.meta.url);
 const CATALOG_PATH = new URL("../data/product-catalog.json", import.meta.url);
 const RSS_URL = "https://www.databricks.com/feed";
 const AZURE_PRICES = "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview&$filter=";

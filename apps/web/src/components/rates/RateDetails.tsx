@@ -1,4 +1,12 @@
-import type { UnitCostRow } from "@cayfore/engine/unit-costs";
+import type { Portfolio } from "@cayfore/engine";
+import {
+  planQuantityAction,
+  planQuantityForUnitCost,
+  planQuantityUnavailableReason,
+  previewPlanQuantity,
+  type UnitCostRow,
+} from "@cayfore/engine/unit-costs";
+import { useCallback } from "react";
 import { ArrowLeft, ReceiptText } from "lucide-react";
 import { Button } from "../ui/button";
 import { RateBuildUp } from "./RateBuildUp";
@@ -15,7 +23,18 @@ import {
   variantLabel,
 } from "./rate-presentation";
 
-export function RateDetails({ row, onResults }: { row: UnitCostRow; onResults: () => void }) {
+export function RateDetails({
+  row,
+  onResults,
+  portfolio,
+  onApply,
+}: {
+  row: UnitCostRow;
+  onResults: () => void;
+  portfolio: Portfolio;
+  onApply?: (quantity: number) => void;
+}) {
+  const preview = useCallback((quantity: number) => previewPlanQuantity(portfolio, row, quantity), [portfolio, row]);
   return (
     <section
       id="rate-details"
@@ -57,7 +76,14 @@ export function RateDetails({ row, onResults }: { row: UnitCostRow; onResults: (
       {row.status === "unpriced" && (
         <p className="mt-3 text-sm font-medium text-destructive">A missing price is unresolved, not a free service.</p>
       )}
-      <RateCalculator row={row} />
+      <RateCalculator
+        row={row}
+        usage={planQuantityForUnitCost(portfolio, row)}
+        action={planQuantityAction(portfolio, row)}
+        onApply={onApply}
+        onPreview={preview}
+        unavailableReason={planQuantityUnavailableReason(portfolio, row)}
+      />
       <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{row.evidenceSummary}</p>
       <RateBuildUp row={row} />
       <div className="mt-5">

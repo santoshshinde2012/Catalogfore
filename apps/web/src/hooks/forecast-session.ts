@@ -18,6 +18,7 @@ import {
   type Tier,
   type WorkloadMix,
 } from "@cayfore/engine";
+import type { UnitCostRow } from "@cayfore/engine/unit-costs";
 
 export interface SimpleSession {
   forecastResult: ReturnType<typeof projectPortfolio>;
@@ -71,6 +72,7 @@ export interface SimpleSession {
   loadForecastFile: (file: File) => Promise<void>;
   editPortfolio: (portfolio: Portfolio) => void;
   addProduct: (id: string) => boolean;
+  applyUnitCost: (row: UnitCostRow, quantity: number) => boolean;
   selectWorkload: (id: string | null) => void;
   removeWorkload: (id: string) => void;
   undoRemove: () => void;

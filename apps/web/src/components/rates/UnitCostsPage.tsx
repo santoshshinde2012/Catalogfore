@@ -2,6 +2,7 @@ import type { Portfolio } from "@cayfore/engine";
 import {
   buildUnitCostCatalog,
   filterUnitCosts,
+  planQuantityAction,
   type UnitCostFilters,
   type UnitCostRow,
 } from "@cayfore/engine/unit-costs";
@@ -17,6 +18,7 @@ import { RateDirectory } from "./RateDirectory";
 import { RateDownloads } from "./RateDownloads";
 import { RateEvidenceOverview } from "./RateEvidenceOverview";
 import { RateFilters } from "./RateFilters";
+import { RatePlanFeedback } from "./RatePlanFeedback";
 import { RateCatalogNotes, RateWorkspaceHeader } from "./RateWorkspaceHeader";
 import { RateWorkspaceTabs } from "./RateWorkspaceTabs";
 
@@ -27,12 +29,20 @@ export function UnitCostsPage({
   productId,
   onProduct,
   onBack,
+  onApplyUsage,
+  onViewForecast,
+  onUndo,
+  canUndo,
   placement,
 }: {
   portfolio: Portfolio;
   productId: string;
   onProduct: (id: string) => void;
   onBack: () => void;
+  onApplyUsage: (row: UnitCostRow, quantity: number) => boolean;
+  onViewForecast: () => void;
+  onUndo: () => void;
+  canUndo: boolean;
   placement?: RatePlacement;
 }) {
   const [filters, setFilters] = useState<UnitCostFilters>(() => ({
@@ -44,6 +54,7 @@ export function UnitCostsPage({
   const [selectedId, setSelectedId] = useState("");
   const [limit, setLimit] = useState(12);
   const [panel, setPanel] = useState("rates");
+  const [changeNotice, setChangeNotice] = useState("");
   useEffect(() => {
     navigateToSection("unit-costs");
   }, []);
@@ -60,6 +71,13 @@ export function UnitCostsPage({
   }, [cloud, region, tier]);
   const rows = useMemo(() => filterUnitCosts(catalog.rows, filters), [filters]);
   const selected = rows.find((row) => row.id === selectedId) ?? rows[0];
+  function apply(row: UnitCostRow, quantity: number) {
+    const action = planQuantityAction(portfolio, row);
+    if (onApplyUsage(row, quantity))
+      setChangeNotice(
+        `${action === "add" ? "Added" : "Updated"} ${row.productName}: ${quantity.toLocaleString("en-US")} ${row.unit} per baseline month.`,
+      );
+  }
   const productKnown = !productId || catalog.products.some((product) => product.id === productId);
   function change(next: UnitCostFilters) {
     setFilters(next);
@@ -112,6 +130,17 @@ export function UnitCostsPage({
             This product link is not in the installed catalog. Reset the filters to explore available services.
           </p>
         )}
+        {changeNotice && (
+          <RatePlanFeedback
+            notice={changeNotice}
+            canUndo={canUndo}
+            onView={onViewForecast}
+            onUndo={() => {
+              onUndo();
+              setChangeNotice("Change undone. Your previous forecast is restored.");
+            }}
+          />
+        )}
         <RateFilters catalog={catalog} filters={filters} onChange={change} onClear={clear} />
         <Tabs value={panel} onValueChange={setPanel} className="min-w-0">
           <RateWorkspaceTabs />
@@ -135,7 +164,13 @@ export function UnitCostsPage({
                 onSelected={() => selected && select(selected.id)}
               />
               {selected && (
-                <RateDetails key={selected.id} row={selected} onResults={() => navigateToSection("rate-directory")} />
+                <RateDetails
+                  key={selected.id}
+                  row={selected}
+                  portfolio={portfolio}
+                  onApply={(quantity) => apply(selected, quantity)}
+                  onResults={() => navigateToSection("rate-directory")}
+                />
               )}
             </div>
           </TabsContent>

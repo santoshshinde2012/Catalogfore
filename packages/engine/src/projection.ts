@@ -22,6 +22,8 @@ export interface PortfolioProjection {
   listMonthly: number;
   cloudShare: number;
   assumptions: string[];
+  /** True when any projected month contains unresolved usage prices. */
+  hasUnpriced: boolean;
 }
 
 /** All presentation and export callers consume these same reconciled monthly amounts. */
@@ -100,6 +102,7 @@ export function projectPortfolio(
     listMonthly: listMonthlyOf(result, portfolio.commitment.dbuDiscount),
     cloudShare: result.total > 0 ? result.cloudCost / result.total : 0,
     assumptions,
+    hasUnpriced: priced.some((month) => !month.estimate.coverage?.complete),
     ...(predictionMonths ? { predictionMonths } : {}),
   };
 }

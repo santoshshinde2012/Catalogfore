@@ -10,7 +10,9 @@ export interface UnitCostCalculation {
 }
 
 /** A quote and its normalized rate must agree before either can drive a calculation or chart. */
-export function unitCostQuote(row: UnitCostRow): { rate: number | null; reason: string | null } {
+export function unitCostQuote(
+  row: Pick<UnitCostRow, "rateKind" | "status" | "confidence" | "unitQuantity" | "unitPriceUsd" | "usdPerUnit">,
+): { rate: number | null; reason: string | null } {
   if (row.rateKind !== "money" || ["unpriced", "not_applicable"].includes(row.status) || row.confidence === "conflict")
     return { rate: null, reason: "This component has no resolved monetary quote for the selected scope." };
   if (!Number.isFinite(row.unitQuantity) || row.unitQuantity <= 0)

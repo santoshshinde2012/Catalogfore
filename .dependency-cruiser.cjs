@@ -16,6 +16,37 @@ module.exports = {
       to: { path: ["^packages/engine", "^apps/", "^mcp/"] },
     },
     {
+      name: "engine-json-through-sources",
+      comment: "Versioned JSON enters the engine through one loader per file.",
+      severity: "error",
+      from: { path: "^packages/engine", pathNot: "^packages/engine/src/catalog/sources/" },
+      to: { path: "\\.json$" },
+    },
+    {
+      name: "confidence-stays-with-excel",
+      comment: "Cell confidence scores load with the workbook, not the forecast page.",
+      severity: "error",
+      from: {
+        path: "^packages/engine",
+        pathNot: "^packages/engine/src/catalog/sources/rate-confidence",
+      },
+      to: { path: "rate-confidence" },
+    },
+    {
+      name: "presentation-not-price-files",
+      comment: "The web app, Excel export, and MCP server read prices through the engine.",
+      severity: "error",
+      from: { path: "^(apps/|packages/sheet|mcp/)" },
+      to: { path: "\\.json$" },
+    },
+    {
+      name: "catalog-owns-product-documents",
+      comment: "The product catalog package loads only its inventory and learning map.",
+      severity: "error",
+      from: { path: "^packages/catalog" },
+      to: { path: "\\.json$", pathNot: "(product-catalog|product-map)\\.json$" },
+    },
+    {
       name: "costing-not-application",
       comment: "A cost strategy does not forecast, import a CSV, or read the product catalog module.",
       severity: "error",

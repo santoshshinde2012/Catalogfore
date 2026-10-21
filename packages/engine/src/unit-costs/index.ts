@@ -2,6 +2,16 @@ export * from "./types.js";
 export { buildUnitCostCatalog } from "./builder.js";
 export { filterUnitCosts, unitCostCsv, unitCostJson } from "./serialization.js";
 export { calculateUnitCost, buildUnitCostBreakdown } from "./quote.js";
+export {
+  applyPlanQuantity,
+  planQuantityAction,
+  planQuantityForUnitCost,
+  planQuantityUnavailableReason,
+  MAX_PLAN_QUANTITY,
+} from "./plan-quantity.js";
+export type { PlanQuantity, PlanQuantityUpdate, UnitCostPlanTarget } from "./plan-quantity.js";
+export { previewPlanQuantity } from "./plan-quantity-preview.js";
+export type { PlanQuantityPreview } from "./plan-quantity-preview.js";
 export type { UnitCostCalculation, UnitCostBreakdown, UnitCostStep } from "./quote.js";
 export { buildUnitCostComparison } from "./comparison.js";
 export type { UnitCostComparison } from "./comparison.js";

@@ -1,3 +1,4 @@
+import { productCatalog } from "@cayfore/catalog";
 import { defaultPlan, projectSimple } from "@cayfore/engine";
 import ExcelJS from "exceljs";
 import { describe, expect, it } from "vitest";
@@ -34,7 +35,7 @@ describe("forecast workbook", () => {
     expect(summary.getCell("A1").fill).toMatchObject({ fgColor: { argb: "FFFF3621" } });
     expect(summary.getCell("B3").value).toBe("AWS");
     expect(summary.getCell("B9").value).toMatchObject({ formula: "'Monthly forecast'!C14" });
-    expect(summary.getCell("B12").value).toMatch(/2026-10-17/);
+    expect(summary.getCell("B12").value).toBe(productCatalog.version);
     expect(String(summary.getCell("B15").value)).toMatch(/Not affiliated with Databricks/);
     expect(String(summary.getCell("B17").value)).toMatch(/^'=cmd|^'=HYPERLINK|'=cmd|'=/);
 

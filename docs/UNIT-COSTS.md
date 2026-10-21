@@ -1,12 +1,18 @@
 # Unit costs and source evidence
 
-Catalogfore's **Unit costs** menu explains the bundled cost of one billing or operational unit, the dimensions that change it, and the source behind it. Enter a quantity to calculate a component subtotal. Use Product map or Advanced to add a supported product to a forecast when you need schedules, growth, commitments, and other charges. This is source-cost visibility; it does not assume business value or ROI.
+Catalogfore's **Unit costs** menu explains the bundled cost of one billing or operational unit, the dimensions that change it, and the source behind it. Enter a quantity to calculate a component subtotal, preview its effect on your plan, and apply a supported monthly quantity directly to the forecast. Use Product map or Advanced for schedules and other product usage drivers. This is source-cost visibility; it does not assume business value or ROI.
 
 The inventory covers all **70 current pricing-catalog products and 8 learning-only platform concepts**. It is a curated snapshot, not a complete worldwide Databricks tariff, every current model, or an availability guarantee. Rates are USD list-price bases before contract discounts, tax, and excluded services.
 
 ## Explore the workspace
 
-Start in **Rates & calculator**. Search or choose a product, then set its reference cloud, region, edition and component. The selected quote and billable-quantity calculator are beside the matching rows on a wide screen; on a phone, use **View selected rate** and **Back to rates**. These actions leave the forecast unchanged.
+Start in **Rates & calculator**. Search or choose a product, then set its reference cloud, region, edition and component. The selected quote and billable-quantity calculator are beside the matching rows on a wide screen; on a phone, use **View selected rate** and **Back to rates**. Browsing and editing the quantity leave the forecast unchanged. **Use my usage** fills the calculator with the combined baseline quantity of matching workloads.
+
+For a supported quantity, **Preview your forecast** shows the current and proposed first-month and 12-month whole-plan estimates, plus the annual difference. It uses the same engine as the forecast and exports, including discounts, growth or fitted trends, and dated changes. Plans with unresolved prices show a known subtotal. The separate component calculation remains a list-price subtotal before discounts and excludes other charges.
+
+**Add to forecast** creates a workload for a monthly DBU baseline in the selected placement. **Update forecast** distributes the new combined quantity across matching workloads in their existing proportions. Both preserve unrelated workloads, budget, and planning settings. The persistent confirmation provides **View forecast** and **Undo change**. Forecast quantities are limited to 1,000,000,000,000 per month; larger standalone component calculations cannot be applied.
+
+An exported dollar cost stays observed. A product that derives its bill from schedules, requests, or other inputs must be edited through those drivers in Advanced. The calculator explains these restrictions beside the quantity. Missing prices and conflicting sources cannot be applied as a free workload. Classic DBU charges do not automatically add cloud machines, storage, or network charges.
 
 Use **More filters** for domain, pricing coverage and evidence basis. Active refinements remain counted when collapsed. **Compare regions**, **Evidence** and **Downloads** open the supporting tools without replacing your chosen placement. Calculator input and download scope survive task switches. Keyboard arrow keys move between the workspace tabs.
 
@@ -24,8 +30,8 @@ CSV and JSON retain all 40 canonical fields, including stable IDs, normalized pe
 
 ## Files and commands
 
-- [unit-costs.json.gz](../data/unit-costs.json.gz): losslessly compressed JSON inventory with component, placement, dimension, price, and provenance fields.
-- [unit-costs.csv.gz](../data/unit-costs.csv.gz): the same inventory as a losslessly compressed flat CSV table for spreadsheets and joins.
+- [unit-costs.json.gz](../data/generated/unit-costs.json.gz): losslessly compressed JSON inventory with component, placement, dimension, price, and provenance fields.
+- [unit-costs.csv.gz](../data/generated/unit-costs.csv.gz): the same inventory as a losslessly compressed flat CSV table for spreadsheets and joins.
 - [unit-cost-evidence.json](../data/unit-cost-evidence.json): maintained source registry, source scopes, review dates, and known conflicts.
 - [RESEARCH.md](RESEARCH.md): the existing calculator's detailed pricing assumptions.
 
@@ -48,7 +54,7 @@ npm run cayfore -- rates --format csv --product jobs_classic --cloud azure --reg
 
 Generation reads local catalog inputs; it does not fetch live prices or use a customer's account. Source review dates describe what was checked, while stored rate dates describe the underlying snapshot. Rebuilding a file does not make its rates newly verified. Cloud-price refreshes and manually researched consumption changes remain separate maintenance actions.
 
-`export:unit-costs` writes ordinary `data/unit-costs.csv` and `data/unit-costs.json` files for local use, plus the versioned `.gz` copies. The expanded grid repeats evidence across many placement and variant combinations, so the repository stores compressed copies to keep updates small. Decompress either copy with a standard archive tool or `gzip -dk data/unit-costs.csv.gz` (use the JSON filename for JSON). The website and CLI download ordinary CSV/JSON without requiring decompression. CI expands the committed copies and compares their complete contents against the current builder.
+`export:unit-costs` writes ordinary `data/generated/unit-costs.csv` and `data/generated/unit-costs.json` files for local use, plus the versioned `.gz` copies. The expanded grid repeats evidence across many placement and variant combinations, so the repository stores compressed copies to keep updates small. Decompress either copy with a standard archive tool or `gzip -dk data/generated/unit-costs.csv.gz` (use the JSON filename for JSON). The website and CLI download ordinary CSV/JSON without requiring decompression. CI expands the committed copies and compares their complete contents against the current builder.
 
 ## Source of truth and evidence levels
 

@@ -7,6 +7,12 @@ import {
   type RecommendationId,
 } from "@cayfore/engine";
 import { productById, workloadsForProduct } from "@cayfore/engine/products";
+import {
+  applyPlanQuantity,
+  planQuantityForUnitCost,
+  planQuantityUnavailableReason,
+  type UnitCostRow,
+} from "@cayfore/engine/unit-costs";
 import { toast } from "sonner";
 import { planFromPortfolio } from "./forecast-session";
 import type { SessionControls } from "./session-controls";
@@ -30,6 +36,7 @@ export function sessionActions(controls: SessionControls) {
         monthlyGrowth: Math.pow(1 + previous.forecast.annualGrowth, 1 / 12) - 1,
       }));
     setUndo(null);
+    controls.setNotice("Previous forecast restored.");
     setSelectedId((current) =>
       previous.workloads.some((workload) => workload.id === current) ? current : (previous.workloads[0]?.id ?? null),
     );
@@ -68,6 +75,24 @@ export function sessionActions(controls: SessionControls) {
       setSelectedId(added[0]?.id ?? null);
       controls.setNotice(
         `Added ${product.menuLabel}. Review the default usage and selected-cloud rate coverage before relying on the estimate.`,
+      );
+      return true;
+    },
+    applyUnitCost: (row: UnitCostRow, quantity: number) => {
+      if (planQuantityForUnitCost(portfolio, row)?.quantity === quantity) return false;
+      const update = applyPlanQuantity(portfolio, row, quantity);
+      if (!update) {
+        controls.setNotice(
+          planQuantityUnavailableReason(portfolio, row) ??
+            "Enter a supported monthly quantity before applying it to the forecast.",
+        );
+        return false;
+      }
+      editPortfolio(update.portfolio);
+      setUndo(portfolio);
+      setSelectedId(update.selectedId);
+      controls.setNotice(
+        `Set ${row.productName} to ${quantity.toLocaleString("en-US")} ${row.unit} per baseline month. The forecast applies your discounts, growth or fitted trend, and dated changes.`,
       );
       return true;
     },

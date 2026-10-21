@@ -60,6 +60,16 @@ test("CSV and JSON downloads retain the same filtered dimensions and complete ca
   expect(full.rows.every((row) => row.sources.length > 0)).toBe(true);
 });
 
+test("a calculator quantity can be added to the forecast", async ({ page }) => {
+  await page.goto("./");
+  const before = await page.getByTestId("year-sentence").innerText();
+  await navigate(page, "Unit costs");
+  await chooseOption(page, "Product or service", "jobs_serverless");
+  await details(page).getByRole("button", { name: "Add to forecast", exact: true }).click();
+  await navigate(page, "Plan");
+  await expect(page.getByTestId("year-sentence")).not.toHaveText(before);
+});
+
 test("a source rate calculates a component cost without changing the forecast", async ({ page }) => {
   await page.goto("./?view=rates&product=jobs_classic");
   await expect.poll(() => new URL(page.url()).hash).toMatch(/^#plan=/);
