@@ -1,7 +1,8 @@
 import type { Estimate, Portfolio } from "@cayfore/engine";
-import { ChevronRight, LoaderCircle } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { lazy, Suspense, useEffect, useState } from "react";
-import { loadLedger, prefetchDestination } from "../loading/route-prefetch";
+import { AdvancedSkeleton } from "../loading/skeletons";
+import { loadLedger, prefetch } from "../loading/route-loaders";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 
@@ -51,8 +52,8 @@ export function AdvancedBuilder({
           type="button"
           variant="ghost"
           className="order-2 h-auto min-h-11 w-full min-w-0 justify-between px-2.5 py-2 font-medium whitespace-normal"
-          onMouseEnter={() => prefetchDestination("advanced")}
-          onFocus={() => prefetchDestination("advanced")}
+          onMouseEnter={() => prefetch.warm("advanced")}
+          onFocus={() => prefetch.warm("advanced")}
         >
           Advanced
           <ChevronRight className="size-4 text-muted-foreground" />
@@ -81,18 +82,7 @@ export function AdvancedBuilder({
             {usageError}
           </p>
         )}
-        <Suspense
-          fallback={
-            <div className="grid min-h-24 gap-2" role="status" aria-live="polite" aria-busy="true">
-              <p className="flex items-center gap-2 text-sm text-muted-foreground">
-                <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
-                Loading workload editor…
-              </p>
-              <span className="skeleton h-11 rounded-lg" />
-              <span className="skeleton h-24 rounded-lg" />
-            </div>
-          }
-        >
+        <Suspense fallback={<AdvancedSkeleton />}>
           <Ledger
             portfolio={portfolio}
             estimate={estimate}

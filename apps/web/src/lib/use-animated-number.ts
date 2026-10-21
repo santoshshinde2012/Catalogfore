@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from "react";
+import { browserClock, browserMotion } from "../services/browser-ports";
+
+const COUNTER_MS = 480;
 
 export function usePrefersReducedMotion() {
   const [reduce, setReduce] = useState(false);
   useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const apply = () => setReduce(media.matches);
+    const apply = () => setReduce(browserMotion.matches());
     apply();
-    media.addEventListener("change", apply);
-    return () => media.removeEventListener("change", apply);
+    return browserMotion.subscribe(setReduce);
   }, []);
   return reduce;
 }
@@ -17,17 +18,17 @@ export function useAnimatedNumber(value: number) {
   const from = useRef(value);
 
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = browserMotion.matches();
     const start = from.current;
     if (reduce || start === value) {
       from.current = value;
       setDisplay(value);
       return;
     }
-    const began = performance.now();
+    const began = browserClock.now();
     let frame = 0;
     const step = (now: number) => {
-      const t = Math.min(1, (now - began) / 480);
+      const t = Math.min(1, (now - began) / COUNTER_MS);
       const eased = 1 - (1 - t) ** 3;
       const next = start + (value - start) * eased;
       from.current = next;

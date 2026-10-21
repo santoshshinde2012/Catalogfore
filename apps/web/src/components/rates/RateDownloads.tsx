@@ -1,8 +1,12 @@
-import { unitCostCsv, unitCostJson, type UnitCostCatalog, type UnitCostRow } from "@cayfore/engine/unit-costs";
-import { Braces, FileSpreadsheet, LoaderCircle } from "lucide-react";
-import { useDeferredValue, useState, type Dispatch, type SetStateAction } from "react";
-import { toast } from "sonner";
-import { APP_NAME } from "../../site";
+import type { UnitCostCatalog, UnitCostRow } from "@cayfore/engine/unit-costs";
+import { Braces, FileSpreadsheet, LoaderCircle, type LucideIcon } from "lucide-react";
+import { useDeferredValue, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useReturnFocus } from "../../hooks/use-return-focus";
+import { browserScheduler } from "../../services/browser-ports";
+import { exportBusy, tableIsSettling } from "../../services/export-busy";
+import { notices } from "../../services/notices";
+import { rateDownload, rateExportJobs, type RateExportId } from "../../services/rate-exports";
+import { showNotice } from "../../services/sonner-notifier";
 import { RatesTableSkeleton } from "../loading/skeletons";
 import { Button } from "../ui/button";
 import { OptionSelect } from "../ui/option-select";
@@ -10,10 +14,7 @@ import { InfoTooltip } from "../ui/tooltip";
 import { RateDataPreview } from "./RateDataPreview";
 import { useRateDataTable, type RateDownloadDraft } from "./useRateDataTable";
 
-const formats = [
-  { id: "csv", label: "CSV", icon: FileSpreadsheet, hint: "Spreadsheet of the selected rows" },
-  { id: "json", label: "JSON", icon: Braces, hint: "Catalog file with the same rows" },
-] as const;
+const rateExportIcons: Record<RateExportId, LucideIcon> = { csv: FileSpreadsheet, json: Braces };
 
 export function RateDownloads({
   catalog,
@@ -33,9 +34,11 @@ export function RateDownloads({
   const { scope } = draft;
   const [error, setError] = useState("");
   const [busy, setBusy] = useState("");
+  const focus = useRef<HTMLButtonElement>(null);
+  useReturnFocus(Boolean(busy), focus);
   const sourceRows = scope === "all" ? catalog.rows : rows;
   const deferredRows = useDeferredValue(sourceRows);
-  const tableLoading = sourceRows.length > 500 && deferredRows !== sourceRows;
+  const tableLoading = tableIsSettling(sourceRows.length, deferredRows === sourceRows);
   const table = useRateDataTable(
     tableLoading ? deferredRows : sourceRows,
     draft,
@@ -43,29 +46,29 @@ export function RateDownloads({
     scope === "all" ? "all" : filterKey,
   );
   const count = (value: number) => value.toLocaleString("en-US");
-  async function download(format: "csv" | "json") {
+  async function download(format: RateExportId) {
     const selected = table.orderedRows;
     let url: string | undefined;
     setBusy(format);
     setError("");
     try {
-      await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
-      const body = format === "csv" ? unitCostCsv(selected) : unitCostJson(catalog, selected);
-      url = URL.createObjectURL(
-        new Blob([body], { type: format === "csv" ? "text/csv;charset=utf-8" : "application/json" }),
-      );
+      await new Promise<void>((resolve) => {
+        browserScheduler.frame(() => browserScheduler.frame(() => resolve()));
+      });
+      const file = rateDownload(format, catalog, selected, scope);
+      url = URL.createObjectURL(file.blob);
       const anchor = document.createElement("a");
       anchor.href = url;
-      anchor.download = `${APP_NAME.toLowerCase()}-unit-costs-${scope}.${format}`;
+      anchor.download = file.filename;
       document.body.append(anchor);
       anchor.click();
       anchor.remove();
       setError("");
-      toast.success(`${format.toUpperCase()} downloaded`);
+      showNotice(notices.exportReady(format.toUpperCase()));
     } catch {
       const message = "The rate file could not be downloaded. Try again.";
       setError(message);
-      toast.error(message);
+      showNotice(notices.problem(message));
     } finally {
       if (url) URL.revokeObjectURL(url);
       setBusy("");
@@ -99,25 +102,29 @@ export function RateDownloads({
             ]}
           />
           <div role="group" aria-label="Export format" className="flex gap-2">
-            {formats.map(({ id, label, icon: Icon, hint }) => {
-              const preparing = busy === id;
+            {rateExportJobs.map((job) => {
+              const state = exportBusy(busy, job);
+              const Icon = rateExportIcons[job.id];
               return (
-                <InfoTooltip key={id} label={`Download ${label}`} description={hint}>
+                <InfoTooltip key={job.id} label={`Download ${job.label}`} description={job.hint}>
                   <Button
                     type="button"
                     variant="outline"
                     className="h-11 min-w-[6.5rem] justify-start px-3 sm:h-10"
-                    aria-label={preparing ? `Preparing ${label}` : label}
-                    aria-busy={preparing}
-                    onClick={() => void download(id)}
-                    disabled={Boolean(busy)}
+                    aria-label={state.active ? `Preparing ${job.label}` : job.label}
+                    aria-busy={state.active}
+                    onClick={(event) => {
+                      focus.current = event.currentTarget;
+                      void download(job.id);
+                    }}
+                    disabled={state.disabled}
                   >
-                    {preparing ? (
-                      <LoaderCircle className="animate-spin" aria-hidden="true" />
+                    {state.active ? (
+                      <LoaderCircle className="animate-spin motion-reduce:animate-none" aria-hidden="true" />
                     ) : (
                       <Icon aria-hidden="true" />
                     )}
-                    {preparing ? "Preparing…" : label}
+                    {state.label}
                   </Button>
                 </InfoTooltip>
               );

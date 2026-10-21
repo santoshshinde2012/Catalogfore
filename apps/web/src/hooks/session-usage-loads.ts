@@ -1,8 +1,18 @@
-import { toast } from "sonner";
+import { browserFetcher } from "../services/browser-ports";
+import { notices, type Notifier } from "../services/notices";
+import type { TextFetcher } from "../services/ports";
+import { showNotice, sonnerNotifier } from "../services/sonner-notifier";
+import { usageSamples, type UsageSampleKind } from "../services/usage-samples";
 import type { SessionControls } from "./session-controls";
 
 /** File and sample reads stay off the forecast path until the user asks for them. */
-export function usageLoads(controls: SessionControls, preview: (text: string, sourceLabel?: string) => void) {
+export function usageLoads(
+  controls: SessionControls,
+  preview: (text: string, sourceLabel?: string) => void,
+  ports: { fetcher?: TextFetcher; notifier?: Notifier } = {},
+) {
+  const fetcher = ports.fetcher ?? browserFetcher;
+  const notifier = ports.notifier ?? sonnerNotifier;
   const { loadRequest, setUsageBusy, setUsageProgress, setUsageError, setNotice } = controls;
   return {
     loadUsageFile: (file: File) => {
@@ -31,25 +41,19 @@ export function usageLoads(controls: SessionControls, preview: (text: string, so
           }
         });
     },
-    loadSample: (kind: "current" | "history" = "current") => {
+    loadSample: (kind: UsageSampleKind = "current") => {
       const request = ++loadRequest.current;
       setUsageBusy(true);
       setUsageProgress(null);
       setUsageError("");
-      const sample = kind === "history" ? "sample-usage-history.csv" : "sample-usage.csv";
-      void fetch(`${import.meta.env.BASE_URL}${sample}`)
-        .then((response) => {
-          if (!response.ok) throw new Error("missing");
-          return response.text();
-        })
+      const sample = usageSamples[kind];
+      void fetcher
+        .getText(`${import.meta.env.BASE_URL}${sample.href}`)
         .then((text) => {
           if (request !== loadRequest.current) return;
-          preview(
-            text,
-            kind === "history" ? "Bundled historical demonstration sample" : "Bundled demonstration sample",
-          );
+          preview(text, sample.source);
           setNotice("Sample data loaded for demonstration. Review the preview before applying.");
-          toast.success("Sample ready to review");
+          showNotice(notices.sampleReady(), notifier);
         })
         .catch(() => {
           if (request === loadRequest.current) setUsageError("The sample file did not load.");

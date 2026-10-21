@@ -47,6 +47,13 @@ module.exports = {
       to: { path: "\\.json$", pathNot: "(product-catalog|product-map)\\.json$" },
     },
     {
+      name: "web-services-not-presentation",
+      comment: "Application services stay free of React and the page. Presentation depends on them.",
+      severity: "error",
+      from: { path: "^apps/web/src/services" },
+      to: { path: ["^apps/web/src/(components|hooks)", "(^|/)react$", "(^|/)react-dom$"] },
+    },
+    {
       name: "costing-not-application",
       comment: "A cost strategy does not forecast, import a CSV, or read the product catalog module.",
       severity: "error",

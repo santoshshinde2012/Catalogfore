@@ -1,6 +1,6 @@
 import { Ellipsis, FolderOpen, Keyboard, Moon, Printer, RotateCcw, Star, Sun } from "lucide-react";
 import { useRef } from "react";
-import { openShortcuts } from "./loading/workspace-assist";
+import { openShortcuts } from "../services/shortcut-channel";
 import type { Theme } from "../hooks/forecast-session";
 import { APP_NAME, REPO } from "../site";
 import { secondaryNavigation, type NavigationActions } from "./header-navigation";

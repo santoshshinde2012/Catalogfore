@@ -1,9 +1,10 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
 import { ConnectionStatus } from "./ConnectionStatus";
 import { ProductMapSkeleton, UnitCostsSkeleton } from "./loading/skeletons";
-import { loadProductMap, loadUnitCosts } from "./loading/route-prefetch";
+import { loadProductMap, loadUnitCosts } from "./loading/route-loaders";
 import { WorkspaceAssist } from "./loading/workspace-assist";
+import { notices } from "../services/notices";
+import { showNotice } from "../services/sonner-notifier";
 import { navigateToSection } from "../lib/page-navigation";
 import { readAppView, useAppView, type RatePlacement } from "../hooks/useAppView";
 import {
@@ -84,9 +85,7 @@ export function AppShell({ session }: { session: SimpleSession }) {
   function addProduct(id: string) {
     if (!session.addProduct(id)) return;
     showAdvanced();
-    toast("Added to your forecast", {
-      description: "Review the new workload in Advanced. Undo last change can restore your previous plan.",
-    });
+    showNotice(notices.addedProduct());
   }
 
   return (
@@ -118,21 +117,24 @@ export function AppShell({ session }: { session: SimpleSession }) {
             showPlanner("plan-inputs");
           }}
           onNew={() => {
-            const previous = session.portfolio;
+            const previous = session.captureForecast();
             session.reset();
             showPlanner("plan-inputs");
-            toast.success("Started a new forecast", {
-              description: "The default plan is restored.",
-              action: { label: "Undo", onClick: () => session.loadPortfolio(previous) },
-            });
+            showNotice(notices.forecastReset(() => session.restoreForecast(previous)));
           }}
         />
         <ConnectionStatus />
         <WorkspaceAssist
-          onPlan={() => showPlanner("plan-inputs")}
-          onProducts={showProducts}
-          onRates={() => showRates()}
-          onForecast={() => showPlanner("forecast")}
+          onNavigate={(action) =>
+            (
+              ({
+                plan: () => showPlanner("plan-inputs"),
+                products: showProducts,
+                rates: () => showRates(),
+                forecast: () => showPlanner("forecast"),
+              }) as const
+            )[action]()
+          }
         />
         <main>
           <WorkspaceBoundary key={view} contentId={contentId} onPlan={() => showPlanner("plan-inputs")}>
@@ -169,15 +171,10 @@ export function AppShell({ session }: { session: SimpleSession }) {
                   onUndo={session.undoRemove}
                   onApplyUsage={(row, quantity) => {
                     if (!session.applyUnitCost(row, quantity)) {
-                      toast("Quantity kept in the calculator", {
-                        description: "Review the quantity and pricing requirements shown beside the calculator.",
-                      });
+                      showNotice(notices.quantityKept());
                       return false;
                     }
-                    toast("Forecast updated", {
-                      description: `${row.productName} now uses this quantity. Plan discounts still apply.`,
-                      action: { label: "View forecast", onClick: () => showPlanner("forecast") },
-                    });
+                    showNotice(notices.forecastUpdated(row.productName, () => showPlanner("forecast")));
                     return true;
                   }}
                 />

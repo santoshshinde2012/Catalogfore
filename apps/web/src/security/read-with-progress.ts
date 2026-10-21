@@ -1,4 +1,5 @@
 import { UPLOAD_MAX_CHARS } from "@cayfore/engine";
+import { usageReadMarks } from "../services/usage-samples";
 import { inspectUsageText, type ReadResult } from "./read-upload";
 
 /** Read a usage file, reporting 0–1 while bytes arrive, then validate the text. */
@@ -7,16 +8,18 @@ export async function readUsageWithProgress(
   onProgress: (ratio: number) => void,
 ): Promise<ReadResult<string>> {
   if (file.size > UPLOAD_MAX_CHARS) return { ok: false, error: "That file is too large." };
-  onProgress(0.04);
+  onProgress(usageReadMarks.opened);
   let text = "";
   try {
-    text = await readBlobText(file, (ratio) => onProgress(Math.min(0.72, 0.08 + ratio * 0.64)));
+    text = await readBlobText(file, (ratio) =>
+      onProgress(Math.min(usageReadMarks.readCap, usageReadMarks.reading + ratio * usageReadMarks.readWeight)),
+    );
   } catch {
     return { ok: false, error: "That file could not be read." };
   }
-  onProgress(0.86);
+  onProgress(usageReadMarks.checked);
   const result = inspectUsageText(text);
-  onProgress(1);
+  onProgress(usageReadMarks.done);
   return result;
 }
 

@@ -1,4 +1,7 @@
 import { Component, createRef, type ReactNode } from "react";
+import { browserNetwork } from "../services/browser-ports";
+import { recoveryActions, recoveryCopy, type RecoveryActionId } from "../services/connection";
+import type { NetworkStatus } from "../services/ports";
 import { navigateToSection } from "../lib/page-navigation";
 import { Button } from "./ui/button";
 
@@ -9,30 +12,44 @@ interface BoundaryState {
 
 /** Keep navigation and the active forecast available when a view fails to render or download. */
 export class WorkspaceBoundary extends Component<
-  { children: ReactNode; onPlan: () => void; contentId: string },
+  { children: ReactNode; onPlan: () => void; contentId: string; network?: NetworkStatus },
   BoundaryState
 > {
   state: BoundaryState = { failed: false, offline: false };
   private notice = createRef<HTMLElement>();
-  private syncConnection = () => this.setState({ offline: navigator.onLine === false });
+  private unsubscribe = () => {};
+  private network(): NetworkStatus {
+    return this.props.network ?? browserNetwork;
+  }
 
   static getDerivedStateFromError(): Partial<BoundaryState> {
     return { failed: true };
   }
 
   componentDidMount() {
-    window.addEventListener("online", this.syncConnection);
-    window.addEventListener("offline", this.syncConnection);
+    this.setState({ offline: !this.network().online() });
+    this.unsubscribe = this.network().subscribe((online) => this.setState({ offline: !online }));
   }
 
   componentWillUnmount() {
-    window.removeEventListener("online", this.syncConnection);
-    window.removeEventListener("offline", this.syncConnection);
+    this.unsubscribe();
   }
 
   componentDidCatch() {
-    this.syncConnection();
+    this.setState({ offline: !this.network().online() });
     if (this.notice.current) navigateToSection(this.notice.current.id);
+  }
+
+  private recover(id: RecoveryActionId) {
+    const actions: Record<RecoveryActionId, () => void> = {
+      retry: () => this.setState({ failed: false }),
+      reload: () => window.location.reload(),
+      plan: () => {
+        this.setState({ failed: false });
+        this.props.onPlan();
+      },
+    };
+    actions[id]();
   }
 
   render() {
@@ -48,29 +65,18 @@ export class WorkspaceBoundary extends Component<
         <h1 id={this.props.contentId} tabIndex={-1} className="text-xl font-semibold">
           This view couldn’t load
         </h1>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Something went wrong while drawing this view. Your forecast is still saved in the page address.
-          {this.state.offline
-            ? " You appear to be offline. The plan can still open from the prices already in this page."
-            : " Try again, or return to your plan."}
-        </p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{recoveryCopy(this.state.offline)}</p>
         <div className="mt-5 flex flex-wrap gap-3">
-          <Button type="button" onClick={() => this.setState({ failed: false })}>
-            Try again
-          </Button>
-          <Button type="button" variant="outline" onClick={() => window.location.reload()}>
-            Reload view
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              this.setState({ failed: false });
-              this.props.onPlan();
-            }}
-          >
-            Return to plan
-          </Button>
+          {recoveryActions.map((action) => (
+            <Button
+              key={action.id}
+              type="button"
+              variant={action.emphasis === "outline" ? "outline" : "default"}
+              onClick={() => this.recover(action.id)}
+            >
+              {action.label}
+            </Button>
+          ))}
         </div>
       </section>
     );

@@ -1,9 +1,12 @@
 import type { Estimate, ForecastPoint, Portfolio } from "@cayfore/engine";
 import { ChevronDown, Download, LoaderCircle } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+import { useRef, useState } from "react";
 import { forecastExporters, type ForecastDownload } from "../../export";
 import type { ForecastExportResult } from "../../export-data";
+import { useReturnFocus } from "../../hooks/use-return-focus";
+import { activeBusyLabel, exportBusy } from "../../services/export-busy";
+import { notices } from "../../services/notices";
+import { showNotice } from "../../services/sonner-notifier";
 import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { InfoTooltip } from "../ui/tooltip";
@@ -23,13 +26,8 @@ export function ExportBar({
   const [downloadError, setDownloadError] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
-  const wasBusy = useRef(false);
-  const active = forecastExporters.find((exporter) => exporter.id === busy);
-  const busyLabel = active ? (active.busyLabel ?? "Preparing…") : "";
-  useEffect(() => {
-    if (wasBusy.current && !busy) trigger.current?.focus();
-    wasBusy.current = Boolean(busy);
-  }, [busy]);
+  const busyLabel = activeBusyLabel(forecastExporters, busy);
+  useReturnFocus(Boolean(busy), trigger);
 
   async function run(exporter: ForecastDownload) {
     if (busy) return;
@@ -37,11 +35,11 @@ export function ExportBar({
     setDownloadError("");
     try {
       await exporter.write(portfolio, estimate, points, forecastResult);
-      toast.success(`${exporter.menuLabel} downloaded`);
+      showNotice(notices.exportReady(exporter.menuLabel));
     } catch {
       const message = exporter.failure ?? `The ${exporter.menuLabel} file did not download. Try again.`;
       setDownloadError(message);
-      toast.error(message);
+      showNotice(notices.problem(message));
     } finally {
       setBusy("");
     }
@@ -70,7 +68,11 @@ export function ExportBar({
               aria-busy={Boolean(busy)}
               className={busy ? "cursor-wait" : undefined}
             >
-              {busy ? <LoaderCircle className="animate-spin" aria-hidden="true" /> : <Download aria-hidden="true" />}
+              {busy ? (
+                <LoaderCircle className="animate-spin motion-reduce:animate-none" aria-hidden="true" />
+              ) : (
+                <Download aria-hidden="true" />
+              )}
               {busyLabel || "Export"}
               <ChevronDown aria-hidden="true" />
             </Button>
@@ -88,18 +90,21 @@ export function ExportBar({
           </div>
           {forecastExporters.map((exporter) => {
             const Icon = exporter.icon;
+            const state = exportBusy(busy, {
+              id: exporter.id,
+              label: exporter.menuLabel,
+              busyLabel: exporter.busyLabel,
+            });
             return (
               <DropdownMenuItem
                 key={exporter.id}
                 className="gap-3 rounded-xl px-2.5 py-2.5"
                 onSelect={() => void run(exporter)}
-                disabled={Boolean(busy)}
+                disabled={state.disabled}
               >
                 <Icon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
                 <span className="min-w-0">
-                  <span className="block font-medium">
-                    {busy === exporter.id && exporter.busyLabel ? exporter.busyLabel : exporter.menuLabel}
-                  </span>
+                  <span className="block font-medium">{state.label}</span>
                   <span className="mt-0.5 block text-xs text-muted-foreground">{exporter.detail}</span>
                 </span>
               </DropdownMenuItem>

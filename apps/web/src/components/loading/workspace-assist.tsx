@@ -1,52 +1,42 @@
-import { useEffect, useState } from "react";
-import { prefetchIdleRoutes } from "./route-prefetch";
+import { useEffect, useRef, useState } from "react";
+import { prefetch } from "./route-loaders";
 import { ShortcutsDialog } from "./shortcuts-dialog";
+import { useIdlePrefetch } from "../../hooks/use-idle-prefetch";
+import { focusedElement } from "../../hooks/use-return-focus";
+import { useShortcuts } from "../../hooks/use-shortcuts";
+import { subscribeShortcuts } from "../../services/shortcut-channel";
+import type { ShortcutAction } from "../../services/shortcuts";
 
-const SHORTCUTS_EVENT = "catalogfore-shortcuts";
+type Destination = Exclude<ShortcutAction, "help">;
 
-export function openShortcuts() {
-  window.dispatchEvent(new Event(SHORTCUTS_EVENT));
-}
-
-export function WorkspaceAssist({
-  onPlan,
-  onProducts,
-  onRates,
-  onForecast,
-}: {
-  onPlan: () => void;
-  onProducts: () => void;
-  onRates: () => void;
-  onForecast: () => void;
-}) {
+export function WorkspaceAssist({ onNavigate }: { onNavigate: (action: Destination) => void }) {
   const [open, setOpen] = useState(false);
-  useEffect(() => {
-    prefetchIdleRoutes();
-    const show = () => setOpen(true);
-    window.addEventListener(SHORTCUTS_EVENT, show);
-    return () => window.removeEventListener(SHORTCUTS_EVENT, show);
-  }, []);
-  useEffect(() => {
-    const actions: Record<string, () => void> = { "1": onPlan, "2": onProducts, "3": onRates, "4": onForecast };
-    function onKey(event: KeyboardEvent) {
-      const target = event.target;
-      const typing =
-        target instanceof HTMLElement &&
-        (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));
-      if (event.key === "?" && !event.altKey && !event.ctrlKey && !event.metaKey) {
-        if (typing) return;
+  const returnTo = useRef<HTMLElement | null>(null);
+  const navigateRef = useRef(onNavigate);
+  navigateRef.current = onNavigate;
+  useIdlePrefetch(prefetch);
+  function showHelp() {
+    returnTo.current = focusedElement();
+    setOpen(true);
+  }
+  useEffect(() => subscribeShortcuts(showHelp), []);
+  useShortcuts({
+    plan: () => navigateRef.current("plan"),
+    products: () => navigateRef.current("products"),
+    rates: () => navigateRef.current("rates"),
+    forecast: () => navigateRef.current("forecast"),
+    help: showHelp,
+  });
+  return (
+    <ShortcutsDialog
+      open={open}
+      onOpenChange={setOpen}
+      onCloseAutoFocus={(event) => {
+        const node = returnTo.current;
+        if (!node) return;
         event.preventDefault();
-        setOpen(true);
-        return;
-      }
-      if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || typing) return;
-      const run = actions[event.key];
-      if (!run) return;
-      event.preventDefault();
-      run();
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onPlan, onProducts, onRates, onForecast]);
-  return <ShortcutsDialog open={open} onOpenChange={setOpen} />;
+        node.focus();
+      }}
+    />
+  );
 }

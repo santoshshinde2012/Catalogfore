@@ -1,4 +1,5 @@
 import { useRef, type ReactNode } from "react";
+import { browserScheduler } from "../../services/browser-ports";
 import type { Cloud, SimplePlan, TeamPresetId, Tier, WorkloadMix } from "@cayfore/engine";
 import { TEAM_PRESETS } from "@cayfore/engine";
 import { AwsMark, AzureMark, GcpMark } from "../ui/cloud-marks";
@@ -64,7 +65,7 @@ export function MixBar({
           const queue = (clientX: number) => {
             latest = clientX;
             if (frame.current) return;
-            frame.current = requestAnimationFrame(() => {
+            frame.current = browserScheduler.frame(() => {
               frame.current = 0;
               applyNow();
             });
@@ -72,7 +73,7 @@ export function MixBar({
           queue(event.clientX);
           const move = (pointer: PointerEvent) => queue(pointer.clientX);
           const stop = () => {
-            if (frame.current) cancelAnimationFrame(frame.current);
+            if (frame.current) browserScheduler.cancel(frame.current);
             frame.current = 0;
             applyNow();
             window.removeEventListener("pointermove", move);

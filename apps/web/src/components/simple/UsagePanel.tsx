@@ -51,7 +51,11 @@ export function UsagePanel({
             className="w-full cursor-pointer focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ring"
           >
             <label aria-disabled={busy}>
-              {busy ? <LoaderCircle className="animate-spin" aria-hidden="true" /> : <Upload aria-hidden="true" />}
+              {busy ? (
+                <LoaderCircle className="animate-spin motion-reduce:animate-none" aria-hidden="true" />
+              ) : (
+                <Upload aria-hidden="true" />
+              )}
               {busy ? "Reading…" : "Choose CSV"}
               <input
                 ref={fileRef}
@@ -72,7 +76,10 @@ export function UsagePanel({
           </Button>
           {busy && percent != null && (
             <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted" aria-hidden="true">
-              <div className="h-full bg-primary transition-[width] duration-150" style={{ width: `${percent}%` }} />
+              <div
+                className="h-full bg-primary transition-[width] duration-150 motion-reduce:transition-none"
+                style={{ width: `${percent}%` }}
+              />
             </div>
           )}
           {busy && percent == null && <div className="skeleton mt-3 h-1.5 rounded-full" aria-hidden="true" />}

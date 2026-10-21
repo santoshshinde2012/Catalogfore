@@ -6,12 +6,24 @@ import {
   type Portfolio,
   type UsageImportPreview,
 } from "@cayfore/engine";
-import { toast } from "sonner";
+import { browserClipboard, browserClock } from "../services/browser-ports";
+import { notices, type Notifier } from "../services/notices";
+import type { ClipboardPort, Clock } from "../services/ports";
+import { showNotice, sonnerNotifier } from "../services/sonner-notifier";
+import { captureForecast, restoreForecast } from "./forecast-snapshot";
 import { planFromPortfolio } from "./forecast-session";
 import type { SessionControls } from "./session-controls";
 import { usageLoads } from "./session-usage-loads";
 
-export function ioActions(controls: SessionControls) {
+export interface IoPorts {
+  clock: Clock;
+  clipboard: ClipboardPort;
+  notifier: Notifier;
+}
+
+const defaultPorts: IoPorts = { clock: browserClock, clipboard: browserClipboard, notifier: sonnerNotifier };
+
+export function ioActions(controls: SessionControls, ports: IoPorts = defaultPorts) {
   const {
     portfolio,
     loadRequest,
@@ -51,7 +63,7 @@ export function ioActions(controls: SessionControls) {
   function previewUsageText(text: string, sourceLabel?: string) {
     try {
       const preview = {
-        ...previewUsageImport(text, { asOf: new Date().toISOString().slice(0, 10) }),
+        ...previewUsageImport(text, { asOf: ports.clock.today() }),
         ...(sourceLabel ? { sourceLabel } : {}),
       };
       if (!preview.records.length) {
@@ -76,33 +88,17 @@ export function ioActions(controls: SessionControls) {
     loadUsagePreview: (preview: UsageImportPreview, mode: "replace" | "append") => {
       try {
         const loaded = portfolioFromUsage(preview, { base: portfolio, mode });
-        const previous = portfolio;
+        const snapshot = captureForecast(controls);
+        const notice = notices.usageImported(mode, () => restoreForecast(controls, snapshot));
         loadPortfolio(loaded.portfolio);
         setUsagePreview(null);
         setUsageError("");
-        const description =
-          mode === "replace"
-            ? "Replaced the baseline with imported usage."
-            : "Appended imported usage. Review combined scope for overlap.";
-        setNotice(description);
-        toast.success(mode === "replace" ? "Usage imported" : "Usage appended", {
-          description,
-          action: {
-            label: "Undo",
-            onClick: () => {
-              setUndo(null);
-              setOverride(normalizePortfolio(previous));
-              const simple = planFromPortfolio(previous);
-              if (simple) setPlan(simple);
-              setSelectedId(previous.workloads[0]?.id ?? null);
-              setNotice("Import undone. Your previous forecast is restored.");
-            },
-          },
-        });
+        setNotice(notice.description ?? "");
+        showNotice(notice, ports.notifier);
       } catch (error) {
         const message = error instanceof Error ? error.message : "That usage could not be imported.";
         setUsageError(message);
-        toast.error(message);
+        showNotice(notices.problem(message), ports.notifier);
       }
     },
     dismissUsagePreview: () => {
@@ -118,9 +114,9 @@ export function ioActions(controls: SessionControls) {
       const url = new URL(window.location.href);
       url.hash = `plan=${encodePortfolio(portfolio)}`;
       try {
-        await navigator.clipboard.writeText(url.href);
-        setNotice("Link copied");
-        toast.success("Link copied");
+        await ports.clipboard.writeText(url.href);
+        setNotice(notices.linkCopied().title);
+        showNotice(notices.linkCopied(), ports.notifier);
       } catch {
         window.prompt("Copy this link", url.href);
       }
@@ -137,17 +133,17 @@ export function ioActions(controls: SessionControls) {
             loadPortfolio(result.value);
             const opened = `Opened ${result.value.name || "saved forecast"}.`;
             setNotice(opened);
-            toast.success("Forecast opened", { description: opened });
+            showNotice(notices.forecastOpened(opened), ports.notifier);
           } else {
             setNotice(result.error);
-            toast.error(result.error);
+            showNotice(notices.problem(result.error), ports.notifier);
           }
         })
         .catch(() => {
           if (request !== loadRequest.current) return;
           const error = "That file is not a forecast JSON.";
           setNotice(error);
-          toast.error(error);
+          showNotice(notices.problem(error), ports.notifier);
         });
     },
   };

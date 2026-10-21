@@ -1,26 +1,16 @@
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+import { useOfflineNotice } from "../hooks/use-online";
+import { sonnerNotifier } from "../services/sonner-notifier";
+import type { NetworkStatus } from "../services/ports";
+import type { Notifier } from "../services/notices";
 
-export function ConnectionStatus() {
-  const [offline, setOffline] = useState(() => typeof navigator !== "undefined" && navigator.onLine === false);
-  const wasOffline = useRef(offline);
-  useEffect(() => {
-    const onOnline = () => {
-      setOffline(false);
-      if (wasOffline.current) toast.success("Back online");
-      wasOffline.current = false;
-    };
-    const onOffline = () => {
-      wasOffline.current = true;
-      setOffline(true);
-    };
-    window.addEventListener("online", onOnline);
-    window.addEventListener("offline", onOffline);
-    return () => {
-      window.removeEventListener("online", onOnline);
-      window.removeEventListener("offline", onOffline);
-    };
-  }, []);
+export function ConnectionStatus({
+  network,
+  notifier = sonnerNotifier,
+}: {
+  network?: NetworkStatus;
+  notifier?: Notifier;
+}) {
+  const offline = useOfflineNotice(network, notifier);
   if (!offline) return null;
   return (
     <p role="status" data-testid="offline-banner" className="border-b bg-card px-4 py-2 text-sm text-foreground">

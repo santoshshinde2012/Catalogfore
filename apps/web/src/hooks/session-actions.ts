@@ -14,11 +14,17 @@ import {
   planQuantityUnavailableReason,
   type UnitCostRow,
 } from "@cayfore/engine/unit-costs";
-import { toast } from "sonner";
+import {
+  captureForecast as capture,
+  restoreForecast as restoreSnapshot,
+  type ForecastSnapshot,
+} from "./forecast-snapshot";
 import { planFromPortfolio } from "./forecast-session";
 import type { SessionControls } from "./session-controls";
 import { ioActions } from "./session-io-actions";
 import { planActions } from "./session-plan-actions";
+import { notices } from "../services/notices";
+import { showNotice } from "../services/sonner-notifier";
 
 /** State commands delegate file boundaries and model edits to focused modules. */
 export function sessionActions(controls: SessionControls) {
@@ -58,6 +64,8 @@ export function sessionActions(controls: SessionControls) {
   return {
     ...planActions(controls),
     ...ioActions(controls),
+    captureForecast: () => capture(controls),
+    restoreForecast: (snapshot: ForecastSnapshot) => restoreSnapshot(controls, snapshot),
     toggleTheme: () => controls.setTheme((current) => (current === "light" ? "dark" : "light")),
     editPortfolio,
     addProduct: (id: string) => {
@@ -110,14 +118,7 @@ export function sessionActions(controls: SessionControls) {
       );
       setOverride(next);
       setSelectedId((current) => (current === id ? null : current));
-      toast("Workload removed", {
-        action: {
-          label: "Undo",
-          onClick: () => {
-            restore(portfolio);
-          },
-        },
-      });
+      showNotice(notices.workloadRemoved(() => restore(portfolio)));
     },
     undoRemove: () => {
       if (undo) {
