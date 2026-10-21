@@ -19,8 +19,15 @@ export function ScenarioControls({ session }: { session: SimpleSession }) {
         <span className="text-xs tabular-nums text-muted-foreground">{session.scenarios.length} / 20 saved</span>
       </div>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-        Save a baseline, change the plan, then compare. Saved scenarios stay in this browser.
+        Save a baseline, change the plan, then compare. Saved scenarios stay in this browser. Export JSON for a portable
+        backup.
       </p>
+      {!session.scenarioStorageAvailable && (
+        <p role="alert" className="mt-3 rounded-lg border border-destructive/25 bg-destructive/5 p-3 text-sm">
+          Session only: browser storage is unavailable or full. Export each plan as JSON before closing or reloading
+          this page.
+        </p>
+      )}
       <form
         className="mt-4 grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]"
         onSubmit={(event) => {
@@ -53,6 +60,21 @@ export function ScenarioControls({ session }: { session: SimpleSession }) {
         <p role="status" className="mt-3 text-xs leading-relaxed text-muted-foreground">
           {feedback}
         </p>
+      )}
+      {session.canUndoScenarioDelete && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="mt-3 min-h-11"
+          onClick={() => {
+            session.undoScenarioDelete();
+            setFeedback("Deleted scenario restored.");
+            nameInput.current?.focus();
+          }}
+        >
+          Undo scenario deletion
+        </Button>
       )}
       {session.scenarios.length > 0 && (
         <OptionSelect

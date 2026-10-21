@@ -32,7 +32,18 @@ export function UsageReview({
         if (!open) onDismiss();
       }}
     >
-      <SheetContent className="gap-0 overflow-hidden p-0 sm:max-w-2xl">
+      <SheetContent
+        className="gap-0 overflow-hidden p-0 sm:max-w-2xl"
+        onCloseAutoFocus={(event) => {
+          const target = [...document.querySelectorAll<HTMLElement>("[data-usage-import-return]")]
+            .reverse()
+            .find((element) => element.getClientRects().length > 0);
+          if (target) {
+            event.preventDefault();
+            target.focus({ preventScroll: true });
+          }
+        }}
+      >
         <SheetHeader className="shrink-0 border-b px-5 py-5 pr-12 sm:px-6 sm:pr-12">
           <SheetTitle>Review usage import</SheetTitle>
           <SheetDescription>

@@ -18,7 +18,10 @@ export function UsagePanel({
 }) {
   return (
     <Collapsible className="rounded-lg border bg-muted/30">
-      <CollapsibleTrigger className="group flex min-h-12 w-full items-center justify-between gap-3 rounded-lg px-3 py-3 text-left text-sm font-medium hover:bg-muted">
+      <CollapsibleTrigger
+        data-usage-import-return
+        className="group flex min-h-12 w-full items-center justify-between gap-3 rounded-lg px-3 py-3 text-left text-sm font-medium hover:bg-muted"
+      >
         <span className="flex items-center gap-2.5">
           <FileSpreadsheet className="size-4 text-muted-foreground" aria-hidden="true" />
           Use my real usage

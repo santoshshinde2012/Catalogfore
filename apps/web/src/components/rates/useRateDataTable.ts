@@ -1,9 +1,17 @@
 import type { UnitCostRow } from "@cayfore/engine/unit-costs";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, type Dispatch, type SetStateAction } from "react";
 import { evidenceLabels } from "./rate-presentation";
 
 export type RateSortKey = "productName" | "cloud" | "region" | "tier" | "price" | "evidenceLevel";
 type RateSort = { key: RateSortKey; direction: "ascending" | "descending" } | null;
+
+export interface RateDownloadDraft {
+  scope: "filtered" | "all";
+  sort: RateSort;
+  page: number;
+  pageSize: number;
+  scopeKey?: string;
+}
 
 function sortValue(row: UnitCostRow, key: RateSortKey): string | number | null {
   if (key === "price") return row.rateKind === "money" ? row.unitPriceUsd : null;
@@ -24,23 +32,31 @@ function compareRows(left: UnitCostRow, right: UnitCostRow, sort: NonNullable<Ra
   return sort.direction === "ascending" ? compared : -compared;
 }
 
-export function useRateDataTable(rows: UnitCostRow[]) {
-  const [sort, setSort] = useState<RateSort>(null);
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(25);
+export function useRateDataTable(
+  rows: UnitCostRow[],
+  draft: RateDownloadDraft,
+  onDraft: Dispatch<SetStateAction<RateDownloadDraft>>,
+  scopeKey: string,
+) {
+  const { sort, page, pageSize } = draft;
   const orderedRows = useMemo(() => (sort ? [...rows].sort((a, b) => compareRows(a, b, sort)) : rows), [rows, sort]);
   const pageCount = Math.max(1, Math.ceil(orderedRows.length / pageSize));
   const currentPage = Math.min(page, pageCount - 1);
   const start = currentPage * pageSize;
-  useEffect(() => setPage(0), [rows, sort, pageSize]);
+  useEffect(() => {
+    if (draft.scopeKey !== scopeKey) onDraft((current) => ({ ...current, scopeKey, page: 0 }));
+  }, [draft.scopeKey, scopeKey, onDraft]);
   function changeSort(key: RateSortKey) {
-    setSort((current) =>
-      current?.key === key
-        ? current.direction === "ascending"
-          ? { key, direction: "descending" }
-          : null
-        : { key, direction: "ascending" },
-    );
+    onDraft((current) => ({
+      ...current,
+      page: 0,
+      sort:
+        current.sort?.key === key
+          ? current.sort.direction === "ascending"
+            ? { key, direction: "descending" }
+            : null
+          : { key, direction: "ascending" },
+    }));
   }
   return {
     sort,
@@ -50,8 +66,8 @@ export function useRateDataTable(rows: UnitCostRow[]) {
     page: currentPage,
     pageCount,
     pageSize,
-    setPage,
-    setPageSize,
+    setPage: (page: number) => onDraft((current) => ({ ...current, page })),
+    setPageSize: (pageSize: number) => onDraft((current) => ({ ...current, pageSize, page: 0 })),
     start,
   };
 }

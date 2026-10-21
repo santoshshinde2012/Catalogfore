@@ -6,7 +6,7 @@ import {
   type Portfolio,
   type UsageImportPreview,
 } from "@cayfore/engine";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { readStoredTheme, storeTheme } from "../theme-storage";
 import { readInitial, type SimpleSession, type Theme } from "./forecast-session";
 import { useSavedScenarios } from "./saved-scenarios";
@@ -20,6 +20,7 @@ export function useSimpleForecast(): SimpleSession {
   const [override, setOverride] = useState<Portfolio | null>(initial.override);
   const [selectedId, setSelectedId] = useState<string | null>(initial.override?.workloads[0]?.id ?? null);
   const [undo, setUndo] = useState<Portfolio | null>(null);
+  const loadRequest = useRef(0);
   const [notice, setNotice] = useState("");
   const [usageError, setUsageError] = useState("");
   const [usageBusy, setUsageBusy] = useState(false);
@@ -61,6 +62,7 @@ export function useSimpleForecast(): SimpleSession {
     portfolio,
     override,
     undo,
+    loadRequest,
     setPlan,
     setOverride,
     setUndo,

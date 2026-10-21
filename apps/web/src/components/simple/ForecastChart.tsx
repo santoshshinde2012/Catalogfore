@@ -27,7 +27,7 @@ export function ForecastChart({
             tickFormatter={axisMoney}
             tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
           />
-          <Tooltip content={<ChartTooltip />} />
+          <Tooltip content={<ChartTooltip comparisonLabel={series.comparison?.name} />} />
           <Area
             dataKey="band"
             name="Planning range"

@@ -11,6 +11,7 @@ import {
   type Estimate,
   type ForecastPoint,
   type Portfolio,
+  type PlanningEvent,
   type RecommendationId,
   type SimpleMonth,
   type SimplePlan,
@@ -41,6 +42,9 @@ export interface SimpleSession {
   usageBusy: boolean;
   usagePreview: UsageImportPreview | null;
   scenarios: SavedScenario[];
+  scenarioStorageAvailable: boolean;
+  canUndoScenarioDelete: boolean;
+  undoScenarioDelete: () => void;
   comparison: SavedScenario | null;
   saveScenario: (name: string) => void;
   loadScenario: (id: string) => void;
@@ -49,6 +53,8 @@ export interface SimpleSession {
   compareScenario: (id: string | null) => void;
   setBudget: (amount: number | undefined) => void;
   setCloudDiscount: (rate: number) => void;
+  setForecastStart: (month: string) => boolean;
+  setEvents: (events: PlanningEvent[]) => void;
   resetToQuick: () => void;
   loadUsagePreview: (preview: UsageImportPreview, mode: "replace" | "append") => void;
   dismissUsagePreview: () => void;

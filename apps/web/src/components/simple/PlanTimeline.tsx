@@ -1,5 +1,5 @@
 import { uid, type PlanningEvent, type Portfolio } from "@cayfore/engine";
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { periodAt, periodLabel } from "../../lib/chart-data";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -12,7 +12,7 @@ export function PlanTimeline({
 }: {
   portfolio: Portfolio;
   startMonth: string;
-  onChange: (portfolio: Portfolio) => void;
+  onChange: (events: PlanningEvent[]) => void;
 }) {
   const [name, setName] = useState("");
   const [month, setMonth] = useState(startMonth);
@@ -20,18 +20,22 @@ export function PlanTimeline({
   const [target, setTarget] = useState("");
   const [feedback, setFeedback] = useState("");
   const nameInput = useRef<HTMLInputElement>(null);
+  const changeErrorId = useId();
   const events = portfolio.events ?? [];
+  const atCapacity = events.length >= 100;
   const selectedTarget = portfolio.workloads.some((workload) => workload.id === target) ? target : "";
   const percent = Number(change);
+  const invalidChange = Boolean(change.trim()) && (!Number.isFinite(percent) || percent < -100 || percent > 1000);
   const effectiveMonth = month < startMonth ? startMonth : month;
   const valid =
     name.trim() &&
-    /^\d{4}-(0[1-9]|1[0-2])$/.test(effectiveMonth) &&
+    /^(19|20|21)\d{2}-(0[1-9]|1[0-2])$/.test(effectiveMonth) &&
     change.trim() &&
     Number.isFinite(percent) &&
     percent >= -100 &&
     percent <= 1000 &&
-    portfolio.workloads.length > 0;
+    portfolio.workloads.length > 0 &&
+    !atCapacity;
   function add() {
     if (!valid) return;
     const event: PlanningEvent = {
@@ -41,7 +45,7 @@ export function PlanTimeline({
       usageMultiplier: 1 + percent / 100,
       ...(selectedTarget ? { workloadId: selectedTarget } : {}),
     };
-    onChange({ ...portfolio, events: [...events, event] });
+    onChange([...events, event]);
     setFeedback(`Added ${event.name}, effective ${periodLabel(event.month)}.`);
     setName("");
     nameInput.current?.focus();
@@ -88,6 +92,7 @@ export function PlanTimeline({
               type="month"
               required
               min={startMonth}
+              max="2199-12"
               value={effectiveMonth}
               onChange={(event) => setMonth(event.target.value)}
             />
@@ -100,9 +105,16 @@ export function PlanTimeline({
               min={-100}
               max={1000}
               step={1}
+              aria-invalid={invalidChange}
+              aria-describedby={invalidChange ? changeErrorId : undefined}
               value={change}
               onChange={(event) => setChange(event.target.value)}
             />
+            {invalidChange && (
+              <span id={changeErrorId} className="text-xs font-normal text-destructive" role="alert">
+                Enter a usage change from −100% to 1,000%.
+              </span>
+            )}
           </label>
         </div>
         <OptionSelect
@@ -121,6 +133,11 @@ export function PlanTimeline({
       </form>
       {portfolio.workloads.length === 0 && (
         <p className="mt-2 text-xs text-muted-foreground">Add a workload before scheduling a usage change.</p>
+      )}
+      {atCapacity && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          Remove a planned change before adding another. The limit is 100.
+        </p>
       )}
       {feedback && (
         <p role="status" className="mt-3 text-xs text-muted-foreground">
@@ -154,7 +171,7 @@ export function PlanTimeline({
                 className="min-h-11 shrink-0"
                 aria-label={`Remove ${event.name}`}
                 onClick={() => {
-                  onChange({ ...portfolio, events: events.filter((item) => item.id !== event.id) });
+                  onChange(events.filter((item) => item.id !== event.id));
                   setFeedback(`Removed ${event.name}.`);
                   nameInput.current?.focus();
                 }}

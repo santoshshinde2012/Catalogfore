@@ -1,5 +1,5 @@
 import { TEAM_PRESETS, type Cloud, type SimplePlan, type TeamPresetId, type Tier } from "@cayfore/engine";
-import { useId, useState, type Dispatch, type SetStateAction } from "react";
+import { useId, useState } from "react";
 import { money } from "../../format";
 import { Input } from "../ui/input";
 import { OptionSelect } from "../ui/option-select";
@@ -60,29 +60,31 @@ export function CloudSection({
 
 export function SpendSection({
   plan,
+  source,
   listMonthly,
   usageLocked,
   mixLine,
-  spendFocus,
-  spendText,
-  setSpendFocus,
-  setSpendText,
   onSpend,
   onPreset,
 }: {
   plan: SimplePlan;
+  source: object;
   listMonthly: number;
   usageLocked: boolean;
   mixLine: string;
-  spendFocus: boolean;
-  spendText: string;
-  setSpendFocus: Dispatch<SetStateAction<boolean>>;
-  setSpendText: Dispatch<SetStateAction<string>>;
   onSpend: (amount: number) => void;
   onPreset: (id: TeamPresetId) => void;
 }) {
+  const [spendText, setSpendText] = useState("");
+  const [spendFocus, setSpendFocus] = useState(false);
   const [spendError, setSpendError] = useState("");
+  const [previousSource, setPreviousSource] = useState(source);
   const errorId = useId();
+  if (previousSource !== source) {
+    setPreviousSource(source);
+    setSpendText(String(plan.monthlySpend));
+    setSpendError("");
+  }
   return (
     <>
       <Step n="2" title="Starting point" disabled={usageLocked}>

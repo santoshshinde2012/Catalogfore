@@ -1,4 +1,11 @@
-import { defaultInstanceId, skuCatalog, type Estimate, type Portfolio, type Workload } from "@cayfore/engine";
+import {
+  defaultInstanceId,
+  findInstance,
+  skuCatalog,
+  type Estimate,
+  type Portfolio,
+  type Workload,
+} from "@cayfore/engine";
 import { forecastProducts, productById, workloadsForProduct } from "@cayfore/engine/products";
 import { useRef } from "react";
 import { money } from "../format";
@@ -13,12 +20,25 @@ interface LedgerProps {
   onSelect: (id: string | null) => void;
   onRemove: (id: string) => void;
   onUsageFile: (file: File) => void;
+  usageBusy?: boolean;
+  hasUnpriced?: boolean;
 }
 
-export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect, onRemove, onUsageFile }: LedgerProps) {
+export function Ledger({
+  portfolio,
+  estimate,
+  selectedId,
+  onPortfolio,
+  onSelect,
+  onRemove,
+  onUsageFile,
+  usageBusy = false,
+  hasUnpriced,
+}: LedgerProps) {
   const ledgerRef = useRef<HTMLDivElement>(null);
   const selected = portfolio.workloads.find((workload) => workload.id === selectedId) ?? null;
   const breakdown = forecastProducts(estimate, portfolio);
+  const incomplete = hasUnpriced ?? estimate.coverage?.complete === false;
   function restoreFocus(id?: string) {
     requestAnimationFrame(() => {
       const rows = ledgerRef.current?.querySelectorAll<HTMLButtonElement>("button[data-workload-id]");
@@ -38,22 +58,25 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
 
   function add(productId: string) {
     const added = workloadsForProduct(productId).map((workload) =>
-      workload.kind === "cluster" ? { ...workload, instanceId: defaultInstanceId(portfolio.cloud) } : workload,
+      workload.kind === "cluster" && !findInstance(portfolio.cloud, workload.instanceId)
+        ? { ...workload, instanceId: defaultInstanceId(portfolio.cloud) }
+        : workload,
     );
     onPortfolio({ ...portfolio, workloads: [...portfolio.workloads, ...added] });
     onSelect(added[0]?.id ?? null);
   }
 
   return (
-    <div ref={ledgerRef} className="grid min-w-0 gap-3">
+    <div ref={ledgerRef} className="grid min-w-0 grid-cols-1 gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-sm font-medium">Workloads</h2>
-        <LedgerMenu onAdd={add} onUsageFile={onUsageFile} />
+        <LedgerMenu onAdd={add} onUsageFile={onUsageFile} usageBusy={usageBusy} />
       </div>
 
-      <div className="grid gap-2">
+      <div className="grid min-w-0 grid-cols-1 gap-2">
         {portfolio.workloads.map((workload) => {
           const line = estimate.lines.find((item) => item.workloadId === workload.id);
+          const unresolved = !line || line.priceStatus === "unpriced";
           const product = workload.productId ? productById(workload.productId) : undefined;
           const subtitle = product
             ? product.listPrice === "unpublished"
@@ -75,42 +98,56 @@ export function Ledger({ portfolio, estimate, selectedId, onPortfolio, onSelect,
               onClick={() => onSelect(workload.id)}
             >
               <span className="flex items-center justify-between gap-3">
-                <span>
-                  <span className="block text-sm font-medium">{workload.name}</span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-medium break-words">{workload.name}</span>
                   <span className="block text-xs text-muted-foreground">{subtitle}</span>
                   {gap && <span className="block text-xs text-muted-foreground">{gap}</span>}
                 </span>
-                <span className="text-sm font-medium tabular-nums">{money(line?.total ?? 0)}</span>
+                <span className="shrink-0 text-right text-sm font-medium tabular-nums">
+                  {money(line?.total ?? 0)}
+                  {unresolved ? " known" : ""}
+                </span>
               </span>
             </button>
           );
         })}
         {breakdown.lines.length > 0 && (
-          <div className="rounded-lg border px-3 py-3">
+          <div className="rounded-lg border px-3 py-3" data-testid="advanced-product-totals">
             <h3 className="text-sm font-medium">By product</h3>
             <p className="text-xs text-muted-foreground">
-              This month, and the next 12 months at this portfolio’s growth.
+              First forecast month and the next 12 months, including growth, fitted trends, and dated changes.
             </p>
-            <div className="mt-2 grid gap-2">
+            {incomplete && (
+              <p className="mt-2 text-xs text-destructive">
+                Known costs only. Unresolved prices are excluded from these amounts.
+              </p>
+            )}
+            <div className="mt-2 grid min-w-0 grid-cols-1 gap-2">
               {breakdown.lines.map((line) => (
                 <div key={line.workloadId} className="flex items-center justify-between gap-3 text-sm">
-                  <span>
-                    <span className="block font-medium">{line.name}</span>
+                  <span className="min-w-0">
+                    <span className="block font-medium break-words">{line.name}</span>
                     <span className="block text-xs text-muted-foreground">
                       {line.listPrice === "unpublished"
                         ? "No list rate is published"
                         : (line.billingUnit ?? "This month")}
                     </span>
                   </span>
-                  <span className="text-right tabular-nums">
-                    <span className="block">{money(line.monthly)}</span>
-                    <span className="block text-xs text-muted-foreground">{money(line.year)} / 12 mo</span>
+                  <span className="shrink-0 text-right tabular-nums">
+                    <span className="block">
+                      {money(line.monthly)}
+                      {incomplete ? " known" : ""}
+                    </span>
+                    <span className="block text-xs text-muted-foreground">
+                      {money(line.year)}
+                      {incomplete ? " known" : ""} / 12 mo
+                    </span>
                   </span>
                 </div>
               ))}
             </div>
             <div className="mt-2 flex items-center justify-between gap-3 border-t pt-2 text-sm font-medium">
-              <span>Total</span>
+              <span>{incomplete ? "Known subtotal" : "Total"}</span>
               <span className="text-right tabular-nums">
                 <span className="block">{money(breakdown.monthly)}</span>
                 <span className="block text-xs font-normal text-muted-foreground">{money(breakdown.year)} / 12 mo</span>

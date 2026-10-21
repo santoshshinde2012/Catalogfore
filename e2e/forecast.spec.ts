@@ -9,7 +9,9 @@ async function sentence(page: Page) {
 test("four inputs move the year", async ({ page }) => {
   await page.goto("./");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("What does the next year cost?");
-  await expect(page.getByTestId("year-sentence")).toContainText(/About \$170,258 per year, ±20%/);
+  await expect(page.getByTestId("year-sentence")).toContainText(
+    /About \$170,258 per year\. Planning range \$144,719 to \$204,309/,
+  );
   await expect(page.getByText(/Price book dated \d{4}-\d{2}-\d{2}, catalog v\d{4}-\d{2}-\d{2}\.\d+/)).toBeVisible();
   await expect(page.getByTestId("bill-split")).toBeVisible();
   await page.getByRole("tab", { name: "Months" }).click();

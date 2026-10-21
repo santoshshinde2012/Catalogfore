@@ -1,5 +1,5 @@
 import { type SimplePlan, type WorkloadMix } from "@cayfore/engine";
-import { useId, useState, type Dispatch, type SetStateAction } from "react";
+import { useId, useState } from "react";
 import { Input } from "../ui/input";
 import { Slider } from "../ui/slider";
 import { SegmentedStrip, SegmentedStripItem } from "../ui/segmented-strip";
@@ -47,26 +47,27 @@ export function MixSection({
 export function GrowthSection({
   step = "4",
   plan,
-  growthFocus,
-  growthText,
-  growthPercent,
-  setGrowthFocus,
-  setGrowthText,
+  source,
   onGrowth,
   onCommit,
 }: {
   step?: string;
   plan: SimplePlan;
-  growthFocus: boolean;
-  growthText: string;
-  growthPercent: number;
-  setGrowthFocus: Dispatch<SetStateAction<boolean>>;
-  setGrowthText: Dispatch<SetStateAction<string>>;
+  source: object;
   onGrowth: (rate: number) => void;
   onCommit: (rate: number) => void;
 }) {
+  const growthPercent = Math.round(plan.monthlyGrowth * 1000) / 10;
+  const [growthText, setGrowthText] = useState("");
+  const [growthFocus, setGrowthFocus] = useState(false);
   const [growthError, setGrowthError] = useState("");
+  const [previousSource, setPreviousSource] = useState(source);
   const errorId = useId();
+  if (previousSource !== source) {
+    setPreviousSource(source);
+    setGrowthText(String(growthPercent));
+    setGrowthError("");
+  }
   return (
     <>
       <Step n={step} title="Growth">

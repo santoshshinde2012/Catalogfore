@@ -16,14 +16,14 @@ export function PriceDisclosure({
 }) {
   const coverage = estimate.coverage;
   return (
-    <section className="rounded-lg border bg-muted/40 p-4 text-sm" aria-labelledby="price-heading">
+    <section className="min-w-0 rounded-lg border bg-muted/40 p-4 text-sm break-words" aria-labelledby="price-heading">
       <h3 id="price-heading" className="font-semibold">
         What these prices include
       </h3>
       {coverage && (
         <p className="mt-1 text-xs text-muted-foreground">
-          {coverage.pricedLines} priced · {coverage.approximateLines} approximate · {coverage.unpricedLines} unresolved
-          · {coverage.freeLines} documented free
+          First-month coverage: {coverage.pricedLines} priced · {coverage.approximateLines} approximate ·{" "}
+          {coverage.unpricedLines} unresolved · {coverage.freeLines} documented free
         </p>
       )}
       {coverage && !coverage.complete && (
@@ -32,7 +32,7 @@ export function PriceDisclosure({
         </p>
       )}
       {estimate.warnings.length > 0 && (
-        <ul className="mt-3 grid list-disc gap-1.5 pl-4 text-xs text-muted-foreground">
+        <ul className="mt-3 grid min-w-0 grid-cols-1 list-disc gap-1.5 pl-4 text-xs text-muted-foreground">
           {estimate.warnings.map((warning) => (
             <li key={warning}>{warning}</li>
           ))}
@@ -45,11 +45,11 @@ export function PriceDisclosure({
       )}
       <details className="mt-3">
         <summary className="cursor-pointer font-medium">Inspect rates and assumptions</summary>
-        <ul className="mt-3 grid gap-3">
+        <ul className="mt-3 grid min-w-0 grid-cols-1 gap-3">
           {estimate.lines.map((line) => (
             <li key={line.workloadId} className="border-t pt-2">
               <p className="flex flex-wrap justify-between gap-2">
-                <span>{line.name}</span>
+                <span className="min-w-0">{line.name}</span>
                 <span className="font-mono text-xs">
                   {line.priceStatus === "unpriced" ? `${money(line.total, 2)} known` : money(line.total, 2)}
                 </span>

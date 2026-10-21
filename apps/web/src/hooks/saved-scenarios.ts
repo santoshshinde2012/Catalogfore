@@ -34,11 +34,15 @@ export function useSavedScenarios(
 ) {
   const [scenarios, setScenarios] = useState<SavedScenario[]>(readScenarios);
   const [comparisonId, setComparisonId] = useState<string | null>(null);
+  const [storageAvailable, setStorageAvailable] = useState(true);
+  const [removed, setRemoved] = useState<{ scenario: SavedScenario; index: number; compared: boolean } | null>(null);
   function persist(next: SavedScenario[]) {
     setScenarios(next);
     try {
       localStorage.setItem(SCENARIO_STORAGE_KEY, JSON.stringify(next));
+      setStorageAvailable(true);
     } catch {
+      setStorageAvailable(false);
       notice("Scenarios are available this session. Browser storage is unavailable; export JSON to keep a copy.");
     }
   }
@@ -55,6 +59,8 @@ export function useSavedScenarios(
   }
   return {
     scenarios,
+    scenarioStorageAvailable: storageAvailable,
+    canUndoScenarioDelete: removed !== null && scenarios.length < MAX_SCENARIOS,
     comparison: scenarios.find((item) => item.id === comparisonId) ?? null,
     saveScenario: (name: string) => save(name, portfolio),
     loadScenario: (id: string) => {
@@ -66,8 +72,19 @@ export function useSavedScenarios(
       if (item) save(name ?? `${item.name} copy`, item.portfolio);
     },
     removeScenario: (id: string) => {
+      const index = scenarios.findIndex((item) => item.id === id);
+      if (index === -1) return;
+      setRemoved({ scenario: scenarios[index], index, compared: id === comparisonId });
       persist(scenarios.filter((item) => item.id !== id));
       if (id === comparisonId) setComparisonId(null);
+    },
+    undoScenarioDelete: () => {
+      if (!removed || scenarios.length >= MAX_SCENARIOS) return;
+      const next = [...scenarios];
+      next.splice(Math.min(removed.index, next.length), 0, removed.scenario);
+      persist(next);
+      if (removed.compared) setComparisonId((current) => current ?? removed.scenario.id);
+      setRemoved(null);
     },
     compareScenario: (id: string | null) => setComparisonId(id),
   };

@@ -1,4 +1,5 @@
-import { type KindProps, numberOr, ScheduleFields } from "./fields";
+import { DraftNumberInput } from "./DraftInput";
+import { type KindProps, ScheduleFields } from "./fields";
 
 export function ServerlessFields({ workload, onChange }: KindProps) {
   if (workload.kind !== "serverless_compute") return null;
@@ -6,12 +7,13 @@ export function ServerlessFields({ workload, onChange }: KindProps) {
     <div className="mt-3 grid gap-3">
       <label className="field">
         Average DBU / hour
-        <input
-          type="number"
+        <DraftNumberInput
+          label="Average DBU / hour"
+          max={100000}
           min={0}
           step={0.5}
           value={workload.dbuPerHour}
-          onChange={(event) => onChange({ ...workload, dbuPerHour: numberOr(event.target.value, 0) })}
+          onCommit={(value) => onChange({ ...workload, dbuPerHour: value })}
         />
       </label>
       <ScheduleFields schedule={workload.schedule} onChange={(schedule) => onChange({ ...workload, schedule })} />

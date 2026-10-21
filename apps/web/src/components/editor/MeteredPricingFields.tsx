@@ -1,6 +1,7 @@
 import { type Workload } from "@cayfore/engine";
 import { Button } from "../ui/button";
 import { type KindProps } from "./fields";
+import { DraftNumberInput, DraftTextInput } from "./DraftInput";
 
 type Metered = Extract<Workload, { kind: "metered" }>;
 
@@ -28,20 +29,19 @@ export function MeteredPricingFields({ workload, portfolio, onChange }: KindProp
     return (
       <label className="field mt-3">
         Monthly custom cost (USD)
-        <input
-          type="number"
+        <DraftNumberInput
+          label="Monthly custom cost (USD)"
           min={0}
+          max={1e6}
           step={0.01}
-          value={workload.fixedUsdByCloud[cloud] ?? 0}
-          onChange={(event) => {
-            const value = Number(event.target.value);
-            if (Number.isFinite(value) && value >= 0)
-              onChange({
-                ...workload,
-                fixedUsdByCloud: { ...workload.fixedUsdByCloud, [cloud]: value },
-                priceStatus: undefined,
-                rateProvenance: { kind: "custom", label: "User supplied monthly cost", currency: "USD" },
-              });
+          value={workload.fixedUsdByCloud[cloud]}
+          onCommit={(value) => {
+            onChange({
+              ...workload,
+              fixedUsdByCloud: { ...workload.fixedUsdByCloud, [cloud]: value },
+              priceStatus: undefined,
+              rateProvenance: { kind: "custom", label: "User supplied monthly cost", currency: "USD" },
+            });
           }}
         />
       </label>
@@ -54,30 +54,29 @@ export function MeteredPricingFields({ workload, portfolio, onChange }: KindProp
       </p>
       <label className="field mt-3">
         USD per DBU
-        <input
-          type="number"
+        <DraftNumberInput
+          label="USD per DBU"
           min={0}
+          max={1e6}
           step={0.001}
           placeholder="Use catalog"
-          value={workload.rateProvenance?.kind === "custom" ? (workload.rateByCloud?.[cloud] ?? "") : ""}
-          onChange={(event) => {
-            const value = Number(event.target.value);
-            if (event.target.value === "") return onChange(withoutCustomRate(workload));
-            if (Number.isFinite(value) && value >= 0)
-              onChange({
-                ...workload,
-                rateByCloud: { [cloud]: value },
-                rateByPlacement: undefined,
-                priceStatus: undefined,
-                rateProvenance: {
-                  kind: "custom",
-                  label:
-                    workload.rateProvenance?.kind === "custom"
-                      ? workload.rateProvenance.label
-                      : "User supplied contract rate",
-                  currency: "USD",
-                },
-              });
+          value={workload.rateProvenance?.kind === "custom" ? workload.rateByCloud?.[cloud] : undefined}
+          onClear={() => onChange(withoutCustomRate(workload))}
+          onCommit={(value) => {
+            onChange({
+              ...workload,
+              rateByCloud: { [cloud]: value },
+              rateByPlacement: undefined,
+              priceStatus: undefined,
+              rateProvenance: {
+                kind: "custom",
+                label:
+                  workload.rateProvenance?.kind === "custom"
+                    ? workload.rateProvenance.label
+                    : "User supplied contract rate",
+                currency: "USD",
+              },
+            });
           }}
         />
       </label>
@@ -85,12 +84,11 @@ export function MeteredPricingFields({ workload, portfolio, onChange }: KindProp
         <>
           <label className="field mt-3">
             Rate source
-            <input
-              maxLength={160}
+            <DraftTextInput
+              label="Rate source"
+              maxLength={120}
               value={workload.rateProvenance.label}
-              onChange={(event) =>
-                onChange({ ...workload, rateProvenance: { ...workload.rateProvenance!, label: event.target.value } })
-              }
+              onCommit={(label) => onChange({ ...workload, rateProvenance: { ...workload.rateProvenance!, label } })}
             />
           </label>
           <Button

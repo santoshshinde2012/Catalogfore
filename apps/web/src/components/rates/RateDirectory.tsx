@@ -1,5 +1,6 @@
 import type { UnitCostRow } from "@cayfore/engine/unit-costs";
 import { ArrowUpRight, SearchX } from "lucide-react";
+import { useRef } from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { EvidenceBadge } from "./RateEvidence";
@@ -22,6 +23,11 @@ export function RateDirectory({
   onClear: () => void;
   onSelected: () => void;
 }) {
+  const list = useRef<HTMLUListElement>(null);
+  function showMore() {
+    onMore();
+    requestAnimationFrame(() => list.current?.children[limit]?.querySelector("button")?.focus());
+  }
   return (
     <section
       id="rate-directory"
@@ -51,7 +57,7 @@ export function RateDirectory({
         </div>
       ) : (
         <>
-          <ul className="grid gap-2">
+          <ul ref={list} className="grid gap-2">
             {rows.slice(0, limit).map((row) => (
               <li key={row.id}>
                 <button
@@ -95,8 +101,9 @@ export function RateDirectory({
             ))}
           </ul>
           {limit < rows.length && (
-            <Button type="button" variant="outline" className="mt-4 min-h-11 w-full" onClick={onMore}>
-              Show 12 more ({Math.min(limit, rows.length)} of {rows.length.toLocaleString("en-US")})
+            <Button type="button" variant="outline" className="mt-4 min-h-11 w-full" onClick={showMore}>
+              Show {Math.min(12, rows.length - limit)} more ({Math.min(limit, rows.length)} of{" "}
+              {rows.length.toLocaleString("en-US")})
             </Button>
           )}
         </>

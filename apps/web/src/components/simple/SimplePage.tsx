@@ -81,11 +81,14 @@ export function SimplePage({
               ask={advancedAsk}
               portfolio={session.portfolio}
               estimate={session.estimate}
+              hasUnpriced={session.forecastResult.hasUnpriced}
               selectedId={session.selectedId}
               onPortfolio={session.editPortfolio}
               onSelect={session.selectWorkload}
               onRemove={session.removeWorkload}
               onUsageFile={session.loadUsageFile}
+              usageError={session.usageError}
+              usageBusy={session.usageBusy}
             />
           </div>
           {session.usingDetail && (
@@ -98,6 +101,7 @@ export function SimplePage({
           )}
           <PlanForm
             plan={session.plan}
+            source={session.portfolio}
             listMonthly={session.listMonthly}
             usageLocked={session.usingUsage}
             detailLocked={session.usingDetail}
@@ -160,7 +164,7 @@ export function SimplePage({
         />
       )}
 
-      <MobileForecastBar annual={session.annual} incomplete={session.estimate.coverage?.complete === false} />
+      <MobileForecastBar annual={session.annual} incomplete={session.forecastResult.hasUnpriced} />
     </article>
   );
 }

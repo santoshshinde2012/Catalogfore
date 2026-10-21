@@ -1,6 +1,7 @@
+import { DraftNumberInput } from "./DraftInput";
 import { listInstances, skuCatalog } from "@cayfore/engine";
 import { OptionSelect } from "../ui/option-select";
-import { type KindProps, numberOr, ScaleFields, ScheduleFields } from "./fields";
+import { type KindProps, ScaleFields, ScheduleFields } from "./fields";
 
 export function ClusterFields({ workload, portfolio, onChange }: KindProps) {
   if (workload.kind !== "cluster") return null;
@@ -30,24 +31,24 @@ export function ClusterFields({ workload, portfolio, onChange }: KindProps) {
         </label>
         <label className="field">
           Spot share of workers
-          <input
-            type="number"
+          <DraftNumberInput
+            label="Spot share of workers"
             min={0}
             max={1}
             step={0.05}
             value={workload.spotShare}
-            onChange={(event) => onChange({ ...workload, spotShare: numberOr(event.target.value, 0) })}
+            onCommit={(value) => onChange({ ...workload, spotShare: value })}
           />
         </label>
         <label className="field">
           Spot discount
-          <input
-            type="number"
+          <DraftNumberInput
+            label="Spot discount"
             min={0}
             max={0.95}
             step={0.05}
             value={workload.spotDiscount}
-            onChange={(event) => onChange({ ...workload, spotDiscount: numberOr(event.target.value, 0.6) })}
+            onCommit={(value) => onChange({ ...workload, spotDiscount: value })}
           />
         </label>
       </div>

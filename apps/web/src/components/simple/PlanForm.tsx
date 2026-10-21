@@ -6,7 +6,6 @@ import {
   type Tier,
   type WorkloadMix,
 } from "@cayfore/engine";
-import { useState } from "react";
 import { money } from "../../format";
 import { Separator } from "../ui/separator";
 import { CloudSection, SpendSection } from "./plan-cloud-spend";
@@ -15,6 +14,7 @@ import { pct } from "./plan-widgets";
 
 export function PlanForm({
   plan,
+  source,
   listMonthly,
   usageLocked,
   detailLocked = false,
@@ -30,6 +30,7 @@ export function PlanForm({
   onClearUsage,
 }: {
   plan: SimplePlan;
+  source: object;
   listMonthly: number;
   usageLocked: boolean;
   detailLocked?: boolean;
@@ -44,12 +45,7 @@ export function PlanForm({
   onCommit: (rate: number) => void;
   onClearUsage: () => void;
 }) {
-  const [spendText, setSpendText] = useState("");
-  const [spendFocus, setSpendFocus] = useState(false);
-  const [growthText, setGrowthText] = useState("");
-  const [growthFocus, setGrowthFocus] = useState(false);
   const regions = listRegions(plan.cloud);
-  const growthPercent = Math.round(plan.monthlyGrowth * 1000) / 10;
   const mixLine = `${pct(plan.mix.etl)} pipelines, ${pct(plan.mix.sql)} dashboards, ${pct(plan.mix.ml)} models`;
 
   return (
@@ -80,13 +76,10 @@ export function PlanForm({
         <>
           <SpendSection
             plan={plan}
+            source={source}
             listMonthly={listMonthly}
             usageLocked={usageLocked || detailLocked}
             mixLine={mixLine}
-            spendFocus={spendFocus}
-            spendText={spendText}
-            setSpendFocus={setSpendFocus}
-            setSpendText={setSpendText}
             onSpend={onSpend}
             onPreset={onPreset}
           />
@@ -115,11 +108,7 @@ export function PlanForm({
       <GrowthSection
         step={usageLocked || detailLocked ? "2" : "4"}
         plan={plan}
-        growthFocus={growthFocus}
-        growthText={growthText}
-        growthPercent={growthPercent}
-        setGrowthFocus={setGrowthFocus}
-        setGrowthText={setGrowthText}
+        source={source}
         onGrowth={onGrowth}
         onCommit={onCommit}
       />

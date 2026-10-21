@@ -1,5 +1,6 @@
 import { productMap } from "@cayfore/catalog/map";
 import { Search, SlidersHorizontal, X } from "lucide-react";
+import { useRef } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { OptionSelect } from "../ui/option-select";
@@ -23,6 +24,7 @@ export function ProductFilters({
   onKind: (value: string) => void;
   onClear: () => void;
 }) {
+  const search = useRef<HTMLInputElement>(null);
   return (
     <section aria-label="Find products and services" className="rounded-2xl border bg-card p-4 shadow-sm sm:p-5">
       <div className="grid grid-cols-2 items-end gap-3 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,1fr)]">
@@ -36,6 +38,7 @@ export function ProductFilters({
               aria-hidden="true"
             />
             <Input
+              ref={search}
               id="product-search"
               type="search"
               value={query}
@@ -49,7 +52,10 @@ export function ProductFilters({
                 type="button"
                 aria-label="Clear search"
                 className="absolute top-0 right-0 flex h-full w-11 items-center justify-center rounded-r-lg text-muted-foreground hover:bg-muted hover:text-foreground"
-                onClick={() => onQuery("")}
+                onClick={() => {
+                  onQuery("");
+                  search.current?.focus();
+                }}
               >
                 <X className="size-4" aria-hidden="true" />
               </button>

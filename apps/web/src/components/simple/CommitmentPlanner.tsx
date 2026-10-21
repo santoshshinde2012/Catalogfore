@@ -4,6 +4,10 @@ import { money } from "../../format";
 import { periodLabel } from "../../lib/chart-data";
 import { Input } from "../ui/input";
 
+const MAX_AMOUNT = 1e12;
+const invalidAmount = (value: string, max = MAX_AMOUNT) =>
+  Boolean(value.trim()) && (!Number.isFinite(Number(value)) || Number(value) < 0 || Number(value) > max);
+
 export function CommitmentPlanner({ projection }: { projection: PortfolioProjection }) {
   const [faceValue, setFaceValue] = useState("");
   const [eligible, setEligible] = useState("");
@@ -16,19 +20,16 @@ export function CommitmentPlanner({ projection }: { projection: PortfolioProject
       !faceValue.trim() ||
       !eligible.trim() ||
       !discount.trim() ||
-      !Number.isFinite(allowance) ||
-      !Number.isFinite(monthly) ||
-      !Number.isFinite(rate) ||
-      allowance < 0 ||
-      monthly < 0 ||
-      rate < 0 ||
-      rate >= 1
+      invalidAmount(faceValue) ||
+      invalidAmount(eligible) ||
+      invalidAmount(discount, 99.99)
     )
       return null;
     const first = projection.points[0]?.dbuCost ?? 0;
     const costs = projection.points
       .slice(0, 12)
       .map((point) => monthly * (first > 0 ? Math.max(0, point.dbuCost) / first : 1));
+    if (costs.some((amount) => !Number.isFinite(amount) || amount > 1e15)) return null;
     return simulateCommitment(costs, allowance, rate);
   }, [projection.points, faceValue, eligible, discount]);
   return (
@@ -45,7 +46,10 @@ export function CommitmentPlanner({ projection }: { projection: PortfolioProject
           <Input
             type="number"
             min={0}
+            max={MAX_AMOUNT}
             step={0.01}
+            aria-invalid={invalidAmount(faceValue)}
+            aria-describedby="commitment-guidance"
             placeholder="e.g. 120000"
             value={faceValue}
             onChange={(event) => setFaceValue(event.target.value)}
@@ -56,7 +60,10 @@ export function CommitmentPlanner({ projection }: { projection: PortfolioProject
           <Input
             type="number"
             min={0}
+            max={MAX_AMOUNT}
             step={0.01}
+            aria-invalid={invalidAmount(eligible)}
+            aria-describedby="commitment-guidance"
             placeholder="e.g. 10000"
             value={eligible}
             onChange={(event) => setEligible(event.target.value)}
@@ -69,6 +76,8 @@ export function CommitmentPlanner({ projection }: { projection: PortfolioProject
             min={0}
             max={99.99}
             step={0.01}
+            aria-invalid={invalidAmount(discount, 99.99)}
+            aria-describedby="commitment-guidance"
             value={discount}
             onChange={(event) => setDiscount(event.target.value)}
           />
@@ -78,13 +87,24 @@ export function CommitmentPlanner({ projection }: { projection: PortfolioProject
         No DBCU conversion, rollover, tax, or cancellation terms are inferred. Enter list spend explicitly; billed or
         effective net cost is not an eligible list-spend measure.
       </p>
-      {!result && (
-        <p role="status" className="mt-4 rounded-lg bg-muted/60 p-3 text-sm leading-relaxed text-muted-foreground">
-          {faceValue.trim() && eligible.trim()
-            ? "Use non-negative USD amounts and a discount from 0% to below 100%."
-            : "Enter an allowance and eligible monthly spend to compare the commitment with pay as you go."}
-        </p>
-      )}
+      <p
+        id="commitment-guidance"
+        role="status"
+        className={result ? "sr-only" : "mt-4 rounded-lg bg-muted/60 p-3 text-sm leading-relaxed text-muted-foreground"}
+      >
+        {!result && (
+          <>
+            {faceValue.trim() && eligible.trim()
+              ? invalidAmount(faceValue) ||
+                invalidAmount(eligible) ||
+                invalidAmount(discount, 99.99) ||
+                !discount.trim()
+                ? "Enter USD amounts from $0 to $1,000,000,000,000 and a discount from 0% to 99.99%."
+                : "Reduce the eligible spend or forecast growth to keep the calculation in range."
+              : "Enter an allowance and eligible monthly spend to compare the commitment with pay as you go."}
+          </>
+        )}
+      </p>
       {result && (
         <>
           <div

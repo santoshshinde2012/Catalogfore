@@ -6,8 +6,9 @@ import {
   type UnitCostRow,
 } from "@cayfore/engine/unit-costs";
 import { Calculator } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, type ReactNode } from "react";
 import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import { evidenceLabels, unitMoney } from "./rate-presentation";
 import { RateForecastImpact } from "./RateForecastImpact";
 
@@ -18,6 +19,9 @@ export function RateCalculator({
   onApply,
   onPreview,
   unavailableReason,
+  quantity: draftQuantity,
+  onQuantity,
+  feedback,
 }: {
   row: UnitCostRow;
   usage?: PlanQuantity | null;
@@ -25,8 +29,11 @@ export function RateCalculator({
   onApply?: (quantity: number) => void;
   onPreview?: (quantity: number) => PlanQuantityPreview | null;
   unavailableReason?: string | null;
+  quantity?: string;
+  onQuantity: (quantity: string) => void;
+  feedback?: ReactNode;
 }) {
-  const [quantity, setQuantity] = useState(() => (usage ? String(usage.quantity) : "100"));
+  const quantity = draftQuantity ?? (usage ? String(usage.quantity) : "100");
   const amount = Number(quantity);
   const calculation = calculateUnitCost(row, quantity.trim() === "" ? Number.NaN : amount);
   const usable = calculation.status !== "unavailable";
@@ -56,15 +63,15 @@ export function RateCalculator({
           <label className="field mt-3" htmlFor="rate-quantity">
             Billable quantity ({row.unit})
           </label>
-          <input
+          <Input
             id="rate-quantity"
-            className="mt-2 w-full rounded-lg border bg-background px-3 py-2 text-sm"
+            className="mt-2"
             type="number"
             min="0"
             max="1000000000000000"
             step="any"
             value={quantity}
-            onChange={(event) => setQuantity(event.target.value)}
+            onChange={(event) => onQuantity(event.target.value)}
             aria-invalid={!valid || (!!action && !applyValid) || cannotStore}
             aria-describedby="rate-quantity-help rate-calculation rate-plan-help"
           />
@@ -83,9 +90,15 @@ export function RateCalculator({
               ? `${amount.toLocaleString("en-US", { maximumFractionDigits: 10 })} × ${unitMoney(calculation.unitRateUsd!)} = ${unitMoney(total)}`
               : calculation.reason}
           </p>
+          {preview && <RateForecastImpact preview={preview} />}
           <div className="mt-3 flex flex-wrap gap-2">
             {usage && (
-              <Button type="button" variant="outline" onClick={() => setQuantity(String(usage.quantity))}>
+              <Button
+                type="button"
+                variant="outline"
+                className="h-auto min-h-11 max-w-full whitespace-normal py-2 text-left sm:min-h-9"
+                onClick={() => onQuantity(String(usage.quantity))}
+              >
                 Use my usage ({usage.quantity.toLocaleString("en-US")} {usage.unit})
               </Button>
             )}
@@ -95,6 +108,7 @@ export function RateCalculator({
               </Button>
             )}
           </div>
+          {feedback && <div className="mt-3">{feedback}</div>}
           <p id="rate-plan-help" className="mt-2 text-xs leading-relaxed text-muted-foreground">
             {action && valid && !applyValid
               ? `Forecast quantities must be between 0 and ${MAX_PLAN_QUANTITY.toLocaleString("en-US")} per month. The component calculation above is for reference only.`
@@ -103,7 +117,6 @@ export function RateCalculator({
                 : (unavailableReason ?? calculatorNote(usage, action))}
             {unchanged && " Enter a different quantity to update the forecast."}
           </p>
-          {preview && <RateForecastImpact preview={preview} />}
         </>
       ) : (
         <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
@@ -111,6 +124,7 @@ export function RateCalculator({
           price.
         </p>
       )}
+      {!usable && feedback && <div className="mt-3">{feedback}</div>}
     </section>
   );
 }
