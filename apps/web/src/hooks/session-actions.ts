@@ -7,7 +7,12 @@ import {
   type RecommendationId,
 } from "@cayfore/engine";
 import { productById, workloadsForProduct } from "@cayfore/engine/products";
-import { applyPlanQuantity, type UnitCostRow } from "@cayfore/engine/unit-costs";
+import {
+  applyPlanQuantity,
+  planQuantityForUnitCost,
+  planQuantityUnavailableReason,
+  type UnitCostRow,
+} from "@cayfore/engine/unit-costs";
 import { toast } from "sonner";
 import { planFromPortfolio } from "./forecast-session";
 import type { SessionControls } from "./session-controls";
@@ -31,6 +36,7 @@ export function sessionActions(controls: SessionControls) {
         monthlyGrowth: Math.pow(1 + previous.forecast.annualGrowth, 1 / 12) - 1,
       }));
     setUndo(null);
+    controls.setNotice("Previous forecast restored.");
     setSelectedId((current) =>
       previous.workloads.some((workload) => workload.id === current) ? current : (previous.workloads[0]?.id ?? null),
     );
@@ -73,10 +79,12 @@ export function sessionActions(controls: SessionControls) {
       return true;
     },
     applyUnitCost: (row: UnitCostRow, quantity: number) => {
+      if (planQuantityForUnitCost(portfolio, row)?.quantity === quantity) return false;
       const update = applyPlanQuantity(portfolio, row, quantity);
       if (!update) {
         controls.setNotice(
-          "This quantity stays in the calculator. The forecast only accepts a catalog DBU workload or an adjustable matching workload.",
+          planQuantityUnavailableReason(portfolio, row) ??
+            "Enter a supported monthly quantity before applying it to the forecast.",
         );
         return false;
       }
@@ -84,7 +92,7 @@ export function sessionActions(controls: SessionControls) {
       setUndo(portfolio);
       setSelectedId(update.selectedId);
       controls.setNotice(
-        `Updated ${row.productName} to ${quantity.toLocaleString("en-US")} ${row.unit}. The year uses this quantity and your plan discounts.`,
+        `Set ${row.productName} to ${quantity.toLocaleString("en-US")} ${row.unit} per baseline month. The forecast applies your discounts, growth or fitted trend, and dated changes.`,
       );
       return true;
     },

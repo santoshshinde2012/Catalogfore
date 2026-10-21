@@ -37,6 +37,7 @@ describe("canonical financial projection", () => {
       },
     });
     expect(projection.points.map((point) => point.total)).toEqual(projection.months.map((month) => month.expected));
+    expect(projection.hasUnpriced).toBe(false);
     expect(projection.annual).toBe(roundMoney(projection.points.reduce((sum, point) => sum + point.total, 0)));
     projection.points.forEach((point) =>
       expect(point.total).toBe(roundMoney(point.dbuCost + point.cloudCost + point.addonCost)),
@@ -76,6 +77,7 @@ describe("canonical financial projection", () => {
     const result = projectPortfolio(portfolio);
     expect(result.estimate.lines[0].priceStatus).toBe("unpriced");
     expect(result.estimate.coverage?.complete).toBe(false);
+    expect(result.hasUnpriced).toBe(true);
     expect(result.estimate.warnings.join(" ")).toMatch(/known subtotal/);
     expect(
       estimate({

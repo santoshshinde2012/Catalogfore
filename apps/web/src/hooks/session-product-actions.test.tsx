@@ -4,6 +4,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { defaultInstanceId } from "@cayfore/engine";
 import { productById } from "@cayfore/engine/products";
+import { buildUnitCostCatalog } from "@cayfore/engine/unit-costs";
 import { useSimpleForecast, type SimpleSession } from "./useSimpleForecast";
 
 let root: Root;
@@ -83,4 +84,29 @@ it("leaves the plan and share fragment intact for learning-only or unpriced entr
     expect(session.portfolio).toEqual(baseline);
     expect(location.hash).toBe(hash);
   }
+});
+
+it("preserves the undo snapshot when a calculator quantity is reapplied unchanged", () => {
+  const baseline = structuredClone(session.portfolio);
+  const row = buildUnitCostCatalog().rows.find(
+    (item) =>
+      item.productId === "jobs_serverless" &&
+      item.cloud === baseline.cloud &&
+      item.region === baseline.region &&
+      item.tier === baseline.tier &&
+      item.unit === "DBU",
+  );
+  if (!row) throw new Error("Expected a serverless Jobs DBU rate");
+  act(() => {
+    expect(session.applyUnitCost(row, 240)).toBe(true);
+  });
+  const applied = structuredClone(session.portfolio);
+  act(() => {
+    expect(session.applyUnitCost(row, 240)).toBe(false);
+  });
+  expect(session.portfolio).toEqual(applied);
+  expect(session.canUndo).toBe(true);
+  act(() => session.undoRemove());
+  expect(session.portfolio).toEqual(baseline);
+  expect(session.notice).toBe("Previous forecast restored.");
 });

@@ -1,24 +1,33 @@
 import { uid } from "../money.js";
-import { METERED_SKUS, type Cloud, type MeteredSku, type Portfolio, type Tier, type Workload } from "../types.js";
-import type { UnitCostConfidence, UnitCostRow, UnitCostStatus } from "./types.js";
+import type { MeteredSku, Portfolio, Workload } from "../types.js";
+import type { UnitCostRow } from "./types.js";
+import { unitCostQuote } from "./quote.js";
+import { billableQuantity, canAdjust, canCreate, matchingWorkloads, quantityScale } from "./plan-quantity-match.js";
 
-/** The fields the plan needs from a unit-cost row. Callers may pass a full row. */
-export interface UnitCostPlanTarget {
-  productId: string;
-  productName: string;
-  componentName: string;
-  partId: string | null;
-  sku: string | null;
-  unit: string;
-  cloud: Cloud | null;
-  region: string | null;
-  tier: Tier | null;
-  rateKind: UnitCostRow["rateKind"];
-  status: UnitCostStatus;
-  confidence: UnitCostConfidence;
-}
+/** Matches the saved workload quantity limit, including after usage calibration. */
+export const MAX_PLAN_QUANTITY = 1e12;
+
+export type UnitCostPlanTarget = Pick<
+  UnitCostRow,
+  | "productId"
+  | "productName"
+  | "componentName"
+  | "partId"
+  | "sku"
+  | "unit"
+  | "cloud"
+  | "region"
+  | "tier"
+  | "rateKind"
+  | "status"
+  | "confidence"
+  | "unitQuantity"
+  | "unitPriceUsd"
+  | "usdPerUnit"
+>;
 
 export interface PlanQuantity {
+  /** Billable baseline-month quantity after the portfolio's usage calibration. */
   quantity: number;
   unit: string;
   workloadIds: readonly string[];
@@ -34,19 +43,36 @@ export function planQuantityForUnitCost(portfolio: Portfolio, row: UnitCostPlanT
   const matches = matchingWorkloads(portfolio, row);
   if (!matches.length) return null;
   return {
-    quantity: matches.reduce((sum, workload) => sum + (billableQuantity(workload, row.unit) ?? 0), 0),
+    quantity:
+      matches.reduce((sum, workload) => sum + (billableQuantity(workload, row.unit) ?? 0), 0) *
+      quantityScale(portfolio),
     unit: row.unit,
     workloadIds: matches.map((workload) => workload.id),
     adjustable: matches.every((workload) => canAdjust(workload, row.unit)),
   };
 }
 
-/** Update an adjustable workload, or append a catalog-priced DBU workload. Observed costs stay put. */
+export function planQuantityUnavailableReason(portfolio: Portfolio, row: UnitCostPlanTarget): string | null {
+  const quote = unitCostQuote(row);
+  if (quote.reason) return quote.reason;
+  const matches = matchingWorkloads(portfolio, row);
+  if (matches.some((workload) => workload.kind === "metered" && workload.fixedUsdByCloud))
+    return "This usage includes a fixed or exported cost. Edit it in the forecast to preserve the recorded amount.";
+  if (matches.some((workload) => (billableQuantity(workload, row.unit) ?? 0) < 0))
+    return "This usage includes billing corrections. Edit individual workloads in the forecast to preserve their signs.";
+  if (matches.length)
+    return matches.every((workload) => canAdjust(workload, row.unit))
+      ? null
+      : "Edit this product's usage drivers in the forecast; this component quantity cannot safely replace them.";
+  return canCreate(row)
+    ? null
+    : "Only resolved DBU components without product usage formulas can be added here. Add this product in the forecast to set its usage drivers.";
+}
+
+/** Update an adjustable monthly quantity, or append a catalog-priced DBU workload. */
 export function planQuantityAction(portfolio: Portfolio, row: UnitCostPlanTarget): "update" | "add" | null {
-  const current = planQuantityForUnitCost(portfolio, row);
-  if (current?.adjustable) return "update";
-  if (current) return null;
-  return canCreate(row) ? "add" : null;
+  if (planQuantityUnavailableReason(portfolio, row)) return null;
+  return planQuantityForUnitCost(portfolio, row) ? "update" : "add";
 }
 
 export function applyPlanQuantity(
@@ -55,11 +81,14 @@ export function applyPlanQuantity(
   quantity: number,
   nextId: () => string = uid,
 ): PlanQuantityUpdate | null {
-  if (!Number.isFinite(quantity) || quantity < 0 || quantity > 1e12) return null;
+  const rawQuantity = quantity / quantityScale(portfolio);
+  if (!Number.isFinite(quantity) || quantity < 0 || quantity > MAX_PLAN_QUANTITY || rawQuantity > MAX_PLAN_QUANTITY)
+    return null;
+  if (!planQuantityAction(portfolio, row)) return null;
   const current = planQuantityForUnitCost(portfolio, row);
-  if (current?.adjustable) return scaleMatches(portfolio, row, current, quantity);
-  if (current || !canCreate(row)) return null;
+  if (current) return scaleMatches(portfolio, row, current, quantity, rawQuantity);
   const id = nextId();
+  if (!id || portfolio.workloads.some((workload) => workload.id === id)) return null;
   const workload: Workload = {
     id,
     name: `${row.productName} · ${row.componentName}`,
@@ -67,11 +96,11 @@ export function applyPlanQuantity(
     ...(row.partId ? { partId: row.partId } : {}),
     kind: "metered",
     sku: row.sku as MeteredSku,
-    dbuPerMonth: quantity,
+    dbuPerMonth: rawQuantity,
     ...(row.cloud ? { cloud: row.cloud } : {}),
     ...(row.region ? { region: row.region } : {}),
     ...(row.tier ? { tier: row.tier } : {}),
-    inputs: { usageUnit: "DBU", usageQuantity: quantity },
+    inputs: { usageUnit: "DBU", usageQuantity: rawQuantity },
   };
   return { portfolio: { ...portfolio, workloads: [...portfolio.workloads, workload] }, selectedId: id };
 }
@@ -81,69 +110,25 @@ function scaleMatches(
   row: UnitCostPlanTarget,
   current: PlanQuantity,
   quantity: number,
+  rawQuantity: number,
 ): PlanQuantityUpdate {
   const ids = new Set(current.workloadIds);
-  let selectedId = current.workloadIds[0];
+  const selectedId = current.workloadIds[0];
   const workloads = portfolio.workloads.map((workload) => {
-    if (!ids.has(workload.id)) return workload;
-    const share = current.quantity > 0 ? (billableQuantity(workload, row.unit) ?? 0) / current.quantity : 0;
-    const next = current.quantity > 0 ? share * quantity : workload.id === selectedId ? quantity : 0;
-    if (workload.id === selectedId) selectedId = workload.id;
-    return withQuantity(workload, next, row.unit);
+    if (!ids.has(workload.id) || workload.kind !== "metered") return workload;
+    const next =
+      current.quantity > 0
+        ? ((billableQuantity(workload, row.unit) ?? 0) / current.quantity) * quantity
+        : workload.id === selectedId
+          ? rawQuantity
+          : 0;
+    const inputs =
+      workload.inputs?.usageUnit === row.unit ? { ...workload.inputs, usageQuantity: next } : workload.inputs;
+    return {
+      ...workload,
+      ...(row.unit === "DBU" ? { dbuPerMonth: next } : { units: next }),
+      ...(inputs ? { inputs } : {}),
+    };
   });
   return { portfolio: { ...portfolio, workloads }, selectedId };
-}
-
-function matchingWorkloads(portfolio: Portfolio, row: UnitCostPlanTarget): Workload[] {
-  return portfolio.workloads.filter((workload) => {
-    if (workload.productId !== row.productId) return false;
-    if (row.partId && workload.partId !== row.partId) return false;
-    if (row.sku && skuOf(workload) !== row.sku) return false;
-    if (billableQuantity(workload, row.unit) === null) return false;
-    const cloud = workload.cloud ?? portfolio.cloud;
-    const region = workload.region ?? portfolio.region;
-    const tier = workload.tier ?? portfolio.tier;
-    return (
-      (!row.cloud || row.cloud === cloud) && (!row.region || row.region === region) && (!row.tier || row.tier === tier)
-    );
-  });
-}
-
-function billableQuantity(workload: Workload, unit: string): number | null {
-  if (workload.kind !== "metered") return null;
-  if (unit === "DBU" && Number.isFinite(workload.dbuPerMonth)) return workload.dbuPerMonth;
-  const recorded = workload.inputs?.usageQuantity;
-  if (workload.inputs?.usageUnit === unit && typeof recorded === "number" && Number.isFinite(recorded)) return recorded;
-  if (unit !== "DBU" && typeof workload.units === "number" && Number.isFinite(workload.units)) return workload.units;
-  return null;
-}
-
-function canAdjust(workload: Workload, unit: string): boolean {
-  if (workload.kind !== "metered" || workload.fixedUsdByCloud || billableQuantity(workload, unit) === null)
-    return false;
-  return unit === "DBU" ? !workload.rateByPlacement : true;
-}
-
-function withQuantity(workload: Workload, quantity: number, unit: string): Workload {
-  if (workload.kind !== "metered") return workload;
-  const inputs =
-    workload.inputs?.usageUnit === unit ? { ...workload.inputs, usageQuantity: quantity } : workload.inputs;
-  if (unit === "DBU") return { ...workload, dbuPerMonth: quantity, ...(inputs ? { inputs } : {}) };
-  return { ...workload, units: quantity, ...(inputs ? { inputs } : {}) };
-}
-
-function skuOf(workload: Workload): string | undefined {
-  return "sku" in workload ? workload.sku : undefined;
-}
-
-function canCreate(row: UnitCostPlanTarget): boolean {
-  return (
-    row.unit === "DBU" &&
-    row.rateKind === "money" &&
-    row.status !== "unpriced" &&
-    row.status !== "not_applicable" &&
-    row.confidence !== "conflict" &&
-    row.sku !== null &&
-    (METERED_SKUS as readonly string[]).includes(row.sku)
-  );
 }

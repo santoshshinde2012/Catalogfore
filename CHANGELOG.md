@@ -6,6 +6,8 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Added
 
+- Monthly quantity planning from Unit costs, with whole-plan first-month and annual previews, proportional updates to matching workloads, explicit application limits and pricing restrictions, and persistent View forecast / Undo change actions. Preview, applied forecast, and exports use the same engine.
+
 - The product name is Catalogfore. The GitHub repository and Pages site are [Catalogfore](https://github.com/santoshshinde2012/Catalogfore) and https://santoshshinde2012.github.io/Catalogfore/. The npm scope and `cayfore-theme` key stay `cayfore`. Excel downloads use `catalogfore-forecast-*.xlsx`.
 
 - A sortable, paginated unit-cost data preview with quoted billing units, source evidence and dates, exact-row inspection, and matching CSV/JSON export scope. Files retain all 40 fields and every selected row; pagination only limits the preview.
@@ -53,6 +55,7 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 ### Changed
 
 - Weekly catalog check on 2026-10-19. Catalog version 2026-10-17.3 -> 2026-10-19.1.
+- Weekly report generation runs after the catalog version changes so the product inventory and generated reports describe the same snapshot. Refresh-sensitive tests compare against source observations instead of a fixed capture date.
 - Each price file now has one engine loader under `packages/engine/src/catalog/sources`. Excel reads cell confidence through `@cayfore/engine/rate-confidence`. Rebuilt reports and unit-cost artifacts live in `data/generated/`, apart from the catalogs that are edited by hand.
 - Removed boxed header and unit-cost task navigation in favor of plain text and active underlines. Compacted the reference filters and source context to give catalog data more room.
 

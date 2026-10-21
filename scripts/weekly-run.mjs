@@ -16,6 +16,7 @@ const statePath = new URL("data/generated/catalog-watch-state.json", root);
 const CHANGELOG_MARKER = "### Changed\n\n";
 
 export async function runWeeklyCatalog({ apply, offline, ports }) {
+  if (apply && offline) stop("--apply requires live source checks; use --offline without --apply for a dry run.");
   const today = ports.clock.today();
   const before = snapshot(ports);
   const stateBefore = readJson(ports, statePath);
@@ -76,6 +77,14 @@ export async function runWeeklyCatalog({ apply, offline, ports }) {
       new URL("data/weekly-summary.md", root),
       summary({ today, catalogVersion, added, removed, flags, notes }),
     );
+  }
+  if (apply) {
+    // The watch runs before the version bump. Rebuild these reports against the
+    // final catalog so its documentation and confidence metadata stay in sync.
+    for (const script of ["scripts/coverage-report.mjs", "scripts/rate-confidence.mjs"]) {
+      const result = ports.spawn(script);
+      if (result !== 0) stop(`Could not rebuild ${script}`, result);
+    }
   }
   const issue = renderResearchIssue(checklist);
   if (apply && issue) ports.writeText(ports.researchPath(), `${issue}\n`);

@@ -12,6 +12,8 @@ import { buildUnitCostCatalog } from "./unit-costs/builder.js";
 import { estimate } from "./estimate.js";
 import { blankPortfolio } from "./portfolio.js";
 import type { Workload } from "./types.js";
+import { publishedDbuRates } from "./catalog/sources/published-dbu.js";
+import { azureDbuMeters } from "./catalog/sources/azure-meters.js";
 
 describe("shared first-party DBU price resolution", () => {
   it("traces manually mapped Zerobus GB rates to the exact retained first-party price card", () => {
@@ -38,7 +40,11 @@ describe("shared first-party DBU price resolution", () => {
     expect(rate.region).toBe("sa-east-1");
     expect(rate.sourceUrl).toBe("https://www.databricks.com/en-pricing-assets/data/pricing/cards.json");
     expect(rate.locator).toContain("JSON pointer /premium/AWS/");
-    expect(rate.observedOn).toBe("2026-10-17");
+    const observation = publishedDbuRates.find(
+      (row) =>
+        row.cloud === "aws" && row.region === "sa-east-1" && row.tier === "premium" && row.sku === "jobs_classic",
+    )!;
+    expect(rate.observedOn).toBe(observation.observedOn);
     expect(rate.effectiveFrom).toBeNull();
     expect(regionalSkuRate("aws", "sa-east-1", "premium", "jobs_classic")).toBe(rate.usdPerDbu);
     expect(firstPartyDbuRate("gcp", "us-central1", "premium", "model_serving")!.usdPerDbu).toBe(0.07);
@@ -56,7 +62,8 @@ describe("shared first-party DBU price resolution", () => {
   it("retains Azure meter observations separately from documentation and effective dates", () => {
     const rate = firstPartyDbuRate("azure", "eastus", "premium", "jobs_classic")!;
     expect(rate.usdPerDbu).toBe(0.3);
-    expect(rate.observedOn).toBe("2026-10-17");
+    const observation = azureDbuMeters.find((row) => row.region === "eastus" && row.sku === "jobs_classic")!;
+    expect(rate.observedOn).toBe(observation.asOf);
     expect(rate.effectiveFrom).toMatch(/^\d{4}-\d{2}-\d{2}/);
     expect(new URL(rate.sourceUrl).hostname).toBe("prices.azure.com");
     expect(rate.locator).toContain("meter ");
