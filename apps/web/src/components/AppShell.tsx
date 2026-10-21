@@ -1,5 +1,9 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { ConnectionStatus } from "./ConnectionStatus";
+import { ProductMapSkeleton, UnitCostsSkeleton } from "./loading/skeletons";
+import { loadProductMap, loadUnitCosts } from "./loading/route-prefetch";
+import { WorkspaceAssist } from "./loading/workspace-assist";
 import { navigateToSection } from "../lib/page-navigation";
 import { readAppView, useAppView, type RatePlacement } from "../hooks/useAppView";
 import {
@@ -16,10 +20,8 @@ import { SimplePage } from "./simple/SimplePage";
 import { Toaster } from "./ui/sonner";
 import { TooltipProvider } from "./ui/tooltip";
 
-const ProductMapPage = lazy(() =>
-  import("./products/ProductMapPage").then((module) => ({ default: module.ProductMapPage })),
-);
-const UnitCostsPage = lazy(() => import("./rates/UnitCostsPage").then((module) => ({ default: module.UnitCostsPage })));
+const ProductMapPage = lazy(() => loadProductMap().then((module) => ({ default: module.ProductMapPage })));
+const UnitCostsPage = lazy(() => loadUnitCosts().then((module) => ({ default: module.UnitCostsPage })));
 
 export function AppShell({ session }: { session: SimpleSession }) {
   const [howOpen, setHowOpen] = useState(false);
@@ -116,13 +118,24 @@ export function AppShell({ session }: { session: SimpleSession }) {
             showPlanner("plan-inputs");
           }}
           onNew={() => {
+            const previous = session.portfolio;
             session.reset();
             showPlanner("plan-inputs");
-            toast("Started a new forecast", { description: "Adjust the inputs to start a new estimate." });
+            toast.success("Started a new forecast", {
+              description: "The default plan is restored.",
+              action: { label: "Undo", onClick: () => session.loadPortfolio(previous) },
+            });
           }}
         />
+        <ConnectionStatus />
+        <WorkspaceAssist
+          onPlan={() => showPlanner("plan-inputs")}
+          onProducts={showProducts}
+          onRates={() => showRates()}
+          onForecast={() => showPlanner("forecast")}
+        />
         <main>
-          <WorkspaceBoundary key={view} onPlan={() => showPlanner("plan-inputs")}>
+          <WorkspaceBoundary key={view} contentId={contentId} onPlan={() => showPlanner("plan-inputs")}>
             {view === "planner" && (
               <SimplePage
                 session={session}
@@ -133,13 +146,7 @@ export function AppShell({ session }: { session: SimpleSession }) {
               />
             )}
             {productsOpen && (
-              <Suspense
-                fallback={
-                  <p className="mx-auto max-w-7xl px-6 py-16 text-muted-foreground" role="status">
-                    Loading the product map…
-                  </p>
-                }
-              >
+              <Suspense fallback={<ProductMapSkeleton />}>
                 <ProductMapPage
                   cache={productDraft}
                   onAddProduct={addProduct}
@@ -149,13 +156,7 @@ export function AppShell({ session }: { session: SimpleSession }) {
               </Suspense>
             )}
             {ratesOpen && (
-              <Suspense
-                fallback={
-                  <p className="mx-auto max-w-7xl px-6 py-16 text-muted-foreground" role="status">
-                    Loading unit costs…
-                  </p>
-                }
-              >
+              <Suspense fallback={<UnitCostsSkeleton />}>
                 <UnitCostsPage
                   productId={rateProductId}
                   placement={ratePlacement}

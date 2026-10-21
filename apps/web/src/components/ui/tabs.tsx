@@ -39,5 +39,5 @@ export function TabsTrigger({ className, children, ...props }: ComponentProps<ty
 }
 
 export function TabsContent({ className, ...props }: ComponentProps<typeof TabsPrimitive.Content>) {
-  return <TabsPrimitive.Content className={cn("mt-4 outline-none", className)} {...props} />;
+  return <TabsPrimitive.Content className={cn("tab-panel mt-4 outline-none", className)} {...props} />;
 }

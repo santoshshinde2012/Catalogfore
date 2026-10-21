@@ -9,6 +9,7 @@ import type { RatePlacement } from "../../hooks/useAppView";
 import { ForecastViews } from "./ForecastViews";
 import { PriceDisclosure } from "./PriceDisclosure";
 import { periodAt, periodLabel } from "../../lib/chart-data";
+import { FieldHelp } from "../ui/field-help";
 import { InfoTooltip } from "../ui/tooltip";
 import { ScenarioComparison } from "./ScenarioComparison";
 
@@ -52,7 +53,13 @@ export function ResultsPanel({
         <div>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-sm font-semibold">Next 12 months</h2>
+              <h2 className="flex items-center gap-1.5 text-sm font-semibold">
+                Next 12 months
+                <FieldHelp
+                  label="Next 12 months"
+                  description="Sum of the first twelve forecast months, rounded for reading. Exports keep the exact amount."
+                />
+              </h2>
               <p className="mt-1 text-xs text-muted-foreground">
                 {periodLabel(startMonth)}–{periodLabel(endMonth)} · USD
               </p>
@@ -91,8 +98,15 @@ export function ResultsPanel({
               Reading usage data…
             </p>
           )}
-          <p className="mt-2 text-sm tabular-nums text-muted-foreground" data-testid="annual-range">
+          <p
+            className="mt-2 flex flex-wrap items-center gap-1.5 text-sm tabular-nums text-muted-foreground"
+            data-testid="annual-range"
+          >
             Planning range {money(band.low, 0)}–{money(band.high, 0)}
+            <FieldHelp
+              label="Planning range"
+              description="Low and high totals from the model assumptions. This is not a calibrated probability interval."
+            />
           </p>
           {portfolio.usage?.sourceLabel && (
             <p className="mt-2 text-xs font-medium text-muted-foreground">{portfolio.usage.sourceLabel}</p>
@@ -157,10 +171,18 @@ export function ResultsPanel({
   );
 }
 
+const tileHelp: Record<string, string> = {
+  "First month": "Expected spend in the first forecast month, after mix, growth, and discounts.",
+  "Month 12": "Expected spend in the twelfth month. Monthly growth compounds from the baseline.",
+};
+
 function Tile({ label, value, testId }: { label: string; value: string; testId?: string }) {
   return (
     <div className="min-w-0 rounded-lg border bg-background px-3 py-2">
-      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="flex items-center gap-1 text-xs text-muted-foreground">
+        {label}
+        {tileHelp[label] && <FieldHelp label={label} description={tileHelp[label]} />}
+      </p>
       <p className="mt-0.5 break-words text-sm font-semibold tabular-nums" data-testid={testId}>
         {value}
       </p>

@@ -27,7 +27,8 @@ export function MobileForecastBar({ annual, incomplete }: { annual: number; inco
   }, []);
   return (
     <aside
-      className="fixed inset-x-0 bottom-0 z-40 border-t bg-card/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-6px_24px_rgb(11_32_38/0.06)] backdrop-blur lg:hidden"
+      data-print-hide=""
+      className="fixed inset-x-0 bottom-0 z-40 border-t bg-card/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-6px_24px_rgb(11_32_38/0.06)] backdrop-blur lg:hidden print:hidden"
       aria-label="Forecast shortcut"
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">

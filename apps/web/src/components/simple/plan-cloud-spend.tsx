@@ -21,7 +21,12 @@ export function CloudSection({
 }) {
   return (
     <>
-      <Step id="plan-cloud" n="1" title="Cloud">
+      <Step
+        id="plan-cloud"
+        n="1"
+        title="Cloud"
+        hint="Sets the cloud, edition, and region used to price new workloads. Prices follow the selected region."
+      >
         <SegmentedStrip label="Cloud" value={plan.cloud} onValueChange={(value) => value && onCloud(value as Cloud)}>
           {CLOUDS.map((cloud) => (
             <SegmentedStripItem key={cloud.id} value={cloud.id}>
@@ -87,7 +92,13 @@ export function SpendSection({
   }
   return (
     <>
-      <Step id="plan-spend" n="2" title="Starting spend" disabled={usageLocked}>
+      <Step
+        id="plan-spend"
+        n="2"
+        title="Starting spend"
+        hint="Monthly amount before commitment discounts. Team-size presets replace this baseline. Enter $0 to $1,000,000,000."
+        disabled={usageLocked}
+      >
         <label className="grid gap-2 text-sm font-medium">
           Starting monthly spend
           <span className="relative block font-normal">

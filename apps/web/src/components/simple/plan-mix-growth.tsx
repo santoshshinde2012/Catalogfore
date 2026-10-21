@@ -1,6 +1,7 @@
 import { type SimplePlan, type WorkloadMix } from "@cayfore/engine";
 import { useId, useState } from "react";
 import { Input } from "../ui/input";
+import { FieldHelp } from "../ui/field-help";
 import { Slider } from "../ui/slider";
 import { SegmentedStrip, SegmentedStripItem } from "../ui/segmented-strip";
 import { GROWTH, MIX_DOT, MIX_FIELDS, MixBar, Step, growthValue, pct } from "./plan-widgets";
@@ -16,7 +17,13 @@ export function MixSection({
 }) {
   return (
     <>
-      <Step id="plan-mix" n="3" title="Mix" disabled={usageLocked}>
+      <Step
+        id="plan-mix"
+        n="3"
+        title="Mix"
+        hint="How the baseline splits across pipelines, dashboards, and models. The three shares always total 100%."
+        disabled={usageLocked}
+      >
         {MIX_FIELDS.map((field) => (
           <div key={field.key} className="grid gap-2">
             <div className="flex items-center justify-between text-sm font-medium">
@@ -70,7 +77,12 @@ export function GrowthSection({
   }
   return (
     <>
-      <Step id="plan-growth" n={step} title="Monthly growth">
+      <Step
+        id="plan-growth"
+        n={step}
+        title="Monthly growth"
+        hint="Compound change applied after the baseline month. Custom growth accepts −20% to 20%."
+      >
         <SegmentedStrip
           label="Monthly growth"
           value={growthValue(plan.monthlyGrowth)}
@@ -134,7 +146,13 @@ export function GrowthSection({
         )}
         <div className="grid gap-2 border-t pt-3">
           <div className="flex items-center justify-between text-sm font-medium">
-            <span>Optional commitment discount</span>
+            <span className="flex items-center gap-1.5">
+              Optional commitment discount
+              <FieldHelp
+                label="Optional commitment discount"
+                description="Percent off the Databricks portion only. Cloud machine charges stay at list price."
+              />
+            </span>
             <span className="tabular-nums">{Math.round(plan.commitDiscount * 100)}%</span>
           </div>
           <Slider

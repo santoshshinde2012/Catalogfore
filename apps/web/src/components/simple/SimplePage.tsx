@@ -79,6 +79,7 @@ export function SimplePage({
           <div className="plan-start mb-3 grid grid-cols-2 gap-1.5 rounded-xl border bg-muted/15 p-1.5">
             <UsagePanel
               busy={session.usageBusy}
+              progress={session.usageProgress}
               error={session.usageError}
               onFile={session.loadUsageFile}
               onSample={session.loadSample}
@@ -96,6 +97,7 @@ export function SimplePage({
               onUsageFile={session.loadUsageFile}
               usageError={session.usageError}
               usageBusy={session.usageBusy}
+              usageProgress={session.usageProgress}
             />
           </div>
           {session.usingDetail && (

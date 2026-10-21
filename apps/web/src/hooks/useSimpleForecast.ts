@@ -24,6 +24,7 @@ export function useSimpleForecast(): SimpleSession {
   const [notice, setNotice] = useState("");
   const [usageError, setUsageError] = useState("");
   const [usageBusy, setUsageBusy] = useState(false);
+  const [usageProgress, setUsageProgress] = useState<number | null>(null);
   const [usagePreview, setUsagePreview] = useState<UsageImportPreview | null>(null);
   const [theme, setTheme] = useState<Theme>(() => {
     if (document.documentElement.dataset.theme === "dark") return "dark";
@@ -70,6 +71,7 @@ export function useSimpleForecast(): SimpleSession {
     setNotice,
     setUsageError,
     setUsageBusy,
+    setUsageProgress,
     setUsagePreview,
     setTheme,
   });
@@ -85,6 +87,7 @@ export function useSimpleForecast(): SimpleSession {
     notice,
     usageError,
     usageBusy,
+    usageProgress,
     usagePreview,
     selectedId,
     canUndo: undo !== null,

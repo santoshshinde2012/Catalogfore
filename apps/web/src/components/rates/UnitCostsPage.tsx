@@ -1,13 +1,13 @@
 import type { Portfolio } from "@cayfore/engine";
 import {
-  buildUnitCostCatalog,
   filterUnitCosts,
   planQuantityAction,
   type UnitCostFilters,
   type UnitCostRow,
 } from "@cayfore/engine/unit-costs";
 import { ArrowDown } from "lucide-react";
-import { useEffect, useMemo, useState, type RefObject } from "react";
+import { use, useEffect, useMemo, useState, type RefObject } from "react";
+import { loadUnitCostCatalog } from "./unit-cost-catalog";
 import { navigateToSection } from "../../lib/page-navigation";
 import type { RatePlacement } from "../../hooks/useAppView";
 import { useRateWorkspace, type RateWorkspaceDraft } from "../../hooks/useRateWorkspace";
@@ -22,8 +22,6 @@ import { RateFilters } from "./RateFilters";
 import { RatePlanFeedback } from "./RatePlanFeedback";
 import { RateCatalogNotes, RateWorkspaceHeader } from "./RateWorkspaceHeader";
 import { RateWorkspaceTabs } from "./RateWorkspaceTabs";
-
-const catalog = buildUnitCostCatalog();
 
 export function UnitCostsPage({
   portfolio,
@@ -48,6 +46,7 @@ export function UnitCostsPage({
   placement?: RatePlacement;
   cache: RefObject<RateWorkspaceDraft | undefined>;
 }) {
+  const catalog = use(loadUnitCostCatalog());
   const { draft, setDraft, change } = useRateWorkspace({ cache, portfolio, productId, placement, onScope });
   const { filters, selectedId, limit, panel, quantities } = draft;
   const patch = (next: Partial<RateWorkspaceDraft>) => setDraft((previous) => ({ ...previous, ...next }));
@@ -55,7 +54,7 @@ export function UnitCostsPage({
   useEffect(() => {
     navigateToSection("unit-costs");
   }, []);
-  const rows = useMemo(() => filterUnitCosts(catalog.rows, filters), [filters]);
+  const rows = useMemo(() => filterUnitCosts(catalog.rows, filters), [catalog.rows, filters]);
   const selected = rows.find((row) => row.id === selectedId) ?? rows[0];
   function apply(row: UnitCostRow, quantity: number) {
     const action = planQuantityAction(portfolio, row);

@@ -2,17 +2,20 @@ import { useRef, type ReactNode } from "react";
 import type { Cloud, SimplePlan, TeamPresetId, Tier, WorkloadMix } from "@cayfore/engine";
 import { TEAM_PRESETS } from "@cayfore/engine";
 import { AwsMark, AzureMark, GcpMark } from "../ui/cloud-marks";
+import { FieldHelp } from "../ui/field-help";
 
 export function Step({
   id,
   n,
   title,
+  hint,
   disabled,
   children,
 }: {
   id?: string;
   n: string;
   title: string;
+  hint?: string;
   disabled?: boolean;
   children: ReactNode;
 }) {
@@ -23,6 +26,7 @@ export function Step({
           {n}
         </span>
         {title}
+        {hint && <FieldHelp label={title} description={hint} />}
       </legend>
       {children}
     </fieldset>
@@ -39,6 +43,7 @@ export function MixBar({
   onMix: (key: keyof WorkloadMix, value: number) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const frame = useRef(0);
   function share(clientX: number): number {
     const rect = ref.current?.getBoundingClientRect();
     if (!rect || rect.width <= 0) return 0;
@@ -54,13 +59,22 @@ export function MixBar({
           const start = share(event.clientX);
           const boundary = mix.etl + mix.sql;
           const key: keyof WorkloadMix = Math.abs(start - mix.etl) <= Math.abs(start - boundary) ? "etl" : "ml";
-          const apply = (clientX: number) => {
-            const next = share(clientX);
-            onMix(key, key === "etl" ? next : 1 - next);
+          let latest = event.clientX;
+          const applyNow = () => onMix(key, key === "etl" ? share(latest) : 1 - share(latest));
+          const queue = (clientX: number) => {
+            latest = clientX;
+            if (frame.current) return;
+            frame.current = requestAnimationFrame(() => {
+              frame.current = 0;
+              applyNow();
+            });
           };
-          apply(event.clientX);
-          const move = (pointer: PointerEvent) => apply(pointer.clientX);
+          queue(event.clientX);
+          const move = (pointer: PointerEvent) => queue(pointer.clientX);
           const stop = () => {
+            if (frame.current) cancelAnimationFrame(frame.current);
+            frame.current = 0;
+            applyNow();
             window.removeEventListener("pointermove", move);
             window.removeEventListener("pointerup", stop);
           };

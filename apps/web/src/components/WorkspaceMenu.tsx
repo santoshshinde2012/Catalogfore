@@ -1,5 +1,6 @@
-import { Ellipsis, FolderOpen, Moon, RotateCcw, Star, Sun } from "lucide-react";
+import { Ellipsis, FolderOpen, Keyboard, Moon, Printer, RotateCcw, Star, Sun } from "lucide-react";
 import { useRef } from "react";
+import { openShortcuts } from "./loading/workspace-assist";
 import type { Theme } from "../hooks/forecast-session";
 import { APP_NAME, REPO } from "../site";
 import { secondaryNavigation, type NavigationActions } from "./header-navigation";
@@ -85,6 +86,22 @@ export function WorkspaceMenu({
           }}
         />
         <MenuGroupLabel separated>Preferences & project</MenuGroupLabel>
+        <WorkspaceMenuEntry
+          label="Keyboard shortcuts"
+          description="See Alt shortcuts for Plan, Product map, Unit costs, and Forecast."
+          icon={Keyboard}
+          onSelect={() => {
+            menuAction.current = openShortcuts;
+          }}
+        />
+        <WorkspaceMenuEntry
+          label="Print forecast"
+          description="Open a print view of this forecast without the workspace chrome."
+          icon={Printer}
+          onSelect={() => {
+            menuAction.current = () => window.print();
+          }}
+        />
         <WorkspaceMenuEntry
           label={themeLabel}
           description="Choose the appearance for this browser."

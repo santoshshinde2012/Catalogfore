@@ -1,7 +1,9 @@
 import { unitCostCsv, unitCostJson, type UnitCostCatalog, type UnitCostRow } from "@cayfore/engine/unit-costs";
 import { Braces, FileSpreadsheet, LoaderCircle } from "lucide-react";
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useDeferredValue, useState, type Dispatch, type SetStateAction } from "react";
+import { toast } from "sonner";
 import { APP_NAME } from "../../site";
+import { RatesTableSkeleton } from "../loading/skeletons";
 import { Button } from "../ui/button";
 import { OptionSelect } from "../ui/option-select";
 import { InfoTooltip } from "../ui/tooltip";
@@ -31,8 +33,11 @@ export function RateDownloads({
   const { scope } = draft;
   const [error, setError] = useState("");
   const [busy, setBusy] = useState("");
+  const sourceRows = scope === "all" ? catalog.rows : rows;
+  const deferredRows = useDeferredValue(sourceRows);
+  const tableLoading = sourceRows.length > 500 && deferredRows !== sourceRows;
   const table = useRateDataTable(
-    scope === "all" ? catalog.rows : rows,
+    tableLoading ? deferredRows : sourceRows,
     draft,
     onDraft,
     scope === "all" ? "all" : filterKey,
@@ -56,15 +61,22 @@ export function RateDownloads({
       anchor.click();
       anchor.remove();
       setError("");
+      toast.success(`${format.toUpperCase()} downloaded`);
     } catch {
-      setError("The rate file could not be downloaded. Try again.");
+      const message = "The rate file could not be downloaded. Try again.";
+      setError(message);
+      toast.error(message);
     } finally {
       if (url) URL.revokeObjectURL(url);
       setBusy("");
     }
   }
   return (
-    <section aria-label="Download unit costs" className="min-w-0 overflow-hidden rounded-xl border bg-card">
+    <section
+      aria-label="Download unit costs"
+      aria-busy={Boolean(busy) || tableLoading}
+      className="min-w-0 overflow-hidden rounded-xl border bg-card"
+    >
       <div className="flex flex-wrap items-end justify-between gap-3 px-4 pt-4 sm:px-5">
         <div className="min-w-0 basis-full lg:max-w-md lg:basis-auto lg:pb-1">
           <h2 className="text-base font-semibold tracking-tight">Explore the price catalog</h2>
@@ -96,6 +108,7 @@ export function RateDownloads({
                     variant="outline"
                     className="h-11 min-w-[6.5rem] justify-start px-3 sm:h-10"
                     aria-label={preparing ? `Preparing ${label}` : label}
+                    aria-busy={preparing}
                     onClick={() => void download(id)}
                     disabled={Boolean(busy)}
                   >
@@ -126,7 +139,7 @@ export function RateDownloads({
           {error}
         </p>
       )}
-      <RateDataPreview table={table} onInspect={onInspect} />
+      {tableLoading ? <RatesTableSkeleton /> : <RateDataPreview table={table} onInspect={onInspect} />}
     </section>
   );
 }

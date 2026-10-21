@@ -14,6 +14,7 @@ export interface SessionControls {
   setNotice: (notice: string) => void;
   setUsageError: (error: string) => void;
   setUsageBusy: (busy: boolean) => void;
+  setUsageProgress: (progress: number | null) => void;
   setUsagePreview: (preview: UsageImportPreview | null) => void;
   setTheme: (theme: Theme | ((current: Theme) => Theme)) => void;
 }

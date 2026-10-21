@@ -66,7 +66,7 @@ export function AppFooter({
     },
   ];
   return (
-    <footer className="border-t">
+    <footer className="border-t print:hidden">
       <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 pt-8 pb-[calc(7rem+env(safe-area-inset-bottom))] sm:px-6 lg:pb-12">
         <div className="flex flex-wrap items-start justify-between gap-6">
           <div className="max-w-md">
