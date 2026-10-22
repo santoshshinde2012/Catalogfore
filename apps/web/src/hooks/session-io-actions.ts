@@ -6,11 +6,30 @@ import {
   type Portfolio,
   type UsageImportPreview,
 } from "@cayfore/engine";
-import { toast } from "sonner";
+import { browserClipboard, browserClock, browserFetcher } from "../services/browser-ports";
+import { notices, type Notifier } from "../services/notices";
+import type { ClipboardPort, Clock, TextFetcher } from "../services/ports";
+import { showNotice, sonnerNotifier } from "../services/sonner-notifier";
+import { captureForecast, restoreForecast } from "./forecast-snapshot";
 import { planFromPortfolio } from "./forecast-session";
 import type { SessionControls } from "./session-controls";
+import { usageLoads } from "./session-usage-loads";
 
-export function ioActions(controls: SessionControls) {
+export interface IoPorts {
+  clock: Clock;
+  clipboard: ClipboardPort;
+  notifier: Notifier;
+  fetcher: TextFetcher;
+}
+
+const defaultPorts: IoPorts = {
+  clock: browserClock,
+  clipboard: browserClipboard,
+  notifier: sonnerNotifier,
+  fetcher: browserFetcher,
+};
+
+export function ioActions(controls: SessionControls, ports: IoPorts = defaultPorts) {
   const {
     portfolio,
     loadRequest,
@@ -20,6 +39,7 @@ export function ioActions(controls: SessionControls) {
     setSelectedId,
     setUsageError,
     setUsageBusy,
+    setUsageProgress,
     setUsagePreview,
     setNotice,
   } = controls;
@@ -27,6 +47,7 @@ export function ioActions(controls: SessionControls) {
     const next = normalizePortfolio(input);
     loadRequest.current += 1;
     setUsageBusy(false);
+    setUsageProgress(null);
     const simple = planFromPortfolio(next);
     if (simple) setPlan(simple);
     else
@@ -48,22 +69,25 @@ export function ioActions(controls: SessionControls) {
   function previewUsageText(text: string, sourceLabel?: string) {
     try {
       const preview = {
-        ...previewUsageImport(text, { asOf: new Date().toISOString().slice(0, 10) }),
+        ...previewUsageImport(text, { asOf: ports.clock.today() }),
         ...(sourceLabel ? { sourceLabel } : {}),
       };
       if (!preview.records.length) {
         setUsageError(preview.warnings[0] ?? "That file did not contain usage rows.");
-        return;
+        return false;
       }
       setUsageError("");
       setUsagePreview(preview);
+      return true;
     } catch (error) {
       setUsageError(error instanceof Error ? error.message : "That usage file could not be read.");
+      return false;
     }
   }
   function loadUsageText(text: string, sourceLabel?: string) {
     loadRequest.current += 1;
     setUsageBusy(false);
+    setUsageProgress(null);
     previewUsageText(text, sourceLabel);
   }
   return {
@@ -72,74 +96,42 @@ export function ioActions(controls: SessionControls) {
     loadUsagePreview: (preview: UsageImportPreview, mode: "replace" | "append") => {
       try {
         const loaded = portfolioFromUsage(preview, { base: portfolio, mode });
+        const snapshot = captureForecast(controls);
+        const notice = notices.usageImported(mode, () => restoreForecast(controls, snapshot));
         loadPortfolio(loaded.portfolio);
         setUsagePreview(null);
         setUsageError("");
-        setNotice(
-          mode === "replace"
-            ? "Replaced the baseline with imported usage."
-            : "Appended imported usage. Review combined scope for overlap.",
-        );
+        setNotice(notice.description ?? "");
+        showNotice(notice, ports.notifier);
       } catch (error) {
-        setUsageError(error instanceof Error ? error.message : "That usage could not be imported.");
+        const message = error instanceof Error ? error.message : "That usage could not be imported.";
+        setUsageError(message);
+        showNotice(notices.problem(message), ports.notifier);
       }
     },
     dismissUsagePreview: () => {
       loadRequest.current += 1;
       setUsageBusy(false);
+      setUsageProgress(null);
       setUsagePreview(null);
       setUsageError("");
       setNotice("Import cancelled. Your forecast is unchanged.");
     },
-    loadUsageFile: (file: File) => {
-      const request = ++loadRequest.current;
-      setUsageBusy(true);
-      setUsageError("");
-      void import("../security/read-upload")
-        .then(({ readUsageFile }) => readUsageFile(file))
-        .then((result) => {
-          if (request !== loadRequest.current) return;
-          if (result.ok) previewUsageText(result.value);
-          else setUsageError(result.error);
-        })
-        .catch(() => {
-          if (request === loadRequest.current) setUsageError("That file could not be read.");
-        })
-        .finally(() => {
-          if (request === loadRequest.current) setUsageBusy(false);
-        });
-    },
-    loadSample: (kind: "current" | "history" = "current") => {
-      const request = ++loadRequest.current;
-      setUsageBusy(true);
-      setUsageError("");
-      void fetch(`${import.meta.env.BASE_URL}${kind === "history" ? "sample-usage-history.csv" : "sample-usage.csv"}`)
-        .then((response) => {
-          if (!response.ok) throw new Error("missing");
-          return response.text();
-        })
-        .then((text) => {
-          if (request !== loadRequest.current) return;
-          previewUsageText(
-            text,
-            kind === "history" ? "Bundled historical demonstration sample" : "Bundled demonstration sample",
-          );
-          setNotice("Sample data loaded for demonstration. Review the preview before applying.");
-        })
-        .catch(() => {
-          if (request === loadRequest.current) setUsageError("The sample file did not load.");
-        })
-        .finally(() => {
-          if (request === loadRequest.current) setUsageBusy(false);
-        });
-    },
+    ...usageLoads(controls, previewUsageText, ports),
     share: async () => {
       const url = new URL(window.location.href);
-      url.hash = `plan=${encodePortfolio(portfolio)}`;
       try {
-        await navigator.clipboard.writeText(url.href);
-        setNotice("Link copied");
-        toast.success("Link copied");
+        url.hash = `plan=${encodePortfolio(portfolio)}`;
+      } catch {
+        const problem = notices.linkUnavailable();
+        setNotice(problem.title);
+        showNotice(problem, ports.notifier);
+        return;
+      }
+      try {
+        await ports.clipboard.writeText(url.href);
+        setNotice(notices.linkCopied().title);
+        showNotice(notices.linkCopied(), ports.notifier);
       } catch {
         window.prompt("Copy this link", url.href);
       }
@@ -147,23 +139,26 @@ export function ioActions(controls: SessionControls) {
     loadForecastFile: (file: File) => {
       const request = ++loadRequest.current;
       setUsageBusy(false);
+      setUsageProgress(null);
       return import("../security/read-upload")
         .then(({ readForecastFile }) => readForecastFile(file))
         .then((result) => {
           if (request !== loadRequest.current) return;
           if (result.ok) {
             loadPortfolio(result.value);
-            setNotice(`Opened ${result.value.name || "saved forecast"}.`);
+            const opened = `Opened ${result.value.name || "saved forecast"}.`;
+            setNotice(opened);
+            showNotice(notices.forecastOpened(opened), ports.notifier);
           } else {
             setNotice(result.error);
-            toast.error(result.error);
+            showNotice(notices.problem(result.error), ports.notifier);
           }
         })
         .catch(() => {
           if (request !== loadRequest.current) return;
           const error = "That file is not a forecast JSON.";
           setNotice(error);
-          toast.error(error);
+          showNotice(notices.problem(error), ports.notifier);
         });
     },
   };

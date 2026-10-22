@@ -44,7 +44,7 @@ window.matchMedia = () => ({
 const vite = await createServer({
   root: webRoot,
   configFile: path.join(webRoot, "vite.config.ts"),
-  server: { middlewareMode: true },
+  server: { middlewareMode: true, ws: false },
   appType: "custom",
   logLevel: "error",
   ssr: { noExternal: ["lz-string"] },
@@ -61,9 +61,9 @@ try {
   }
   const indexPath = path.join(webRoot, "dist/index.html");
   let index = readFileSync(indexPath, "utf8");
-  const marker = '<div id="root"></div>';
+  const marker = '<div id="root" inert aria-busy="true"></div>';
   if (!index.includes(marker)) throw new Error("Built index.html has no empty #root");
-  index = index.replace(marker, `<div id="root" data-prerender="done">${html}</div>`);
+  index = index.replace(marker, `<div id="root" data-prerender="done" inert aria-busy="true">${html}</div>`);
 
   const sheet = index.match(/<link rel="stylesheet"[^>]*href="([^"]+)"[^>]*>/);
   if (!sheet) throw new Error("Built index.html has no stylesheet");
@@ -79,11 +79,9 @@ try {
   index = index.replace(bootTag[0], `<script>${boot}</script>`);
   const moduleTag = index.match(/<script type="module" crossorigin src="([^"]+)"><\/script>/);
   if (!moduleTag) throw new Error("Built index.html is missing the module script");
-  const loader = `import("${moduleTag[1]}");`;
-  const loaderHash = createHash("sha256").update(loader).digest("base64");
-  index = index.replace(moduleTag[0], `<script type="module">${loader}</script>`);
-  index = index.replace(/<link rel="modulepreload"[^>]*>/g, "");
-  index = index.replace(/script-src ([^;"]+)/, `script-src $1 'sha256-${bootHash}' 'sha256-${loaderHash}'`);
+  // Keep Vite's module script and dependency preloads. A detached dynamic import
+  // lets document load finish while the visible planner still has no handlers.
+  index = index.replace(/script-src ([^;"]+)/, `script-src $1 'sha256-${bootHash}'`);
 
   writeFileSync(indexPath, index);
   console.log(`prerendered landing (${html.length} bytes), inlined css and theme boot`);

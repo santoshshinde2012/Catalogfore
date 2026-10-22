@@ -6,6 +6,10 @@ export interface SessionControls {
   portfolio: Portfolio;
   override: Portfolio | null;
   undo: Portfolio | null;
+  selectedId: string | null;
+  notice: string;
+  usageError: string;
+  usagePreview: UsageImportPreview | null;
   loadRequest: { current: number };
   setPlan: (plan: SimplePlan | ((current: SimplePlan) => SimplePlan)) => void;
   setOverride: (portfolio: Portfolio | null) => void;
@@ -14,6 +18,7 @@ export interface SessionControls {
   setNotice: (notice: string) => void;
   setUsageError: (error: string) => void;
   setUsageBusy: (busy: boolean) => void;
+  setUsageProgress: (progress: number | null) => void;
   setUsagePreview: (preview: UsageImportPreview | null) => void;
   setTheme: (theme: Theme | ((current: Theme) => Theme)) => void;
 }

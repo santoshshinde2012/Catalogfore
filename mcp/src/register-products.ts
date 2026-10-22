@@ -55,7 +55,7 @@ export function registerProductTools(server: McpServer) {
     {
       title: "Estimate one Databricks product",
       description:
-        "Forecast one catalog product with its defaults, including every underlying SKU when the product is a composition. Returns this month and 12 months. A product with no published rate is $0. Estimates only, not a quote.",
+        "Forecast one catalog product with its defaults, including every underlying SKU when the product is a composition. Returns this month and 12 months. Missing rates remain unresolved; totals show the known subtotal, not a complete bill or a free service. Estimates only, not a quote.",
       inputSchema: {
         productId: z.string().describe("Product id from list_products."),
         cloud: z.enum(["aws", "azure", "gcp"]).optional(),

@@ -12,7 +12,7 @@ On a phone, **View forecast** jumps from the inputs to the result; **Edit inputs
 
 The Catalogfore brand returns to the inputs while keeping the current plan. **Menu → New forecast** explicitly starts again; **Undo last change** restores the previous plan. Section navigation preserves the shared URL and moves keyboard focus to its destination. The Open forecast menu item works with a keyboard or touch. Header destinations use plain text and active underlines, with one unboxed Menu trigger for secondary actions.
 
-Saved scenarios stay in this browser and include the inputs and any imported monthly and ownership summaries. **Undo scenario deletion** restores the most recent deletion while a slot is available. A storage failure shows a nearby session-only notice. Export JSON for a portable copy, then use **Menu → Open forecast** to restore it. The current plan is also encoded in the address fragment. Copy link shares plan inputs and monthly observations while omitting ownership labels; it does not share the browser’s saved-scenario list. See [PRIVACY.md](PRIVACY.md).
+Saved scenarios stay in this browser and include the inputs and any imported monthly and ownership summaries. **Undo scenario deletion** restores the most recent deletion while a slot is available. A storage failure shows a nearby session-only notice. Export JSON for a portable copy of the active plan, then use **Menu → Open forecast** to restore it. Plans within the share limits are also encoded in the address fragment. Oversized plans remain active but require JSON export before leaving or reloading. Copy link shares plan inputs and monthly observations while omitting the usage attribution summary; names and other user-entered text can remain. It does not share the browser’s saved-scenario list. See [PRIVACY.md](PRIVACY.md).
 
 Starting spend retains the amount entered. A separate modeled baseline explains sizing differences. Enter applies spend or custom growth; invalid drafts show an error and preserve the last valid forecast. Advanced names, numbers, and rate-source labels also apply on Enter or blur. Blank required values, invalid schedules, and inverted worker ranges remain drafts. Changing a workload’s cloud chooses a compatible machine and explains the region fallback; imported placement stays attached to its billing source. Adding or selecting a workload focuses its editor; closing or removing it restores focus to the workload list.
 
@@ -20,14 +20,14 @@ The import review keeps its primary action visible while the billing details scr
 
 The Unit costs Downloads tab previews the canonical inventory in a sortable table. Filtered or complete scope applies to both the preview and CSV/JSON, while paging only limits visible rows. Billing quantities, source dates and evidence stay beside each price; Inspect opens the exact row and its calculator. On phones, the table scrolls inside its named keyboard-focusable region. Product searches, rate filters and selections, calculator quantities, and download scope/sort/page persist across workspace navigation during the session. Clear/reset returns focus to search; Show more focuses the first new result. Reference filters leave the saved forecast unchanged. Apply/Undo feedback stays beside the calculator, including on narrow screens.
 
-Scenario differences identify unresolved charges in either the current plan or the saved baseline. Chart legends label incomplete saved scenarios as known subtotals. Advanced also qualifies incomplete totals. If a workspace download or rendering fails, navigation stays available with reload and return-to-plan actions; the last valid forecast remains in the URL.
+Scenario differences identify unresolved charges in either the current plan or the saved baseline. Chart legends label incomplete saved scenarios as known subtotals. Advanced also qualifies incomplete totals. If a workspace download or rendering fails, navigation stays available with reload and return-to-plan actions. A valid shareable plan remains in the URL; an oversized plan needs a JSON backup before reload.
 
 ## Evaluating — what does a medium team cost on AWS?
 
 Land on the page. Medium is selected: 45% pipelines, 40% dashboards, 15% models, about $12,000 a month before a discount. AWS, Premium, US East (N. Virginia). Growth is 3% a month, so the chart rises.
 
 - Annual estimate: **$170,258**, with a planning range of **$144,719–$204,309**.
-- First month: **$11,997**. The three dollars are rounding on the priced lines. Month 12 is higher because each month is 3% above the one before.
+- First month: **$11,996.70** on the month tiles. The year total rounds to the nearest dollar, so it reads about **$170,258**. Month 12 is higher because each month is 3% above the one before.
 - **29% of the first-month bill is cloud machines.** That share is the classic-job portion. Dashboards are serverless, and models are token usage, so they do not add a machine line.
 - The shaded band is 15% under to 20% over, because no usage file has been loaded. Chart is the default view. Months lists all 12 months.
 

@@ -9,23 +9,23 @@ export function ForecastChart({
 }: ChartSeries & { label: string; cumulative?: boolean }) {
   const data = cumulative ? cumulativeRows(series) : monthlyRows(series);
   return (
-    <div className="h-72 w-full min-w-0" role="group" aria-label={label} data-testid="forecast-chart">
+    <div className="h-60 w-full min-w-0 lg:h-48" role="group" aria-label={label} data-testid="forecast-chart">
       <ResponsiveContainer width="100%" height="100%" minWidth={0}>
-        <ComposedChart data={data} margin={{ top: 12, right: 8, left: 0, bottom: 0 }} accessibilityLayer>
-          <CartesianGrid vertical={false} stroke="var(--border)" />
+        <ComposedChart data={data} margin={{ top: 8, right: 4, left: 0, bottom: 0 }} accessibilityLayer>
+          <CartesianGrid vertical={false} stroke="var(--chart-grid)" />
           <XAxis
             dataKey="label"
             tickLine={false}
             axisLine={false}
-            minTickGap={24}
-            tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
+            minTickGap={28}
+            tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
           />
           <YAxis
             tickLine={false}
             axisLine={false}
-            width={58}
+            width={52}
             tickFormatter={axisMoney}
-            tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
+            tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
           />
           <Tooltip content={<ChartTooltip comparisonLabel={series.comparison?.name} />} />
           <Area
@@ -50,8 +50,7 @@ export function ForecastChart({
             dataKey="expected"
             name="Forecast"
             stroke="var(--foreground)"
-            strokeWidth={2}
-            strokeDasharray="6 3"
+            strokeWidth={2.5}
             dot={false}
             isAnimationActive={false}
             connectNulls={false}

@@ -1,218 +1,122 @@
 # Catalogfore
 
-A browser-local Databricks budget and scenario planner, with a 12-month cost forecast.
+Plan Databricks costs, compare scenarios, and inspect the evidence behind each rate.
+
+[Open the planner](https://santoshshinde2012.github.io/Catalogfore/) · [Documentation](docs/README.md) · [FAQ](docs/FAQ.md) · [Contributing](CONTRIBUTING.md)
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-111111)](LICENSE)
-[![Node 22.13+](https://img.shields.io/badge/node-22.13%2B-111111)](package.json)
-[![Live site](https://img.shields.io/badge/live-GitHub%20Pages-111111)](https://santoshshinde2012.github.io/Catalogfore/)
+[![Node 22.13+ or 24+](https://img.shields.io/badge/node-22.13%2B%20or%2024%2B-111111)](package.json)
 
-Plan Databricks spending, compare scenarios, and inspect the prices behind an estimate. No account is required. Calculations and usage-file imports stay in your browser. Catalogfore is independent of Databricks and produces estimates, not quotes. See [privacy details](docs/PRIVACY.md).
+Catalogfore is an independent, browser-local budget and scenario planner. No account or workspace credentials are required. Calculations, billing-file imports, and downloads run locally. The bundled prices are dated snapshots; results are estimates, not Databricks quotes. [Privacy details](docs/PRIVACY.md)
 
-## Try the planner
+![The planner with quick inputs, a forecast, and a planning range](docs/screenshots/forecast-light.png)
 
-1. Open the [live app](https://santoshshinde2012.github.io/Catalogfore/) and choose your cloud, tier, and region in **Plan**.
-2. Set a starting monthly spend or team size, workload mix, and monthly growth. If you already have billing data, choose **Use my real usage**, review the CSV, then choose **Use this baseline**.
-3. Review the 12-month total, planning range, and monthly costs. Check any unresolved prices before using the known subtotal as a budget. Add an annual budget or dated usage changes when needed.
-4. Save a named scenario before trying another option, then choose it under **Compare current plan with**. Use **Copy link** to share the current plan, or **Export → JSON** to keep a file you can reopen with **Menu → Open forecast**.
+## Start with what you know
 
-Named scenarios stay in this browser; they do not sync across devices. **Undo scenario deletion** restores the most recently deleted scenario while a slot is available. If browser storage fails, the scenarios panel explains that saves are available only for this session. The current plan also stays in the address fragment, so reloading the same URL restores it. Links include costs, workload names, assumptions, and monthly usage summaries; anyone with the link can read them. Ownership labels are omitted from links but can remain in saved scenarios and JSON downloads. See [privacy details](docs/PRIVACY.md) before sharing imported data.
+| Your starting point             | What to do                                                                                                                                                               |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| A monthly budget or team size   | Open **Plan**. Choose cloud, region, and edition; set starting spend, workload mix, and monthly growth.                                                                  |
+| A billing export                | Choose **Use my real usage**. Review the CSV's baseline month, cost basis, and missing prices, then choose **Use this baseline**. [Import guide](docs/USAGE-IMPORT.md)   |
+| Specific products and schedules | Open **Advanced** to edit workloads, or use **Product map** to inspect and add a supported product. [Product map](docs/PRODUCT-MAP.md)                                   |
+| A price or regional comparison  | Open **Unit costs**. Inspect the source, billing unit, evidence, and quantity calculation before applying a supported monthly quantity. [Unit costs](docs/UNIT-COSTS.md) |
+| A saved plan                    | Choose **Menu → Open forecast** and select a forecast JSON file. CSV, XLSX, and PDF exports are reports, not editable-plan backups.                                      |
 
-![Catalogfore on a wide screen: quick inputs and a year total with a planning range](docs/screenshots/forecast-light.png)
+Review the first 12 months, the planning range, and any unresolved charges. Add an annual budget or dated usage changes under **Budget and scenarios**. Save a named baseline before exploring alternatives, then select it under **Compare current plan with**. [Guided examples](docs/USABILITY.md)
 
-## What it answers
+The bundled default is AWS Premium, a $12,000 starting monthly amount, a 45% pipelines / 40% dashboards / 15% models mix, and 3% monthly growth. Running `npm run --silent catalogfore -- estimate` currently returns **$11,996.70** for month one and **$170,257.52** for the first year. These are reproducible snapshot results, not promised future bills.
 
-Cloud and tier, a starting monthly amount or a team size, a mix of pipelines, dashboards, and models, and monthly growth. The page returns an annual total, planning range, charts and monthly values.
+## Save and share your work
 
-| Input          | Default                                          |
-| -------------- | ------------------------------------------------ |
-| Cloud and tier | AWS, Premium, reference region                   |
-| Starting point | Medium, $12,000 a month                          |
-| Mix            | 45% pipelines, 40% dashboards, 15% models        |
-| Growth         | 3% a month, with an optional commitment discount |
+- **Save scenario** keeps a named plan in this browser, up to 20 scenarios. These do not sync across devices. A storage failure leaves saves available only for the current session.
+- **Copy link** embeds the active plan in the URL fragment and omits ownership attribution summaries. Anyone receiving the link can inspect its inputs. Links recalculate against the app's installed price book.
+- **Export → JSON** saves the active editable plan and its calculated report. It does not export the entire scenario collection. Open each scenario and export it separately to back up the collection.
+- **XLSX, CSV, and PDF** report the same forecast result. The workbook's annual summary covers the first 12 months; its monthly sheet can include a longer saved forecast.
 
-With the bundled rates, that default estimates **about $170,258 per year**, with a planning range of **$144,719–$204,309** (15% below to 20% above the estimate). First month **$11,997**. **29%** of the first-month bill is cloud machines. The sources for the presets and the rates are in [docs/RESEARCH.md](docs/RESEARCH.md).
+Plans that fit the share-link limits also restore from their URL after reload. If a plan is too large for a link, the app keeps it active, removes the stale plan fragment, and asks you to export JSON. Export before leaving or reloading. Browser storage and URL history are conveniences, not substitutes for a backup. [Storage and sharing](docs/PRIVACY.md)
 
-Usage import and Advanced are available at the top of Plan inputs. The forecast remains visible while editing on desktop, and a persistent shortcut shows the annual total on mobile. A usage CSV opens a review of its baseline month, prices, and gaps before replacing the estimate. Databricks billing and recognized FOCUS files are supported. Imported monetary costs stay observed costs; the app does not invent a separate VM bill. See [usage import](docs/USAGE-IMPORT.md).
+## Understand the estimate
 
-The header keeps **Plan**, **Product map** and **Unit costs** directly accessible through plain text navigation with active underlines. One **Menu** groups forecast navigation, Advanced, explanatory help, file actions, appearance and GitHub. To continue a saved JSON forecast, choose **Menu → Open forecast**.
+The quick planner sizes classic jobs, serverless SQL, and model-token workloads from your budget and mix. Advanced supports individual products and schedules. Imported monetary costs retain their cost basis; the importer does not invent a separate virtual-machine bill.
 
-Choose **Budget and scenarios** from the forecast to set an annual budget, save named scenarios, and plan dated launches or retirements. Budget, start-date, and timeline edits preserve the quick inputs. Charts show observed spend, future estimates, budget variance, scenario comparisons, and monthly cost components. Advanced opens the per-workload editor. Growth and pricing controls preserve those workloads.
+**Product map** explains domains, relationships, aliases, and billing context. **Unit costs** exposes the source-to-quote calculation, regional comparisons, evidence coverage, and CSV/JSON downloads. Download scope includes all selected rows; pagination does not limit the file. Reference browsing changes the forecast only when you explicitly add or update a supported quantity.
 
-Advanced names, schedules, quantities, and contract rates apply on Enter or when you leave the field. Invalid drafts keep the last valid forecast and explain the allowed values. Scenario comparisons identify missing prices in either plan; a known-cost difference is not a complete savings comparison.
+Keep these boundaries in mind:
 
-Open **Product map** to explore eight Databricks domains, all 70 catalog entries, and eight platform concepts. Search current names or older aliases, filter by domain, expand example architectures, and inspect roles, relationships, billing context, and official sources. Supported products can be added to the current forecast with Undo. [Product map research and maintenance](docs/PRODUCT-MAP.md) explains the taxonomy and pricing boundaries.
+- An unresolved price is excluded from the **known subtotal**; it is not a free service. A published rate does not establish regional availability or contract eligibility.
+- Official observations, derived rates, planning estimates, and unresolved conflicts are labeled separately. A source review date does not make an old observation current.
+- The planning range combines model and pricing assumptions. It is not a calibrated probability interval or evidence of customer forecast accuracy.
+- Savings alternatives can overlap and must not be added together. A commitment what-if models the supplied terms, not a negotiated contract.
+- Monetary imports and prices are in USD. Supported FOCUS columns do not imply full FOCUS dataset conformance.
 
-![Databricks products and services mapped across eight learning domains](docs/screenshots/product-map-light.png)
-
-Open **Unit costs** for the source prices and consumption rules behind each product. **Rates & calculator** opens the working quote immediately; **Compare regions**, **Evidence** and **Downloads** provide focused supporting views. **More filters** reveals the additional evidence and coverage controls. Official price links, publisher names, snapshot dates, and evidence labels appear beside prices. Direct official prices, derived rates, planning estimates, and unresolved conflicts can be filtered separately. Filter by product, cloud, region, edition, component, or evidence status; inspect machines, models, token directions, and other variants; then enter a quantity to calculate a component subtotal. Compare the same configured unit across regions, inspect the source-to-quote calculation path, and view evidence coverage without combining unlike prices. The calculator, visual scales, CSV/JSON and Excel share the engine quote policy. Product map and forecast rows link to the relevant reference costs. [Unit-cost documentation](docs/UNIT-COSTS.md) explains sources, missing prices, assumptions, and pricing conflicts.
-
-The calculator previews the change to your first-month and 12-month forecast before you apply a supported monthly quantity. **Add to forecast** and **Update forecast** preserve existing workloads and planning settings; **View forecast** and **Undo change** remain available after applying. Imported dollar costs and products driven by schedules or other inputs explain why their quantities must be edited elsewhere.
-
-Product searches, rate selections, calculator quantities, and download scope/sort/page stay available when switching workspaces in the same session. Apply/Undo feedback appears beside the calculator. Import and export failures show recovery instructions; a view that fails to load offers reload and return-to-plan actions.
-
-**Downloads** previews the catalog as a sortable, paginated table with billing units, evidence and source dates. Inspect an exact row or export all filtered rows or the complete catalog as ordinary CSV or JSON; pagination never limits the file. Run `npm run export:unit-costs` to create both locally. Complete, lossless copies are versioned as [CSV](data/generated/unit-costs.csv.gz) and [JSON](data/generated/unit-costs.json.gz) gzip files. The bundled USD snapshot is product catalog **2026-10-19.1**: 70 pricing products, eight platform concepts, and 29,665 dimensional rows. The forecast price book is **2026-10-17.3**; individual price sources have their own observation dates. These version identifiers describe the bundled data, not a live quote. An unknown rate stays empty rather than free.
-
-<details>
-<summary>Unit-cost and usage-import screenshots</summary>
-
-![Browse source unit costs in a spreadsheet-style table before exporting](docs/screenshots/unit-cost-downloads-light.png)
-
-![Source unit costs, billing dimensions, and a quantity calculation](docs/screenshots/unit-cost-details-light.png)
-
-![Regional quotes for the same configured unit](docs/screenshots/unit-cost-comparison-light.png)
-
-![Source price, consumption, regional factor and component quote](docs/screenshots/unit-cost-calculation-light.png)
-
-![Imported spend and forecast against a budget, using the bundled historical demonstration CSV](docs/screenshots/usage-forecast.png)
-
-</details>
-
-Forecast XLSX, CSV, JSON, and PDF exports use the same forecast result. JSON includes the editable plan; CSV, XLSX, and PDF are reports. Shared links carry plan inputs and recalculate with the pricing data loaded by the app, so a later catalog update can change the result. Unpriced charges are identified as unresolved; the total is a known subtotal when costs are missing. The range represents planning assumptions, not a calibrated probability interval.
-
-<details>
-<summary>Dark theme and mobile screenshots</summary>
-
-![The same forecast in dark mode](docs/screenshots/forecast-dark.png)
-
-![The forecast on a narrow screen, with the year total pinned](docs/screenshots/mobile-light.png)
-
-![The same narrow screen in dark mode](docs/screenshots/mobile-dark.png)
-
-</details>
+[Pricing evidence](docs/UNIT-COSTS.md) · [Source research](docs/RESEARCH.md) · [Current behavior](docs/PLAN.md) · [Remaining work](docs/ROADMAP.md)
 
 ## Run locally
 
-Use Node 22.13+ within Node 22, or Node 24+, before installing dependencies. If you use nvm, run `nvm install` and `nvm use` in this repository to select the version in `.nvmrc`.
+Use **Node 22.13+ within Node 22, or Node 24+**. Node 20 and 23 are outside the declared range. With nvm, `nvm install` and `nvm use` select Node 22 from [.nvmrc](.nvmrc).
 
 From the repository root:
 
-```bash
+```sh
 npm ci
 npm run dev
 ```
 
-Open http://localhost:5173/Catalogfore/. To inspect the production build, run `npm run build` followed by `npm run preview` and open the address printed by Vite.
+Open [http://localhost:5173/Catalogfore/](http://localhost:5173/Catalogfore/). No `.env` file, Databricks token, or database is required for the planner.
 
-```bash
-npm test          # engine and app unit tests, coverage, and script tests
+```sh
 npm run lint
 npm run typecheck
-npm run check:sources # replay official price captures and validate accepted rates
-npm run check:unit-costs # committed CSV/JSON still match their source inputs
+npm run check:docs
+npm run check:sources
+npm run check:unit-costs
+npm test
 npm run build
-npm run test:mcp  # stdio MCP smoke test
-npx playwright install chromium # first-time browser setup
-npm run test:e2e  # Playwright, desktop and mobile, including axe
+npm run test:mcp
+npx playwright install chromium
+npm run test:e2e
 ```
 
-The production build reports each asset’s size and gzip estimate. Charts, the Product map and Unit costs screens, the Advanced editor, PDF, and Excel export load in separate chunks. Catalog data is split into separately cached chunks; some metadata is also needed by the initial forecast. Fonts are served with the app.
+By default, Playwright starts the development server. CI checks the built app, where CSP, prerendering, and lazy assets matter. [Development and production verification](docs/DEVELOPMENT.md) includes the exact preview commands and configuration settings.
 
-## Architecture
+## Use the CLI or MCP server
 
-The web app, the command line, and the MCP server call one forecast engine. Pricing stays in versioned files. A new screen does not keep its own rate table.
+The command line and local stdio MCP server use the same engine and bundled data.
 
-```mermaid
-flowchart TB
-  subgraph clients [Clients]
-    direction LR
-    Web[Web app]
-    CLI[CLI]
-    MCP[MCP server]
-  end
-
-  subgraph application [Application]
-    direction LR
-    Plan[Plan and scenarios]
-    Map[Product map]
-    Rates[Unit costs]
-    Sheet[Excel workbook]
-  end
-
-  subgraph engine [Forecast engine]
-    direction LR
-    Projection[Projection]
-    Estimate[Estimate]
-    Strategies[Cost strategies]
-    Policies[Scenario policies]
-  end
-
-  subgraph sources [Versioned sources]
-    direction LR
-    Catalog[(Product catalog)]
-    Prices[(Price book)]
-  end
-
-  Web --> Plan
-  Web --> Map
-  Web --> Rates
-  Web --> Sheet
-  CLI --> Projection
-  MCP --> Projection
-  Plan --> Projection
-  Sheet --> Projection
-  Map --> Catalog
-  Rates --> Catalog
-  Rates --> Prices
-  Projection --> Estimate
-  Projection --> Policies
-  Estimate --> Strategies
-  Strategies --> Catalog
-  Strategies --> Prices
+```sh
+npm run --silent catalogfore -- estimate
+npm run --silent catalogfore -- estimate --xlsx forecast.xlsx
+npm run --silent catalogfore -- usage apps/web/public/sample-usage-history.csv --as-of 2026-10-17
+npm run --silent catalogfore -- rates --product jobs_serverless --cloud aws --region us-east-1 --format csv
 ```
 
-Clients choose a plan, a product, or a unit price. The engine projects that request through an estimate and a cost strategy. Strategies read the product catalog and the price book. Excel export is a separate package and loads only when someone exports. The layering, and how to add a product without editing the estimate, is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+Use `--silent` when redirecting npm output to JSON or CSV. [CLI reference](docs/CLI.md) covers saved plans, usage cutoffs, rate filters, and artifact generation.
 
-## Repository
-
-| Path                         | Role                                                                    |
-| ---------------------------- | ----------------------------------------------------------------------- |
-| `packages/engine`            | Pricing, the four-input forecast, scenarios, and usage import           |
-| `packages/sheet`             | Excel workbook export. Loaded only when someone exports                 |
-| `data/`                      | Versioned rates, instance ratings, and virtual-machine prices           |
-| `apps/web`                   | The forecast page                                                       |
-| `mcp/`                       | The stdio server over the same engine                                   |
-| `scripts/weekly-catalog.ts`  | Monday catalog and price check. Dry-run by default                      |
-| `scripts/refresh-prices.mjs` | VM and Azure DBU meter refresh. Instance DBU counts stay cited.         |
-| `docs/DATA-PIPELINE.md`      | Where those prices come from, and how the weekly job runs               |
-| `docs/CATALOG.md`            | Product catalog schema, citations, and the watch                        |
-| `docs/PRODUCTS.md`           | Product inventory and which rows have a list rate                       |
-| `docs/PRODUCT-MAP.md`        | Learning domains, service relationships, aliases, and source evidence   |
-| `docs/UNIT-COSTS.md`         | Source unit prices, dimensions, formulas, CSV/JSON, and evidence limits |
-| `docs/COVERAGE.md`           | Which products and Azure cells have a cited rate                        |
-| `docs/RESEARCH.md`           | Source for every rate                                                   |
-| `docs/NAMING.md`             | Why the product is called Catalogfore                                   |
-| `docs/ARCHITECTURE.md`       | How the pricing code is split                                           |
-| `docs/USABILITY.md`          | Walkthroughs for evaluating, budgeting, and a usage file                |
-| `docs/USAGE-IMPORT.md`       | Typed import, period selection, currencies, corrections, and cost basis |
-| `docs/PLAN.md`               | What the page covers, and what the engine still prices                  |
-| `docs/ROADMAP.md`            | Gaps versus other calculators, and what is not in this pass             |
-| `docs/PRIVACY.md`            | What stays in the browser                                               |
-| `docs/FAQ.md`                | Short answers for the public FAQ page                                   |
-| `docs/MCP.md`                | Tool arguments and a client config                                      |
-| `docs/MAINTENANCE.md`        | How dependency updates are grouped                                      |
-| `SECURITY.md`                | How to report a vulnerability                                           |
-| `CHANGELOG.md`               | What is unreleased. GitHub Releases are cut by the owner                |
-| `NOTICE`                     | License notice for the code and the price sources                       |
-
-## Publish
-
-Pushes to `main` publish the site from `.github/workflows/pages.yml`. The address is https://santoshshinde2012.github.io/Catalogfore/
-
-Vite’s base path is `/Catalogfore/`. Unknown addresses serve `404.html`. The repository social-preview image is `.github/social-preview.png` (1280×640). Upload that file in the repository settings if GitHub has not picked it up. Topics and the description belong on the repository, not in the page.
-
-One weekly workflow, Mondays at 06:00 UTC, refreshes AWS and Azure list prices and checks allowed Databricks metadata for new or renamed products. It opens a single review pull request and does not merge. GCP virtual-machine rates stay seeded unless `GCP_BILLING_API_KEY` is set. Do not commit that key. The job captures and validates official Databricks price-card and calculator JSON before updating the shared resolver. Saved source responses make the accepted rates reproducible. The forecast page prints the catalog date; individual source observation dates are separate. Details are in [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md).
-
-## MCP
-
-`mcp/` speaks stdio and does not log into a workspace. A browser page cannot call the Databricks SQL API. Tools: `list_skus`, `list_products`, `estimate_workload`, `estimate_product`, `forecast`, `compare_scenarios`, `forecast_usage`, and `export_xlsx`. `npm run catalogfore -- estimate --xlsx forecast.xlsx` writes the same Excel workbook the page downloads.
-
-```bash
+```sh
 npm run build
 node mcp/dist/index.js
 ```
 
-Arguments, a client config, and the fixture numbers are in [docs/MCP.md](docs/MCP.md).
+The MCP process waits for a client on stdin/stdout; it is not an HTTP endpoint or a workspace connector. [MCP setup and tools](docs/MCP.md)
 
-## License
+## How it is organized
 
-[MIT](LICENSE). Read [CONTRIBUTING.md](CONTRIBUTING.md) before changing a rate.
+| Path                                 | Responsibility                                                                     |
+| ------------------------------------ | ---------------------------------------------------------------------------------- |
+| [apps/web](apps/web)                 | React workspaces, browser session state, imports, and downloads                    |
+| [packages/engine](packages/engine)   | Cost strategies, dated projections, usage parsing, scenarios, and unit-cost policy |
+| [packages/catalog](packages/catalog) | Validated product inventory and optional learning map                              |
+| [packages/sheet](packages/sheet)     | Excel reports from the shared projection                                           |
+| [mcp](mcp)                           | Local MCP tool adapters over the engine                                            |
+| [data](data)                         | Versioned price inputs, retained source captures, and generated reports            |
+| [scripts](scripts)                   | CLI, source refresh/replay, artifact generation, and verification                  |
+| [docs](docs/README.md)               | User guides, implementation references, and source evidence                        |
+
+Pricing belongs in the engine. Browser ports isolate capabilities used by application services; dependency checks prevent presentation code from importing price files directly. [Architecture and extension points](docs/ARCHITECTURE.md)
+
+## Maintain and publish
+
+Source refreshes are maintainer operations, separate from running the app. The weekly workflow is scheduled for Monday 06:00 UTC and prepares a review PR; it does not merge it. Offline source replay verifies retained captures and normalized values, not today's vendor prices. [Data pipeline](docs/DATA-PIPELINE.md)
+
+The [Pages workflow](.github/workflows/pages.yml) builds and deploys `main`. The configured base path is `/Catalogfore/`. Deployment depends on repository Pages and Actions settings; a local build does not publish anything. [Deployment settings](docs/DEVELOPMENT.md#deployment)
+
+[MIT license](LICENSE) · [Source attribution](NOTICE) · [Security reporting](SECURITY.md) · [Unreleased changes](CHANGELOG.md)

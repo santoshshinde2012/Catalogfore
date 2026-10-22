@@ -26,13 +26,21 @@ jobs:
       - run: node scripts/lockfile-integrity.mjs
       - run: npm run lint
       - run: npm run typecheck
+      - run: npm run check:docs
       - run: npm run check:sources
       - run: npm run check:unit-costs
       - run: npm test
       - run: npm run build
       - run: npm run test:mcp
-      - run: npx playwright install --with-deps chromium
-      - name: Console on the built app
+      - name: Install Chromium and system dependencies
+        timeout-minutes: 15
+        run: |
+          # Keep the runner's official HTTPS fallbacks; the Azure mirror repeatedly stalled.
+          if [ -f /etc/apt/apt-mirrors.txt ] && grep -q '^https://archive\.ubuntu\.com/ubuntu/' /etc/apt/apt-mirrors.txt; then
+            sudo sed -i '/^http:\/\/azure\.archive\.ubuntu\.com\/ubuntu\//d' /etc/apt/apt-mirrors.txt
+          fi
+          npx playwright install --with-deps chromium
+      - name: Browser checks on the built app
         run: |
           npm run preview -w @cayfore/web -- --host 127.0.0.1 --port 4175 --strictPort > /tmp/cayfore-preview.log 2>&1 &
           echo "$!" > /tmp/cayfore-preview.pid
@@ -50,4 +58,4 @@ jobs:
             exit 1
           fi
           node scripts/console-routes.mjs
-      - run: npm run test:e2e
+          PLAYWRIGHT_BASE_URL=http://127.0.0.1:4175/Catalogfore/ npm run test:e2e

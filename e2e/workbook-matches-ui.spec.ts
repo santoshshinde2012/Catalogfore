@@ -29,7 +29,10 @@ test("the Excel workbook matches the on-screen forecast", async ({ page }) => {
   const bases = Array.from({ length: MONTHS }, (_, index) => monthly.getCell(index + FIRST_MONTH_ROW, 3).value);
   expect(bases).toEqual(saved.months.map((month) => month.expected));
   expect(summary.getCell("B3").value).toBe("AWS");
-  expect(summary.getCell("B9").value).toEqual({ formula: "'Monthly forecast'!C14" });
+  expect(summary.getCell("B9").value).toEqual({
+    formula: "SUM('Monthly forecast'!C2:C13)",
+    result: saved.annual,
+  });
   const catalog = JSON.parse(await readFile(new URL("../data/product-catalog.json", import.meta.url), "utf8"));
   expect(summary.getCell("B12").value).toBe(catalog.version);
   await expect(page.getByTestId("year-sentence")).toContainText(

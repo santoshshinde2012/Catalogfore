@@ -14,15 +14,18 @@ function buildSummary(workbook: ExcelJS.Workbook, result: PortfolioProjection): 
   const sheet = workbook.addWorksheet("Summary", { views: [{ state: "frozen", ySplit: 1 }] });
   const { portfolio } = result;
   const simple = portfolio.simple;
-  const rows: [string, string | number | { formula: string }][] = [
+  const rows: [string, string | number | { formula: string; result?: number }][] = [
     ["Field", "Value"],
     ["Cloud", portfolio.cloud.toUpperCase()],
     ["Tier", portfolio.tier],
     ["Region", portfolio.region],
     ["Starting monthly spend", simple?.monthlySpend ?? result.listMonthly],
-    ["Monthly growth", simple?.monthlyGrowth ?? 0],
+    ["Monthly growth", simple?.monthlyGrowth ?? Math.pow(1 + portfolio.forecast.annualGrowth, 1 / 12) - 1],
     ["Commitment discount", simple?.commitDiscount ?? portfolio.commitment.dbuDiscount],
-    ["Annual total", { formula: `'${MONTHLY_SHEET}'!C${annualTotalRow(workbook)}` }],
+    [
+      "Annual total",
+      { formula: `SUM('${MONTHLY_SHEET}'!C2:C${Math.min(12, result.months.length) + 1})`, result: result.annual },
+    ],
     ["Low", result.band.low],
     ["High", result.band.high],
     ["Product catalog", productCatalog.version],
@@ -44,12 +47,6 @@ function buildSummary(workbook: ExcelJS.Workbook, result: PortfolioProjection): 
     if (MONEY_FIELDS.has(label)) cell.numFmt = USD_FORMAT;
     if (PERCENT_FIELDS.has(label)) cell.numFmt = PERCENT_FORMAT;
   });
-}
-
-function annualTotalRow(workbook: ExcelJS.Workbook): number {
-  const monthly = workbook.getWorksheet(MONTHLY_SHEET);
-  if (!monthly) throw new Error(`${MONTHLY_SHEET} is missing`);
-  return monthly.rowCount;
 }
 
 registerForecastSheet({ id: "summary", name: "Summary", build: buildSummary });

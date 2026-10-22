@@ -143,6 +143,7 @@ export function planActions(controls: SessionControls) {
     reset: () => {
       controls.loadRequest.current += 1;
       controls.setUsageBusy(false);
+      controls.setUsageProgress(null);
       controls.setUsagePreview(null);
       replacePlan(defaultPlan(), true);
     },

@@ -8,6 +8,7 @@ import {
 } from "@cayfore/engine";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { readStoredTheme, storeTheme } from "../theme-storage";
+import { notices } from "../services/notices";
 import { readInitial, type SimpleSession, type Theme } from "./forecast-session";
 import { useSavedScenarios } from "./saved-scenarios";
 import { sessionActions } from "./session-actions";
@@ -24,6 +25,7 @@ export function useSimpleForecast(): SimpleSession {
   const [notice, setNotice] = useState("");
   const [usageError, setUsageError] = useState("");
   const [usageBusy, setUsageBusy] = useState(false);
+  const [usageProgress, setUsageProgress] = useState<number | null>(null);
   const [usagePreview, setUsagePreview] = useState<UsageImportPreview | null>(null);
   const [theme, setTheme] = useState<Theme>(() => {
     if (document.documentElement.dataset.theme === "dark") return "dark";
@@ -35,8 +37,19 @@ export function useSimpleForecast(): SimpleSession {
   const ideas = useMemo(() => recommendations(portfolio).slice(0, 3), [portfolio]);
   useEffect(() => {
     function synchronizeShareUrl() {
-      const next = `#plan=${encodePortfolio(portfolio)}`;
+      let next: string;
+      const unavailable = notices.linkUnavailable().title;
+      try {
+        next = `#plan=${encodePortfolio(portfolio)}`;
+      } catch {
+        const url = new URL(window.location.href);
+        url.hash = "";
+        if (window.location.hash) history.replaceState(history.state, "", url);
+        setNotice(unavailable);
+        return;
+      }
       if (window.location.hash !== next) history.replaceState(history.state, "", next);
+      setNotice((current) => (current === unavailable ? "" : current));
     }
     synchronizeShareUrl();
     // View history changes the query string; the active session remains the source of truth for the plan.
@@ -62,6 +75,10 @@ export function useSimpleForecast(): SimpleSession {
     portfolio,
     override,
     undo,
+    selectedId,
+    notice,
+    usageError,
+    usagePreview,
     loadRequest,
     setPlan,
     setOverride,
@@ -70,6 +87,7 @@ export function useSimpleForecast(): SimpleSession {
     setNotice,
     setUsageError,
     setUsageBusy,
+    setUsageProgress,
     setUsagePreview,
     setTheme,
   });
@@ -85,6 +103,7 @@ export function useSimpleForecast(): SimpleSession {
     notice,
     usageError,
     usageBusy,
+    usageProgress,
     usagePreview,
     selectedId,
     canUndo: undo !== null,

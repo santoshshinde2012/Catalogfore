@@ -56,8 +56,8 @@ export function RateFilters({
   }
   return (
     <section aria-label="Filter unit costs" className="border-y bg-card/60 px-3 py-3 sm:px-4">
-      <div className="grid grid-cols-2 items-end gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        <div className="col-span-2 grid min-w-0 gap-2 sm:col-span-1">
+      <div className="grid grid-cols-1 items-end gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
+        <div className="grid min-w-0 gap-2">
           <label className="text-xs font-medium text-muted-foreground" htmlFor="rate-search">
             Search rates and services
           </label>
@@ -77,7 +77,7 @@ export function RateFilters({
           </div>
         </div>
         <OptionSelect
-          className="col-span-2 min-w-0 sm:col-span-1"
+          className="min-w-0"
           label="Product or service"
           value={filters.productId ?? ""}
           onValueChange={(productId) =>

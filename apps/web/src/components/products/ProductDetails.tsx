@@ -45,9 +45,7 @@ export function ProductDetails({
         </span>
         <CoverageBadge entry={entry} />
       </div>
-      <p className="mt-4 text-[10px] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
-        Product details
-      </p>
+      <p className="mt-4 text-xs font-semibold tracking-[0.14em] text-muted-foreground uppercase">Product details</p>
       <h2 className="mt-1 text-2xl font-semibold tracking-tight text-balance">{entry.name}</h2>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{entry.summary}</p>
       <ProductActions entry={entry} onAdd={onAdd} onInspectCosts={onInspectCosts} />

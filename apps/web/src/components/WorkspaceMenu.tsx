@@ -1,7 +1,8 @@
-import { Ellipsis, FolderOpen, Moon, RotateCcw, Star, Sun } from "lucide-react";
+import { CircleHelp, Ellipsis, FolderOpen, Keyboard, Moon, Printer, RotateCcw, Star, Sun } from "lucide-react";
 import { useRef } from "react";
+import { openShortcuts } from "../services/shortcut-channel";
 import type { Theme } from "../hooks/forecast-session";
-import { APP_NAME, REPO } from "../site";
+import { APP_NAME, BASE_PATH, REPO } from "../site";
 import { secondaryNavigation, type NavigationActions } from "./header-navigation";
 import { WorkspaceMenuEntry } from "./WorkspaceMenuEntry";
 import { Button } from "./ui/button";
@@ -22,6 +23,8 @@ export function WorkspaceMenu({
   onTheme: () => void;
 }) {
   const menuAction = useRef<(() => void) | null>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const restoringFocus = useRef(false);
   const themeLabel = theme === "light" ? "Switch to dark theme" : "Switch to light theme";
   return (
     <DropdownMenu modal={false}>
@@ -32,7 +35,13 @@ export function WorkspaceMenu({
       >
         <DropdownMenuTrigger asChild>
           <Button
+            ref={trigger}
             type="button"
+            onFocus={(event) => {
+              // Returning from a menu action restores the keyboard position;
+              // it should not open fresh hover help over the updated view.
+              if (restoringFocus.current) event.preventDefault();
+            }}
             variant="ghost"
             className="min-h-11 gap-2 rounded-none px-2.5 text-[13px] text-muted-foreground hover:bg-transparent hover:text-foreground data-[state=open]:text-foreground sm:px-3"
             aria-label="Menu"
@@ -53,7 +62,12 @@ export function WorkspaceMenu({
           if (!action) return;
           event.preventDefault();
           menuAction.current = null;
-          requestAnimationFrame(action);
+          requestAnimationFrame(() => {
+            restoringFocus.current = true;
+            trigger.current?.focus();
+            restoringFocus.current = false;
+            action();
+          });
         }}
       >
         <MenuGroupLabel>Planning</MenuGroupLabel>
@@ -86,6 +100,28 @@ export function WorkspaceMenu({
         />
         <MenuGroupLabel separated>Preferences & project</MenuGroupLabel>
         <WorkspaceMenuEntry
+          label="Help & FAQ"
+          description="Choose a starting point, compare scenarios, and save or share a plan. Opens in a new tab."
+          icon={CircleHelp}
+          href={`${BASE_PATH}faq.html`}
+        />
+        <WorkspaceMenuEntry
+          label="Keyboard shortcuts"
+          description="See Alt shortcuts for Plan, Product map, Unit costs, and Forecast."
+          icon={Keyboard}
+          onSelect={() => {
+            menuAction.current = openShortcuts;
+          }}
+        />
+        <WorkspaceMenuEntry
+          label="Print current view"
+          description="Print the current view without the workspace chrome."
+          icon={Printer}
+          onSelect={() => {
+            menuAction.current = () => window.print();
+          }}
+        />
+        <WorkspaceMenuEntry
           label={themeLabel}
           description="Choose the appearance for this browser."
           icon={theme === "light" ? Moon : Sun}
@@ -108,7 +144,7 @@ function MenuGroupLabel({ children, separated = false }: { children: string; sep
   return (
     <div className={separated ? "mx-2 mt-1 border-t pt-2" : "mx-2 pt-1"}>
       <p
-        className="px-1 pt-1 pb-1.5 text-[10px] font-semibold tracking-[0.12em] text-muted-foreground uppercase"
+        className="px-1 pt-1 pb-1.5 text-xs font-semibold tracking-[0.08em] text-muted-foreground uppercase"
         aria-hidden="true"
       >
         {children}

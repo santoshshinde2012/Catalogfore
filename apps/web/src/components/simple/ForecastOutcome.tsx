@@ -9,6 +9,7 @@ import type { RatePlacement } from "../../hooks/useAppView";
 import { ForecastViews } from "./ForecastViews";
 import { PriceDisclosure } from "./PriceDisclosure";
 import { periodAt, periodLabel } from "../../lib/chart-data";
+import { FieldHelp } from "../ui/field-help";
 import { InfoTooltip } from "../ui/tooltip";
 import { ScenarioComparison } from "./ScenarioComparison";
 
@@ -47,12 +48,18 @@ export function ResultsPanel({
   const startMonth = points[0]?.period ?? estimate.verifiedOn.slice(0, 7);
   const endMonth = points[11]?.period ?? periodAt(startMonth, 11);
   return (
-    <div id="forecast" tabIndex={-1} aria-busy={busy} className="grid gap-6">
-      <Rise className="grid gap-4">
+    <div id="forecast" tabIndex={-1} aria-busy={busy} className="grid gap-3">
+      <Rise className="grid gap-2">
         <div>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-sm font-semibold">Next 12 months</h2>
+              <h2 className="flex items-center gap-1.5 text-sm font-semibold">
+                Next 12 months
+                <FieldHelp
+                  label="Next 12 months"
+                  description="Sum of the first twelve forecast months, rounded for reading. Exports keep the exact amount."
+                />
+              </h2>
               <p className="mt-1 text-xs text-muted-foreground">
                 {periodLabel(startMonth)}–{periodLabel(endMonth)} · USD
               </p>
@@ -60,7 +67,7 @@ export function ResultsPanel({
             <div className="flex flex-wrap items-center gap-2">
               <InfoTooltip
                 label="Share this forecast"
-                description="Copy a link with your current plan and assumptions so someone else can open it."
+                description="Anyone with this link can read the shared plan. Owner attribution is omitted. For a complete backup or a plan too large for a link, use Export → JSON."
               >
                 <Button type="button" onClick={onShare}>
                   Copy link
@@ -69,13 +76,13 @@ export function ResultsPanel({
               <ExportBar portfolio={portfolio} estimate={estimate} points={points} forecastResult={projection} />
             </div>
           </div>
-          <p className="mt-4">
+          <p className="mt-3">
             <span className="sr-only" data-testid="year-sentence" aria-live="polite">
               {sentence}
             </span>
             <span
               aria-hidden="true"
-              className="block break-words text-4xl font-semibold tracking-tight tabular-nums min-[390px]:text-5xl sm:text-6xl"
+              className="block text-4xl font-semibold tracking-tight break-words tabular-nums 2xl:text-5xl"
               data-testid="year-total"
             >
               {money(animated, 0)}
@@ -91,8 +98,15 @@ export function ResultsPanel({
               Reading usage data…
             </p>
           )}
-          <p className="mt-2 text-sm tabular-nums text-muted-foreground" data-testid="annual-range">
+          <p
+            className="mt-2 flex flex-wrap items-center gap-1.5 text-sm tabular-nums text-muted-foreground"
+            data-testid="annual-range"
+          >
             Planning range {money(band.low, 0)}–{money(band.high, 0)}
+            <FieldHelp
+              label="Planning range"
+              description="Low and high totals from the model assumptions. This is not a calibrated probability interval."
+            />
           </p>
           {portfolio.usage?.sourceLabel && (
             <p className="mt-2 text-xs font-medium text-muted-foreground">{portfolio.usage.sourceLabel}</p>
@@ -103,22 +117,13 @@ export function ResultsPanel({
             </p>
           )}
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Tile label="First month" value={money(animatedFirst, 0)} />
-          <Tile label="Month 12" value={money(animatedLast, 0)} />
+        <div className="grid grid-cols-2 gap-2">
+          <Tile label="First month" value={money(animatedFirst, 2)} testId="first-month" />
+          <Tile label="Month 12" value={money(animatedLast, 2)} testId="month-twelve" />
         </div>
         <p className="text-sm text-muted-foreground" data-testid="bill-split">
           {split}
         </p>
-        <Button
-          type="button"
-          variant="outline"
-          className="justify-self-start"
-          onClick={() => navigateToSection("budget-planning")}
-        >
-          Budget and scenarios
-        </Button>
-        {comparison && <ScenarioComparison current={projection} comparison={comparison} />}
       </Rise>
       {portfolio.workloads.length === 0 && (
         <div className="rounded-xl border border-dashed bg-muted/30 p-5 text-sm">
@@ -132,6 +137,15 @@ export function ResultsPanel({
         </div>
       )}
       <ForecastViews projection={projection} comparison={comparison} />
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        Anyone with a link can read this plan. Export → JSON saves a copy for Menu → Open forecast.
+      </p>
+      <div className="flex flex-wrap items-center gap-2">
+        <Button type="button" variant="outline" onClick={() => navigateToSection("budget-planning")}>
+          Budget and scenarios
+        </Button>
+      </div>
+      {comparison && <ScenarioComparison current={projection} comparison={comparison} />}
       <PriceDisclosure
         estimate={estimate}
         portfolio={portfolio}
@@ -160,11 +174,21 @@ export function ResultsPanel({
   );
 }
 
-function Tile({ label, value }: { label: string; value: string }) {
+const tileHelp: Record<string, string> = {
+  "First month": "Expected spend in the first forecast month, after mix, growth, and discounts.",
+  "Month 12": "Expected spend in the twelfth month. Monthly growth compounds from the baseline.",
+};
+
+function Tile({ label, value, testId }: { label: string; value: string; testId?: string }) {
   return (
     <div className="min-w-0 rounded-lg border bg-background px-3 py-2">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="mt-1 break-words text-sm font-semibold tabular-nums">{value}</p>
+      <p className="flex items-center gap-1 text-xs text-muted-foreground">
+        {label}
+        {tileHelp[label] && <FieldHelp label={label} description={tileHelp[label]} />}
+      </p>
+      <p className="mt-0.5 break-words text-sm font-semibold tabular-nums" data-testid={testId}>
+        {value}
+      </p>
     </div>
   );
 }

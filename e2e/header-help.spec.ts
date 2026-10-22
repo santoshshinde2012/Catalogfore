@@ -43,6 +43,8 @@ test("every desktop header action explains itself on hover and keyboard focus", 
 test("keyboard menu navigation moves to the forecast and Escape restores its trigger", async ({ page }) => {
   await page.goto("./");
   await page.getByRole("radio", { name: "10%", exact: true }).click();
+  // Move off the future menu; WebKit's focus scroll can emit a pointermove that changes selection.
+  await page.mouse.move(0, 0);
   const hash = new URL(page.url()).hash;
   const menuTrigger = workspaceMenuTrigger(page);
   await menuTrigger.focus();
@@ -72,7 +74,7 @@ test("touch menu explains its actions and fits a narrow screen @mobile", async (
   await page.goto("./");
   const menu = await openWorkspaceMenu(page);
   await expect(menu).toBeVisible();
-  await expect(menu.getByRole("menuitem")).toHaveCount(7);
+  await expect(menu.getByRole("menuitem")).toHaveCount(10);
   await expect(menu.getByRole("menuitem", { name: /^Forecast\b/ })).toContainText(
     "Explore monthly spend, cost drivers, and your 12-month outlook.",
   );
@@ -82,6 +84,9 @@ test("touch menu explains its actions and fits a narrow screen @mobile", async (
     "How it works",
     "Open forecast",
     "New forecast",
+    "Help & FAQ",
+    "Keyboard shortcuts",
+    "Print current view",
     "Switch to dark theme",
     "Star on GitHub",
   ]) {
@@ -112,8 +117,7 @@ test("touch menu explains its actions and fits a narrow screen @mobile", async (
   await expect(menu.getByRole("menuitem", { name: /^Forecast\b/ })).toBeFocused();
   expect(await menu.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
-  const scan = await new AxeBuilder({ page }).analyze();
-  expect(scan.violations).toEqual([]);
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 });
 
 test("workspace help returns from reference pages without changing the forecast", async ({ page }) => {

@@ -8,7 +8,7 @@ import { DomainIcon, domainColor } from "./map-presentation";
 export function DomainOverview({ selected, onSelect }: { selected: string; onSelect: (id: string) => void }) {
   const active = domainById(selected);
   return (
-    <section aria-labelledby="domain-map-heading" className="min-w-0 overflow-hidden">
+    <section aria-labelledby="domain-map-heading" className="min-w-0">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 id="domain-map-heading" className="flex items-center gap-2 text-sm font-semibold">
           <Layers3 className="size-4 text-muted-foreground" aria-hidden="true" />
@@ -19,7 +19,7 @@ export function DomainOverview({ selected, onSelect }: { selected: string; onSel
       <div
         role="group"
         aria-label="Product domains"
-        className="grid min-w-0 auto-cols-[minmax(11.5rem,1fr)] grid-flow-col grid-rows-2 gap-2 overflow-x-auto pb-2 sm:grid-flow-row sm:grid-cols-4 sm:grid-rows-none"
+        className="grid min-w-0 grid-cols-2 gap-2 max-[359px]:grid-cols-1 lg:grid-cols-4"
       >
         {productMap.domains.map((domain) => {
           const count = productMap.entries.filter((entry) => entry.domainId === domain.id).length;
@@ -45,14 +45,16 @@ export function DomainOverview({ selected, onSelect }: { selected: string; onSel
                   <DomainIcon id={domain.id} />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-xs leading-snug font-semibold">{domain.name}</span>
-                  <span className="mt-1 block text-[10px] leading-snug text-muted-foreground">{domain.verb}</span>
+                  <span className="block text-xs leading-snug font-semibold break-words">{domain.name}</span>
+                  <span className="mt-1 block text-xs leading-snug break-words text-muted-foreground">
+                    {domain.verb}
+                  </span>
                 </span>
                 {isSelected ? (
                   <Check className="size-3.5 shrink-0 text-link" aria-hidden="true" />
                 ) : (
                   <span
-                    className="self-start rounded-md bg-muted/70 px-1.5 py-0.5 text-[10px] tabular-nums text-muted-foreground"
+                    className="self-start rounded-md bg-muted/70 px-1.5 py-0.5 text-xs tabular-nums text-muted-foreground"
                     aria-label={`${count} primary entries`}
                   >
                     {count}

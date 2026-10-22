@@ -42,7 +42,7 @@ export function AppHeader({
     how: onHow,
   };
   return (
-    <header className="sticky top-0 z-40 h-[var(--workspace-header-height)] bg-card/95 shadow-[0_1px_0_var(--border),0_4px_24px_rgb(11_32_38/0.025)] backdrop-blur-xl">
+    <header className="sticky top-0 z-40 h-[var(--workspace-header-height)] bg-card/95 shadow-[0_1px_0_var(--border),0_4px_24px_rgb(11_32_38/0.025)] backdrop-blur-xl print:hidden">
       <div className="mx-auto grid h-15 w-full max-w-7xl grid-cols-[1fr_auto] items-center gap-3 px-4 sm:px-6 md:h-18 md:grid-cols-[1fr_auto_1fr]">
         <InfoTooltip
           label="Your planning workspace"

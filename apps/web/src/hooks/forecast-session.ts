@@ -1,3 +1,4 @@
+import type { ForecastSnapshot } from "./forecast-snapshot";
 import type { SavedScenario } from "./saved-scenarios";
 
 import {
@@ -40,6 +41,7 @@ export interface SimpleSession {
   notice: string;
   usageError: string;
   usageBusy: boolean;
+  usageProgress: number | null;
   usagePreview: UsageImportPreview | null;
   scenarios: SavedScenario[];
   scenarioStorageAvailable: boolean;
@@ -68,6 +70,9 @@ export interface SimpleSession {
   setMix: (key: keyof WorkloadMix, value: number) => void;
   setGrowth: (rate: number) => void;
   setCommit: (rate: number) => void;
+  loadPortfolio: (input: Portfolio) => void;
+  captureForecast: () => ForecastSnapshot;
+  restoreForecast: (snapshot: ForecastSnapshot) => void;
   loadUsageText: (text: string) => void;
   loadUsageFile: (file: File) => void;
   loadSample: (kind?: "current" | "history") => void;

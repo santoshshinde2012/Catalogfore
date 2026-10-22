@@ -20,6 +20,124 @@ import { publishedPhotonMultiplier } from "./rates/photon.js";
 import type { Portfolio, Workload } from "./types.js";
 
 describe("canonical financial projection", () => {
+  it("applies already-active planning events once in product totals", () => {
+    const portfolio: Portfolio = {
+      ...blankPortfolio(),
+      workloads: [{ id: "storage", name: "Storage", kind: "storage", gbMonth: 1000, managed: true }],
+      forecast: { months: 12, annualGrowth: 0.2, seasonality: "flat", startMonth: "2027-01" },
+      events: [{ id: "expand", name: "Expand storage", month: "2027-01", usageMultiplier: 2 }],
+    };
+    const projection = projectPortfolio(portfolio);
+    for (const baseline of [estimate(portfolio), projection.estimate]) {
+      const products = forecastProducts(baseline, portfolio);
+      expect(products.monthly).toBe(projection.points[0].total);
+      expect(products.year).toBe(projection.annual);
+      expect(products.lines[0].year).toBe(projection.annual);
+    }
+  });
+
+  it("keeps offsetting imported product charges visible when the total is zero", () => {
+    const portfolio: Portfolio = {
+      ...blankPortfolio(),
+      forecast: { months: 12, annualGrowth: 0, seasonality: "flat" },
+      workloads: [100, -100].map((amount, index) => ({
+        id: `charge-${index}`,
+        name: index ? "Credit" : "Usage",
+        kind: "metered",
+        sku: "jobs_classic",
+        dbuPerMonth: amount,
+        fixedUsdByCloud: { aws: amount },
+        rateProvenance: { kind: "imported", label: "Invoice", currency: "USD", basis: "billed" },
+      })),
+    };
+    const products = forecastProducts(estimate(portfolio), portfolio);
+    expect(products.monthly).toBe(0);
+    expect(products.lines.map((line) => line.monthly)).toEqual([100, -100]);
+    expect(products.lines.map((line) => line.year)).toEqual([1200, -1200]);
+  });
+
+  it("assigns add-ons to eligible products without changing imported net costs", () => {
+    const portfolio: Portfolio = {
+      ...blankPortfolio(),
+      addon: "compliance",
+      commitment: { dbuDiscount: 0.5, cloudDiscount: 0 },
+      forecast: { months: 12, annualGrowth: 0, seasonality: "flat" },
+      workloads: ["billed", "list"].map((basis, index) => ({
+        id: basis,
+        name: basis,
+        kind: "metered",
+        sku: "jobs_classic",
+        dbuPerMonth: 100,
+        fixedUsdByCloud: { aws: index ? 100 : 80 },
+        rateProvenance: { kind: "imported", label: "Invoice", currency: "USD", basis: basis as "billed" | "list" },
+      })),
+    };
+    const products = forecastProducts(estimate(portfolio), portfolio);
+    expect(products.monthly).toBe(135);
+    expect(products.lines.map((line) => line.monthly)).toEqual([80, 55]);
+    expect(products.lines.map((line) => line.year)).toEqual([960, 660]);
+  });
+
+  it.each([10, 999])("reconciles add-on rounding across %i small charges without reducing a billed import", (count) => {
+    const portfolio: Portfolio = {
+      ...blankPortfolio(),
+      addon: "compliance",
+      forecast: { months: 12, annualGrowth: 0, seasonality: "flat" },
+      workloads: [
+        ...Array.from({ length: count }, (_, index): Workload => ({
+          id: `charge-${index}`,
+          name: `Usage ${index}`,
+          kind: "metered",
+          sku: "jobs_classic",
+          dbuPerMonth: 0.05,
+          fixedUsdByCloud: { aws: 0.05 },
+          rateProvenance: { kind: "imported", label: "List cost", currency: "USD", basis: "list" },
+        })),
+        {
+          id: "billed",
+          name: "Billed cost",
+          kind: "metered",
+          sku: "jobs_classic",
+          dbuPerMonth: 1,
+          fixedUsdByCloud: { aws: 1 },
+          rateProvenance: { kind: "imported", label: "Invoice", currency: "USD", basis: "billed" },
+        },
+      ],
+    };
+    const projection = projectPortfolio(portfolio);
+    const products = forecastProducts(projection.estimate, portfolio);
+    expect(products.lines.at(-1)).toMatchObject({ monthly: 1, year: 12 });
+    expect(products.lines.slice(0, -1).every((line) => line.monthly === 0.05 || line.monthly === 0.06)).toBe(true);
+    expect(roundMoney(products.lines.reduce((sum, line) => sum + line.monthly, 0))).toBe(products.monthly);
+    expect(roundMoney(products.lines.reduce((sum, line) => sum + line.year, 0))).toBe(projection.annual);
+    expect(products.monthly).toBe(projection.points[0].total);
+    if (count === 10) expect(products.monthly).toBe(1.55);
+  });
+
+  it("recomputes add-ons when an event changes a previously offsetting baseline", () => {
+    const portfolio: Portfolio = {
+      ...blankPortfolio(),
+      addon: "compliance",
+      forecast: { months: 12, annualGrowth: 0, seasonality: "flat", startMonth: "2027-01" },
+      workloads: [100, -100].map((amount, index) => ({
+        id: `charge-${index}`,
+        name: index ? "Credit" : "Usage",
+        kind: "metered",
+        sku: "jobs_classic",
+        dbuPerMonth: amount,
+        fixedUsdByCloud: { aws: amount },
+        rateProvenance: { kind: "imported", label: "List cost", currency: "USD", basis: "list" },
+      })),
+      events: [{ id: "expand", name: "Expand", month: "2027-02", workloadId: "charge-0", usageMultiplier: 2 }],
+    };
+    const projection = projectPortfolio(portfolio);
+    expect(projection.points[0].total).toBe(0);
+    expect(projection.points[1]).toMatchObject({ dbuCost: 100, addonCost: 10, total: 110 });
+    const products = forecastProducts(projection.estimate, portfolio);
+    expect(products.lines.map((line) => line.monthly)).toEqual([110, -110]);
+    expect(products.year).toBe(projection.annual);
+  });
+
   it("reconciles fitted totals, components, annual range and product attribution to cents", () => {
     const base = defaultPlan();
     const projection = projectSimple({
@@ -137,6 +255,30 @@ describe("canonical financial projection", () => {
 });
 
 describe("saved plan integrity", () => {
+  it.each([24, 36] as const)("preserves all %i fitted months through saved JSON and share links", (months) => {
+    const portfolio = projectSimple(defaultPlan()).portfolio;
+    if (!portfolio.simple) throw new Error("Expected simple metadata");
+    portfolio.forecast = { ...portfolio.forecast, months, startMonth: "2027-01" };
+    portfolio.simple.usageForecast = {
+      method: "log-linear",
+      mape: null,
+      holdout: 0,
+      monthlyGrowth: 0.01,
+      originPeriod: "2027-01",
+      ratios: Array.from({ length: months }, (_, index) => ({ low: 1, expected: 1 + index / 100, high: 2 })),
+    };
+    for (const original of [portfolio, detachSimple(portfolio)]) {
+      const parsed = parseSavedForecast(JSON.parse(JSON.stringify(original)));
+      expect(parsed.ok).toBe(true);
+      const shared = decodePortfolio(encodePortfolio(original));
+      expect(shared).not.toBeNull();
+      for (const restored of [parsed.ok ? parsed.value : null, shared]) {
+        if (!restored) throw new Error("Expected restored forecast");
+        expect(projectPortfolio(restored).points).toEqual(projectPortfolio(original).points);
+      }
+    }
+  });
+
   it("preserves declining growth and an explicitly zero budget on save and reopen", () => {
     const projection = projectSimple(withGrowth(defaultPlan(), -0.2));
     const portfolio = { ...projection.portfolio, budgetAnnual: 0 };

@@ -51,6 +51,13 @@ export function RateDataPreview({
         tabIndex={0}
         className="relative max-h-[34rem] overflow-auto overscroll-contain border-y focus-visible:outline-offset-[-2px]"
       >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 right-0 z-20 w-5 bg-gradient-to-l from-background to-transparent"
+        />
+        <p className="sticky left-0 px-3 pt-3 text-xs text-muted-foreground sm:px-4 lg:hidden">
+          Scroll sideways for placement and evidence. The product column stays in place.
+        </p>
         <table className="w-full min-w-[68rem] table-fixed border-separate border-spacing-0 text-left">
           <caption className="sr-only">
             Unit cost catalog preview. Key pricing, placement and evidence fields; downloads retain all 40 canonical
@@ -61,9 +68,9 @@ export function RateDataPreview({
               <col key={index} style={{ width: `${width / 10.88}%` }} />
             ))}
           </colgroup>
-          <thead className="sticky top-0 z-10 bg-muted text-[11px] tracking-wide text-muted-foreground">
+          <thead className="sticky top-0 z-10 bg-muted text-xs tracking-wide text-muted-foreground">
             <tr>
-              {columns.map(({ label, key, hint, right }) => {
+              {columns.map(({ label, key, hint, right }, index) => {
                 const direction = sort && sort.key === key ? sort.direction : "none";
                 const Icon = direction === "ascending" ? ArrowUp : direction === "descending" ? ArrowDown : ArrowUpDown;
                 return (
@@ -71,7 +78,7 @@ export function RateDataPreview({
                     key={label}
                     scope="col"
                     aria-sort={key ? direction : undefined}
-                    className={`border-b px-3 font-medium ${right ? "text-right" : ""}`}
+                    className={`border-b bg-muted px-3 font-medium ${index === 0 ? "sticky left-0 z-20" : ""} ${right ? "text-right" : ""}`}
                   >
                     {key ? (
                       <button

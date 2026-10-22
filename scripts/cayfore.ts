@@ -14,6 +14,7 @@ import {
   type Tier,
   projectSimple,
   referenceRegion,
+  UPLOAD_MAX_CHARS,
   type PortfolioProjection,
 } from "../packages/engine/src/index.ts";
 import { forecastProducts, listProducts, productById, workloadsForProduct } from "../packages/engine/src/products.ts";
@@ -107,7 +108,7 @@ if (command === "sql") {
 } else if (command === "forecast" || (command === "estimate" && file)) {
   if (!file) fail("forecast needs a saved JSON path");
   try {
-    const saved = parseSavedForecast(parseUntrustedJson(readFileSync(file, "utf8")));
+    const saved = parseSavedForecast(parseUntrustedJson(readFileSync(file, "utf8"), UPLOAD_MAX_CHARS));
     if (!saved.ok) fail(saved.error);
     const projected = projectPortfolio(saved.value);
     await writeXlsx(projected, xlsxPath);

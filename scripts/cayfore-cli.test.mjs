@@ -59,11 +59,40 @@ test("CLI rejects unrelated saved JSON and invalid usage options", () => {
   assert.equal(run("usage", usage, "--month", "2026-13").status, 1);
 });
 
+test("forecast CLI accepts exported reports above the share limit and enforces the file limit", () => {
+  const saved = {
+    format: "cayfore.forecast",
+    version: 1,
+    portfolio: {
+      version: 1,
+      name: "Saved report",
+      cloud: "aws",
+      region: "us-east-1",
+      tier: "premium",
+      workloads: [],
+      commitment: { dbuDiscount: 0, cloudDiscount: 0 },
+      addon: "none",
+      usageScale: 1,
+      forecast: { months: 12, annualGrowth: 0, seasonality: "flat" },
+    },
+    report: "x".repeat(1_000_001),
+  };
+  const result = run("forecast", fixture("large-report.json", JSON.stringify(saved)));
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(JSON.parse(result.stdout).portfolio.name, "Saved report");
+
+  saved.report = "x".repeat(8_000_001);
+  const oversized = run("forecast", fixture("oversized-report.json", JSON.stringify(saved)));
+  assert.equal(oversized.status, 1);
+  assert.match(oversized.stderr, /too large/i);
+});
+
 test("estimate --xlsx writes a workbook and keeps the JSON summary", () => {
   const path = join(directory, "forecast.xlsx");
   const result = run("estimate", "--xlsx", path);
   assert.equal(result.status, 0, result.stderr);
   assert.equal(JSON.parse(result.stdout).annual, 170257.52);
+  assert.match(JSON.parse(result.stdout).pricesLine, /^Prices updated \d{4}-\d{2}-\d{2}\.$/);
   assert.equal(existsSync(path), true);
   assert.equal(run("estimate", "--xlsx").status, 1);
 });

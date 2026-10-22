@@ -1,4 +1,5 @@
 import { cn } from "../lib/utils";
+import { prefetch } from "./loading/route-loaders";
 import { primaryNavigation, type NavigationActions } from "./header-navigation";
 import { Button } from "./ui/button";
 import { InfoTooltip } from "./ui/tooltip";
@@ -28,6 +29,8 @@ export function WorkspaceNavigation({
             type="button"
             variant="ghost"
             aria-current={id === current ? "page" : undefined}
+            onMouseEnter={() => prefetch.warmNavigation(id)}
+            onFocus={() => prefetch.warmNavigation(id)}
             className={cn(
               "group relative min-h-11 min-w-0 rounded-none px-3.5 text-[13px] text-muted-foreground hover:bg-transparent hover:text-foreground aria-[current=page]:font-semibold aria-[current=page]:text-foreground",
               compact && "px-2 text-xs",

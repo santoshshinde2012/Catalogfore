@@ -37,7 +37,7 @@ export function ProductDirectory({
             {hasFilters ? " match your filters" : " to explore"}
           </p>
         </div>
-        <span className="rounded-lg border bg-card px-2.5 py-1 text-[11px] tabular-nums text-muted-foreground">
+        <span className="rounded-lg border bg-card px-2.5 py-1 text-xs tabular-nums text-muted-foreground">
           {Math.min(limit, entries.length)} shown
         </span>
       </div>
@@ -92,7 +92,7 @@ export function ProductDirectory({
                     </span>
                     <span className="mt-2 flex flex-wrap items-center gap-2">
                       <CoverageBadge entry={entry} />
-                      <span className="text-[10px] text-muted-foreground">{domainById(entry.domainId)?.name}</span>
+                      <span className="text-xs text-muted-foreground">{domainById(entry.domainId)?.name}</span>
                     </span>
                   </span>
                 </button>

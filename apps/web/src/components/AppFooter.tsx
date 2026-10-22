@@ -1,4 +1,4 @@
-import { APP_NAME, REPO } from "../site";
+import { APP_NAME, BASE_PATH, REPO } from "../site";
 import { InfoTooltip } from "./ui/tooltip";
 
 const sources = [
@@ -66,7 +66,7 @@ export function AppFooter({
     },
   ];
   return (
-    <footer className="border-t">
+    <footer className="border-t print:hidden">
       <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 pt-8 pb-[calc(7rem+env(safe-area-inset-bottom))] sm:px-6 lg:pb-12">
         <div className="flex flex-wrap items-start justify-between gap-6">
           <div className="max-w-md">
@@ -95,6 +95,14 @@ export function AppFooter({
                 </a>
               </InfoTooltip>
             ))}
+            <a
+              className="text-link underline-offset-4 hover:underline"
+              href={`${BASE_PATH}faq.html`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Help & FAQ<span className="sr-only"> (opens in a new tab)</span>
+            </a>
             {sources.map(({ label, title, description, href }) => (
               <InfoTooltip key={label} label={title} description={description} side="top">
                 <a className="text-link underline-offset-4 hover:underline" href={href}>

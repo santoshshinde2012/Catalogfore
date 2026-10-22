@@ -1,28 +1,16 @@
 # MCP server
 
-A local stdio server that estimates Databricks cost with the same engine as the website. It does not log into a workspace, and it does not read `system.billing.usage` unless you pass numbers in yourself.
-
-Databricks’ own managed MCP servers (Genie, SQL, AI Search, Unity Catalog functions) are the right tool for live account data. They do not publish list prices. Use those for usage, and this server for the forecast.
+A local stdio server that estimates Databricks cost with the same engine as the website. It accepts supplied portfolio inputs or CSV text; it does not log into a workspace, query system tables, or fetch current prices. [Documentation index](README.md) · [CLI guide](CLI.md) · [Development setup](DEVELOPMENT.md)
 
 ## Run
 
 ```bash
-npm install
+npm ci
 npm run build
 node mcp/dist/index.js
 ```
 
-The GitHub Pages site cannot call a workspace. The SQL Statement API does not send `Access-Control-Allow-Origin` ([Databricks, CORS policy error](https://kb.databricks.com/security/cors-policy-error-when-trying-to-run-databricks-api-from-a-browser-based-application)), and a personal access token does not belong in browser JavaScript. This server does not read `DATABRICKS_TOKEN` and does not open a network connection. Export usage with `docs/usage-export.sql`, then pass the CSV to `forecast_usage` or to the shell.
-
-The SQL file is a fixed `SELECT`. Run it with a principal that can read `system.billing.usage` and `system.billing.list_prices` and nothing else. A future client that does connect must take the host and token from the environment, accept only an HTTPS Databricks workspace host, time out after 30 seconds, and must not log the token. That check lives in `scripts/workspace-host.mjs`.
-
-```bash
-npm run cayfore
-npm run cayfore -- usage apps/web/public/sample-usage-history.csv --cloud aws --as-of 2026-10-17
-npm run cayfore -- forecast saved-plan.json
-npm run cayfore -- estimate --xlsx forecast.xlsx
-npm run cayfore -- sql
-```
+Use the repository's supported Node version. The server waits for an MCP client; running it directly does not open a web interface. It does not read `DATABRICKS_TOKEN`. Export usage separately with [usage-export.sql](usage-export.sql), using an authorized principal that can read the named system tables, then supply the CSV text to `forecast_usage`. The [CLI guide](CLI.md) documents the equivalent local file commands.
 
 The process speaks MCP over stdin and stdout. A client config looks like this (use the absolute path on your machine):
 
@@ -41,19 +29,19 @@ The process speaks MCP over stdin and stdout. A client config looks like this (u
 
 ## Tools
 
-Every response includes an estimates-only disclaimer and is JSON text.
+Tool results are JSON text with an estimates-only disclaimer. Validation failures reject the input or return an `error` field; clients should check for both before presenting a result. The eight tools below are registered by the local server. Your MCP client's handling of supplied data is separate from this repository's browser-local privacy model.
 
 ### `list_skus`
 
 Optional `cloud` (`aws`, `azure`, `gcp`, default `aws`) and `tier` (`premium` or `enterprise`, default `premium`).
 
-Returns SKU labels, US East $/DBU, whether compute is included, the SQL DBU ladder, regions and their factors, curated instances with the reference-region VM price, foundation-model DBU rates, GPU serving DBU/hour, and the Photon multiplier.
+Returns the bundled reference SKU table, whether compute is included, the SQL DBU ladder, regions and their factors, curated instances with the reference-region VM price, foundation-model DBU rates, GPU serving DBU/hour, and the Photon multiplier. This is not the complete regional price inventory. Use the CLI's `rates` command or the browser's Unit costs view for scoped regional observations and evidence.
 
 Azure `enterprise` uses the same list rates as Azure Premium. The payload says so.
 
 ### `estimate_workload`
 
-`portfolio` is a versioned saved portfolio or a shorthand object with an explicit `workloads` array. Unrelated objects such as `{}` are rejected. Versioned saves use the same strict validation as the website. Shorthand fills omitted settings with AWS, its reference region, Premium, and a flat 12-month forecast with 8% annual growth. Unsupported workload kinds fail validation.
+`portfolio` is a versioned saved portfolio or a shorthand object with an explicit `workloads` array, up to 1,000 workloads. When using a browser JSON export, pass its nested `portfolio` object, not the whole report envelope or a file path. Unrelated objects such as `{}` are rejected. Versioned saves use the same strict validation as the website. Shorthand fills omitted settings with AWS, its reference region, Premium, and a flat-seasonality 12-month forecast with 8% annual growth. Unsupported workload kinds fail validation.
 
 A minimal classic job:
 
@@ -86,7 +74,7 @@ That portfolio is the engine fixture: about $53.82 DBU and $99.84 cloud per mont
 
 ### `forecast`
 
-Same `portfolio`. Returns the canonical monthly estimate, `forecast` points, `months` with planning ranges, annual total, coverage, and assumptions used by the website and its exports. Growth compounds monthly. Seasonality is `flat`, `retail`, or `custom` (12 weights). `forecast.startMonth` fixes the calendar start; dated `events` change usage from their effective month. Prices and product formulas are recomputed for each forecast month. A flat year with zero growth and no dated changes sums to twelve times the run rate.
+Same `portfolio`. Returns the canonical monthly estimate, `forecast` points, `months` with planning ranges, annual total, coverage, and assumptions used by the website and its exports. `annual` covers the first 12 months, even when the forecast horizon is 24 or 36 months. Growth compounds monthly. Seasonality is `flat`, `retail`, or `custom` (12 weights). `forecast.startMonth` fixes the calendar start; dated `events` change usage from their effective month. Prices and product formulas are recomputed for each forecast month. A flat year with zero growth and no dated changes sums to twelve times the run rate, subject to money rounding.
 
 ### `compare_scenarios`
 
@@ -106,7 +94,7 @@ The default comparison is `as_modeled`, `jobs_serverless`, and `commit_37`.
 
 ### `forecast_usage`
 
-`csv` contains a Databricks system-billing or supported FOCUS CSV. Include `list_price` when the query joined `system.billing.list_prices` (`docs/usage-export.sql`). Optional arguments are `cloud` (fallback for rows without cloud), `tier`, `region`, `asOf` (`YYYY-MM-DD` reporting cutoff), `month` (`YYYY-MM` explicit baseline), and `costBasis` (`effective` or `billed`, for FOCUS).
+`csv` contains Databricks system-billing or supported FOCUS CSV text, up to 8,000,000 characters and 100,000 data rows. Include `list_price` when the query joined `system.billing.list_prices` ([export query](usage-export.sql)). Optional arguments are `cloud` (fallback for rows without cloud), `tier`, `region`, `asOf` (`YYYY-MM-DD` reporting cutoff, default today's UTC date), `month` (`YYYY-MM` explicit baseline), and `costBasis` (`effective` or `billed`, for FOCUS).
 
 The default baseline is the latest complete month. A partial month requires an explicit `month`; the response warns that it remains a partial run rate. The importer preserves exported USD costs, signed corrections, per-row cloud placement, unpriced quantities, and observed monthly history. Non-USD input fails with a conversion message. No separate cloud VM bill is inferred. Unknown prices remain visible through source and estimate coverage plus warnings.
 
@@ -116,7 +104,15 @@ The CLI accepts the corresponding options as `--cloud`, `--tier`, `--region`, `-
 
 ### `export_xlsx`
 
-Same `portfolio` as `forecast`. Returns `filename` (`catalogfore-forecast-<cloud>-<YYYY-MM-DD>.xlsx`) and `workbookBase64`. The workbook has Summary, Monthly forecast, Breakdown, Products, Savings, and Rates sheets. Totals are Excel `SUM` formulas. It is an estimate, not a quote, and it says it is not affiliated with Databricks.
+Same `portfolio` as `forecast`. Returns `filename` (`catalogfore-forecast-<cloud>-<YYYY-MM-DD>.xlsx`) and `workbookBase64`; the client must decode and save the bytes. The server does not write a file to your machine. The workbook has Summary, Monthly forecast, Breakdown, Products, Savings, and Rates sheets. Its Summary annual total covers year one; the Monthly forecast sheet includes all exported months. Totals use Excel formulas. It is an estimate, not a quote, and it says it is not affiliated with Databricks.
+
+### `list_products`
+
+No arguments. Lists product IDs, names, categories, billing units, publication status, confidence, source and notes from the bundled catalog. Use these IDs with `estimate_product`. Catalog inclusion does not establish availability in every cloud or region.
+
+### `estimate_product`
+
+Required `productId`, with optional `cloud`, `region` and `tier`. Defaults to AWS Premium and that cloud's reference region. Builds the product template, including underlying SKUs for a composition, and returns its estimate and 12-month product forecast. Inspect estimate coverage: unavailable rates remain unresolved and totals are known subtotals, not proof that the product is free. Use `forecast` with an explicit portfolio for custom quantities or schedules.
 
 ## What this server will not do
 

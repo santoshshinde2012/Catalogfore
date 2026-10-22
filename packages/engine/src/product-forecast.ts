@@ -2,6 +2,7 @@ import { productCatalog, type Product } from "@cayfore/catalog";
 import { annualTotal } from "./forecast.js";
 import { forecastPortfolioMonths } from "./forecast/portfolio.js";
 import { roundMoney } from "./money.js";
+import { isNetImportedRate } from "./pricing-basis.js";
 import type { Estimate, Portfolio } from "./types.js";
 
 export interface ProductForecastLine {
@@ -31,7 +32,9 @@ export function forecastProducts(result: Estimate, portfolio: Portfolio): Produc
   const months = forecastPortfolioMonths(
     { ...portfolio, forecast: { ...portfolio.forecast, months: 12 } },
     undefined,
-    result,
+    // A projection estimate already includes events active in its first month.
+    // Reprice from the workloads when events exist so they are applied once.
+    portfolio.events?.length ? undefined : result,
   );
   const year = annualTotal(months.map((month) => month.point));
   const drafts = result.lines.map((line) => {
@@ -50,16 +53,23 @@ export function forecastProducts(result: Estimate, portfolio: Portfolio): Produc
     };
   });
   months.forEach((month, monthIndex) => {
-    let allocated = 0;
+    const priced = drafts.map((line) => month.estimate.lines.find((item) => item.workloadId === line.workloadId));
+    const dbu = allocateRounded(
+      priced.map((line) => (line?.dbuCost ?? 0) * month.factor),
+      month.point.dbuCost,
+    );
+    const cloud = allocateRounded(
+      priced.map((line) => (line?.cloudCost ?? 0) * month.factor),
+      month.point.cloudCost,
+    );
+    const addons = allocateRounded(
+      priced.map((line) =>
+        line && !isNetImportedRate(line.rateProvenance) ? line.dbuCost * month.addonRate * month.factor : 0,
+      ),
+      month.point.addonCost,
+    );
     drafts.forEach((line, index) => {
-      const priced = month.estimate.lines.find((item) => item.workloadId === line.workloadId);
-      const weight =
-        month.estimate.total !== 0 ? (priced?.total ?? 0) / (month.estimate.dbuCost + month.estimate.cloudCost) : 0;
-      const amount =
-        index === drafts.length - 1
-          ? roundMoney(month.point.total - allocated)
-          : roundMoney(weight * month.point.total);
-      allocated = roundMoney(allocated + amount);
+      const amount = roundMoney(dbu[index] + cloud[index] + addons[index]);
       if (monthIndex === 0) line.monthly = amount;
       line.year = roundMoney(line.year + amount);
     });
@@ -77,4 +87,28 @@ export function forecastProducts(result: Estimate, portfolio: Portfolio): Produc
     existing.year = roundMoney(existing.year + line.year);
   }
   return { lines: grouped, monthly: months[0].point.total, year };
+}
+
+/** Reconcile each cost component among its contributors, preserving zero lines and charge/credit signs. */
+function allocateRounded(amounts: number[], total: number): number[] {
+  const cents = amounts.map((amount) => Math.round(amount * 100));
+  let remaining = Math.round(total * 100) - cents.reduce((sum, value) => sum + value, 0);
+  if (!Number.isSafeInteger(remaining) || cents.some((value) => !Number.isSafeInteger(value)))
+    return amounts.map(roundMoney);
+  const direction = Math.sign(remaining);
+  const order = amounts
+    .map((_, index) => index)
+    .sort((left, right) => direction * (amounts[right] * 100 - cents[right] - (amounts[left] * 100 - cents[left])));
+  while (remaining !== 0) {
+    const contributors = order.filter((index) => amounts[index] * direction > 0 || cents[index] * direction < 0);
+    if (!contributors.length) break;
+    const share = Math.ceil(Math.abs(remaining) / contributors.length);
+    for (const index of contributors) {
+      const limit = amounts[index] * direction > 0 ? Math.abs(remaining) : Math.abs(cents[index]);
+      const correction = Math.min(Math.abs(remaining), share, limit);
+      cents[index] += direction * correction;
+      remaining -= direction * correction;
+    }
+  }
+  return cents.map((value) => value / 100);
 }

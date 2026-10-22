@@ -30,6 +30,7 @@
   --color-ring: var(--ring);
   --color-lava: var(--lava);
   --color-link: var(--link);
+  --color-chart-grid: var(--chart-grid);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -59,37 +60,41 @@
   --ring: #c42812;
   --lava: #ff3621;
   --link: #9e1e0c;
+  --chart-grid: #d5dbe2;
   --chart-actual: #146c63;
   --chart-budget: #946000;
   --chart-comparison: #6554a4;
   color-scheme: light;
 }
 
-[data-theme="dark"] {
-  --background: #0b2026;
-  --foreground: #f4f4f5;
-  --card: #12282f;
-  --card-foreground: #f4f4f5;
-  --popover: #12282f;
-  --popover-foreground: #f4f4f5;
-  --primary: #c42812;
-  --primary-foreground: #ffffff;
-  --secondary: #1b3139;
-  --secondary-foreground: #f4f4f5;
-  --muted: #1b3139;
-  --muted-foreground: #c5ced2;
-  --accent: #1b3139;
-  --accent-foreground: #f4f4f5;
-  --destructive: #ff8a72;
-  --border: rgb(244 244 245 / 0.12);
-  --input: rgb(244 244 245 / 0.16);
-  --ring: #ff3621;
-  --lava: #ff3621;
-  --link: #ff8a72;
-  --chart-actual: #6cd4c3;
-  --chart-budget: #edc46a;
-  --chart-comparison: #b4a5f5;
-  color-scheme: dark;
+@media screen {
+  [data-theme="dark"] {
+    --background: #0b2026;
+    --foreground: #f4f4f5;
+    --card: #12282f;
+    --card-foreground: #f4f4f5;
+    --popover: #12282f;
+    --popover-foreground: #f4f4f5;
+    --primary: #c42812;
+    --primary-foreground: #ffffff;
+    --secondary: #1b3139;
+    --secondary-foreground: #f4f4f5;
+    --muted: #1b3139;
+    --muted-foreground: #c5ced2;
+    --accent: #1b3139;
+    --accent-foreground: #f4f4f5;
+    --destructive: #ff8a72;
+    --border: rgb(244 244 245 / 0.12);
+    --input: rgb(244 244 245 / 0.16);
+    --ring: #ff3621;
+    --lava: #ff3621;
+    --link: #ff8a72;
+    --chart-grid: rgb(244 244 245 / 0.24);
+    --chart-actual: #6cd4c3;
+    --chart-budget: #edc46a;
+    --chart-comparison: #b4a5f5;
+    color-scheme: dark;
+  }
 }
 
 html.theme-swap,
@@ -133,6 +138,41 @@ html.theme-swap * {
   }
 }
 
+.skeleton {
+  background-color: var(--muted);
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--foreground) 9%, transparent),
+    transparent
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: skeleton-shimmer 1.15s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+.tab-panel[data-state="active"] {
+  animation: tab-in 140ms ease;
+}
+
+@keyframes tab-in {
+  from {
+    transform: translateY(4px);
+  }
+  to {
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -141,6 +181,21 @@ html.theme-swap * {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .skeleton {
+    animation: none;
+    background-image: none;
+  }
+}
+
+@media print {
+  [data-sonner-toaster],
+  [data-print-hide] {
+    display: none !important;
+  }
+  html,
+  body {
+    background: #fff !important;
   }
 }
 
@@ -211,4 +266,9 @@ html.theme-swap * {
   .grid-2 {
     grid-template-columns: 1fr;
   }
+}
+
+/* Closed usage details leave the grid so Advanced can sit beside the trigger. */
+.plan-start .plan-usage-panel[data-state="closed"] {
+  display: none;
 }

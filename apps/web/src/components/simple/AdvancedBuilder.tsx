@@ -1,10 +1,12 @@
 import type { Estimate, Portfolio } from "@cayfore/engine";
-import { ChevronRight, LoaderCircle } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { lazy, Suspense, useEffect, useState } from "react";
+import { AdvancedSkeleton } from "../loading/skeletons";
+import { loadLedger, prefetch } from "../loading/route-loaders";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 
-const Ledger = lazy(() => import("../Ledger").then((module) => ({ default: module.Ledger })));
+const Ledger = lazy(() => loadLedger().then((module) => ({ default: module.Ledger })));
 
 export function AdvancedBuilder({
   ask = 0,
@@ -18,6 +20,7 @@ export function AdvancedBuilder({
   onUsageFile,
   usageError = "",
   usageBusy = false,
+  usageProgress = null,
 }: {
   ask?: number;
   portfolio: Portfolio;
@@ -30,6 +33,7 @@ export function AdvancedBuilder({
   onUsageFile: (file: File) => void;
   usageError?: string;
   usageBusy?: boolean;
+  usageProgress?: number | null;
 }) {
   const [opened, setOpened] = useState(false);
   useEffect(() => {
@@ -44,7 +48,13 @@ export function AdvancedBuilder({
       }}
     >
       <SheetTrigger asChild>
-        <Button type="button" variant="ghost" className="h-auto w-full justify-between px-2 py-2 font-medium">
+        <Button
+          type="button"
+          variant="ghost"
+          className="order-2 h-auto min-h-11 w-full min-w-0 justify-between px-2.5 py-2 font-medium whitespace-normal"
+          onMouseEnter={() => prefetch.warm("advanced")}
+          onFocus={() => prefetch.warm("advanced")}
+        >
           Advanced
           <ChevronRight className="size-4 text-muted-foreground" />
         </Button>
@@ -59,7 +69,9 @@ export function AdvancedBuilder({
         </SheetHeader>
         {usageBusy && (
           <p role="status" className="text-sm text-muted-foreground">
-            Reading your CSV and checking its pricing coverage…
+            {usageProgress == null
+              ? "Reading your CSV and checking its pricing coverage…"
+              : `Reading your CSV, ${usageProgress}%`}
           </p>
         )}
         {usageError && (
@@ -70,14 +82,7 @@ export function AdvancedBuilder({
             {usageError}
           </p>
         )}
-        <Suspense
-          fallback={
-            <p className="flex min-h-24 items-center justify-center gap-2 text-sm text-muted-foreground" role="status">
-              <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
-              Loading workload editor…
-            </p>
-          }
-        >
+        <Suspense fallback={<AdvancedSkeleton />}>
           <Ledger
             portfolio={portfolio}
             estimate={estimate}

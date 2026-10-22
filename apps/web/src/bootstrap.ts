@@ -1,4 +1,5 @@
 import { SCENARIO_STORAGE_KEY } from "./hooks/saved-scenarios";
+import { browserStore } from "./services/browser-ports";
 
 /** The static HTML represents the default light landing page, before browser-specific state. */
 export function canHydratePrerender(root: HTMLElement): boolean {
@@ -11,7 +12,7 @@ export function canHydratePrerender(root: HTMLElement): boolean {
     return false;
   }
   try {
-    const scenarios = localStorage.getItem(SCENARIO_STORAGE_KEY);
+    const scenarios = browserStore.get(SCENARIO_STORAGE_KEY);
     return !scenarios || scenarios === "[]";
   } catch {
     return false;

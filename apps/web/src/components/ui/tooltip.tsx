@@ -17,11 +17,14 @@ export const TooltipTrigger = TooltipPrimitive.Trigger;
 
 export function TooltipContent({
   className,
+  container,
   sideOffset = 6,
   ...props
-}: ComponentProps<typeof TooltipPrimitive.Content>) {
+}: ComponentProps<typeof TooltipPrimitive.Content> & {
+  container?: ComponentProps<typeof TooltipPrimitive.Portal>["container"];
+}) {
   return (
-    <TooltipPrimitive.Portal>
+    <TooltipPrimitive.Portal container={container}>
       <TooltipPrimitive.Content
         sideOffset={sideOffset}
         collisionPadding={12}
@@ -42,12 +45,14 @@ export function InfoTooltip({
   children,
   side = "bottom",
   align = "center",
+  openOnClick = false,
 }: {
   label: string;
   description?: string;
   children: ReactElement;
   side?: ComponentProps<typeof TooltipPrimitive.Content>["side"];
   align?: ComponentProps<typeof TooltipPrimitive.Content>["align"];
+  openOnClick?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const trigger = useRef<HTMLElement>(null);
@@ -87,10 +92,46 @@ export function InfoTooltip({
 
   return (
     <Tooltip open={open} onOpenChange={setOpen}>
-      <TooltipTrigger asChild>
+      <TooltipTrigger
+        asChild
+        aria-expanded={openOnClick ? open : undefined}
+        onPointerDown={
+          openOnClick
+            ? (event) => {
+                event.preventDefault();
+                event.currentTarget.focus();
+              }
+            : undefined
+        }
+        onClick={
+          openOnClick
+            ? (event) => {
+                // Radix normally closes tooltips on activation. Dedicated help
+                // buttons also need to open on touch and keyboard activation.
+                event.preventDefault();
+                setOpen(true);
+              }
+            : undefined
+        }
+      >
         <TooltipTarget ref={trigger}>{children}</TooltipTarget>
       </TooltipTrigger>
-      <TooltipContent ref={content} side={side} align={align}>
+      <TooltipContent
+        ref={content}
+        side={side}
+        align={align}
+        // Keep contextual help in its trigger's existing landmark, including
+        // dialogs whose other page content is hidden from assistive technology.
+        container={trigger.current?.closest<HTMLElement>(
+          'header, main, footer, [role="dialog"], [role="alertdialog"], [role="region"], section[aria-label], section[aria-labelledby]',
+        )}
+        onPointerDownOutside={(event) => {
+          // Touch dismissal runs on click, after the trigger has opened the
+          // tooltip. Keep that same tap from immediately dismissing its help.
+          if (openOnClick && event.target instanceof Node && trigger.current?.contains(event.target))
+            event.preventDefault();
+        }}
+      >
         <span className="block font-semibold">{label}</span>
         {description && <span className="mt-1 block text-muted-foreground">{description}</span>}
       </TooltipContent>

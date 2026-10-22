@@ -4,6 +4,7 @@ import { lazy, Suspense } from "react";
 import { periodAt, periodLabel, type ChartSeries } from "../../lib/chart-data";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { InfoTooltip } from "../ui/tooltip";
+import { ChartSkeleton } from "../loading/skeletons";
 import { Breakdown } from "./Breakdown";
 import { MonthTable } from "./MonthTable";
 
@@ -83,9 +84,9 @@ export function ForecastViews({
           </TabsTrigger>
         </InfoTooltip>
       </TabsList>
-      <TabsContent value="chart">
+      <TabsContent value="chart" className="mt-2">
         <ChartHeading title="Monthly spend" startMonth={startMonth} />
-        <Suspense fallback={<ChartLoading />}>
+        <Suspense fallback={<ChartSkeleton />}>
           <Chart {...series} label="Imported spend and monthly forecast with a planning range" />
         </Suspense>
         <ChartLegend series={series} />
@@ -111,7 +112,7 @@ export function ForecastViews({
       </TabsContent>
       <TabsContent value="cumulative">
         <ChartHeading title="Cumulative spend" startMonth={startMonth} />
-        <Suspense fallback={<ChartLoading />}>
+        <Suspense fallback={<ChartSkeleton />}>
           <Chart {...series} cumulative label="Cumulative forecast and equally phased annual budget" />
         </Suspense>
         <ChartLegend series={{ ...series, history: [] }} />
@@ -122,7 +123,7 @@ export function ForecastViews({
       </TabsContent>
       <TabsContent value="composition">
         <ChartHeading title="Monthly cost components" startMonth={startMonth} />
-        <Suspense fallback={<ChartLoading />}>
+        <Suspense fallback={<ChartSkeleton />}>
           <Composition
             points={points}
             startMonth={startMonth}
@@ -158,22 +159,11 @@ export function ForecastViews({
 
 function ChartHeading({ title, startMonth }: { title: string; startMonth: string }) {
   return (
-    <div className="mb-2 flex flex-wrap items-baseline justify-between gap-1 text-xs text-muted-foreground">
+    <div className="mb-1 flex flex-wrap items-baseline justify-between gap-1 text-xs text-muted-foreground">
       <h3 className="text-sm font-semibold text-foreground">{title}</h3>
       <p>
         {periodLabel(startMonth)}–{periodLabel(periodAt(startMonth, 11))} · USD
       </p>
-    </div>
-  );
-}
-
-function ChartLoading() {
-  return (
-    <div
-      className="flex h-72 items-center justify-center rounded-lg bg-muted/40 text-sm text-muted-foreground"
-      role="status"
-    >
-      Loading chart…
     </div>
   );
 }

@@ -31,7 +31,7 @@ The script rejects alternate endpoints, credentials and redirects. It normalizes
 
 `npm run check:sources` runs offline. It validates dimensions and monetary units, replays the parsers against retained responses, and compares the complete normalized snapshot. Changing a price independently of its captured source fails this check. A successful replay proves snapshot consistency, not that the vendor has kept the same price since capture. Product availability, negotiated discounts and tariff effective dates are not inferred from a capture date.
 
-The 2026-10-17 capture contains 1,059 accepted USD/DBU observations. Twenty-one same-key disagreements between official sources are quarantined, including eleven within the currently supported AWS/GCP catalog regions. Some serving discrepancies can involve displayed precision; they still require reconciliation before an unqualified exact quote.
+The 2026-10-19 capture contains 1,059 accepted USD/DBU observations. Twenty-one same-key disagreements between official sources are quarantined, including eleven within the currently supported AWS/GCP catalog regions. Some serving discrepancies can involve displayed precision; they still require reconciliation before an unqualified exact quote.
 
 ## Azure Retail Prices
 
@@ -41,7 +41,13 @@ Each fetched DBU row records its own `asOf`, meter ID, effective start date, raw
 
 Pagination follows `NextPageLink`. Reaching the safety limit with pages remaining fails instead of accepting a partial snapshot. A 429 is retried with bounded backoff. Regions run three at a time. A partial or failed refresh keeps unmatched previous meters with their original per-meter dates; a new file-wide timestamp never refreshes those observations. Legacy rows without a per-meter date retain an unknown observation date.
 
-All 530 mapped DBU meters across the 39 supported Azure regions were fetched on 2026-10-17 with their meter IDs and price metadata. VM observations retain their own dates.
+All 530 mapped DBU meters across the 39 supported Azure regions were fetched on 2026-10-19 with their meter IDs and price metadata. VM observations retain their own dates.
+
+## Live comparison on 2026-10-22
+
+A read-only comparison against the first-party endpoints found that the AWS and GCP Databricks calculator responses matched the retained captures byte for byte. The price-card response had changed bytes, but replay produced the same 1,059 accepted rates, no accepted-price changes or removals, and the same 226 quarantined issues. The Azure Retail Prices API returned matching meter IDs and prices for all 530 stored DBU rows across the 39 supported regions, with no failed region lookups.
+
+This is a dated comparison of those DBU sources. It does not revalidate every VM observation, Spot estimate, GCP seed, consumption conversion or regional planning factor, and does not establish product availability. The retained capture and per-meter observation dates remain 2026-10-19; a review does not rewrite source history.
 
 ## Cloud infrastructure and consumption
 

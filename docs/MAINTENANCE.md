@@ -1,14 +1,14 @@
 # Dependency maintenance
 
-Reviewed **2026-10-17**. Dependabot previously grouped only security fixes. Routine version updates were separate, allowing five npm PRs and five GitHub Actions PRs at once.
+The repository's [Dependabot configuration](../.github/dependabot.yml) groups routine npm and GitHub Actions updates. Use [Development and verification](DEVELOPMENT.md) for the current supported runtime and checks.
 
-Routine npm and GitHub Actions updates now share one weekly `dependencies` multi-ecosystem group, with an open-PR limit of one. The existing seven-day cooldown remains. This configuration takes effect after it is merged into the default branch.
+Routine updates share one weekly `dependencies` multi-ecosystem group, with an open-PR limit of one and a seven-day cooldown. Check the default branch configuration and current PRs when investigating an update; a local YAML change does not prove GitHub has applied it.
 
 Security updates remain enabled and grouped by ecosystem. GitHub does not support combining security updates across ecosystems or combining them with routine version updates. Security alerts can therefore create additional PRs. The weekly catalog workflow still reviews product data; it did not create the nine dependency PRs covered here.
 
-## Consolidation decisions
+## Historical consolidation decisions: 2026-10-17
 
-The feature and UI work in [PR #15](https://github.com/santoshshinde2012/Catalogfore/pull/15) is already merged. The following independent Dependabot proposals are represented in one maintenance review. Their original branches and PR history remain available.
+The following table records the 2026-10-17 maintenance review of specific proposed versions. It is not an instruction to install those versions today; evaluate current package metadata, the supported Node range and compatibility tests before a migration. Original branches and PR history provide the review context.
 
 | Original PR                                                                                                                      | Proposal                   | Decision                                                                                                                                                              |
 | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -21,7 +21,7 @@ The feature and UI work in [PR #15](https://github.com/santoshshinde2012/Catalog
 | [#11](https://github.com/santoshshinde2012/Catalogfore/pull/11)                                                                  | vite-node 6.0.0            | Defer as a coordinated CLI runner migration with focused CLI/MCP checks. It brings its own Vite 8 dependency; coexistence alone does not establish CLI compatibility. |
 | [#12](https://github.com/santoshshinde2012/Catalogfore/pull/12)                                                                  | @types/node 26.6.5         | Keep Node types on major 22, aligned with the minimum supported runtime. Node 26 types expose APIs unavailable on Node 22.                                            |
 
-No npm version or lockfile is changed by this consolidation. Major updates remain eligible for future grouped proposals; the table records the migration work needed to adopt these particular versions.
+That consolidation did not change npm package versions or the lockfile. Major updates remain eligible for future grouped proposals; the table records the migration work identified for those particular versions.
 
 ## Validation and sources
 

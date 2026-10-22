@@ -1,26 +1,33 @@
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
+import { browserScheduler } from "../../services/browser-ports";
 import type { Cloud, SimplePlan, TeamPresetId, Tier, WorkloadMix } from "@cayfore/engine";
 import { TEAM_PRESETS } from "@cayfore/engine";
 import { AwsMark, AzureMark, GcpMark } from "../ui/cloud-marks";
+import { FieldHelp } from "../ui/field-help";
 
 export function Step({
+  id,
   n,
   title,
+  hint,
   disabled,
   children,
 }: {
+  id?: string;
   n: string;
   title: string;
+  hint?: string;
   disabled?: boolean;
   children: ReactNode;
 }) {
   return (
-    <fieldset className="grid min-w-0 gap-4" disabled={disabled}>
+    <fieldset id={id} className="grid min-w-0 scroll-mt-28 gap-3" disabled={disabled}>
       <legend className="mb-1 flex items-center gap-2 text-sm font-semibold">
         <span className="flex size-6 items-center justify-center rounded-full bg-foreground text-xs text-background">
           {n}
         </span>
         {title}
+        {hint && <FieldHelp label={title} description={hint} />}
       </legend>
       {children}
     </fieldset>
@@ -37,6 +44,13 @@ export function MixBar({
   onMix: (key: keyof WorkloadMix, value: number) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const cancelDrag = useRef(() => {});
+  const onMixRef = useRef(onMix);
+  onMixRef.current = onMix;
+  useEffect(() => {
+    if (disabled) cancelDrag.current();
+    return () => cancelDrag.current();
+  }, [disabled]);
   function share(clientX: number): number {
     const rect = ref.current?.getBoundingClientRect();
     if (!rect || rect.width <= 0) return 0;
@@ -46,24 +60,53 @@ export function MixBar({
     <div className="relative h-3" aria-hidden="true">
       <div
         ref={ref}
-        className="flex h-full overflow-hidden rounded-full bg-muted"
+        className="flex h-full touch-none overflow-hidden rounded-full bg-muted"
         onPointerDown={(event) => {
-          if (disabled) return;
+          if (disabled || event.button !== 0) return;
+          cancelDrag.current();
+          event.preventDefault();
+          const pointerId = event.pointerId;
           const start = share(event.clientX);
           const boundary = mix.etl + mix.sql;
           const key: keyof WorkloadMix = Math.abs(start - mix.etl) <= Math.abs(start - boundary) ? "etl" : "ml";
-          const apply = (clientX: number) => {
-            const next = share(clientX);
-            onMix(key, key === "etl" ? next : 1 - next);
+          let latest = event.clientX;
+          let frame: number | null = null;
+          const applyNow = () => onMixRef.current(key, key === "etl" ? share(latest) : 1 - share(latest));
+          const queue = (clientX: number) => {
+            latest = clientX;
+            if (frame !== null) return;
+            frame = browserScheduler.frame(() => {
+              frame = null;
+              applyNow();
+            });
           };
-          apply(event.clientX);
-          const move = (pointer: PointerEvent) => apply(pointer.clientX);
-          const stop = () => {
+          const move = (pointer: PointerEvent) => {
+            if (pointer.pointerId === pointerId) queue(pointer.clientX);
+          };
+          const cleanup = () => {
+            if (frame !== null) browserScheduler.cancel(frame);
+            frame = null;
             window.removeEventListener("pointermove", move);
             window.removeEventListener("pointerup", stop);
+            window.removeEventListener("pointercancel", cancel);
+            window.removeEventListener("blur", cleanup);
+            cancelDrag.current = () => {};
           };
+          const stop = (pointer: PointerEvent) => {
+            if (pointer.pointerId !== pointerId) return;
+            latest = pointer.clientX;
+            cleanup();
+            applyNow();
+          };
+          const cancel = (pointer: PointerEvent) => {
+            if (pointer.pointerId === pointerId) cleanup();
+          };
+          cancelDrag.current = cleanup;
+          queue(event.clientX);
           window.addEventListener("pointermove", move);
           window.addEventListener("pointerup", stop);
+          window.addEventListener("pointercancel", cancel);
+          window.addEventListener("blur", cleanup);
         }}
       >
         <span className="bg-lava" style={{ width: `${mix.etl * 100}%` }} />

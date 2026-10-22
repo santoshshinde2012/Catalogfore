@@ -16,11 +16,7 @@ function buildSavings(workbook: ExcelJS.Workbook, result: PortfolioProjection): 
   for (const row of rows) sheet.addRow([safeText(row.title), row.annualSavings, safeText(row.detail)]);
   const last = Math.max(sheet.rowCount, FIRST_DATA_ROW);
   if (rows.length) {
-    const total = sheet.addRow([
-      "Listed separately",
-      { formula: `SUM(B2:B${last})` },
-      "Do not add these together. They overlap.",
-    ]);
+    const total = sheet.addRow(["Listed separately", "", "Do not add these together. They overlap."]);
     total.font = { bold: true };
   }
   finishSheet(sheet, {
