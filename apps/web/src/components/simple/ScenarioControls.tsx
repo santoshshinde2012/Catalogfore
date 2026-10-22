@@ -19,8 +19,8 @@ export function ScenarioControls({ session }: { session: SimpleSession }) {
         <span className="text-xs tabular-nums text-muted-foreground">{session.scenarios.length} / 20 saved</span>
       </div>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-        Save a baseline, change the plan, then compare. Saved scenarios stay in this browser. Export JSON for a portable
-        backup.
+        Save a baseline, change the plan, then compare. Saved scenarios stay in this browser. To back one up, open it
+        and choose Export → JSON in the forecast. Each file saves the active plan.
       </p>
       {!session.scenarioStorageAvailable && (
         <p role="alert" className="mt-3 rounded-lg border border-destructive/25 bg-destructive/5 p-3 text-sm">

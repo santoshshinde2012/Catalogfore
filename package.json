@@ -21,7 +21,7 @@
   "scripts": {
     "dev": "npm run dev -w @cayfore/web",
     "build": "npm run typecheck -w @cayfore/catalog && npm run typecheck -w @cayfore/engine && npm run typecheck -w @cayfore/sheet && npm run build -w @cayfore/web && npm run build -w @cayfore/mcp",
-    "test": "vitest run --coverage && node --test scripts/parse-prices.test.mjs scripts/validate-catalog.test.mjs scripts/catalog-watch.test.mjs scripts/coverage-report.test.mjs scripts/products-doc.test.mjs scripts/rate-confidence.test.mjs scripts/https-allowlist.test.mjs scripts/workspace-host.test.mjs scripts/usage-export.test.mjs scripts/lockfile-integrity.test.mjs scripts/weekly-diff.test.mjs scripts/cli-args.test.mjs scripts/signal-registry.test.mjs scripts/weekly-run.test.mjs scripts/cayfore-cli.test.mjs scripts/unit-costs-cli.test.mjs scripts/azure-meter-provenance.test.mjs scripts/parse-databricks-rates.test.mjs scripts/changelog-notes.test.mjs",
+    "test": "vitest run --coverage && node --test scripts/parse-prices.test.mjs scripts/validate-catalog.test.mjs scripts/catalog-watch.test.mjs scripts/coverage-report.test.mjs scripts/products-doc.test.mjs scripts/rate-confidence.test.mjs scripts/https-allowlist.test.mjs scripts/workspace-host.test.mjs scripts/usage-export.test.mjs scripts/lockfile-integrity.test.mjs scripts/weekly-diff.test.mjs scripts/cli-args.test.mjs scripts/signal-registry.test.mjs scripts/weekly-run.test.mjs scripts/cayfore-cli.test.mjs scripts/unit-costs-cli.test.mjs scripts/azure-meter-provenance.test.mjs scripts/parse-databricks-rates.test.mjs scripts/changelog-notes.test.mjs scripts/check-docs.test.mjs",
     "boundaries": "depcruise --config .dependency-cruiser.cjs packages apps mcp scripts",
     "catalogfore": "vite-node scripts/cayfore.ts",
     "cayfore": "vite-node scripts/cayfore.ts",
@@ -36,7 +36,8 @@
     "check:unit-costs": "vite-node scripts/unit-costs.ts --check",
     "refresh:databricks": "node scripts/refresh-databricks-rates.mjs",
     "check:sources": "node scripts/refresh-databricks-rates.mjs --check",
-    "test:fuzz": "vitest run packages/engine/src/security.fuzz.test.ts"
+    "test:fuzz": "vitest run packages/engine/src/security.fuzz.test.ts",
+    "check:docs": "node scripts/check-docs.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",

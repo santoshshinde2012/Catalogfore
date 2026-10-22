@@ -1,6 +1,6 @@
 # Product behavior
 
-Updated **2026-10-17**. Pricing sources are in [RESEARCH.md](RESEARCH.md), import semantics in [USAGE-IMPORT.md](USAGE-IMPORT.md), and module boundaries in [ARCHITECTURE.md](ARCHITECTURE.md).
+Updated **2026-10-22**. This describes current behavior; [FAQ](FAQ.md) provides task guidance. Pricing sources are in [DATA-PIPELINE.md](DATA-PIPELINE.md), import semantics in [USAGE-IMPORT.md](USAGE-IMPORT.md), and module boundaries in [ARCHITECTURE.md](ARCHITECTURE.md).
 
 Catalogfore helps a Databricks owner prepare a budget and compare planned changes without workspace credentials. It is a browser-local estimate, not a vendor quote. The web app, CLI, and MCP use the same cost and forecast engine.
 
@@ -50,17 +50,17 @@ Mobile navigation moves directly between inputs and results. Section links prese
 
 CSV, Excel, JSON, and PDF exports use the same canonical forecast as the screen. The workbook adds live totals, rates, and sources. JSON includes source context, calculated quote, bands, assumptions, and saved inputs. Saved files are validated against the supported version and workload schemas before replacing the active plan.
 
-Share links use a namespaced fragment and internal navigation preserves that state. Links exclude ownership attribution labels; JSON downloads and local saved scenarios can retain them. See [PRIVACY.md](PRIVACY.md).
+Share links use a namespaced fragment and internal navigation preserves that state while the plan fits the link limits. Oversized plans remain active, but their stale fragment is removed and the app directs users to JSON export. Links exclude the usage attribution summary; plan names and other user-entered text can remain. JSON downloads and local saved scenarios can retain attribution. JSON exports contain the active plan, not the saved-scenario collection. See [PRIVACY.md](PRIVACY.md).
 
 Saved plans record their price-book version. When the installed catalog differs, a visible warning explains that the historical book is unavailable and current prices are being used. Accepting the current catalog is explicit. Exported quotes retain the original calculated report; older catalog replay requires supplying that catalog separately.
 
 ## Architecture and delivery
 
-Cost strategies, product formulas, usage sources, scenario policies, and exporters have explicit interfaces or registries. Business pricing stays in the engine. Web hooks own browser state, storage, uploads, and clipboard actions. Charts render prepared series. Dependency-cruiser enforces layer boundaries, and modules stay below the repository's 200-line limit.
+Cost strategies, product formulas, usage sources, scenario policies, and exporters have explicit interfaces or registries. Business pricing stays in the engine. Web hooks and services own browser state, storage, uploads, and clipboard actions. Charts render prepared series. Dependency-cruiser enforces layer boundaries, and ESLint checks configured module-size limits.
 
 Use Node **22.13+ within Node 22, or Node 24+**; `.nvmrc` and workflows select Node 22. Checks include lint, typecheck, covered engine tests, script tests, CLI/MCP checks, production build, and desktop/mobile Playwright flows with axe.
 
-The app retains GitHub Pages deployment at `/Catalogfore/`. This implementation changes source locally; publishing remains the repository's existing deployment workflow.
+The app deploys from `main` to GitHub Pages at `/Catalogfore/`. Building or previewing locally does not publish it. [Development and verification](DEVELOPMENT.md) documents setup, configuration, checks and deployment.
 
 ## Work requiring additional evidence
 

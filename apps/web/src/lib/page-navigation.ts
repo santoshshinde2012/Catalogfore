@@ -5,5 +5,8 @@ export function navigateToSection(id: string): void {
   target.tabIndex = -1;
   target.focus({ preventScroll: true });
   const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-  target.scrollIntoView({ behavior: reduced ? "instant" : "smooth", block: "start" });
+  // A page heading can have a return action and source context above it.
+  // Keep that whole introduction visible when entering a workspace.
+  const start = target.tagName === "H1" ? (target.closest("article") ?? target) : target;
+  start.scrollIntoView({ behavior: reduced ? "instant" : "smooth", block: "start" });
 }

@@ -72,7 +72,7 @@ test("touch menu explains its actions and fits a narrow screen @mobile", async (
   await page.goto("./");
   const menu = await openWorkspaceMenu(page);
   await expect(menu).toBeVisible();
-  await expect(menu.getByRole("menuitem")).toHaveCount(9);
+  await expect(menu.getByRole("menuitem")).toHaveCount(10);
   await expect(menu.getByRole("menuitem", { name: /^Forecast\b/ })).toContainText(
     "Explore monthly spend, cost drivers, and your 12-month outlook.",
   );
@@ -82,6 +82,7 @@ test("touch menu explains its actions and fits a narrow screen @mobile", async (
     "How it works",
     "Open forecast",
     "New forecast",
+    "Help & FAQ",
     "Keyboard shortcuts",
     "Print current view",
     "Switch to dark theme",

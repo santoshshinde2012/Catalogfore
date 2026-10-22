@@ -1,8 +1,8 @@
-import { Ellipsis, FolderOpen, Keyboard, Moon, Printer, RotateCcw, Star, Sun } from "lucide-react";
+import { CircleHelp, Ellipsis, FolderOpen, Keyboard, Moon, Printer, RotateCcw, Star, Sun } from "lucide-react";
 import { useRef } from "react";
 import { openShortcuts } from "../services/shortcut-channel";
 import type { Theme } from "../hooks/forecast-session";
-import { APP_NAME, REPO } from "../site";
+import { APP_NAME, BASE_PATH, REPO } from "../site";
 import { secondaryNavigation, type NavigationActions } from "./header-navigation";
 import { WorkspaceMenuEntry } from "./WorkspaceMenuEntry";
 import { Button } from "./ui/button";
@@ -99,6 +99,12 @@ export function WorkspaceMenu({
           }}
         />
         <MenuGroupLabel separated>Preferences & project</MenuGroupLabel>
+        <WorkspaceMenuEntry
+          label="Help & FAQ"
+          description="Choose a starting point, compare scenarios, and save or share a plan. Opens in a new tab."
+          icon={CircleHelp}
+          href={`${BASE_PATH}faq.html`}
+        />
         <WorkspaceMenuEntry
           label="Keyboard shortcuts"
           description="See Alt shortcuts for Plan, Product map, Unit costs, and Forecast."

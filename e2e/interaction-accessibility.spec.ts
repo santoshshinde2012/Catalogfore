@@ -59,13 +59,16 @@ test("field help remains available on hover and keyboard focus", async ({ page, 
   await expect(tooltip).toHaveCount(0);
 });
 
-test("open field help has one accessible description in light and dark themes", async ({ page }) => {
+test("open field help has one accessible description in light and dark themes", async ({ page, isMobile }) => {
   await page.goto("./");
   await expect(page.locator("#root")).not.toHaveAttribute("inert");
   for (const theme of ["light", "dark"] as const) {
     if (theme === "dark") await selectTheme(page, theme);
     const help = page.getByRole("button", { name: "Help: Cloud", exact: true });
-    await help.focus();
+    // Use touch on phones: WebKit can scroll after a synthetic focus(), which
+    // correctly dismisses tooltips. A tap settles that scroll before opening.
+    if (isMobile) await help.tap();
+    else await help.focus();
     await expect(page.getByRole("tooltip", { name: /^Cloud\b/ })).toBeVisible();
     await expect(help).toHaveAccessibleDescription(
       /Cloud.*Sets the cloud, edition, and region used to price new workloads. Prices follow the selected region./,

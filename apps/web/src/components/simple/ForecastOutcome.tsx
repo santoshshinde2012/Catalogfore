@@ -67,7 +67,7 @@ export function ResultsPanel({
             <div className="flex flex-wrap items-center gap-2">
               <InfoTooltip
                 label="Share this forecast"
-                description="Copy a link with your current plan and assumptions so someone else can open it."
+                description="Anyone with this link can read the shared plan. Owner attribution is omitted. For a complete backup or a plan too large for a link, use Export → JSON."
               >
                 <Button type="button" onClick={onShare}>
                   Copy link
@@ -137,6 +137,9 @@ export function ResultsPanel({
         </div>
       )}
       <ForecastViews projection={projection} comparison={comparison} />
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        Anyone with a link can read this plan. Export → JSON saves a copy for Menu → Open forecast.
+      </p>
       <div className="flex flex-wrap items-center gap-2">
         <Button type="button" variant="outline" onClick={() => navigateToSection("budget-planning")}>
           Budget and scenarios

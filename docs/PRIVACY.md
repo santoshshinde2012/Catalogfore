@@ -1,15 +1,33 @@
-# Privacy
+# Privacy and local storage
 
-Catalogfore calculates in the browser. The page does not send the forecast, the usage file, or the share link to a Catalogfore server. There is no account.
+[Documentation index](README.md) · [FAQ](FAQ.md)
 
-A usage CSV is read on your machine. It is not uploaded. The same is true of the exports: CSV, Excel, JSON, and PDF are built locally.
+The Catalogfore web app calculates in your browser. It does not send your forecast, imported usage rows, or share fragment to a Catalogfore backend, and it has no account system. CSV, Excel, JSON, and PDF downloads are generated locally.
 
-The share link keeps the plan in the URL hash. Opening or forwarding that link shares the costs, workload names, assumptions, and monthly observations with whoever can see the address. Ownership attribution labels are omitted from links. It is not stored on a server by this project.
+## What is retained
 
-Named scenarios are stored locally under `cayfore:scenarios:v1`. They include plan inputs, monthly usage summaries, and any ownership summaries imported for that scenario. Delete a scenario using its Delete button or clear the site's browser storage. JSON downloads can retain these ownership summaries; review the file before sharing it. Saved plans do not retain raw CSV rows or full identity metadata. If browser storage is unavailable, scenarios remain available for the current session and the page recommends exporting a copy.
+| Location                             | Contents                                                                                     | How to remove or keep it                                                                |
+| ------------------------------------ | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Active session                       | Current inputs, imported preview, and workspace drafts                                       | Leaving/reloading ends the session; export JSON for a file backup                       |
+| URL fragment                         | Shareable plan inputs, costs, names, and monthly summaries; ownership attribution is omitted | Remove the fragment or start a new forecast; browser history may retain older addresses |
+| `cayfore:scenarios:v1` local storage | Up to 20 saved plans, including imported monthly and ownership summaries                     | Delete scenarios in the app or clear this site's browser storage                        |
+| `cayfore-theme` local storage        | Light/dark preference                                                                        | Change appearance or clear site storage; legacy `dcf-theme` is migrated when possible   |
+| Downloaded files                     | Reports and, for JSON, editable plan inputs and retained summaries                           | Manage these files and any copies yourself                                              |
 
-The theme choice is stored in this browser under the key `cayfore-theme`. A browser that still has the previous key `dcf-theme` is copied once, and that old key is removed.
+Saved plans do not retain raw CSV records or full identity metadata. They can retain derived team/owner labels in ownership summaries. Workload names and other plan labels can also contain information you supplied; excluding attribution from a link is not a complete anonymization step.
 
-Scripts, styles, and fonts are served with the page. The build does not load an analytics script and does not set a cookie. Browser storage contains the theme and any scenarios the user saves.
+## Sharing and backup
 
-GitHub Pages, and your browser, still have their own logs. This note covers what Catalogfore itself does.
+Anyone who receives a share URL can read its plan inputs. URL fragments are not included in the normal HTTP request for the page, but remain visible to browser history, extensions with access, and people or tools receiving the full URL. The project does not create a server copy of the link.
+
+Share links omit ownership attribution and recalculate against the currently installed price book. JSON files retain the calculated report and can retain attribution summaries; review them before sharing. Reopening a saved plan recalculates it with the installed book and can warn when the stored version differs.
+
+Only plans within the supported link limits are synchronized to the address. For oversized plans, the app removes the stale plan fragment, keeps the plan active in memory, and asks you to export JSON. Export before leaving or reloading. A JSON export backs up the active plan, not the full saved-scenario collection.
+
+Browser storage can be blocked, cleared, or exhausted. Failed scenario saves remain available for the current session and show a session-only notice. Scenarios do not synchronize between browsers or devices. Open and export each scenario you need to retain.
+
+## Network and other tools
+
+Scripts, styles, fonts, bundled samples, and lazy-loaded code are served with the app. The build includes no analytics script and the app itself sets no cookie. Opening a source, documentation, or repository link navigates to that site's own service and policies. GitHub Pages and your browser have their own operational logs.
+
+The CLI and stdio MCP server compute locally using supplied inputs; their current implementation does not connect to a Databricks workspace. This does not describe the privacy of an MCP client, an assistant, or an external connector you use to supply those inputs. Maintainer refresh scripts separately fetch public pricing/metadata and are not part of a browser import.

@@ -1,4 +1,4 @@
-import { APP_NAME, REPO } from "../site";
+import { APP_NAME, BASE_PATH, REPO } from "../site";
 import { InfoTooltip } from "./ui/tooltip";
 
 const sources = [
@@ -95,6 +95,14 @@ export function AppFooter({
                 </a>
               </InfoTooltip>
             ))}
+            <a
+              className="text-link underline-offset-4 hover:underline"
+              href={`${BASE_PATH}faq.html`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Help & FAQ<span className="sr-only"> (opens in a new tab)</span>
+            </a>
             {sources.map(({ label, title, description, href }) => (
               <InfoTooltip key={label} label={title} description={description} side="top">
                 <a className="text-link underline-offset-4 hover:underline" href={href}>

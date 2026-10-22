@@ -25,6 +25,8 @@ Spreadsheet text neutralization now includes line feeds and full-width `Ôºù`, `Ô
 
 ## Repository controls
 
+Rechecked through GitHub's API on **2026-10-22**: `main` protection matches the versioned policy; secret scanning, push protection and Dependabot security updates are enabled. Actions defaults to read permission and cannot approve pull requests. Pages uses the Actions workflow with HTTPS enforced, and the `github-pages` environment permits deployments from `main` only. Private vulnerability reporting was disabled despite the security policy's reporting link; it is now enabled and its state was read back. These are dated settings observations, not a security certification.
+
 Dependabot alerts, the dependency graph and Dependabot security updates were enabled and read back through GitHub's API. Secret scanning and push protection were already enabled. The review found no open secret-scanning or Dependabot alerts; `npm audit --audit-level=low` also passed. Dependency status is time-sensitive and should be rechecked in CI.
 
 The [branch policy](../.github/branch-protection.json) requires `check`, `Analyze`, `scan` and `OpenSSF Scorecard` from GitHub Actions (App 15368), and `CodeQL` from GitHub Advanced Security (App 57789). These are actual check names observed on successful runs. The policy preserves the existing merge-commit workflow. It does not require an unavailable second reviewer. After a reviewer joins, enable at least one required approval and approval of the most recent push, then update the versioned policy.

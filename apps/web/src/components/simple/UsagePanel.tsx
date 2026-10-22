@@ -26,7 +26,7 @@ export function UsagePanel({
     ? percent == null
       ? "Reading your CSV and checking its pricing coverage…"
       : `Reading your CSV, ${percent}%`
-    : "Processed in this browser. No credentials needed.";
+    : "CSV up to 8 MB. Processed in this browser. No credentials needed.";
   return (
     <Collapsible className="contents">
       <CollapsibleTrigger

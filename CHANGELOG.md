@@ -1,10 +1,12 @@
 # Changelog
 
-There is no GitHub Release yet. The owner publishes those. Dates below are the catalog day, not a support window.
+Unreleased changes are listed below. Catalog dates describe bundled data, not a support window or release publication.
 
 ## Unreleased
 
 ### Added
+
+- Task-based documentation index, CLI and development guides, production verification commands, and consistent help for input paths, budget scenarios, rate evidence, saving and sharing. Authored Markdown local file links are checked in CI and Pages builds.
 
 - Monthly quantity planning from Unit costs, with whole-plan first-month and annual previews, proportional updates to matching workloads, explicit application limits and pricing restrictions, and persistent View forecast / Undo change actions. Preview, applied forecast, and exports use the same engine.
 
@@ -29,10 +31,10 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 - Shared typed Databricks and FOCUS cost imports with preview, closed-month defaults, explicit partial periods, effective-list pricing, signed corrections, duplicate detection, USD validation, and local attribution.
 - Runtime price status and source context, saved price-book references, strict saved-file validation, and financial workflow regressions across engine, CLI, MCP, and desktop/mobile browsers.
 
-- A confidence score on every product and on every cloud, region, tier, and SKU cell (`data/generated/rate-confidence.json`). Azure meters score as measured. The US East card scores as secondary. Other AWS and GCP regions stay on the Lakehouse Real-Time proxy.
+- A confidence score on every product and on every cloud, region, tier, and SKU cell (`data/generated/rate-confidence.json`). Exact Azure meters and qualified captured Databricks regional observations take precedence; reference bases and regional factors remain labeled fallbacks. Scores describe evidence quality, not probabilities.
 - Zerobus Ingest at the captured official US East list: $0.050/GB on AWS Premium and $0.064/GB on AWS Enterprise and Azure. The example is 100 GB. GCP remains unresolved. The undated launch promotion is not applied.
 - Layer checks (`dependency-cruiser`), an engine coverage threshold, CodeQL, Dependabot, CODEOWNERS, pinned GitHub Action SHAs, and a semver release workflow that reads CHANGELOG.md.
-- A versioned product catalog (`data/product-catalog.json`, `@cayfore/catalog`) covering Databricks products as of 2026-10-16. A row with a published rate or a documented underlying SKU is priced. A row with nothing billable stays at $0 and says so.
+- A versioned product catalog (`data/product-catalog.json`, `@cayfore/catalog`) with billing units, sources and workload templates. Published rates and documented underlying SKUs contribute priced costs. Missing rates remain unresolved and excluded from known subtotals; zero requires explicit evidence.
 - Usage-based estimators for Genie, Genie Code, AI/BI dashboards, and `ai_parse_document`. Allowance math follows the docs. DBU per question and DBU per refresh are labeled assumptions.
 - A usage CSV import that maps `sku_name` onto every catalog product it can, with `docs/usage-export.sql` and a Databricks notebook at `docs/cayfore-usage.py`.
 - A coverage report (`docs/COVERAGE.md`) for products and for Azure region-and-SKU cells. The same sentence is in “How we got this”.
@@ -53,6 +55,8 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 - `docs/PRIVACY.md`. The calculation stays in the browser.
 
 ### Changed
+
+- Browser usage loading preserves injected fetch and notification dependencies. CLI saved-plan input accepts the supported 8,000,000-character file limit. MCP product estimates describe missing prices as unresolved and expose incomplete coverage instead of implying a free product.
 
 - Production controls wait for session startup before accepting input, and CI runs the full browser suite against the built app. Touch field help, drag cancellation, short-screen keyboard help, menu focus, and dark-theme printing now have regression coverage.
 - Long fitted forecasts retain all 36 months when reopened. Product forecasts apply dated events once, preserve signed corrections, and allocate add-ons only to eligible charges. Excel annual totals cover the first 12 months, detailed growth matches the engine, and overlapping savings alternatives are not added together.

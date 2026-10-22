@@ -6,9 +6,9 @@ import {
   type Portfolio,
   type UsageImportPreview,
 } from "@cayfore/engine";
-import { browserClipboard, browserClock } from "../services/browser-ports";
+import { browserClipboard, browserClock, browserFetcher } from "../services/browser-ports";
 import { notices, type Notifier } from "../services/notices";
-import type { ClipboardPort, Clock } from "../services/ports";
+import type { ClipboardPort, Clock, TextFetcher } from "../services/ports";
 import { showNotice, sonnerNotifier } from "../services/sonner-notifier";
 import { captureForecast, restoreForecast } from "./forecast-snapshot";
 import { planFromPortfolio } from "./forecast-session";
@@ -19,9 +19,15 @@ export interface IoPorts {
   clock: Clock;
   clipboard: ClipboardPort;
   notifier: Notifier;
+  fetcher: TextFetcher;
 }
 
-const defaultPorts: IoPorts = { clock: browserClock, clipboard: browserClipboard, notifier: sonnerNotifier };
+const defaultPorts: IoPorts = {
+  clock: browserClock,
+  clipboard: browserClipboard,
+  notifier: sonnerNotifier,
+  fetcher: browserFetcher,
+};
 
 export function ioActions(controls: SessionControls, ports: IoPorts = defaultPorts) {
   const {
@@ -111,7 +117,7 @@ export function ioActions(controls: SessionControls, ports: IoPorts = defaultPor
       setUsageError("");
       setNotice("Import cancelled. Your forecast is unchanged.");
     },
-    ...usageLoads(controls, previewUsageText),
+    ...usageLoads(controls, previewUsageText, ports),
     share: async () => {
       const url = new URL(window.location.href);
       try {

@@ -10,7 +10,7 @@
     <!-- frame-ancestors is ignored in a meta policy. GitHub Pages cannot send it as a response header. -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'sha256-yFnTbqJPjPAF1D3TyuaSy6M5FCud+VpQkKfBFG0GV6g='; style-src 'unsafe-inline'; style-src-elem 'sha256-QncEjtIBq55dHI84kgti5DV5sob6ywBM7oEAH0sKGbo='; style-src-attr 'none'; img-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+      content="default-src 'self'; script-src 'self' 'sha256-TwDwyDJ4DinZz3szEgQY0APTYd82GoptoqNCre3s1V0='; style-src 'unsafe-inline'; style-src-elem 'sha256-6tX1/KEC4c40lKawE06Tyaebdj4Hy/gxPdaQhpjNAd8='; style-src-attr 'none'; img-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
     />
     <title>FAQ — Catalogfore Databricks cost calculator</title>
     <meta
@@ -45,7 +45,22 @@
     <style>
       :root {
         color-scheme: light;
+        --background: #f6f7f9;
+        --foreground: #0b2026;
+        --muted: #3e4c53;
+        --link: #9e1e0c;
+        --border: #dfe3e8;
         font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+      }
+      @media screen {
+        [data-theme="dark"] {
+          color-scheme: dark;
+          --background: #0b2026;
+          --foreground: #f4f4f5;
+          --muted: #c5ced2;
+          --link: #ff8a72;
+          --border: #32454c;
+        }
       }
       * {
         box-sizing: border-box;
@@ -53,8 +68,8 @@
       body {
         margin: 0;
         min-height: 100vh;
-        background: #f6f6f7;
-        color: #0b2026;
+        background: var(--background);
+        color: var(--foreground);
       }
       main {
         max-width: 40rem;
@@ -98,16 +113,32 @@
       }
       p {
         line-height: 1.5;
-        color: #3e4c53;
+        color: var(--muted);
       }
       section {
+        scroll-margin-top: 1.5rem;
         margin-top: 1.5rem;
       }
-      a.home {
-        color: #9e1e0c;
+      a {
+        color: var(--link);
+        text-underline-offset: 0.2em;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem 1rem;
+        margin: 1.5rem 0;
+        padding: 1rem 0;
+        border-block: 1px solid var(--border);
+        font-size: 0.875rem;
+      }
+      nav a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 2.75rem;
       }
       a:focus-visible {
-        outline: 2px solid #c42812;
+        outline: 2px solid var(--link);
         outline-offset: 2px;
       }
       footer {
@@ -115,6 +146,7 @@
         font-size: 0.875rem;
       }
     </style>
+    <script src="./theme-boot.js"></script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -136,6 +168,14 @@
           },
           {
             "@type": "Question",
+            "name": "Where should I start?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "For a quick estimate, open Plan and choose your cloud, starting spend, workload mix, and monthly growth. Use my real usage imports a billing CSV; you review it before applying changes. Advanced configures individual products, machines, quantities, and schedules. These are different starting points for the same forecast. Use the Plan section links to move between Inputs, Forecast, and Budget and scenarios."
+            }
+          },
+          {
+            "@type": "Question",
             "name": "What does the DBU forecast include?",
             "acceptedAnswer": {
               "@type": "Answer",
@@ -152,10 +192,18 @@
           },
           {
             "@type": "Question",
+            "name": "How do Product map and Unit costs fit into my plan?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Product map explains services, platform concepts, and example architectures. Select an entry, then Inspect unit costs to check its billing components and source evidence. In Unit costs, choose a rate and try a billable quantity. Browsing and calculating leave your plan unchanged; Add to forecast or Update forecast applies a supported quantity. Product map can also add supported products with defaults and open Advanced so you can review their configuration."
+            }
+          },
+          {
+            "@type": "Question",
             "name": "Which usage files can I import?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Import a Databricks billing CSV or a recognized FOCUS cost and usage CSV in USD. Review the selected month, cost basis, price coverage, and warnings before replacing or adding workloads. The latest closed calendar month is selected by default. FOCUS effective and billed costs are labelled separately."
+              "text": "Open Use my real usage in Plan and choose a Databricks billing CSV or a recognized FOCUS cost and usage CSV in USD, up to 8 MB. The import guide shows how to prepare a file, and demonstration samples let you explore first. Review the selected month, cost basis, price coverage, and warnings before replacing or adding workloads. The latest closed calendar month is selected by default. FOCUS effective and billed costs are labelled separately."
             }
           },
           {
@@ -163,7 +211,15 @@
             "name": "Can I compare scenarios against a budget?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Yes. Set an annual budget to see forecast headroom or overspend, save named scenarios, and compare their costs. Growth, dated workload changes, and pricing assumptions affect the projections. Named scenarios are saved in this browser. Export the active plan as a JSON file to open that plan in another browser. The Export menu also downloads an Excel workbook of the same forecast."
+              "text": "Open Budget and scenarios from the Plan section links or below the forecast charts. Set an annual budget, save a named baseline, change the plan, then select the baseline under Compare current plan with. The charts show the comparison without replacing your current plan. Open a saved scenario to make it the active plan. Up to 20 scenarios stay in this browser; export each active plan as JSON for a portable backup."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I save, reopen, and share a plan?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Copy link creates a link to the current plan, without usage attribution summaries or your saved scenario library. Anyone with the link can read it. If a plan is too large for a link, keep the page open and choose Export → JSON. JSON saves the active plan so it can be reopened with Menu → Open forecast, including in another browser. It does not back up all saved scenarios at once. XLSX, CSV, and PDF are reports; use JSON to continue editing. Imported forecast JSON files must be no larger than 8 MB."
             }
           },
           {
@@ -176,10 +232,18 @@
           },
           {
             "@type": "Question",
+            "name": "Are prices live or official quotes?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Prices are a bundled snapshot, not live quotes. Unit costs separates official list prices, derived values, planning estimates, unresolved prices, and platform context. Open a rate’s Source evidence for its billing scope, observation date, and review date. Reviewing a source does not refresh an older price, and a listed price does not confirm regional availability. Check current provider pricing and your contract before making a purchasing decision; taxes and separately billed charges may be excluded."
+            }
+          },
+          {
+            "@type": "Question",
             "name": "Does Catalogfore upload a usage file or the estimate?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "No. Usage files and calculations stay local; Catalogfore does not save them on a server. A share link embeds the plan in its URL hash, so anyone receiving it can read the shared plan. Attribution summaries are excluded from shared links. Saved forecast JSON files can contain team or owner labels."
+              "text": "No. Usage files and calculations stay in this browser; Catalogfore does not upload them to a planning server or connect to your billing account. A share link embeds the current plan in its URL hash, so anyone receiving it can read that plan. Usage attribution summaries are excluded from links; workload names and other plan content can still be included. Saved JSON files can contain team or owner labels. Review a link or file before sharing it."
             }
           }
         ]
@@ -192,12 +256,20 @@
         <span class="dot" aria-hidden="true"></span>
         Catalogfore
       </a>
-      <h1>Questions about the forecast</h1>
+      <h1>Help &amp; FAQ</h1>
       <p>
-        Catalogfore is a Databricks cost calculator and DBU forecast. These answers describe the estimate. They are not
-        a Databricks quote, and Catalogfore is not affiliated with Databricks.
+        Choose a starting point, understand the estimate, and keep a copy of your plan. Help opens separately so you can
+        return to your planner without losing your place.
       </p>
-      <section>
+      <nav aria-label="Help topics">
+        <a href="#start">Start a plan</a>
+        <a href="#explore">Explore products and rates</a>
+        <a href="#scenarios">Compare scenarios</a>
+        <a href="#save-share">Save and share</a>
+        <a href="#prices">Pricing limits</a>
+        <a href="#privacy">Privacy</a>
+      </nav>
+      <section id="about">
         <h2>What is Catalogfore?</h2>
         <p>
           Catalogfore is an independent Databricks cost calculator and budget planner. It models pipelines, dashboards,
@@ -205,7 +277,16 @@
           usage. It is an estimate, not a Databricks quote, and is not affiliated with Databricks.
         </p>
       </section>
-      <section>
+      <section id="start">
+        <h2>Where should I start?</h2>
+        <p>
+          For a quick estimate, open Plan and choose your cloud, starting spend, workload mix, and monthly growth. Use
+          my real usage imports a billing CSV; you review it before applying changes. Advanced configures individual
+          products, machines, quantities, and schedules. These are different starting points for the same forecast. Use
+          the Plan section links to move between Inputs, Forecast, and Budget and scenarios.
+        </p>
+      </section>
+      <section id="coverage">
         <h2>What does the DBU forecast include?</h2>
         <p>
           Configuration estimates price Databricks usage and the relevant cloud infrastructure. Usage imports preserve
@@ -213,7 +294,7 @@
           charges remain visibly unpriced. A virtual machine bill is not inferred from imported DBUs.
         </p>
       </section>
-      <section>
+      <section id="difference">
         <h2>How is this different from a Databricks pricing estimator?</h2>
         <p>
           Catalogfore combines mixed workloads into a plan over time, with budgets, dated changes, and named scenarios.
@@ -221,24 +302,46 @@
           login or a connected billing account.
         </p>
       </section>
-      <section>
+      <section id="explore">
+        <h2>How do Product map and Unit costs fit into my plan?</h2>
+        <p>
+          Product map explains services, platform concepts, and example architectures. Select an entry, then Inspect
+          unit costs to check its billing components and source evidence. In Unit costs, choose a rate and try a
+          billable quantity. Browsing and calculating leave your plan unchanged; Add to forecast or Update forecast
+          applies a supported quantity. Product map can also add supported products with defaults and open Advanced so
+          you can review their configuration.
+        </p>
+      </section>
+      <section id="imports">
         <h2>Which usage files can I import?</h2>
         <p>
-          Import a Databricks billing CSV or a recognized FOCUS cost and usage CSV in USD. Review the selected month,
-          cost basis, price coverage, and warnings before replacing or adding workloads. The latest closed calendar
-          month is selected by default. FOCUS effective and billed costs are labelled separately.
+          Open Use my real usage in Plan and choose a Databricks billing CSV or a recognized FOCUS cost and usage CSV in
+          USD, up to 8 MB. The import guide shows how to prepare a file, and demonstration samples let you explore
+          first. Review the selected month, cost basis, price coverage, and warnings before replacing or adding
+          workloads. The latest closed calendar month is selected by default. FOCUS effective and billed costs are
+          labelled separately.
         </p>
       </section>
-      <section>
+      <section id="scenarios">
         <h2>Can I compare scenarios against a budget?</h2>
         <p>
-          Yes. Set an annual budget to see forecast headroom or overspend, save named scenarios, and compare their
-          costs. Growth, dated workload changes, and pricing assumptions affect the projections. Named scenarios are
-          saved in this browser. Export the active plan as a JSON file to open that plan in another browser. The Export
-          menu also downloads an Excel workbook of the same forecast.
+          Open Budget and scenarios from the Plan section links or below the forecast charts. Set an annual budget, save
+          a named baseline, change the plan, then select the baseline under Compare current plan with. The charts show
+          the comparison without replacing your current plan. Open a saved scenario to make it the active plan. Up to 20
+          scenarios stay in this browser; export each active plan as JSON for a portable backup.
         </p>
       </section>
-      <section>
+      <section id="save-share">
+        <h2>Can I save, reopen, and share a plan?</h2>
+        <p>
+          Copy link creates a link to the current plan, without usage attribution summaries or your saved scenario
+          library. Anyone with the link can read it. If a plan is too large for a link, keep the page open and choose
+          Export → JSON. JSON saves the active plan so it can be reopened with Menu → Open forecast, including in
+          another browser. It does not back up all saved scenarios at once. XLSX, CSV, and PDF are reports; use JSON to
+          continue editing. Imported forecast JSON files must be no larger than 8 MB.
+        </p>
+      </section>
+      <section id="charts">
         <h2>What do the charts and forecast range mean?</h2>
         <p>
           The chart plots imported observed costs in USD alongside the model’s future projection. DBU-only observations
@@ -247,12 +350,24 @@
           subtotal.
         </p>
       </section>
-      <section>
+      <section id="prices">
+        <h2>Are prices live or official quotes?</h2>
+        <p>
+          Prices are a bundled snapshot, not live quotes. Unit costs separates official list prices, derived values,
+          planning estimates, unresolved prices, and platform context. Open a rate’s Source evidence for its billing
+          scope, observation date, and review date. Reviewing a source does not refresh an older price, and a listed
+          price does not confirm regional availability. Check current provider pricing and your contract before making a
+          purchasing decision; taxes and separately billed charges may be excluded.
+        </p>
+      </section>
+      <section id="privacy">
         <h2>Does Catalogfore upload a usage file or the estimate?</h2>
         <p>
-          No. Usage files and calculations stay local; Catalogfore does not save them on a server. A share link embeds
-          the plan in its URL hash, so anyone receiving it can read the shared plan. Attribution summaries are excluded
-          from shared links. Saved forecast JSON files can contain team or owner labels.
+          No. Usage files and calculations stay in this browser; Catalogfore does not upload them to a planning server
+          or connect to your billing account. A share link embeds the current plan in its URL hash, so anyone receiving
+          it can read that plan. Usage attribution summaries are excluded from links; workload names and other plan
+          content can still be included. Saved JSON files can contain team or owner labels. Review a link or file before
+          sharing it.
         </p>
       </section>
       <footer>

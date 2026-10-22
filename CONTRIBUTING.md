@@ -2,10 +2,14 @@
 
 Changes to rates need a source and a date. Changes to the page should keep the forecast, the tests, and the accessibility checks green.
 
+[Documentation index](docs/README.md) · [Development and production verification](docs/DEVELOPMENT.md) · [Architecture](docs/ARCHITECTURE.md)
+
 ## Local setup
 
+Use Node `^22.13.0 || >=24.0.0`; `.nvmrc` selects Node 22. Run from the repository root:
+
 ```bash
-npm install
+npm ci
 npm test
 npm run dev
 ```
@@ -17,6 +21,7 @@ Before a pull request:
 ```bash
 npm run lint
 npm run typecheck
+npm run check:docs
 npm run check:sources
 npm run check:unit-costs
 npm test
@@ -25,7 +30,7 @@ npm run test:mcp
 npm run test:e2e
 ```
 
-Playwright downloads Chromium on first run: `npx playwright install chromium`.
+Install Chromium before browser checks: `npx playwright install chromium`. The default Playwright command starts the development server. Follow the [production preview commands](docs/DEVELOPMENT.md#check-the-production-build) to test the built app as CI does.
 
 ## Pricing data
 
@@ -33,7 +38,7 @@ Primary DBU observations live in `data/azure-dbu-meters.json` and `data/databric
 
 Legacy fallback DBU list rates live in `data/sku-rates.json`. Change one only with a source and a date in `docs/RESEARCH.md`, then bump `version` and `verifiedOn`. Do not silently rewrite list rates from a scraper.
 
-Instance DBU/hour values live in `data/instances.json` and are a cited table. VM dollars live in `data/cloud-vm-prices.json`. Azure regional DBU meters live in `data/azure-dbu-meters.json`. Refresh the VM and meter files with:
+Instance DBU/hour values live in `data/instances.json` with their evidence and consumption assumptions. VM dollars live in `data/cloud-vm-prices.json`. Azure regional DBU meters live in `data/azure-dbu-meters.json`. Refresh the VM and meter files with:
 
 ```bash
 npm run refresh-prices
@@ -56,7 +61,7 @@ npm run build
 node mcp/dist/index.js
 ```
 
-Point an MCP client at that file over stdio. See the README.
+Point an MCP client at that file over stdio. See [MCP setup and tools](docs/MCP.md).
 
 ## Design
 
