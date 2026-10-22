@@ -43,6 +43,8 @@ test("every desktop header action explains itself on hover and keyboard focus", 
 test("keyboard menu navigation moves to the forecast and Escape restores its trigger", async ({ page }) => {
   await page.goto("./");
   await page.getByRole("radio", { name: "10%", exact: true }).click();
+  // Move off the future menu; WebKit's focus scroll can emit a pointermove that changes selection.
+  await page.mouse.move(0, 0);
   const hash = new URL(page.url()).hash;
   const menuTrigger = workspaceMenuTrigger(page);
   await menuTrigger.focus();
