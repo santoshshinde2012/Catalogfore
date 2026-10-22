@@ -8,7 +8,7 @@ import type { SessionControls } from "./session-controls";
 /** File and sample reads stay off the forecast path until the user asks for them. */
 export function usageLoads(
   controls: SessionControls,
-  preview: (text: string, sourceLabel?: string) => void,
+  preview: (text: string, sourceLabel?: string) => boolean,
   ports: { fetcher?: TextFetcher; notifier?: Notifier } = {},
 ) {
   const fetcher = ports.fetcher ?? browserFetcher;
@@ -51,7 +51,7 @@ export function usageLoads(
         .getText(`${import.meta.env.BASE_URL}${sample.href}`)
         .then((text) => {
           if (request !== loadRequest.current) return;
-          preview(text, sample.source);
+          if (!preview(text, sample.source)) return;
           setNotice("Sample data loaded for demonstration. Review the preview before applying.");
           showNotice(notices.sampleReady(), notifier);
         })

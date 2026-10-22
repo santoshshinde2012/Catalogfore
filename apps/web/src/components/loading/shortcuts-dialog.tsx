@@ -15,7 +15,7 @@ export function ShortcutsDialog({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-[#0b2026]/40" />
         <Dialog.Content
-          className="fixed top-1/2 left-1/2 z-50 w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-xl border bg-card p-5 shadow-xl"
+          className="fixed top-1/2 left-1/2 z-50 max-h-[calc(100svh-2rem)] w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 overflow-y-auto overscroll-contain rounded-xl border bg-card p-5 shadow-xl"
           onCloseAutoFocus={onCloseAutoFocus}
         >
           <Dialog.Title className="text-lg font-semibold">Keyboard shortcuts</Dialog.Title>

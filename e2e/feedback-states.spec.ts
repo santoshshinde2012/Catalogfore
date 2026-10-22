@@ -82,6 +82,7 @@ test("an empty product search explains itself and can be cleared", async ({ page
 
 test("offline keeps the planner and coming back announces it", async ({ page }, testInfo) => {
   await page.goto("./");
+  await expect(page.locator("#root")).not.toHaveAttribute("aria-busy", "true");
   await expect(page.getByTestId("year-sentence")).toContainText("$170,258");
   await page.context().setOffline(true);
   await expect(page.getByTestId("offline-banner")).toBeVisible();
@@ -92,7 +93,9 @@ test("offline keeps the planner and coming back announces it", async ({ page }, 
   await expect(page.getByTestId("offline-banner")).toHaveCount(0);
 });
 
-test("keyboard help is a dialog and chart loading is busy until the chart arrives", async ({ page }, testInfo) => {
+test("keyboard help is a dialog and the chart slot stays available while its code loads", async ({
+  page,
+}, testInfo) => {
   let release = () => {};
   const gate = new Promise<void>((resolve) => {
     release = resolve;
@@ -103,8 +106,13 @@ test("keyboard help is a dialog and chart loading is busy until the chart arrive
   });
   await page.goto("./", { waitUntil: "domcontentloaded" });
   const chartLoading = page.getByRole("status").filter({ hasText: "Loading chart" });
-  await expect(chartLoading).toBeVisible();
-  await expect(chartLoading).toHaveAttribute("aria-busy", "true");
+  if (await page.locator("#root").getAttribute("data-prerender")) {
+    // A completed server-rendered chart stays visible during hydration.
+    await expect(page.getByTestId("forecast-chart")).toBeVisible();
+  } else {
+    await expect(chartLoading).toBeVisible();
+    await expect(chartLoading).toHaveAttribute("aria-busy", "true");
+  }
   await page.screenshot({ path: testInfo.outputPath("loading_chart.png"), fullPage: false });
   release();
   await expect(page.getByTestId("forecast-chart")).toBeVisible();

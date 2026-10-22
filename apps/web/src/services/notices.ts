@@ -25,6 +25,10 @@ const imported = {
 /** Every toast the planner shows. A new message is a new entry. */
 export const notices = {
   linkCopied: (): Notice => ({ tone: "success", title: "Link copied" }),
+  linkUnavailable: (): Notice => ({
+    tone: "error",
+    title: "This forecast is too large for a share link. Export JSON to save or share it.",
+  }),
   forecastReset: (undo: () => void): Notice => ({
     tone: "success",
     title: "Started a new forecast",

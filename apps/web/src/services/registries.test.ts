@@ -62,17 +62,19 @@ describe("shortcut registry", () => {
     handled.preventDefault();
     expect(matchingShortcut(handled)).toBeUndefined();
     expect(matchingShortcut(new KeyboardEvent("keydown", { key: "?", repeat: true }))).toBeUndefined();
-    const dialog = document.createElement("div");
-    dialog.setAttribute("role", "dialog");
-    const close = document.createElement("button");
-    dialog.append(close);
-    const run = vi.fn();
-    close.addEventListener("keydown", (event) => {
-      if (matchingShortcut(event)) run();
-    });
-    close.dispatchEvent(new KeyboardEvent("keydown", { key: "2", altKey: true }));
-    close.dispatchEvent(new KeyboardEvent("keydown", { key: "?" }));
-    expect(run).not.toHaveBeenCalled();
+    for (const role of ["dialog", "alertdialog", "menu", "listbox"]) {
+      const popup = document.createElement("div");
+      popup.setAttribute("role", role);
+      const control = document.createElement("button");
+      popup.append(control);
+      const run = vi.fn();
+      control.addEventListener("keydown", (event) => {
+        if (matchingShortcut(event)) run();
+      });
+      control.dispatchEvent(new KeyboardEvent("keydown", { key: "2", altKey: true }));
+      control.dispatchEvent(new KeyboardEvent("keydown", { key: "?" }));
+      expect(run).not.toHaveBeenCalled();
+    }
   });
 });
 

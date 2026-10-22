@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { blankPortfolio } from "@cayfore/engine";
+import { blankPortfolio, JSON_MAX_CHARS, type Portfolio } from "@cayfore/engine";
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -8,10 +8,11 @@ import { SCENARIO_STORAGE_KEY, useSavedScenarios } from "./saved-scenarios";
 let root: Root;
 let host: HTMLDivElement;
 let saved: ReturnType<typeof useSavedScenarios>;
+let portfolio: Portfolio;
 const load = vi.fn();
 const notice = vi.fn();
 function Harness() {
-  saved = useSavedScenarios(blankPortfolio(), load, notice);
+  saved = useSavedScenarios(portfolio, load, notice);
   return null;
 }
 function save(...names: string[]) {
@@ -23,6 +24,7 @@ beforeEach(() => {
   localStorage.clear();
   load.mockClear();
   notice.mockClear();
+  portfolio = blankPortfolio();
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
@@ -36,6 +38,29 @@ afterEach(() => {
 });
 
 describe("saved scenario recovery", () => {
+  it("reloads valid collections larger than one forecast's JSON limit", () => {
+    portfolio = {
+      ...blankPortfolio(),
+      workloads: Array.from({ length: 1000 }, (_, index) => ({
+        id: `storage-${index}`,
+        name: `Archive ${index} ${"s".repeat(60)}`,
+        kind: "storage",
+        gbMonth: 1000,
+        managed: true,
+      })),
+    };
+    act(() => root.render(<Harness />));
+    const names = Array.from({ length: 8 }, (_, index) => `Regional scenario ${index + 1}`);
+    save(...names);
+    expect(localStorage.getItem(SCENARIO_STORAGE_KEY)!.length).toBeGreaterThan(JSON_MAX_CHARS);
+    expect(saved.scenarioStorageAvailable).toBe(true);
+    act(() => root.unmount());
+    root = createRoot(host);
+    act(() => root.render(<Harness />));
+    expect(saved.scenarios.map((item) => item.name)).toEqual(names);
+    expect(saved.scenarios.every((item) => item.portfolio.workloads.length === 1000)).toBe(true);
+  });
+
   it("keeps failed saves in memory and persists all of them when browser storage recovers", () => {
     const blocked = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
       throw new DOMException("Quota exceeded", "QuotaExceededError");

@@ -4,7 +4,7 @@ import { FLAT_SEASONALITY } from "./forecast.js";
 import { normalizeWorkload } from "./normalize-workload.js";
 import { cloudOf, isRecord, num, str, tierOf } from "./portfolio-fields.js";
 import { err, ok, type Result } from "./result.js";
-import { JSON_MAX_CHARS, SHARE_MAX_CHARS, parseUntrustedJson } from "./untrusted.js";
+import { JSON_MAX_CHARS, SHARE_MAX_CHARS, UploadError, parseUntrustedJson } from "./untrusted.js";
 import { savedPortfolioInput } from "./saved-schema.js";
 import { normalizeSimple } from "./simple-fields.js";
 import { normalizeEvents, normalizeUsage } from "./plan-fields.js";
@@ -95,7 +95,12 @@ export function encodePortfolio(portfolio: Portfolio): string {
     delete usage.attribution;
     shared.usage = usage;
   }
-  return compressToEncodedURIComponent(JSON.stringify(shared));
+  const json = JSON.stringify(shared);
+  const tooLarge = "This forecast is too large for a share link. Export JSON to save or share it.";
+  if (json.length > JSON_MAX_CHARS) throw new UploadError(tooLarge);
+  const encoded = compressToEncodedURIComponent(json);
+  if (encoded.length > SHARE_MAX_CHARS) throw new UploadError(tooLarge);
+  return encoded;
 }
 
 /** Preserve an imported legacy fit when moving from the quick basket to detailed editing. */

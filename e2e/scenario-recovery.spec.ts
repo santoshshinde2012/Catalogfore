@@ -3,6 +3,7 @@ import { chooseOptionByName } from "./combobox";
 
 test("budget shortcut preserves the shared plan URL and moves keyboard focus to planning", async ({ page }) => {
   await page.goto("./");
+  await expect(page.locator("#root")).not.toHaveAttribute("aria-busy", "true");
   const url = page.url();
   await page.getByRole("button", { name: "Budget and scenarios", exact: true }).click();
   await expect(page.locator("#budget-planning")).toBeFocused();

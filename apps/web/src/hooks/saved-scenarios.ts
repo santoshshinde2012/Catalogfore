@@ -1,4 +1,4 @@
-import { parseSavedForecast, parseUntrustedJson, type Portfolio } from "@cayfore/engine";
+import { parseSavedForecast, parseUntrustedJson, UPLOAD_MAX_CHARS, type Portfolio } from "@cayfore/engine";
 import { useState } from "react";
 import { browserStore } from "../services/browser-ports";
 import type { KeyValueStore } from "../services/ports";
@@ -15,7 +15,7 @@ function readScenarios(store: KeyValueStore): SavedScenario[] {
   try {
     const raw = store.get(SCENARIO_STORAGE_KEY);
     if (!raw) return [];
-    const saved: unknown = parseUntrustedJson(raw);
+    const saved: unknown = parseUntrustedJson(raw, UPLOAD_MAX_CHARS);
     if (!Array.isArray(saved)) return [];
     return saved.slice(0, MAX_SCENARIOS).flatMap((value: unknown) => {
       if (!value || typeof value !== "object" || !("id" in value) || !("name" in value) || !("portfolio" in value))

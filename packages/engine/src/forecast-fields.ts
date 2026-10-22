@@ -13,7 +13,7 @@ export function forecastOf(value: unknown): StoredSimple["usageForecast"] | unde
   ) {
     return undefined;
   }
-  const ratios = value.ratios.slice(0, 12).map((ratio) => {
+  const ratios = value.ratios.slice(0, 36).map((ratio) => {
     const row = isRecord(ratio) ? ratio : {};
     const expected = num(row.expected, 1, 0, 100);
     return {

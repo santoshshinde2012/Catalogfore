@@ -90,6 +90,7 @@ test("applied quantities and Undo remain visible and keyboard accessible on a na
   await page.goto("./?view=rates&product=jobs_serverless");
   const calculator = page.getByRole("region", { name: "Unit cost calculator", exact: true });
   const feedback = page.getByRole("region", { name: "Forecast change", exact: true });
+  await expect(calculator).toBeVisible();
   for (const theme of ["light", "dark"] as const) {
     if (theme === "dark") await selectTheme(page, theme);
     const before = new URL(page.url()).hash;

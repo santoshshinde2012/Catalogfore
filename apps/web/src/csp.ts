@@ -3,7 +3,8 @@ import { createHash } from "node:crypto";
 /**
  * Production Content-Security-Policy.
  * script-src has no unsafe-inline and no unsafe-eval. The JSON-LD block is hashed.
- * The theme boot script and the module loader are hashed when the landing page is prerendered.
+ * The theme boot script is hashed when the landing page is prerendered.
+ * Vite's module script and dependency preloads are served from the same origin.
  * style-src keeps unsafe-inline. A hash in style-src-elem would ignore unsafe-inline and
  * block the style tags the animation library inserts at runtime. React width styles need
  * style-src-attr unsafe-inline.

@@ -3,6 +3,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useSimpleForecast, type SimpleSession } from "./useSimpleForecast";
+import { sonnerNotifier } from "../services/sonner-notifier";
 
 let root: Root;
 let host: HTMLDivElement;
@@ -39,6 +40,26 @@ afterEach(() => {
 });
 
 describe("pending forecast and usage loads", () => {
+  it("does not announce sample success when a successful HTTP response contains no usage", async () => {
+    const show = vi.spyOn(sonnerNotifier, "show").mockImplementation(() => {});
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({ ok: true, text: async () => "<html>Missing asset</html>" })),
+    );
+    try {
+      const portfolio = session.portfolio;
+      await act(async () => session.loadSample());
+      expect(session.usageBusy).toBe(false);
+      expect(session.usagePreview).toBeNull();
+      expect(session.usageError).not.toBe("");
+      expect(session.notice).not.toContain("Sample data loaded");
+      expect(show).not.toHaveBeenCalledWith(expect.objectContaining({ title: "Sample ready to review" }));
+      expect(session.portfolio).toBe(portfolio);
+    } finally {
+      show.mockRestore();
+    }
+  });
+
   it("keeps the latest saved file when an earlier file finishes afterward", async () => {
     const first = delayedText();
     const oldPortfolio = { ...session.portfolio, name: "First file A" };

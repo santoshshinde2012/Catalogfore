@@ -55,7 +55,14 @@
     </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root" inert aria-busy="true"></div>
+    <p
+      id="startup-status"
+      role="status"
+      class="fixed right-4 bottom-4 z-50 rounded-lg border bg-card px-4 py-3 text-sm text-foreground shadow-sm"
+    >
+      Starting planner…
+    </p>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

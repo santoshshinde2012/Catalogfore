@@ -68,12 +68,14 @@ export function ioActions(controls: SessionControls, ports: IoPorts = defaultPor
       };
       if (!preview.records.length) {
         setUsageError(preview.warnings[0] ?? "That file did not contain usage rows.");
-        return;
+        return false;
       }
       setUsageError("");
       setUsagePreview(preview);
+      return true;
     } catch (error) {
       setUsageError(error instanceof Error ? error.message : "That usage file could not be read.");
+      return false;
     }
   }
   function loadUsageText(text: string, sourceLabel?: string) {
@@ -112,7 +114,14 @@ export function ioActions(controls: SessionControls, ports: IoPorts = defaultPor
     ...usageLoads(controls, previewUsageText),
     share: async () => {
       const url = new URL(window.location.href);
-      url.hash = `plan=${encodePortfolio(portfolio)}`;
+      try {
+        url.hash = `plan=${encodePortfolio(portfolio)}`;
+      } catch {
+        const problem = notices.linkUnavailable();
+        setNotice(problem.title);
+        showNotice(problem, ports.notifier);
+        return;
+      }
       try {
         await ports.clipboard.writeText(url.href);
         setNotice(notices.linkCopied().title);

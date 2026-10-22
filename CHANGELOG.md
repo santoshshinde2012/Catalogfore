@@ -54,6 +54,9 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Changed
 
+- Production controls wait for session startup before accepting input, and CI runs the full browser suite against the built app. Touch field help, drag cancellation, short-screen keyboard help, menu focus, and dark-theme printing now have regression coverage.
+- Long fitted forecasts retain all 36 months when reopened. Product forecasts apply dated events once, preserve signed corrections, and allocate add-ons only to eligible charges. Excel annual totals cover the first 12 months, detailed growth matches the engine, and overlapping savings alternatives are not added together.
+- Large saved-scenario collections and supported forecast uploads reopen within their advertised limits. Plans too large for a share link keep their active state and offer JSON export; invalid sample responses report a failure.
 - Connection status now hydrates consistently with the static landing page. Failed route downloads retry through a reload that keeps the forecast URL, and catalog build failures reach the recovery screen.
 - Rate exports wait for the selected filters, completed exports preserve focus in another control, and keyboard help returns focus to its trigger. Workspace shortcuts respect open dialogs and support macOS Option keys.
 - Advanced inputs now validate committed drafts, preserve spaces in workload names, keep contract provenance during edits, and reject inverted worker ranges. Workload cloud changes select compatible machines; imported placement stays tied to its source.

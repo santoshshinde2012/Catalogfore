@@ -127,12 +127,12 @@ export function SimplePage({
           />
         </Card>
 
-        <div className="min-w-0 lg:sticky lg:top-[calc(var(--workspace-header-height)+1rem)]">
+        <div className="min-w-0 lg:sticky lg:top-[calc(var(--workspace-header-height)+1rem)] print:static">
           <Card
             role="region"
             aria-label="Forecast results"
             tabIndex={0}
-            className="p-4 shadow-[0_1px_2px_rgb(11_32_38/0.04),0_12px_32px_rgb(11_32_38/0.06)] sm:p-5 lg:max-h-[calc(100svh-var(--workspace-header-height)-2rem)] lg:overflow-y-auto lg:overscroll-contain"
+            className="p-4 shadow-[0_1px_2px_rgb(11_32_38/0.04),0_12px_32px_rgb(11_32_38/0.06)] sm:p-5 lg:max-h-[calc(100svh-var(--workspace-header-height)-2rem)] lg:overflow-y-auto lg:overscroll-contain print:max-h-none print:overflow-visible"
           >
             <ResultsPanel
               projection={session.forecastResult}

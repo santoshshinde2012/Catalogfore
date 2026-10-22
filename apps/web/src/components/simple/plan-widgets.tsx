@@ -1,4 +1,4 @@
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { browserScheduler } from "../../services/browser-ports";
 import type { Cloud, SimplePlan, TeamPresetId, Tier, WorkloadMix } from "@cayfore/engine";
 import { TEAM_PRESETS } from "@cayfore/engine";
@@ -44,7 +44,13 @@ export function MixBar({
   onMix: (key: keyof WorkloadMix, value: number) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const frame = useRef(0);
+  const cancelDrag = useRef(() => {});
+  const onMixRef = useRef(onMix);
+  onMixRef.current = onMix;
+  useEffect(() => {
+    if (disabled) cancelDrag.current();
+    return () => cancelDrag.current();
+  }, [disabled]);
   function share(clientX: number): number {
     const rect = ref.current?.getBoundingClientRect();
     if (!rect || rect.width <= 0) return 0;
@@ -54,33 +60,53 @@ export function MixBar({
     <div className="relative h-3" aria-hidden="true">
       <div
         ref={ref}
-        className="flex h-full overflow-hidden rounded-full bg-muted"
+        className="flex h-full touch-none overflow-hidden rounded-full bg-muted"
         onPointerDown={(event) => {
-          if (disabled) return;
+          if (disabled || event.button !== 0) return;
+          cancelDrag.current();
+          event.preventDefault();
+          const pointerId = event.pointerId;
           const start = share(event.clientX);
           const boundary = mix.etl + mix.sql;
           const key: keyof WorkloadMix = Math.abs(start - mix.etl) <= Math.abs(start - boundary) ? "etl" : "ml";
           let latest = event.clientX;
-          const applyNow = () => onMix(key, key === "etl" ? share(latest) : 1 - share(latest));
+          let frame: number | null = null;
+          const applyNow = () => onMixRef.current(key, key === "etl" ? share(latest) : 1 - share(latest));
           const queue = (clientX: number) => {
             latest = clientX;
-            if (frame.current) return;
-            frame.current = browserScheduler.frame(() => {
-              frame.current = 0;
+            if (frame !== null) return;
+            frame = browserScheduler.frame(() => {
+              frame = null;
               applyNow();
             });
           };
-          queue(event.clientX);
-          const move = (pointer: PointerEvent) => queue(pointer.clientX);
-          const stop = () => {
-            if (frame.current) browserScheduler.cancel(frame.current);
-            frame.current = 0;
-            applyNow();
+          const move = (pointer: PointerEvent) => {
+            if (pointer.pointerId === pointerId) queue(pointer.clientX);
+          };
+          const cleanup = () => {
+            if (frame !== null) browserScheduler.cancel(frame);
+            frame = null;
             window.removeEventListener("pointermove", move);
             window.removeEventListener("pointerup", stop);
+            window.removeEventListener("pointercancel", cancel);
+            window.removeEventListener("blur", cleanup);
+            cancelDrag.current = () => {};
           };
+          const stop = (pointer: PointerEvent) => {
+            if (pointer.pointerId !== pointerId) return;
+            latest = pointer.clientX;
+            cleanup();
+            applyNow();
+          };
+          const cancel = (pointer: PointerEvent) => {
+            if (pointer.pointerId === pointerId) cleanup();
+          };
+          cancelDrag.current = cleanup;
+          queue(event.clientX);
           window.addEventListener("pointermove", move);
           window.addEventListener("pointerup", stop);
+          window.addEventListener("pointercancel", cancel);
+          window.addEventListener("blur", cleanup);
         }}
       >
         <span className="bg-lava" style={{ width: `${mix.etl * 100}%` }} />

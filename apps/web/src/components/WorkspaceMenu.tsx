@@ -24,6 +24,7 @@ export function WorkspaceMenu({
 }) {
   const menuAction = useRef<(() => void) | null>(null);
   const trigger = useRef<HTMLButtonElement>(null);
+  const restoringFocus = useRef(false);
   const themeLabel = theme === "light" ? "Switch to dark theme" : "Switch to light theme";
   return (
     <DropdownMenu modal={false}>
@@ -36,6 +37,11 @@ export function WorkspaceMenu({
           <Button
             ref={trigger}
             type="button"
+            onFocus={(event) => {
+              // Returning from a menu action restores the keyboard position;
+              // it should not open fresh hover help over the updated view.
+              if (restoringFocus.current) event.preventDefault();
+            }}
             variant="ghost"
             className="min-h-11 gap-2 rounded-none px-2.5 text-[13px] text-muted-foreground hover:bg-transparent hover:text-foreground data-[state=open]:text-foreground sm:px-3"
             aria-label="Menu"
@@ -56,7 +62,12 @@ export function WorkspaceMenu({
           if (!action) return;
           event.preventDefault();
           menuAction.current = null;
-          requestAnimationFrame(action);
+          requestAnimationFrame(() => {
+            restoringFocus.current = true;
+            trigger.current?.focus();
+            restoringFocus.current = false;
+            action();
+          });
         }}
       >
         <MenuGroupLabel>Planning</MenuGroupLabel>
@@ -93,10 +104,7 @@ export function WorkspaceMenu({
           description="See Alt shortcuts for Plan, Product map, Unit costs, and Forecast."
           icon={Keyboard}
           onSelect={() => {
-            menuAction.current = () => {
-              trigger.current?.focus();
-              openShortcuts();
-            };
+            menuAction.current = openShortcuts;
           }}
         />
         <WorkspaceMenuEntry

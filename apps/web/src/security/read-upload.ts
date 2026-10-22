@@ -52,7 +52,7 @@ export async function readForecastFile(file: File): Promise<ReadResult<Portfolio
   const body = forecastText.safeParse(text);
   if (!body.success) return { ok: false, error: "That file is too large." };
   try {
-    const parsed = parseSavedForecast(parseUntrustedJson(body.data));
+    const parsed = parseSavedForecast(parseUntrustedJson(body.data, UPLOAD_MAX_CHARS));
     return parsed.ok ? { ok: true, value: parsed.value } : { ok: false, error: parsed.error };
   } catch {
     return { ok: false, error: "That file is not a forecast JSON." };

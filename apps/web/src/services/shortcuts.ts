@@ -44,9 +44,12 @@ export function isTextEntry(target: EventTarget | null): boolean {
 
 export function matchingShortcut(event: KeyboardEvent): Shortcut | undefined {
   if (event.defaultPrevented || event.repeat || event.isComposing || isTextEntry(event.target)) return undefined;
-  // Modal controls own their keyboard interaction; page navigation must wait
-  // until the dialog closes and returns focus to the workspace.
-  if (event.target instanceof Element && event.target.closest('[role="dialog"], [role="alertdialog"]'))
+  // Open dialogs and menus own their keyboard interaction until focus returns
+  // to the workspace.
+  if (
+    event.target instanceof Element &&
+    event.target.closest('[role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"]')
+  )
     return undefined;
   return shortcuts.find((shortcut) => shortcut.when(event));
 }
