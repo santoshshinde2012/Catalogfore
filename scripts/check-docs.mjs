@@ -6,23 +6,25 @@ import { fileURLToPath } from "node:url";
 // fragments and remote URLs require separate review; this is an offline check.
 function prose(markdown) {
   let fence;
-  return markdown
-    .split("\n")
-    .map((line) => {
-      const marker = line.match(/^ {0,3}(`{3,}|~{3,})/);
-      if (marker) {
-        if (!fence) fence = marker[1];
-        else if (marker[1][0] === fence[0] && marker[1].length >= fence.length) {
-          fence = undefined;
+  return (
+    markdown
+      .split("\n")
+      .map((line) => {
+        const marker = line.match(/^ {0,3}(`{3,}|~{3,})/);
+        if (marker) {
+          if (!fence) fence = marker[1];
+          else if (marker[1][0] === fence[0] && marker[1].length >= fence.length) {
+            fence = undefined;
+          }
+          return "";
         }
-        return "";
-      }
-      return fence ? "" : line.replace(/(`+).*?\1/g, " ");
-    })
-    .join("\n")
-    // Preserve separation: ignored text must not manufacture a new link or
-    // comment delimiter by joining the characters on either side.
-    .replace(/<!--[\s\S]*?-->/g, " ");
+        return fence ? "" : line.replace(/(`+).*?\1/g, " ");
+      })
+      .join("\n")
+      // Preserve separation: ignored text must not manufacture a new link or
+      // comment delimiter by joining the characters on either side.
+      .replace(/<!--[\s\S]*?-->/g, " ")
+  );
 }
 
 export function localLinks(markdown) {
