@@ -54,7 +54,7 @@ PLAYWRIGHT_BASE_URL=http://127.0.0.1:4175/Catalogfore/ npm run test:e2e
 
 The console-route script fails on console warnings/errors, page errors, and failed requests while exercising desktop/mobile navigation, editing, persistence, and FAQ access. Both commands use the already-running preview. Stop preview with Ctrl+C. Environment assignments above use POSIX syntax; on PowerShell set `$env:PLAYWRIGHT_BASE_URL` before running npm.
 
-The [CI workflow](../.github/workflows/ci.yml) runs the browser suite against production preview. It also runs `npm audit --audit-level=low` and the lockfile-integrity check. The [Pages workflow](../.github/workflows/pages.yml) has its own build/deploy steps; it is not a duplicate of every CI check.
+The [CI workflow](../.github/workflows/ci.yml) runs the browser suite against production preview. It also runs `npm audit --audit-level=low` and the lockfile-integrity check. Browser dependency installation has a 15-minute timeout. When the runner provides official HTTPS Ubuntu fallback mirrors, CI uses those after repeated timeouts from the Azure package mirror. The [Pages workflow](../.github/workflows/pages.yml) has its own build/deploy steps; it is not a duplicate of every CI check.
 
 ## Configuration
 
