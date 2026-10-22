@@ -117,8 +117,7 @@ test("touch menu explains its actions and fits a narrow screen @mobile", async (
   await expect(menu.getByRole("menuitem", { name: /^Forecast\b/ })).toBeFocused();
   expect(await menu.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
-  const scan = await new AxeBuilder({ page }).analyze();
-  expect(scan.violations).toEqual([]);
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 });
 
 test("workspace help returns from reference pages without changing the forecast", async ({ page }) => {
