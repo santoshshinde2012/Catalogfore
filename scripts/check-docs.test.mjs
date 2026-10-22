@@ -22,6 +22,8 @@ test("an unfinished long link does not stall documentation checks", () => {
 });
 
 test("finds local links, images, and references while ignoring remote URLs and code", () => {
+  assert.deepEqual(localLinks("[split](guide<!-- comment -->.md)"), []);
+  assert.deepEqual(localLinks("[split](guide`code`.md)"), []);
   assert.deepEqual(
     localLinks(
       [

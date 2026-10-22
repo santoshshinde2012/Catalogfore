@@ -17,10 +17,12 @@ function prose(markdown) {
         }
         return "";
       }
-      return fence ? "" : line.replace(/(`+).*?\1/g, "");
+      return fence ? "" : line.replace(/(`+).*?\1/g, " ");
     })
     .join("\n")
-    .replace(/<!--[\s\S]*?-->/g, "");
+    // Preserve separation: ignored text must not manufacture a new link or
+    // comment delimiter by joining the characters on either side.
+    .replace(/<!--[\s\S]*?-->/g, " ");
 }
 
 export function localLinks(markdown) {
