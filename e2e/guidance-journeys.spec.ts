@@ -1,6 +1,39 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { savedDownload } from "./forecast-helpers";
 import { navigateWorkspace, openWorkspaceMenu, selectTheme } from "./header-helpers";
+
+test("download notifications leave workspace navigation reachable", async ({ page, isMobile }) => {
+  const viewports = [page.viewportSize()!];
+  if (!isMobile) viewports.push({ width: 768, height: 720 });
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await page.goto("./");
+    await savedDownload(page);
+    const notification = page.locator("[data-sonner-toast]").filter({ hasText: "JSON downloaded" });
+    await expect(notification).toBeVisible();
+    await notification.hover();
+    await expect
+      .poll(async () => {
+        const header = await page.getByRole("banner").boundingBox();
+        const toast = await notification.boundingBox();
+        const shortcut = page.getByRole("complementary", { name: "Forecast shortcut", exact: true });
+        const bar = (await shortcut.isVisible()) ? await shortcut.boundingBox() : null;
+        return (
+          !!header &&
+          !!toast &&
+          toast.y >= header.y + header.height &&
+          toast.y + toast.height <= (bar?.y ?? viewport.height)
+        );
+      })
+      .toBe(true);
+    await navigateWorkspace(page, "Unit costs");
+    await expect(page.getByRole("heading", { name: "Unit costs", exact: true })).toBeFocused();
+    await expect(notification).toBeVisible();
+    await notification.getByRole("button", { name: "Close toast", exact: true }).click();
+    await expect(notification).toHaveCount(0);
+  }
+});
 
 test("reference workspaces keep their return action and source context below the sticky header", async ({ page }) => {
   await page.goto("./");

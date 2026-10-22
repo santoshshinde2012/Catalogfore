@@ -90,8 +90,10 @@ describe("pending forecast and usage loads", () => {
       "fetch",
       vi.fn(async () => ({ ok: true, text: sample.text })),
     );
-    await act(async () => session.loadUsageFile(first.file));
-    await vi.waitFor(() => expect(first.text).toHaveBeenCalledOnce());
+    await act(async () => {
+      session.loadUsageFile(first.file);
+      await vi.waitFor(() => expect(first.text).toHaveBeenCalledOnce());
+    });
     await act(async () => session.loadSample());
     await act(async () => first.resolve("not,usage\nhello,world"));
     expect(session.usageBusy).toBe(true);
@@ -145,8 +147,10 @@ describe("pending forecast and usage loads", () => {
     act(() => session.saveScenario("Saved scenario"));
     const scenarioId = session.scenarios[0].id;
     const delayed = delayedText();
-    await act(async () => session.loadUsageFile(delayed.file));
-    await vi.waitFor(() => expect(delayed.text).toHaveBeenCalledOnce());
+    await act(async () => {
+      session.loadUsageFile(delayed.file);
+      await vi.waitFor(() => expect(delayed.text).toHaveBeenCalledOnce());
+    });
     act(() => session.loadScenario(scenarioId));
     await act(async () => delayed.resolve("not,usage\nhello,world"));
     expect(session.portfolio.name).toBe("Saved scenario");

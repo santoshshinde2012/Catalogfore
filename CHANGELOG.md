@@ -56,6 +56,8 @@ Unreleased changes are listed below. Catalog dates describe bundled data, not a 
 
 ### Changed
 
+- Dismissible notifications stay clear of workspace navigation and the mobile/tablet forecast shortcut, including device safe areas.
+
 - Browser usage loading preserves injected fetch and notification dependencies. CLI saved-plan input accepts the supported 8,000,000-character file limit. MCP product estimates describe missing prices as unresolved and expose incomplete coverage instead of implying a free product.
 
 - Production controls wait for session startup before accepting input, and CI runs the full browser suite against the built app. Touch field help, drag cancellation, short-screen keyboard help, menu focus, and dark-theme printing now have regression coverage.
