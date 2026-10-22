@@ -1,10 +1,10 @@
 import { useEffect, useRef, type RefObject } from "react";
 
-/** Disabled buttons drop focus. Put it back on the control that was working. */
+/** Restore focus lost to a disabled button without interrupting another control. */
 export function useReturnFocus(busy: boolean, target: RefObject<HTMLElement | null>) {
   const wasBusy = useRef(false);
   useEffect(() => {
-    if (wasBusy.current && !busy) target.current?.focus();
+    if (wasBusy.current && !busy && document.activeElement === document.body) target.current?.focus();
     wasBusy.current = busy;
   }, [busy, target]);
 }

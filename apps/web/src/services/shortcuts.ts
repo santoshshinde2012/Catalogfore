@@ -13,7 +13,11 @@ const TEXT_ENTRY = new Set(["INPUT", "TEXTAREA", "SELECT"]);
 
 function altDigit(key: string) {
   return (event: KeyboardEvent) =>
-    event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey && event.key === key;
+    event.altKey &&
+    !event.ctrlKey &&
+    !event.metaKey &&
+    !event.shiftKey &&
+    (event.code === `Digit${key}` || event.key === key);
 }
 
 /** Shortcuts in display order. Matching walks this list; it does not branch per key. */
@@ -39,6 +43,10 @@ export function isTextEntry(target: EventTarget | null): boolean {
 }
 
 export function matchingShortcut(event: KeyboardEvent): Shortcut | undefined {
-  if (event.isComposing || isTextEntry(event.target)) return undefined;
+  if (event.defaultPrevented || event.repeat || event.isComposing || isTextEntry(event.target)) return undefined;
+  // Modal controls own their keyboard interaction; page navigation must wait
+  // until the dialog closes and returns focus to the workspace.
+  if (event.target instanceof Element && event.target.closest('[role="dialog"], [role="alertdialog"]'))
+    return undefined;
   return shortcuts.find((shortcut) => shortcut.when(event));
 }

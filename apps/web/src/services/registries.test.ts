@@ -51,6 +51,29 @@ describe("shortcut registry", () => {
     expect(isTextEntry(editable)).toBe(true);
     expect(isTextEntry(document.createElement("button"))).toBe(false);
   });
+
+  it("matches Option-number chords when the keyboard produces a different character", () => {
+    const optionTwo = new KeyboardEvent("keydown", { key: "™", code: "Digit2", altKey: true });
+    expect(matchingShortcut(optionTwo)?.action).toBe("products");
+  });
+
+  it("leaves handled, repeated, and modal key events alone", () => {
+    const handled = new KeyboardEvent("keydown", { key: "?", cancelable: true });
+    handled.preventDefault();
+    expect(matchingShortcut(handled)).toBeUndefined();
+    expect(matchingShortcut(new KeyboardEvent("keydown", { key: "?", repeat: true }))).toBeUndefined();
+    const dialog = document.createElement("div");
+    dialog.setAttribute("role", "dialog");
+    const close = document.createElement("button");
+    dialog.append(close);
+    const run = vi.fn();
+    close.addEventListener("keydown", (event) => {
+      if (matchingShortcut(event)) run();
+    });
+    close.dispatchEvent(new KeyboardEvent("keydown", { key: "2", altKey: true }));
+    close.dispatchEvent(new KeyboardEvent("keydown", { key: "?" }));
+    expect(run).not.toHaveBeenCalled();
+  });
 });
 
 describe("prefetch plan", () => {
@@ -112,7 +135,7 @@ describe("export and skeleton registries", () => {
     expect(skeletonLayouts.chart.className).toContain("lg:h-48");
     expect(skeletonLayouts.rates.nested).toBe("rates-table");
     for (const id of skeletonIds) expect(skeletonLayouts[id].label.length).toBeGreaterThan(0);
-    expect(recoveryActions.map((action) => action.label)).toEqual(["Try again", "Reload view", "Return to plan"]);
+    expect(recoveryActions.map((action) => action.label)).toEqual(["Try again", "Return to plan"]);
   });
 });
 

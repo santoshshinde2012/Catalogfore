@@ -3,11 +3,21 @@ import { expect, test } from "@playwright/test";
 import { selectTheme } from "./header-helpers";
 
 test("theme boot loads with the site base path", async ({ page }) => {
-  const response = page.waitForResponse((result) => result.url().includes("theme-boot.js"));
+  let bootStatus: number | undefined;
+  page.on("response", (response) => {
+    if (response.url().includes("theme-boot.js")) bootStatus = response.status();
+  });
   await page.goto("./");
-  expect((await response).status()).toBe(200);
-  expect(await page.locator("script[src*='theme-boot.js']").getAttribute("src")).toContain("theme-boot.js");
-  expect(await page.locator("script[src*='theme-boot.js']").getAttribute("src")).not.toBe("/theme-boot.js");
+  const externalBoot = page.locator("script[src*='theme-boot.js']");
+  if (await externalBoot.count()) {
+    expect(bootStatus).toBe(200);
+    expect(await externalBoot.getAttribute("src")).toContain("/Catalogfore/theme-boot.js");
+  } else {
+    // Production inlines the same boot script under the generated CSP.
+    expect(await page.locator("script:not([src])").allTextContents()).toContainEqual(
+      expect.stringContaining('var key = "cayfore-theme"'),
+    );
+  }
 });
 
 test("the four quick inputs and the chart are reachable without hunting", async ({ page }) => {

@@ -54,6 +54,8 @@ There is no GitHub Release yet. The owner publishes those. Dates below are the c
 
 ### Changed
 
+- Connection status now hydrates consistently with the static landing page. Failed route downloads retry through a reload that keeps the forecast URL, and catalog build failures reach the recovery screen.
+- Rate exports wait for the selected filters, completed exports preserve focus in another control, and keyboard help returns focus to its trigger. Workspace shortcuts respect open dialogs and support macOS Option keys.
 - Advanced inputs now validate committed drafts, preserve spaces in workload names, keep contract provenance during edits, and reject inverted worker ranges. Workload cloud changes select compatible machines; imported placement stays tied to its source.
 - Import cancellation restores keyboard focus, nested upload failures stay visible in Advanced, and corrected saved files clear stale errors. Delayed file reads cannot overwrite a later selection or a new forecast. Every forecast export handles failed downloads and restores keyboard focus after preparation.
 - Catalog search reset and pagination restore useful keyboard focus. Calculator feedback and Undo appear beside the action; Downloads retains scope, sort, page size, and page across workspace navigation.

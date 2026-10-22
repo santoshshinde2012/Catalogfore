@@ -1,15 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
 import { browserNetwork } from "../services/browser-ports";
 import { connectionStep } from "../services/connection";
 import { notices, type Notifier } from "../services/notices";
 import type { NetworkStatus } from "../services/ports";
 import { showNotice } from "../services/sonner-notifier";
 
+// The static landing page has no browser connection state. Hydration must start
+// with the same snapshot, then subscribe to the actual browser status.
+const serverOnline = () => true;
+
 export function useOnline(network?: NetworkStatus): boolean {
   const source = network ?? browserNetwork;
-  const [online, setOnline] = useState(() => source.online());
-  useEffect(() => source.subscribe(setOnline), [source]);
-  return online;
+  const subscribe = useCallback((listener: () => void) => source.subscribe(listener), [source]);
+  const getSnapshot = useCallback(() => source.online(), [source]);
+  return useSyncExternalStore(subscribe, getSnapshot, serverOnline);
 }
 
 /** Offline flag, plus a single “back online” notice on the recovery edge. */

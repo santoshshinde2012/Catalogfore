@@ -83,7 +83,7 @@ test("touch menu explains its actions and fits a narrow screen @mobile", async (
     "Open forecast",
     "New forecast",
     "Keyboard shortcuts",
-    "Print forecast",
+    "Print current view",
     "Switch to dark theme",
     "Star on GitHub",
   ]) {

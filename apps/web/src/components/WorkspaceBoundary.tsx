@@ -42,8 +42,9 @@ export class WorkspaceBoundary extends Component<
 
   private recover(id: RecoveryActionId) {
     const actions: Record<RecoveryActionId, () => void> = {
-      retry: () => this.setState({ failed: false }),
-      reload: () => window.location.reload(),
+      // Both React.lazy and the browser can retain a rejected module load. A fresh
+      // document retries the download while keeping the forecast in the URL.
+      retry: () => window.location.reload(),
       plan: () => {
         this.setState({ failed: false });
         this.props.onPlan();

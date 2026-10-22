@@ -12,8 +12,14 @@ export function createUnitCostLoader(scheduler: Pick<Scheduler, "frame" | "later
     if (!pending) {
       pending = import("@cayfore/engine/unit-costs").then(
         ({ buildUnitCostCatalog }) =>
-          new Promise((resolve) => {
-            const build = () => resolve(buildUnitCostCatalog());
+          new Promise((resolve, reject) => {
+            const build = () => {
+              try {
+                resolve(buildUnitCostCatalog());
+              } catch (error) {
+                reject(error);
+              }
+            };
             if (typeof requestAnimationFrame === "function") scheduler.frame(() => scheduler.later(build, 0));
             else scheduler.later(build, 0);
           }),

@@ -1,7 +1,36 @@
-import { describe, expect, it } from "vitest";
+import * as unitCosts from "@cayfore/engine/unit-costs";
+import { describe, expect, it, vi } from "vitest";
 import { createUnitCostLoader } from "./unit-cost-catalog";
 
 describe("unit-cost catalog loader", () => {
+  it("rejects a failed scheduled build so the workspace can show recovery controls", async () => {
+    const queue: Array<() => void> = [];
+    const build = vi.spyOn(unitCosts, "buildUnitCostCatalog").mockImplementationOnce(() => {
+      throw new Error("Catalog build failed");
+    });
+    const load = createUnitCostLoader({
+      frame: (task) => {
+        queue.push(task);
+        return queue.length;
+      },
+      later: (task) => {
+        queue.push(task);
+        return queue.length;
+      },
+    });
+    try {
+      const pending = load();
+      const rejected = expect(pending).rejects.toThrow("Catalog build failed");
+      await vi.waitFor(() => expect(queue.length).toBeGreaterThan(0));
+      expect(() => {
+        while (queue.length) queue.shift()?.();
+      }).not.toThrow();
+      await rejected;
+    } finally {
+      build.mockRestore();
+    }
+  });
+
   it("lets the skeleton paint before the synchronous build", async () => {
     const queue: Array<() => void> = [];
     const load = createUnitCostLoader({

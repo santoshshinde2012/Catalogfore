@@ -7,12 +7,11 @@ export function recoveryCopy(offline: boolean): string {
   const saved = "Something went wrong while drawing this view. Your forecast is still saved in the page address.";
   return offline
     ? `${saved} You appear to be offline. The plan can still open from the prices already in this page.`
-    : `${saved} Try again, or return to your plan.`;
+    : `${saved} Try again to reload this view, or return to your plan.`;
 }
 
 export const recoveryActions = [
   { id: "retry", label: "Try again", emphasis: "default" },
-  { id: "reload", label: "Reload view", emphasis: "outline" },
   { id: "plan", label: "Return to plan", emphasis: "outline" },
 ] as const;
 

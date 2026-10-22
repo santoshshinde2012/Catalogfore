@@ -23,6 +23,7 @@ export function WorkspaceMenu({
   onTheme: () => void;
 }) {
   const menuAction = useRef<(() => void) | null>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
   const themeLabel = theme === "light" ? "Switch to dark theme" : "Switch to light theme";
   return (
     <DropdownMenu modal={false}>
@@ -33,6 +34,7 @@ export function WorkspaceMenu({
       >
         <DropdownMenuTrigger asChild>
           <Button
+            ref={trigger}
             type="button"
             variant="ghost"
             className="min-h-11 gap-2 rounded-none px-2.5 text-[13px] text-muted-foreground hover:bg-transparent hover:text-foreground data-[state=open]:text-foreground sm:px-3"
@@ -91,12 +93,15 @@ export function WorkspaceMenu({
           description="See Alt shortcuts for Plan, Product map, Unit costs, and Forecast."
           icon={Keyboard}
           onSelect={() => {
-            menuAction.current = openShortcuts;
+            menuAction.current = () => {
+              trigger.current?.focus();
+              openShortcuts();
+            };
           }}
         />
         <WorkspaceMenuEntry
-          label="Print forecast"
-          description="Open a print view of this forecast without the workspace chrome."
+          label="Print current view"
+          description="Print the current view without the workspace chrome."
           icon={Printer}
           onSelect={() => {
             menuAction.current = () => window.print();

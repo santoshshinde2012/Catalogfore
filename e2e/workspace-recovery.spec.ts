@@ -18,7 +18,7 @@ test("a failed workspace download keeps the plan recoverable and supports retry"
   await navigateWorkspace(page, "Product map");
   await expect(page.locator("#workspace-error")).toBeVisible();
   await page.unroute(module);
-  await page.getByRole("button", { name: "Reload view", exact: true }).click();
+  await page.getByRole("button", { name: "Try again", exact: true }).click();
   await expect(page.locator("#product-map")).toBeVisible();
   expect(new URL(page.url()).hash).toBe(hash);
   await navigateWorkspace(page, "Plan");

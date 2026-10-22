@@ -80,6 +80,26 @@ describe("shortcut hook", () => {
 });
 
 describe("idle prefetch and focus return", () => {
+  it("keeps focus on a control selected while an export is running", () => {
+    function Harness({ busy }: { busy: boolean }) {
+      const button = useRef<HTMLButtonElement>(null);
+      useReturnFocus(busy, button);
+      return (
+        <>
+          <button ref={button} disabled={busy}>
+            Export
+          </button>
+          <input aria-label="Spend" />
+        </>
+      );
+    }
+    act(() => root.render(<Harness busy />));
+    const input = host.querySelector("input")!;
+    act(() => input.focus());
+    act(() => root.render(<Harness busy={false} />));
+    expect(document.activeElement).toBe(input);
+  });
+
   it("cancels idle prefetch on unmount and restores focus when work finishes", () => {
     const cancel = vi.fn();
     const prefetch: PrefetchPort = {

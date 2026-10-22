@@ -47,6 +47,7 @@ export function RateDownloads({
   );
   const count = (value: number) => value.toLocaleString("en-US");
   async function download(format: RateExportId) {
+    if (busy || tableLoading) return;
     const selected = table.orderedRows;
     let url: string | undefined;
     setBusy(format);
@@ -117,7 +118,7 @@ export function RateDownloads({
                       focus.current = event.currentTarget;
                       void download(job.id);
                     }}
-                    disabled={state.disabled}
+                    disabled={state.disabled || tableLoading}
                   >
                     {state.active ? (
                       <LoaderCircle className="animate-spin motion-reduce:animate-none" aria-hidden="true" />
