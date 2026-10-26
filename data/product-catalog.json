@@ -1,7 +1,7 @@
 {
   "$schema": "../packages/catalog/product-catalog.schema.json",
-  "version": "2026-10-19.1",
-  "verifiedOn": "2026-10-19",
+  "version": "2026-10-26.1",
+  "verifiedOn": "2026-10-26",
   "disclaimer": "Estimates only. Not a quote, invoice, or commitment. Source rates resolve from captured first-party Azure and Databricks calculator data where supported; missing and conflicted prices remain unresolved. Planning assumptions and reference fallbacks are labeled separately. A catalog product does not guarantee availability in every cloud or region.",
   "categories": [
     {

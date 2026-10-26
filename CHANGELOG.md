@@ -56,6 +56,7 @@ Unreleased changes are listed below. Catalog dates describe bundled data, not a 
 
 ### Changed
 
+- Weekly catalog check on 2026-10-26. Catalog version 2026-10-19.1 -> 2026-10-26.1.
 - Dismissible notifications stay clear of workspace navigation and the mobile/tablet forecast shortcut, including device safe areas.
 
 - Browser usage loading preserves injected fetch and notification dependencies. CLI saved-plan input accepts the supported 8,000,000-character file limit. MCP product estimates describe missing prices as unresolved and expose incomplete coverage instead of implying a free product.

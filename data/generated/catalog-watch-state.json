@@ -2,7 +2,8 @@
   "version": 1,
   "unknownMeters": [],
   "rssGuids": [
-    "https://www.databricks.com/blog/transactions-are-generally-available-advancing-warehousing-lakehouse"
+    "https://www.databricks.com/blog/transactions-are-generally-available-advancing-warehousing-lakehouse",
+    "https://www.databricks.com/blog/ai-runtime-generally-available"
   ],
   "staleProductIds": [],
   "sitemapLocs": [
@@ -47,6 +48,7 @@
     "https://www.databricks.com/product/spark",
     "https://www.databricks.com/product/startups",
     "https://www.databricks.com/product/startups-old",
-    "https://www.databricks.com/product/unity-catalog"
+    "https://www.databricks.com/product/unity-catalog",
+    "https://www.databricks.com/product/ai-runtime"
   ]
 }
