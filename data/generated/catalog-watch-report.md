@@ -1,6 +1,6 @@
 # Product catalog watch
 
-Catalog `2026-10-17.1`. This report is estimates and public list signals, not a quote.
+Catalog `2026-10-19.1`. This report is estimates and public list signals, not a quote.
 
 Live check: Azure Retail Prices for every rate-card region, and the Databricks RSS feed.
 
@@ -14,4 +14,4 @@ None beyond the known meter list. Photon, free-trial, and POC meters are ignored
 
 ## Release-note and blog titles that may be billable
 
-- [Transactions are Generally Available, advancing warehousing on the Lakehouse](https://www.databricks.com/blog/transactions-are-generally-available-advancing-warehousing-lakehouse)
+- [Genie in Slack is now Generally Available: Governed AI cowork, right where work happens](https://www.databricks.com/blog/genie-slack-now-generally-available-governed-ai-cowork-right-where-work-happens)
