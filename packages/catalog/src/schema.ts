@@ -49,7 +49,7 @@ const patchValue = z.union([
   z.string(),
   z.number(),
   z.boolean(),
-  z.record(z.union([z.string(), z.number(), z.boolean()])),
+  z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
 ]);
 
 const partSchema = z.object({
@@ -59,7 +59,7 @@ const partSchema = z.object({
   editor: z.enum(["builtin", "schema"]).default("schema"),
   formula: z.enum(FORMULAS).optional(),
   fields: z.array(fieldSchema).default([]),
-  patch: z.record(patchValue).default({}),
+  patch: z.record(z.string(), patchValue).default({}),
 });
 
 export const productSchema = z.object({
@@ -91,7 +91,7 @@ export const productSchema = z.object({
   }),
   note: z.string().min(1),
   fields: z.array(fieldSchema).default([]),
-  patch: z.record(patchValue).default({}),
+  patch: z.record(z.string(), patchValue).default({}),
   azureMeterNames: z.array(z.string().min(1)).default([]),
   /** Converts editable inputs into DBU or dollars. Omitted when `parts` owns the formulas. */
   formula: z.enum(FORMULAS).optional(),

@@ -17,7 +17,7 @@
   "dependencies": {
     "@cayfore/sheet": "*",
     "@modelcontextprotocol/sdk": "^1.17.4",
-    "zod": "^3.25.76"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^22.15.21",
