@@ -6,6 +6,7 @@ Plan Databricks costs, compare scenarios, and inspect the evidence behind each r
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-111111)](LICENSE)
 [![Node 22.13+ or 24+](https://img.shields.io/badge/node-22.13%2B%20or%2024%2B-111111)](package.json)
+[![Buy Me a Coffee](https://img.shields.io/badge/buymeacoffee-black?style=for-the-badge&logo=buymeacoffee&logoColor=white)](https://buymeacoffee.com/santoshshin)
 
 Catalogfore is an independent, browser-local budget and scenario planner. No account or workspace credentials are required. Calculations, billing-file imports, and downloads run locally. The bundled prices are dated snapshots; results are estimates, not Databricks quotes. [Privacy details](docs/PRIVACY.md)
 
