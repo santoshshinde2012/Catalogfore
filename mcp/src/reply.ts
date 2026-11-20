@@ -9,7 +9,7 @@ export function text(payload: unknown) {
 
 export function portfolioSchema() {
   return z
-    .object({ workloads: z.array(z.record(z.unknown())).max(1000) })
+    .object({ workloads: z.array(z.record(z.string(), z.unknown())).max(1000) })
     .passthrough()
     .describe(
       "A versioned saved portfolio, or shorthand with an explicit workloads array. Shorthand defaults are AWS Premium and a 12-month forecast.",
