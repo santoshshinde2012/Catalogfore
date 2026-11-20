@@ -9,7 +9,7 @@ import {
 import { z } from "zod";
 
 const usageText = z.string().min(1).max(UPLOAD_MAX_CHARS);
-const usageTable = z.array(z.record(z.string().max(2_000))).max(UPLOAD_MAX_ROWS);
+const usageTable = z.array(z.record(z.string(), z.string().max(2_000))).max(UPLOAD_MAX_ROWS);
 const forecastText = z.string().max(UPLOAD_MAX_CHARS);
 
 export type ReadResult<T> = { ok: true; value: T } | { ok: false; error: string };
